@@ -286,7 +286,8 @@ life-planning-coach/
 │   ├── weekly_review.md              # Stage 3 протоколы
 │   ├── science_backing.md            # Научная валидация
 │   ├── dashboard_guide.md            # Гайд по дашборду
-│   └── calendar_integration.md       # Гайд по Calendar MCP
+│   ├── calendar_integration.md       # Гайд по Calendar MCP
+│   └── USER_GUIDE_DRIVE.md           # Гайд по подключению Google Drive
 │
 └── setup.py                           # Python package installer
 ```
