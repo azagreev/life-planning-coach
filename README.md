@@ -2,7 +2,7 @@
 
 Интерактивный evidence-based life coach для диагностики жизни, постановки целей, еженедельных ретроспектив, визуализации прогресса и интеграции с Google Calendar.
 
-**Версия:** 0.1.0
+**Версия:** 0.2.0
 **Автор:** Andrey Zagreev — [@zagreev](https://t.me/zagreev)
 **Лицензия:** [MIT](LICENSE)
 **Целевая платформа:** Claude.ai
@@ -30,18 +30,11 @@ xdg-open life-planning-dashboard.html    # Linux
 start life-planning-dashboard.html       # Windows
 ```
 
-### 2. Google Calendar интеграция
+### 2. Google Calendar интеграция (через MCP)
 
-```bash
-cd calendar_integration
-pip install -r requirements.txt
+В claude.ai: **Settings → MCP → Google Calendar → Authorize** (один клик).
 
-# Первая настройка (один раз)
-export CALENDAR_ENCRYPTION_KEY="your-secret-key-here"
-
-# Запуск примеров
-python example_usage.py
-```
+Скилл автоматически создаёт события (Weekly Review, WOOP, Time Blocks) через встроенный MCP-коннектор. Нет необходимости в credentials.json, Python-зависимостях или encryption key.
 
 ---
 
@@ -94,17 +87,7 @@ life-planning-coach/
 ├── life-planning-dashboard.html       # Интерактивный дашборд
 ├── life-planning-coach.skill          # Упакованный skill
 │
-├── calendar_integration/              # Python модуль
-│   ├── __init__.py
-│   ├── auth.py                        # OAuth + Fernet encryption
-│   ├── calendar_manager.py            # CRUD событий + presets
-│   ├── tasks_manager.py               # CRUD задачи + presets
-│   ├── config.py                      # Цвета, настройки
-│   ├── models.py                      # Dataclasses
-│   ├── exceptions.py                  # Иерархия ошибок
-│   ├── example_usage.py               # 7 примеров
-│   └── requirements.txt               # Зависимости
-│
+
 ├── references/                        # Документация методик
 │   ├── diagnostic_methods.md          # Stage 1 протоколы
 │   ├── goal_architecture.md           # Stage 2 протоколы
@@ -120,68 +103,11 @@ life-planning-coach/
 
 ## Настройка Google Calendar
 
-### 1. Создать проект в Google Cloud
+1. В claude.ai открой **Settings → MCP → Google Calendar**
+2. Нажми **Authorize** — один клик, без скачивания файлов
+3. Скилл автоматически получит доступ к календарю через MCP
 
-1. Открой [Google Cloud Console](https://console.cloud.google.com/)
-2. Создай новый проект: **Life Planning Coach**
-3. Включи API:
-   - **Google Calendar API**
-   - **Google Tasks API**
-4. Настрой **OAuth Consent Screen** (External)
-5. Создай **OAuth 2.0 Credentials** (Desktop app)
-6. Скачай `credentials.json` и положи в `calendar_integration/`
-
-### 2. Установить зависимости
-
-```bash
-cd calendar_integration
-pip install -r requirements.txt
-```
-
-### 3. Запустить первую авторизацию
-
-```python
-from calendar_integration import CalendarAuth
-
-auth = CalendarAuth(
-    client_secrets_file="credentials.json",
-    encryption_key="your-secure-password-here"
-)
-auth.authenticate()  # Откроется браузер для авторизации
-```
-
-Токен сохранится в зашифрованном виде. При следующих запусках браузер не понадобится.
-
-### 4. Использовать
-
-```python
-from calendar_integration import CalendarAuth, CalendarManager, TasksManager
-
-auth = CalendarAuth(client_secrets_file="credentials.json",
-                    encryption_key="your-secure-password")
-calendar = CalendarManager(auth)
-tasks = TasksManager(auth)
-
-# Weekly Review каждое воскресенье в 19:00
-calendar.create_weekly_review_reminder(timezone="Europe/Moscow")
-
-# WOOP каждый будний день в 7:00
-calendar.create_woop_reminder(timezone="Europe/Moscow")
-
-# 3 приоритета на сегодня в Google Tasks
-tasks.create_daily_top3(
-    priorities=["Написать главу книги", "Позвонить клиенту", "Пробежать 5км"],
-    due=date.today()
-)
-
-# Найти свободные слоты на сегодня
-free_slots = calendar.get_free_slots(
-    target_date=date.today(),
-    duration_minutes=90,
-    work_start=9,
-    work_end=18
-)
-```
+Если подключение недоступно — скилл продолжит работу в текстовом режиме без синхронизации с календарём.
 
 ---
 
@@ -190,18 +116,15 @@ free_slots = calendar.get_free_slots(
 | Компонент | Требования |
 |-----------|-----------|
 | Дашборд | Любой современный браузер (Chrome, Firefox, Safari) |
-| Python модуль | Python 3.9+, `google-api-python-client`, `google-auth-oauthlib`, `cryptography` |
-| Google Calendar | Аккаунт Google, проект в Google Cloud Console |
+| Google Calendar | Аккаунт Google, авторизация через MCP в claude.ai |
 
 ---
 
 ## Безопасность
 
-- **Fernet-шифрование** (AES-128-CBC + HMAC) для токенов
-- **Случайный salt** для PBKDF2 (хранится отдельно, права 0o600)
-- **Encryption key обязателен** — нет insecure fallback
-- **OAuth 2.0** с автоматическим refresh токена
-- **Никакие credentials не хранятся в коде**
+- **OAuth 2.0** через официальный MCP-коннектор Google (управляется Anthropic)
+- **Никакие credentials не хранятся в коде скилла**
+- **Zero-trust**: скилл не имеет прямого доступа к токенам, все вызовы через MCP
 
 ---
 
