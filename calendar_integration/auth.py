@@ -27,7 +27,6 @@ import base64
 import json
 import logging
 import os
-import pickle
 import random
 import time
 from functools import wraps
@@ -96,30 +95,33 @@ class SecureTokenStorage:
             encryption_key: Пароль для шифрования (будет использован для
                 вывода ключа через PBKDF2).
             storage_dir: Директория для хранения файлов. По умолчанию ~/.calendar_tokens.
+
+        Raises:
+            AuthError: Если encryption_key короче 8 символов.
         """
-        self._cipher = self._create_cipher(encryption_key)
+        if len(encryption_key) < 8:
+            raise AuthError("Encryption key must be at least 8 characters long")
         self._storage_dir = Path(storage_dir or os.path.expanduser("~/.calendar_tokens"))
+        self._password = encryption_key
         self._storage_dir.mkdir(parents=True, exist_ok=True)
+        # Обратная совместимость: если существует старый .salt файл
+        salt_file = self._storage_dir / ".salt"
+        self._legacy_salt: Optional[bytes] = (
+            salt_file.read_bytes() if salt_file.exists() else None
+        )
         logger.debug("Инициализировано хранилище токенов: %s", self._storage_dir)
 
-    def _create_cipher(self, password: str) -> Fernet:
+    def _create_cipher(self, password: str, salt: bytes) -> Fernet:
         """
-        Создать Fernet cipher из пароля через PBKDF2.
+        Создать Fernet cipher из пароля и соли через PBKDF2.
 
         Args:
             password: Пользовательский пароль.
+            salt: Соль для PBKDF2.
 
         Returns:
             Экземпляр Fernet для шифрования.
         """
-        # Используем случайный salt, сохраняемый рядом с зашифрованными данными
-        salt_file = self._storage_dir / ".salt"
-        if salt_file.exists():
-            salt = salt_file.read_bytes()
-        else:
-            salt = os.urandom(16)
-            salt_file.write_bytes(salt)
-            os.chmod(salt_file, 0o600)
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
             length=32,
@@ -142,12 +144,23 @@ class SecureTokenStorage:
         """
         path = Path(file_path) if file_path else self._storage_dir / "credentials.enc"
         try:
-            # Сериализуем credentials через pickle
-            pickled: bytes = pickle.dumps(credentials)
+            # Миграция со старого формата: если есть .salt — используем его
+            if self._legacy_salt is not None:
+                salt = self._legacy_salt
+                salt_file = self._storage_dir / ".salt"
+                if salt_file.exists():
+                    salt_file.unlink()
+                self._legacy_salt = None
+            else:
+                salt = os.urandom(self._SALT_LENGTH)
+
+            cipher = self._create_cipher(self._password, salt)
+            # Сериализуем credentials через JSON
+            json_bytes: bytes = credentials.to_json().encode("utf-8")
             # Шифруем
-            encrypted: bytes = self._cipher.encrypt(pickled)
-            # Сохраняем
-            path.write_bytes(encrypted)
+            encrypted: bytes = cipher.encrypt(json_bytes)
+            # Сохраняем с salt в префиксе: [salt (16 bytes)][encrypted_data]
+            path.write_bytes(salt + encrypted)
             # Устанавливаем restrictive permissions (только владелец)
             os.chmod(path, 0o600)
             logger.info("Credentials зашифрованы и сохранены: %s", path)
@@ -177,9 +190,27 @@ class SecureTokenStorage:
             )
 
         try:
-            encrypted: bytes = path.read_bytes()
-            pickled: bytes = self._cipher.decrypt(encrypted)
-            credentials: Credentials = pickle.loads(pickled)
+            data: bytes = path.read_bytes()
+            if self._legacy_salt is not None:
+                # Пробуем старый формат (весь файл — зашифрованные данные)
+                try:
+                    legacy_cipher = self._create_cipher(self._password, self._legacy_salt)
+                    decrypted: bytes = legacy_cipher.decrypt(data)
+                except Exception:
+                    # Если старый формат не подошёл — пробуем новый
+                    salt = data[:self._SALT_LENGTH]
+                    ciphertext = data[self._SALT_LENGTH:]
+                    cipher = self._create_cipher(self._password, salt)
+                    decrypted = cipher.decrypt(ciphertext)
+            else:
+                salt = data[:self._SALT_LENGTH]
+                ciphertext = data[self._SALT_LENGTH:]
+                cipher = self._create_cipher(self._password, salt)
+                decrypted = cipher.decrypt(ciphertext)
+
+            credentials: Credentials = Credentials.from_authorized_user_info(
+                json.loads(decrypted)
+            )
             logger.info("Credentials загружены из: %s", path)
             return credentials
         except CredentialsNotFoundError:
@@ -531,6 +562,7 @@ def with_retry(
     base_delay: float = BASE_RETRY_DELAY,
     max_delay: float = MAX_RETRY_DELAY,
     retryable_status_codes: Optional[set[int]] = None,
+    auth_instance: Optional[Any] = None,
 ) -> Callable[[F], F]:
     """
     Декоратор: выполняет функцию с retry логикой и exponential backoff.
@@ -538,11 +570,15 @@ def with_retry(
     При ошибках API (429, 500, 502, 503, 504) повторяет вызов
     с увеличивающейся задержкой (exponential backoff + jitter).
 
+    При ошибке 401 и переданном auth_instance вызывает
+    auth_instance.refresh_if_needed() и пробует ещё раз.
+
     Args:
         max_retries: Максимальное количество повторных попыток.
         base_delay: Базовая задержка в секундах.
         max_delay: Максимальная задержка в секундах.
         retryable_status_codes: Множество HTTP-кодов для retry.
+        auth_instance: Экземпляр CalendarAuth для auto-refresh на 401.
 
     Returns:
         Декоратор, оборачивающий функцию retry-логикой.
@@ -558,8 +594,10 @@ def with_retry(
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             last_error: Optional[Exception] = None
+            refreshed_on_401 = False
+            attempt = 0
 
-            for attempt in range(max_retries):
+            while attempt < max_retries:
                 try:
                     return func(*args, **kwargs)
                 except HttpError as exc:
@@ -588,9 +626,19 @@ def with_retry(
                                 )
 
                         time.sleep(delay)
+                        attempt += 1
                         continue
 
                     if status == 401:
+                        if auth_instance is not None and not refreshed_on_401:
+                            logger.warning(
+                                "API ошибка 401 (попытка %d/%d), "
+                                "пробуем обновить токен...",
+                                attempt + 1, max_retries,
+                            )
+                            auth_instance.refresh_if_needed()
+                            refreshed_on_401 = True
+                            continue
                         logger.error("Ошибка авторизации (401): %s", exc)
                         raise TokenExpiredError(
                             "Токен истёк. Требуется обновление через refresh()."
@@ -624,5 +672,4 @@ def with_retry(
     return decorator
 
 
-# Импорт base64 нужен для Fernet
-import base64
+

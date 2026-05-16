@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import logging
 from datetime import date, datetime, timedelta, time as dt_time
+from zoneinfo import ZoneInfo
 from typing import Any, Optional
 
 from googleapiclient.discovery import Resource
@@ -111,7 +112,6 @@ class CalendarManager:
         """Преобразовать ответ API в CalendarEvent."""
         return CalendarEvent.from_api_response(data)
 
-    @with_retry()
     def _execute_api_call(self, request: Any) -> Any:
         """
         Выполнить API-запрос с retry-логикой.
@@ -122,7 +122,11 @@ class CalendarManager:
         Returns:
             Результат выполнения запроса.
         """
-        return request.execute()
+        @with_retry(auth_instance=self._auth)
+        def _do_execute() -> Any:
+            return request.execute()
+
+        return _do_execute()
 
     # ------------------------------------------------------------------
     # CRUD событий
@@ -502,8 +506,8 @@ class CalendarManager:
             # Преобразуем в TimeSlot
             busy_slots: list[TimeSlot] = []
             for b in busy_raw:
-                b_start = datetime.fromisoformat(b["start"].replace("Z", "+00:00"))
-                b_end = datetime.fromisoformat(b["end"].replace("Z", "+00:00"))
+                b_start = datetime.fromisoformat(b["start"].replace("Z", "+00:00")).replace(tzinfo=None)
+                b_end = datetime.fromisoformat(b["end"].replace("Z", "+00:00")).replace(tzinfo=None)
                 busy_slots.append(TimeSlot(start=b_start, end=b_end, is_free=False))
 
             # Ищем свободные слоты
@@ -614,7 +618,7 @@ class CalendarManager:
             days_until_sunday = 7  # Если сегодня воскресенье — берём следующее
 
         sunday = today + timedelta(days=days_until_sunday)
-        start = datetime.combine(sunday, dt_time(hour, minute))
+        start = datetime.combine(sunday, dt_time(hour, minute), tzinfo=ZoneInfo(timezone))
         end = start + timedelta(minutes=30)
 
         description = (
@@ -669,7 +673,7 @@ class CalendarManager:
             ... )
         """
         tomorrow = date.today() + timedelta(days=1)
-        start = datetime.combine(tomorrow, dt_time(hour, minute))
+        start = datetime.combine(tomorrow, dt_time(hour, minute), tzinfo=ZoneInfo(timezone))
         end = start + timedelta(minutes=15)
 
         description = (

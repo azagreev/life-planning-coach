@@ -107,5 +107,32 @@ class TestSkillArchive(unittest.TestCase):
                 )
 
 
+class TestProjectMetadata(unittest.TestCase):
+    """Project metadata consistency tests."""
+
+    def test_requirements_txt_no_leading_space(self):
+        req_path = Path("calendar_integration/requirements.txt")
+        self.assertTrue(req_path.exists(), "requirements.txt must exist")
+        lines = req_path.read_text(encoding="utf-8").splitlines()
+        for i, line in enumerate(lines, start=1):
+            self.assertFalse(
+                line.startswith(" "),
+                f"Line {i} in requirements.txt starts with a space: {line!r}"
+            )
+
+    def test_setup_py_name_matches_repo(self):
+        setup_text = Path("setup.py").read_text(encoding="utf-8")
+        name_value = ""
+        for line in setup_text.splitlines():
+            if line.strip().startswith("name="):
+                name_value = line.split("=", 1)[1].strip().strip('"\'')
+                break
+        self.assertTrue(name_value, "Could not parse name from setup.py")
+        self.assertIn(
+            "life-planning-coach", name_value,
+            f"setup.py name ({name_value}) should contain 'life-planning-coach', not 'life-planning-calendar'"
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

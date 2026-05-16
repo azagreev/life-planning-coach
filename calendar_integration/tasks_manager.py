@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from typing import Any, Optional
 
 from googleapiclient.discovery import Resource
@@ -94,10 +94,13 @@ class TasksManager:
         """Преобразовать ответ API в CalendarTask."""
         return CalendarTask.from_api_response(data)
 
-    @with_retry()
     def _execute_api_call(self, request: Any) -> Any:
         """Выполнить API-запрос с retry-логикой."""
-        return request.execute()
+        @with_retry(auth_instance=self._auth)
+        def _do_execute() -> Any:
+            return request.execute()
+
+        return _do_execute()
 
     # ------------------------------------------------------------------
     # CRUD задач
@@ -334,7 +337,7 @@ class TasksManager:
         self._auth.refresh_if_needed()
         service = self._get_service()
 
-        completed_time = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        completed_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
         logger.info("Отметка задачи %s как выполненной", task_id)
 

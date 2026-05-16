@@ -25,6 +25,9 @@ jobs:
         run: |
           python3 -m py_compile calendar_integration/*.py
 
+      - name: Run unit tests
+        run: pytest tests/unit -v
+
       - name: Run release tests
         run: python3 -m unittest discover -s tests/release -v
 
