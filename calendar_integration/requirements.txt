@@ -1,0 +1,22 @@
+# Google Calendar / Tasks API
+google-api-python-client>=2.100.0
+google-auth-oauthlib>=1.0.0
+google-auth-httplib2>=0.1.1
+
+# Шифрование токенов
+cryptography>=41.0.0
+
+# Type hints
+ typing-extensions>=4.7.0; python_version < "3.11"
+
+# --- Опциональные зависимости ---
+
+# Часовые пояса (рекомендуется для production)
+# pytz>=2023.3
+
+# Загрузка переменных окружения
+# python-dotenv>=1.0.0
+
+# Тестирование
+# pytest>=7.4.0
+# pytest-asyncio>=0.21.0

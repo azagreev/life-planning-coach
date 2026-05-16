@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Life Planning Dashboard</title>
+  <!-- CDN: ECharts -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+  <!-- CDN: Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <!-- CDN: Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* ============================================
+       LIFE PLANNING DASHBOARD — CSS
+       Theme: Life Coach Warm Palette
+       ============================================ */
+
+    :root {
+      /* Base */
+      --bg-primary: #faf8f5;
+      --bg-card: #ffffff;
+      --bg-hover: #f5f0ea;
+      --text-primary: #2d2a26;
+      --text-secondary: #6b6560;
+      --text-muted: #99908a;
+      --accent: #c4855a;
+      --accent-dark: #a0683d;
+      --border: #e8e2db;
+      --border-light: #f0ebe5;
+      /* Status */
+      --success: #7a9e7e;
+      --success-light: rgba(122,158,126,0.12);
+      --warning: #d4a76a;
+      --warning-light: rgba(212,167,106,0.12);
+      --danger: #c4786a;
+      --danger-light: rgba(196,120,106,0.12);
+      /* 8 Life Spheres */
+      --health: #7a9e7e;
+      --career: #6b8cae;
+      --finances: #c4a55a;
+      --romance: #c4858a;
+      --family: #8a9ec4;
+      --growth: #8a6bc4;
+      --fun: #6bc4a2;
+      --environment: #c4966a;
+      /* Shadows */
+      --shadow-sm: 0 1px 4px rgba(45,42,38,0.06);
+      --shadow-md: 0 4px 16px rgba(45,42,38,0.08);
+      --shadow-lg: 0 8px 32px rgba(45,42,38,0.10);
+      /* Radius */
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 16px;
+      --r-xl: 20px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ========== LAYOUT ========== */
+    .dashboard {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px 24px 40px;
+    }
+
+    /* ========== HEADER ========== */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .header-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .header-title { font-size: 22px; font-weight: 700; color: var(--text-primary); }
+    .header-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .header-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+      background: var(--success-light); color: var(--success);
+      border: 1px solid rgba(122,158,126,0.2);
+    }
+
+    /* ========== TABS ========== */
+    .tabs {
+      display: flex; gap: 4px;
+      background: var(--bg-card);
+      border-radius: var(--r-lg);
+      padding: 5px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+      width: fit-content;
+    }
+    .tab-btn {
+      padding: 10px 22px;
+      border: none; background: none;
+      font-size: 14px; font-weight: 600;
+      color: var(--text-secondary);
+      border-radius: var(--r-md);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .tab-btn:hover { color: var(--text-primary); background: var(--bg-hover); }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(196,133,90,0.35);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ========== GRID ========== */
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media (max-width: 992px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .dashboard { padding: 12px; }
+      .grid-4 { grid-template-columns: 1fr; }
+      .header { flex-direction: column; align-items: flex-start; }
+      .tabs { width: 100%; }
+      .tab-btn { flex: 1; justify-content: center; padding: 10px 8px; font-size: 13px; }
+    }
+
+    /* ========== CARD ========== */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--r-lg);
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
+      transition: box-shadow 0.2s ease;
+    }
+    .card:hover { box-shadow: var(--shadow-md); }
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 15px; font-weight: 700;
+      color: var(--text-primary);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-title i { color: var(--accent); font-size: 14px; }
+    .card-subtitle {
+      font-size: 12px; color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .card-badge {
+      padding: 3px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 700;
+    }
+
+    /* ========== CHART CONTAINERS ========== */
+    .chart-container { width: 100%; height: 340px; }
+    .chart-container-sm { width: 100%; height: 240px; }
+    .chart-container-lg { width: 100%; height: 420px; }
+
+    /* ========== MODAL ========== */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(45,42,38,0.45);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.show { display: flex; animation: fadeIn 0.2s ease; }
+    .modal {
+      background: var(--bg-card);
+      border-radius: var(--r-xl);
+      padding: 28px;
+      max-width: 520px;
+      width: 92%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .modal-title { font-size: 18px; font-weight: 700; }
+    .modal-close {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+    .modal-close:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+    /* ========== PROGRESS RING (CSS fallback) ========== */
+    .ring-container {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .ring-wrap {
+      position: relative; width: 140px; height: 140px;
+    }
+    .ring-svg { transform: rotate(-90deg); }
+    .ring-track { fill: none; stroke: var(--border); stroke-width: 10; }
+    .ring-fill {
+      fill: none;
+      stroke-width: 10;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1.2s ease;
+    }
+    .ring-center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .ring-value { font-size: 26px; font-weight: 800; color: var(--text-primary); }
+    .ring-label { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+    .ring-title {
+      font-size: 13px; font-weight: 700; color: var(--text-secondary);
+      text-align: center;
+    }
+
+    /* ========== 12-WEEK TRACKER ========== */
+    .tracker-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .tracker-row:last-child { border-bottom: none; }
+    .tracker-week {
+      width: 36px; text-align: center;
+      font-size: 12px; font-weight: 700; color: var(--text-muted);
+    }
+    .tracker-week.current { color: var(--accent); }
+    .tracker-bar-wrap {
+      flex: 1; height: 10px;
+      background: var(--bg-primary);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .tracker-bar {
+      height: 100%; border-radius: 5px;
+      transition: width 0.8s ease;
+      background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+    }
+    .tracker-bar.success { background: linear-gradient(90deg, var(--success), #5a8a5e); }
+    .tracker-bar.warning { background: linear-gradient(90deg, var(--warning), #b89050); }
+    .tracker-bar.danger { background: linear-gradient(90deg, var(--danger), #a85850); }
+    .tracker-score {
+      width: 32px; text-align: right;
+      font-size: 13px; font-weight: 700;
+    }
+    .tracker-segments {
+      display: flex; gap: 3px;
+    }
+    .tracker-seg {
+      width: 18px; height: 18px; border-radius: 4px;
+      background: var(--border);
+      transition: all 0.3s;
+    }
+    .tracker-seg.done { background: var(--success); }
+    .tracker-seg.current { background: var(--accent); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    /* ========== WOOP CARDS ========== */
+    .woop-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    @media (max-width: 992px) { .woop-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 576px) { .woop-grid { grid-template-columns: 1fr; } }
+    .woop-card {
+      background: linear-gradient(135deg, #faf8f5, #fff);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 18px;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .woop-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .woop-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .woop-card.wish::before { background: var(--accent); }
+    .woop-card.outcome::before { background: var(--success); }
+    .woop-card.obstacle::before { background: var(--danger); }
+    .woop-card.plan::before { background: var(--career); }
+    .woop-letter {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800; color: #fff;
+      margin-bottom: 10px;
+    }
+    .woop-letter.wish { background: var(--accent); }
+    .woop-letter.outcome { background: var(--success); }
+    .woop-letter.obstacle { background: var(--danger); }
+    .woop-letter.plan { background: var(--career); }
+    .woop-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .woop-text { font-size: 14px; color: var(--text-primary); line-height: 1.5; }
+
+    /* ========== PRIORITY LIST ========== */
+    .priority-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--r-sm);
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    .priority-item:hover { background: var(--bg-hover); }
+    .priority-checkbox {
+      width: 22px; height: 22px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .priority-checkbox.checked {
+      background: var(--success); border-color: var(--success);
+    }
+    .priority-checkbox.checked i { color: #fff; font-size: 12px; }
+    .priority-text { flex: 1; font-size: 14px; }
+    .priority-text.done { text-decoration: line-through; color: var(--text-muted); }
+    .priority-tag {
+      padding: 2px 8px; border-radius: 10px;
+      font-size: 10px; font-weight: 700;
+    }
+
+    /* ========== ROADMAP ========== */
+    .roadmap { position: relative; padding-left: 28px; }
+    .roadmap::before {
+      content: ''; position: absolute; left: 8px; top: 0; bottom: 0;
+      width: 2px; background: var(--border);
+    }
+    .roadmap-item {
+      position: relative; padding: 14px 0 14px 20px;
+    }
+    .roadmap-item::before {
+      content: ''; position: absolute; left: -24px; top: 20px;
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 3px solid var(--bg-card);
+      box-shadow: 0 0 0 2px var(--border);
+    }
+    .roadmap-item.bhag::before { background: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+    .roadmap-item.y3::before { background: var(--growth); box-shadow: 0 0 0 2px var(--growth); }
+    .roadmap-item.y1::before { background: var(--career); box-shadow: 0 0 0 2px var(--career); }
+    .roadmap-item.w12::before { background: var(--success); box-shadow: 0 0 0 2px var(--success); }
+    .roadmap-item.weekly::before { background: var(--warning); box-shadow: 0 0 0 2px var(--warning); }
+    .roadmap-title { font-size: 14px; font-weight: 700; }
+    .roadmap-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .roadmap-bar {
+      height: 6px; border-radius: 3px;
+      background: var(--bg-primary);
+      margin-top: 8px;
+      overflow: hidden;
+    }
+    .roadmap-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+
+    /* ========== SPHERE DETAIL (modal content) ========== */
+    .sphere-goals { display: flex; flex-direction: column; gap: 10px; }
+    .sphere-goal-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px;
+      background: var(--bg-primary);
+      border-radius: var(--r-sm);
+    }
+    .sphere-goal-bar {
+      flex: 1; height: 8px;
+      background: var(--border-light);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .sphere-goal-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+
+    /* ========== EXPORT BUTTON ========== */
+    .export-btn {
+      padding: 8px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      font-size: 13px; font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      transition: all 0.2s;
+    }
+    .export-btn:hover {
+      background: var(--accent); color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* ========== STAT ROW ========== */
+    .stat-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .stat-item {
+      flex: 1; min-width: 100px;
+      padding: 14px 16px;
+      background: var(--bg-primary);
+      border-radius: var(--r-md);
+      text-align: center;
+    }
+    .stat-value { font-size: 22px; font-weight: 800; color: var(--text-primary); }
+    .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+
+    /* ========== MISC ========== */
+    .section { margin-bottom: 20px; }
+    .flex-between { display: flex; align-items: center; justify-content: space-between; }
+    .text-success { color: var(--success); }
+    .text-warning { color: var(--warning); }
+    .text-danger { color: var(--danger); }
+    .badge-success { background: var(--success-light); color: var(--success); }
+    .badge-warning { background: var(--warning-light); color: #a07830; }
+    .badge-danger { background: var(--danger-light); color: var(--danger); }
+  </style>
+</head>
+<body>
+<div class="dashboard">
+
+  <!-- ========== HEADER ========== -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-icon"><i class="fas fa-compass"></i></div>
+      <div>
+        <div class="header-title">Life Planning Dashboard</div>
+        <div class="header-subtitle">Неделя 8 из 12 &middot; 12-Week Year &middot; Q1 2025</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="header-badge"><i class="fas fa-fire"></i> Streak: 12 дней</span>
+      <span class="header-badge" style="background:var(--warning-light);color:var(--warning);border-color:rgba(212,167,106,0.2)"><i class="fas fa-chart-line"></i> Execution: 7.2/10</span>
+      <button class="export-btn" onclick="exportDashboard()" title="Экспорт в PNG">
+        <i class="fas fa-download"></i> Экспорт
+      </button>
+    </div>
+  </header>
+
+  <!-- ========== TABS ========== -->
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" onclick="switchTab('overview')" role="tab" aria-selected="true">
+      <i class="fas fa-chart-pie"></i> Обзор
+    </button>
+    <button class="tab-btn" onclick="switchTab('retrospective')" role="tab" aria-selected="false">
+      <i class="fas fa-calendar-alt"></i> Ретроспектива
+    </button>
+    <button class="tab-btn" onclick="switchTab('goals')" role="tab" aria-selected="false">
+      <i class="fas fa-bullseye"></i> Цели
+    </button>
+  </nav>
+
+  <!-- ============================================
+       TAB 1: ОБЗОР (Overview)
+       ============================================ -->
+  <div id="tab-overview" class="tab-content active">
+
+    <!-- Row 1: Radar + OKR Rings -->
+    <div class="grid-2 section">
+      <!-- Wheel of Life Radar -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fas fa-life-ring"></i> Wheel of Life</div>
+            <div class="card-subtitle">Баланс 8 сфер жизни — клик по сфере для деталей</div>
+          </div>
+          <span class="card-badge badge-success" id="balance-score-badge">6.0</span>
+        </div>
+        <div id="radar-chart" class="chart-container"></div>
+        <div class="stat-row" style="margin-top:12px">
+          <div class="stat-item">
+            <div class="stat-value" style="color:var(--accent)">6.0</div>
+            <div class="stat-label">Баланс</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value text-success">+0.5</div>
+            <div class="stat-label">Рост за месяц</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" style="color:var(--career)">3</div>
+            <div class="stat-label">В фокусе</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OKR Progress Rings -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fas fa-bullseye"></i> OKR Progress</div>
+            <div class="card-subtitle">Прогресс по ключевым результатам</div>
+          </div>
+        </div>
+        <div class="grid-3" style="margin-bottom:16px">
+          <!-- Ring 1: Health -->
+          <div class="ring-container">
+            <div class="ring-wrap">
+              <svg class="ring-svg" width="140" height="140" viewBox="0 0 140 140">
+                <circle class="ring-track" cx="70" cy="70" r="58"/>
+                <circle id="ring1-fill" class="ring-fill" cx="70" cy="70" r="58"
+                  stroke="var(--health)" stroke-dasharray="364.4" stroke-dashoffset="102"/>
+              </svg>
+              <div class="ring-center">
+                <div class="ring-value" style="color:var(--health)">72%</div>
+                <div class="ring-label">Здоровье</div>
+              </div>
+            </div>
+            <div class="ring-title">Physical Health</div>
+          </div>
+          <!-- Ring 2: Career -->
+          <div class="ring-container">
+            <div class="ring-wrap">
+              <svg class="ring-svg" width="140" height="140" viewBox="0 0 140 140">
+                <circle class="ring-track" cx="70" cy="70" r="58"/>
+                <circle id="ring2-fill" class="ring-fill" cx="70" cy="70" r="58"
+                  stroke="var(--career)" stroke-dasharray="364.4" stroke-dashoffset="164"/>
+              </svg>
+              <div class="ring-center">
+                <div class="ring-value" style="color:var(--career)">55%</div>
+                <div class="ring-label">Карьера</div>
+              </div>
+            </div>
+            <div class="ring-title">Career Growth</div>
+          </div>
+          <!-- Ring 3: Finances -->
+          <div class="ring-container">
+            <div class="ring-wrap">
+              <svg class="ring-svg" width="140" height="140" viewBox="0 0 140 140">
+                <circle class="ring-track" cx="70" cy="70" r="58"/>
+                <circle id="ring3-fill" class="ring-fill" cx="70" cy="70" r="58"
+                  stroke="var(--finances)" stroke-dasharray="364.4" stroke-dashoffset="33"/>
+              </svg>
+              <div class="ring-center">
+                <div class="ring-value" style="color:var(--finances)">91%</div>
+                <div class="ring-label">Финансы</div>
+              </div>
+            </div>
+            <div class="ring-title">Financial Freedom</div>
+          </div>
+        </div>
+        <!-- Mini OKR bars -->
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="sphere-goal-row">
+            <span style="font-size:12px;width:90px;font-weight:600">Бег 3x/нед</span>
+            <div class="sphere-goal-bar"><div class="sphere-goal-fill" style="width:100%;background:var(--health)"></div></div>
+            <span style="font-size:11px;color:var(--text-muted)">100%</span>
+          </div>
+          <div class="sphere-goal-row">
+            <span style="font-size:12px;width:90px;font-weight:600">Сон 7+ ч</span>
+            <div class="sphere-goal-bar"><div class="sphere-goal-fill" style="width:65%;background:var(--warning)"></div></div>
+            <span style="font-size:11px;color:var(--text-muted)">65%</span>
+          </div>
+          <div class="sphere-goal-row">
+            <span style="font-size:12px;width:90px;font-weight:600">Курс (модули)</span>
+            <div class="sphere-goal-bar"><div class="sphere-goal-fill" style="width:55%;background:var(--career)"></div></div>
+            <span style="font-size:11px;color:var(--text-muted)">55%</span>
+          </div>
+          <div class="sphere-goal-row">
+            <span style="font-size:12px;width:90px;font-weight:600">Экономия 20%</span>
+            <div class="sphere-goal-bar"><div class="sphere-goal-fill" style="width:91%;background:var(--finances)"></div></div>
+            <span style="font-size:11px;color:var(--text-muted)">91%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Confidence Gauges -->
+    <div class="card section">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><i class="fas fa-tachometer-alt"></i> Confidence Gauges</div>
+          <div class="card-subtitle">Уверенность в достижении целей (1-10)</div>
+        </div>
+      </div>
+      <div class="grid-4">
+        <div id="gauge1" class="chart-container-sm"></div>
+        <div id="gauge2" class="chart-container-sm"></div>
+        <div id="gauge3" class="chart-container-sm"></div>
+        <div id="gauge4" class="chart-container-sm"></div>
+      </div>
+    </div>
+
+  </div><!-- /tab-overview -->
+
+  <!-- ============================================
+       TAB 2: РЕТРОСПЕКТИВА (Retrospective)
+       ============================================ -->
+  <div id="tab-retrospective" class="tab-content">
+
+    <!-- Row 1: Calendar Heatmap -->
+    <div class="card section">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><i class="fas fa-calendar-alt"></i> Activity Heatmap</div>
+          <div class="card-subtitle">Ежедневная активность за 365 дней — чем темнее, тем продуктивнее день</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:11px;color:var(--text-muted)">Меньше</span>
+          <span style="width:12px;height:12px;background:#e7e7e7;border-radius:2px"></span>
+          <span style="width:12px;height:12px;background:#e8d5c4;border-radius:2px"></span>
+          <span style="width:12px;height:12px;background:#d4a574;border-radius:2px"></span>
+          <span style="width:12px;height:12px;background:#c4845c;border-radius:2px"></span>
+          <span style="width:12px;height:12px;background:#a0522d;border-radius:2px"></span>
+          <span style="font-size:11px;color:var(--text-muted)">Больше</span>
+        </div>
+      </div>
+      <div id="heatmap-chart" class="chart-container-lg"></div>
+      <div class="stat-row" style="margin-top:8px">
+        <div class="stat-item">
+          <div class="stat-value text-success" id="current-streak">12</div>
+          <div class="stat-label">Текущий стрик</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" style="color:var(--accent)" id="best-streak">28</div>
+          <div class="stat-label">Лучший стрик</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" style="color:var(--career)" id="total-active">187</div>
+          <div class="stat-label">Активных дней</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" style="color:var(--growth)">51%</div>
+          <div class="stat-label">Активности</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Velocity + Burndown -->
+    <div class="grid-2 section">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fas fa-chart-bar"></i> Velocity Chart</div>
+            <div class="card-subtitle">Запланировано vs выполнено по неделям</div>
+          </div>
+        </div>
+        <div id="velocity-chart" class="chart-container"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fas fa-chart-line"></i> Burndown Chart</div>
+            <div class="card-subtitle">Темп выполнения 12-Week Year — идеал vs факт</div>
+          </div>
+          <span class="card-badge badge-success">Впереди плана</span>
+        </div>
+        <div id="burndown-chart" class="chart-container"></div>
+      </div>
+    </div>
+
+  </div><!-- /tab-retrospective -->
+
+  <!-- ============================================
+       TAB 3: ЦЕЛИ (Goals)
+       ============================================ -->
+  <div id="tab-goals" class="tab-content">
+
+    <!-- Row 1: 12-Week Tracker -->
+    <div class="card section">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><i class="fas fa-tasks"></i> 12-Week Tracker</div>
+          <div class="card-subtitle">Прогресс выполнения по неделям — Execution Score</div>
+        </div>
+        <span class="header-badge" style="font-size:11px"><i class="fas fa-calendar-week"></i> Неделя 8 (текущая)</span>
+      </div>
+      <div id="tracker-container"></div>
+    </div>
+
+    <!-- Row 2: Weekly Priorities + WOOP -->
+    <div class="grid-2 section">
+      <!-- Weekly Priorities -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fas fa-check-circle"></i> Weekly Priorities</div>
+            <div class="card-subtitle">Топ-3 приоритета текущей недели</div>
+          </div>
+        </div>
+        <div id="priority-list">
+          <div class="priority-item" onclick="togglePriority(this)">
+            <div class="priority-checkbox checked"><i class="fas fa-check"></i></div>
+            <div class="priority-text done">Записать 3 видео-модуля для курса</div>
+            <span class="priority-tag badge-success">P1</span>
+          </div>
+          <div class="priority-item" onclick="togglePriority(this)">
+            <div class="priority-checkbox checked"><i class="fas fa-check"></i></div>
+            <div class="priority-text done">Пробежать 15 км суммарно за неделю</div>
+            <span class="priority-tag badge-success">P1</span>
+          </div>
+          <div class="priority-item" onclick="togglePriority(this)">
+            <div class="priority-checkbox"><i class="fas fa-check"></i></div>
+            <div class="priority-text">Прочитать 60 страниц книги "Atomic Habits"</div>
+            <span class="priority-tag badge-warning">P2</span>
+          </div>
+          <div class="priority-item" onclick="togglePriority(this)">
+            <div class="priority-checkbox"><i class="fas fa-check"></i></div>
+            <div class="priority-text">Медитация 10 минут ежедневно (5/7)</div>
+            <span class="priority-tag badge-warning">P2</span>
+          </div>
+          <div class="priority-item" onclick="togglePriority(this)">
+            <div class="priority-checkbox"><i class="fas fa-check"></i></div>
+            <div class="priority-text">Позвонить родителям в выходные</div>
+            <span class="priority-tag" style="background:var(--danger-light);color:var(--danger)">P3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- WOOP Cards -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title"><i class="fas fa-magic"></i> Daily WOOP</div>
+            <div class="card-subtitle">Wish &middot; Outcome &middot; Obstacle &middot; Plan</div>
+          </div>
+        </div>
+        <div class="woop-grid">
+          <div class="woop-card wish">
+            <div class="woop-letter wish">W</div>
+            <div class="woop-title">Wish (Желание)</div>
+            <div class="woop-text">Пробежать полумарафон к концу года</div>
+          </div>
+          <div class="woop-card outcome">
+            <div class="woop-letter outcome">O</div>
+            <div class="woop-title">Outcome (Результат)</div>
+            <div class="woop-text">Чувство гордости, здоровое тело, энергия каждый день</div>
+          </div>
+          <div class="woop-card obstacle">
+            <div class="woop-letter obstacle">O</div>
+            <div class="woop-title">Obstacle (Препятствие)</div>
+            <div class="woop-text">Утренняя усталость и желание нажать "отложить"</div>
+          </div>
+          <div class="woop-card plan">
+            <div class="woop-letter plan">P</div>
+            <div class="woop-title">Plan (План)</div>
+            <div class="woop-text">Если проснусь уставым — положу кроссовки у кровати и сделаю 10 глубоких вдохов</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: BHAG Roadmap -->
+    <div class="card section">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><i class="fas fa-road"></i> BHAG Roadmap</div>
+          <div class="card-subtitle">От большой мечты к еженедельным действиям</div>
+        </div>
+      </div>
+      <div class="roadmap">
+        <div class="roadmap-item bhag">
+          <div class="roadmap-title" style="color:var(--accent)">BHAG (10 лет): Построить жизнь свободы и влияния</div>
+          <div class="roadmap-meta">2025 — 2035 &middot; Финансовая независимость + социальное предпринимательство</div>
+          <div class="roadmap-bar"><div class="roadmap-fill" style="width:15%;background:var(--accent)"></div></div>
+        </div>
+        <div class="roadmap-item y3">
+          <div class="roadmap-title" style="color:var(--growth)">3-Year Vision: Бизнес независимый от локации</div>
+          <div class="roadmap-meta">2025 — 2028 &middot; Первый $10k MRR &middot; Команда 5 человек</div>
+          <div class="roadmap-bar"><div class="roadmap-fill" style="width:25%;background:var(--growth)"></div></div>
+        </div>
+        <div class="roadmap-item y1">
+          <div class="roadmap-title" style="color:var(--career)">Annual Goal: Запустить коучинговую программу</div>
+          <div class="roadmap-meta">Январь — Декабрь 2025 &middot; 20 клиентов &middot; $5k MRR</div>
+          <div class="roadmap-bar"><div class="roadmap-fill" style="width:40%;background:var(--career)"></div></div>
+        </div>
+        <div class="roadmap-item w12">
+          <div class="roadmap-title" style="color:var(--success)">12-Week Objective: Завершить курriculum</div>
+          <div class="roadmap-meta">30 дек — 24 мар &middot; 8 недель осталось &middot; 60% выполнено</div>
+          <div class="roadmap-bar"><div class="roadmap-fill" style="width:60%;background:var(--success)"></div></div>
+        </div>
+        <div class="roadmap-item weekly">
+          <div class="roadmap-title" style="color:var(--warning)">Weekly Tactic: Записать 3 видео-модуля</div>
+          <div class="roadmap-meta">17 — 23 февраля &middot; 2 из 3 записано &middot; 66% выполнено</div>
+          <div class="roadmap-bar"><div class="roadmap-fill" style="width:66%;background:var(--warning)"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-goals -->
+
+</div><!-- /dashboard -->
+
+<!-- ========== MODAL: Sphere Detail ========== -->
+<div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Сфера жизни</div>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ============================================
+// LIFE PLANNING DASHBOARD — JAVASCRIPT
+// ============================================
+
+// ========== DEMO DATA ==========
+
+// 8 сфер Wheel of Life
+const WHEEL_SPHERES = [
+  { id: 'health', name: 'Здоровье и фитнес', short: 'Здоровье', current: 7, prev: 6, target: 9, color: '#7a9e7e', icon: 'heartbeat',
+    goals: [
+      { title: 'Бегать 3x в неделю', progress: 100, status: 'done' },
+      { title: 'Спать 7+ часов', progress: 65, status: 'risk' },
+      { title: 'Пить 2.5л воды', progress: 80, status: 'ok' },
+    ]},
+  { id: 'career', name: 'Карьера и бизнес', short: 'Карьера', current: 6, prev: 5, target: 8, color: '#6b8cae', icon: 'briefcase',
+    goals: [
+      { title: 'Закончить курс повышения', progress: 45, status: 'risk' },
+      { title: 'Записать коучинг-программу', progress: 55, status: 'ok' },
+    ]},
+  { id: 'finances', name: 'Финансы', short: 'Финансы', current: 5, prev: 5, target: 7, color: '#c4a55a', icon: 'coins',
+    goals: [
+      { title: 'Откладывать 20% дохода', progress: 91, status: 'ok' },
+      { title: 'Инвестиционный портфель', progress: 30, status: 'risk' },
+    ]},
+  { id: 'romance', name: 'Отношения', short: 'Отношения', current: 8, prev: 7, target: 9, color: '#c4858a', icon: 'heart',
+    goals: [
+      { title: 'Еженедельное свидание', progress: 90, status: 'ok' },
+      { title: 'Ежедневная благодарность', progress: 75, status: 'ok' },
+    ]},
+  { id: 'family', name: 'Семья и друзья', short: 'Семья', current: 7, prev: 7, target: 8, color: '#8a9ec4', icon: 'users',
+    goals: [
+      { title: 'Звонок родителям', progress: 85, status: 'ok' },
+      { title: 'Встреча с друзьями', progress: 60, status: 'ok' },
+    ]},
+  { id: 'growth', name: 'Личный рост', short: 'Рост', current: 6, prev: 5, target: 8, color: '#8a6bc4', icon: 'book',
+    goals: [
+      { title: 'Читать 2 книги/мес', progress: 50, status: 'ok' },
+      { title: 'Медитация ежедневно', progress: 40, status: 'risk' },
+    ]},
+  { id: 'fun', name: 'Развлечения', short: 'Отдых', current: 4, prev: 3, target: 7, color: '#6bc4a2', icon: 'gamepad',
+    goals: [
+      { title: 'Хобби в выходные', progress: 30, status: 'risk' },
+      { title: 'Путешествие в квартал', progress: 0, status: 'todo' },
+    ]},
+  { id: 'environment', name: 'Окружение', short: 'Дом', current: 7, prev: 6, target: 8, color: '#c4966a', icon: 'home',
+    goals: [
+      { title: 'Порядок на рабочем месте', progress: 80, status: 'ok' },
+      { title: 'Ремонт балкона', progress: 25, status: 'risk' },
+    ]},
+];
+
+// Weekly execution scores for 12-Week Tracker
+const EXECUTION_SCORES = [
+  { week: 1, planned: 10, done: 8, score: 8.0 },
+  { week: 2, planned: 10, done: 9, score: 9.0 },
+  { week: 3, planned: 12, done: 7, score: 5.8 },
+  { week: 4, planned: 10, done: 10, score: 10.0 },
+  { week: 5, planned: 11, done: 8, score: 7.3 },
+  { week: 6, planned: 10, done: 9, score: 9.0 },
+  { week: 7, planned: 10, done: 6, score: 6.0 },
+  { week: 8, planned: 10, done: 9, score: 9.0, current: true },
+  { week: 9, planned: 10, done: 0, score: 0, future: true },
+  { week: 10, planned: 10, done: 0, score: 0, future: true },
+  { week: 11, planned: 10, done: 0, score: 0, future: true },
+  { week: 12, planned: 10, done: 0, score: 0, future: true },
+];
+
+// Velocity data
+const VELOCITY_DATA = [
+  { week: 'W1', planned: 10, completed: 8 },
+  { week: 'W2', planned: 10, completed: 9 },
+  { week: 'W3', planned: 12, completed: 7 },
+  { week: 'W4', planned: 10, completed: 10 },
+  { week: 'W5', planned: 11, completed: 8 },
+  { week: 'W6', planned: 10, completed: 9 },
+  { week: 'W7', planned: 10, completed: 6 },
+  { week: 'W8', planned: 10, completed: 9 },
+];
+
+// Generate realistic heatmap data for last 365 days
+function generateHeatmapData() {
+  const data = [];
+  const today = new Date();
+  const dayMs = 24 * 60 * 60 * 1000;
+  for (let i = 364; i >= 0; i--) {
+    const d = new Date(today.getTime() - i * dayMs);
+    const dateStr = d.toISOString().split('T')[0];
+    // Realistic pattern: higher on weekdays, lower on weekends, occasional 0s
+    const dayOfWeek = d.getDay();
+    let base;
+    if (dayOfWeek === 0 || dayOfWeek === 6) base = Math.random() * 2; // weekends lower
+    else base = 1 + Math.random() * 3; // weekdays higher
+    // Add some streaks and breaks
+    if (Math.random() < 0.08) base = 0; // occasional off day
+    if (Math.random() < 0.05) base = 4; // occasional great day
+    const value = Math.min(4, Math.max(0, Math.round(base)));
+    data.push([dateStr, value]);
+  }
+  return data;
+}
+
+const HEATMAP_DATA = generateHeatmapData();
+
+// Burndown data (12 weeks = 84 days)
+function generateBurndownData() {
+  const ideal = [];
+  const actual = [];
+  const days = 84;
+  const totalTasks = 120;
+  let remaining = totalTasks;
+
+  for (let day = 0; day <= days; day++) {
+    ideal.push([day, Math.max(0, Math.round(totalTasks - (totalTasks / days) * day))]);
+    if (day <= 56) { // 8 weeks * 7 days passed
+      const burn = Math.random() * 2.5 + 0.5;
+      remaining = Math.max(0, remaining - burn);
+      actual.push([day, Math.round(remaining)]);
+    }
+  }
+  return { ideal, actual, totalTasks };
+}
+
+const BURNDOWN_DATA = generateBurndownData();
+
+// ========== TAB SWITCHING ==========
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tabName).classList.add('active');
+  event.target.closest('.tab-btn').classList.add('active');
+  // Trigger resize for charts in newly visible tab
+  setTimeout(() => {
+    if (tabName === 'overview') {
+      radarChart && radarChart.resize();
+      gaugeCharts.forEach(g => g.resize());
+    } else if (tabName === 'retrospective') {
+      heatmapChart && heatmapChart.resize();
+      velocityChart && velocityChart.resize();
+      burndownChart && burndownChart.resize();
+    }
+  }, 50);
+}
+
+// ========== ECHARTS INSTANCES ==========
+let radarChart, heatmapChart, velocityChart, burndownChart;
+let gaugeCharts = [];
+
+// ========== 1. WHEEL OF LIFE RADAR ==========
+function initRadarChart() {
+  const dom = document.getElementById('radar-chart');
+  if (!dom) return;
+  radarChart = echarts.init(dom);
+
+  const names = WHEEL_SPHERES.map(s => s.short);
+  const currentScores = WHEEL_SPHERES.map(s => s.current);
+  const previousScores = WHEEL_SPHERES.map(s => s.prev);
+  const avg = (currentScores.reduce((a,b)=>a+b,0) / 8).toFixed(1);
+  document.getElementById('balance-score-badge').textContent = avg;
+
+  const option = {
+    color: ['#c4855a', '#ccc2b6'],
+    tooltip: {
+      trigger: 'item',
+      backgroundColor: 'rgba(45,42,38,0.95)',
+      borderColor: '#c4855a',
+      textStyle: { color: '#faf8f5' },
+      formatter: function(params) {
+        const idx = params.data.value.indexOf(params.value);
+        const s = WHEEL_SPHERES[idx];
+        if (!s) return params.name;
+        const diff = s.current - s.prev;
+        const arrow = diff > 0 ? '▲' : diff < 0 ? '▼' : '●';
+        return `<strong>${s.name}</strong><br/>
+                Текущий: <b>${s.current}</b>/10<br/>
+                Предыдущий: ${s.prev}/10<br/>
+                Изменение: ${arrow} ${Math.abs(diff)}`;
+      }
+    },
+    legend: {
+      data: ['Текущий месяц', 'Предыдущий месяц'],
+      bottom: 0,
+      textStyle: { color: '#6b6560', fontSize: 12 }
+    },
+    radar: {
+      indicator: names.map(n => ({ name: n, max: 10 })),
+      shape: 'polygon',
+      radius: '62%',
+      center: ['50%', '46%'],
+      splitNumber: 5,
+      axisName: {
+        color: '#2d2a26',
+        fontSize: 12,
+        fontWeight: 600
+      },
+      splitLine: { lineStyle: { color: '#e8e2db', width: 1 } },
+      splitArea: {
+        show: true,
+        areaStyle: {
+          color: ['rgba(196,133,90,0.03)', 'rgba(196,133,90,0.06)', 'rgba(196,133,90,0.09)', 'rgba(196,133,90,0.12)', 'rgba(122,158,126,0.06)']
+        }
+      },
+      axisLine: { lineStyle: { color: '#e8e2db', width: 1 } }
+    },
+    series: [{
+      type: 'radar',
+      data: [
+        {
+          value: currentScores,
+          name: 'Текущий месяц',
+          symbol: 'circle',
+          symbolSize: 8,
+          lineStyle: { color: '#c4855a', width: 2.5 },
+          areaStyle: { color: 'rgba(196,133,90,0.22)' },
+          itemStyle: { color: '#c4855a', borderColor: '#fff', borderWidth: 2 }
+        },
+        {
+          value: previousScores,
+          name: 'Предыдущий месяц',
+          symbol: 'circle',
+          symbolSize: 5,
+          lineStyle: { color: '#ccc2b6', width: 1.5, type: 'dashed' },
+          areaStyle: { color: 'rgba(204,194,182,0.1)' },
+          itemStyle: { color: '#ccc2b6' }
+        }
+      ]
+    }]
+  };
+
+  radarChart.setOption(option);
+
+  // Click on sphere → show detail modal
+  radarChart.on('click', function(params) {
+    if (params.componentType === 'series') {
+      const idx = params.data.value.indexOf(params.value);
+      const sphere = WHEEL_SPHERES[idx];
+      if (sphere) showSphereModal(sphere);
+    }
+  });
+}
+
+// ========== 2. CONFIDENCE GAUGES ==========
+function initGauges() {
+  const gaugeData = [
+    { id: 'gauge1', value: 8.0, name: 'Здоровье', color: '#7a9e7e' },
+    { id: 'gauge2', value: 5.5, name: 'Карьера', color: '#6b8cae' },
+    { id: 'gauge3', value: 7.2, name: 'Финансы', color: '#c4a55a' },
+    { id: 'gauge4', value: 9.0, name: 'Отношения', color: '#c4858a' },
+  ];
+
+  gaugeData.forEach(g => {
+    const dom = document.getElementById(g.id);
+    if (!dom) return;
+    const chart = echarts.init(dom);
+    const option = {
+      series: [{
+        type: 'gauge',
+        startAngle: 200,
+        endAngle: -20,
+        min: 0,
+        max: 10,
+        splitNumber: 10,
+        itemStyle: { color: g.color },
+        progress: {
+          show: true,
+          width: 18,
+          roundCap: true
+        },
+        pointer: {
+          icon: 'path://M12.8,0.7l12,40.1H0.7L12.8,0.7z',
+          length: '55%',
+          width: 5,
+          offsetCenter: [0, '-8%'],
+          itemStyle: { color: '#2d2a26' }
+        },
+        axisLine: {
+          roundCap: true,
+          lineStyle: {
+            width: 18,
+            color: [
+              [0.4, '#c4786a'],
+              [0.7, '#d4a76a'],
+              [1, '#7a9e7e']
+            ]
+          }
+        },
+        axisTick: { show: false },
+        splitLine: { show: false },
+        axisLabel: {
+          distance: -28,
+          color: '#99908a',
+          fontSize: 9
+        },
+        title: {
+          offsetCenter: [0, '52%'],
+          fontSize: 13,
+          color: '#6b6560',
+          fontWeight: 600
+        },
+        detail: {
+          valueAnimation: true,
+          fontSize: 30,
+          fontWeight: 800,
+          offsetCenter: [0, '-8%'],
+          formatter: '{value}',
+          color: '#2d2a26'
+        },
+        data: [{ value: g.value, name: g.name }]
+      }]
+    };
+    chart.setOption(option);
+    gaugeCharts.push(chart);
+  });
+}
+
+// ========== 3. CALENDAR HEATMAP ==========
+function initHeatmap() {
+  const dom = document.getElementById('heatmap-chart');
+  if (!dom) return;
+  heatmapChart = echarts.init(dom);
+
+  // Calculate streaks
+  let currentStreak = 0, bestStreak = 0, tempStreak = 0, activeDays = 0;
+  const sorted = [...HEATMAP_DATA].sort((a, b) => new Date(a[0]) - new Date(b[0]));
+  // Find current streak (from end)
+  for (let i = sorted.length - 1; i >= 0; i--) {
+    if (sorted[i][1] > 0) currentStreak++;
+    else break;
+  }
+  // Find best streak
+  for (const [, v] of sorted) {
+    if (v > 0) { tempStreak++; bestStreak = Math.max(bestStreak, tempStreak); activeDays++; }
+    else tempStreak = 0;
+  }
+  document.getElementById('current-streak').textContent = currentStreak;
+  document.getElementById('best-streak').textContent = bestStreak;
+  document.getElementById('total-active').textContent = activeDays;
+
+  const thisYear = new Date().getFullYear();
+
+  const option = {
+    tooltip: {
+      position: 'top',
+      backgroundColor: 'rgba(45,42,38,0.95)',
+      borderColor: '#c4855a',
+      textStyle: { color: '#faf8f5' },
+      formatter: function(params) {
+        const date = new Date(params.value[0]);
+        const value = params.value[1];
+        const labels = ['Нет активности', 'Минимальная', 'Частичная', 'Цель достигнута', 'Отлично!'];
+        const weekdays = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+        const months = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+        return `<strong>${weekdays[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]}</strong><br/>
+                Активность: <b>${value}/4</b> (${labels[value]})`;
+      }
+    },
+    visualMap: {
+      min: 0,
+      max: 4,
+      calculable: false,
+      orient: 'horizontal',
+      left: 'center',
+      bottom: 6,
+      itemWidth: 14,
+      itemHeight: 14,
+      inRange: {
+        color: ['#e7e7e7', '#e8d5c4', '#d4a574', '#c4845c', '#a0522d']
+      },
+      text: ['4', '0'],
+      textStyle: { color: '#99908a', fontSize: 10 }
+    },
+    calendar: {
+      top: 36,
+      left: 44,
+      right: 18,
+      cellSize: ['auto', 16],
+      range: thisYear,
+      itemStyle: {
+        borderWidth: 2,
+        borderColor: '#faf8f5',
+        borderRadius: 3
+      },
+      splitLine: { show: false },
+      yearLabel: { show: false },
+      monthLabel: {
+        color: '#6b6560',
+        fontSize: 11,
+        fontWeight: 600
+      },
+      dayLabel: {
+        color: '#99908a',
+        fontSize: 10,
+        firstDay: 1,
+        nameMap: 'ru'
+      }
+    },
+    series: {
+      type: 'heatmap',
+      coordinateSystem: 'calendar',
+      data: HEATMAP_DATA,
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 8,
+          shadowColor: 'rgba(45,42,38,0.3)',
+          borderColor: '#c4855a',
+          borderWidth: 2
+        }
+      }
+    }
+  };
+
+  heatmapChart.setOption(option);
+}
+
+// ========== 4. VELOCITY CHART ==========
+function initVelocity() {
+  const dom = document.getElementById('velocity-chart');
+  if (!dom) return;
+  velocityChart = echarts.init(dom);
+
+  const weeks = VELOCITY_DATA.map(d => d.week);
+  const completed = VELOCITY_DATA.map(d => d.completed);
+  const planned = VELOCITY_DATA.map(d => d.planned);
+
+  // 4-week rolling average
+  const rollingAvg = completed.map((v, i) => {
+    if (i < 3) return null;
+    return ((completed[i-3] + completed[i-2] + completed[i-1] + v) / 4).toFixed(1);
+  });
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'cross', crossStyle: { color: '#ccc2b6' } },
+      backgroundColor: 'rgba(45,42,38,0.95)',
+      borderColor: '#c4855a',
+      textStyle: { color: '#faf8f5' }
+    },
+    legend: {
+      data: ['Выполнено', 'Запланировано', 'Скользящее среднее'],
+      bottom: 0,
+      textStyle: { color: '#6b6560', fontSize: 11 }
+    },
+    grid: { top: 20, right: 20, bottom: 40, left: 45 },
+    xAxis: {
+      type: 'category',
+      data: weeks,
+      axisLine: { lineStyle: { color: '#e8e2db' } },
+      axisLabel: { color: '#6b6560', fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Задачи',
+      nameTextStyle: { color: '#99908a', fontSize: 10 },
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#f0ebe5', type: 'dashed' } },
+      axisLabel: { color: '#99908a', fontSize: 10 }
+    },
+    series: [
+      {
+        name: 'Выполнено',
+        type: 'bar',
+        data: completed,
+        barWidth: '38%',
+        itemStyle: {
+          color: '#7a9e7e',
+          borderRadius: [5, 5, 0, 0]
+        }
+      },
+      {
+        name: 'Запланировано',
+        type: 'line',
+        data: planned,
+        lineStyle: { color: '#ccc2b6', width: 2, type: 'dashed' },
+        itemStyle: { color: '#ccc2b6' },
+        symbol: 'none'
+      },
+      {
+        name: 'Скользящее среднее',
+        type: 'line',
+        data: rollingAvg,
+        lineStyle: { color: '#c4855a', width: 2.5 },
+        itemStyle: { color: '#c4855a' },
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 6
+      }
+    ]
+  };
+
+  velocityChart.setOption(option);
+}
+
+// ========== 5. BURNDOWN CHART ==========
+function initBurndown() {
+  const dom = document.getElementById('burndown-chart');
+  if (!dom) return;
+  burndownChart = echarts.init(dom);
+
+  const { ideal, actual, totalTasks } = BURNDOWN_DATA;
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: 'rgba(45,42,38,0.95)',
+      borderColor: '#c4855a',
+      textStyle: { color: '#faf8f5' },
+      formatter: function(params) {
+        let html = '<strong>День ' + params[0].axisValue + '</strong><br/>';
+        params.forEach(p => {
+          if (p.value !== undefined && p.value !== null) {
+            html += p.marker + ' ' + p.seriesName + ': <b>' + p.value + '</b> задач<br/>';
+          }
+        });
+        return html;
+      }
+    },
+    legend: {
+      data: ['Идеальный темп', 'Фактический темп', 'Прогноз'],
+      bottom: 0,
+      textStyle: { color: '#6b6560', fontSize: 11 }
+    },
+    grid: { top: 20, right: 20, bottom: 40, left: 50 },
+    xAxis: {
+      type: 'value',
+      name: 'День',
+      nameTextStyle: { color: '#99908a', fontSize: 10 },
+      min: 0, max: 84,
+      axisLine: { lineStyle: { color: '#e8e2db' } },
+      splitLine: { show: false },
+      axisLabel: { color: '#99908a', fontSize: 10 }
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Осталось задач',
+      nameTextStyle: { color: '#99908a', fontSize: 10 },
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#f0ebe5', type: 'dashed' } },
+      axisLabel: { color: '#99908a', fontSize: 10 }
+    },
+    series: [
+      {
+        name: 'Идеальный темп',
+        type: 'line',
+        data: ideal,
+        lineStyle: { color: '#ccc2b6', width: 2, type: 'dashed' },
+        itemStyle: { color: '#ccc2b6' },
+        symbol: 'none',
+        areaStyle: {
+          color: 'rgba(204,194,182,0.08)'
+        }
+      },
+      {
+        name: 'Фактический темп',
+        type: 'line',
+        data: actual,
+        lineStyle: { color: '#c4855a', width: 2.5 },
+        itemStyle: { color: '#c4855a', borderColor: '#fff', borderWidth: 2 },
+        symbol: 'circle',
+        symbolSize: 6,
+        markArea: {
+          silent: true,
+          data: [
+            [
+              { yAxis: totalTasks, itemStyle: { color: 'rgba(122,158,126,0.08)' } },
+              { yAxis: 0 }
+            ]
+          ]
+        },
+        markPoint: {
+          data: [
+            { type: 'max', name: 'Старт', itemStyle: { color: '#ccc2b6' } }
+          ]
+        }
+      },
+      {
+        name: 'Прогноз',
+        type: 'line',
+        data: (function() {
+          const lastActual = actual[actual.length - 1];
+          if (!lastActual) return [];
+          const lastDay = lastActual[0];
+          const lastVal = lastActual[1];
+          const slope = (totalTasks - lastVal) / lastDay;
+          const forecast = [];
+          for (let d = lastDay; d <= 84; d++) {
+            const val = Math.max(0, Math.round(lastVal - slope * (d - lastDay)));
+            forecast.push([d, val]);
+          }
+          return forecast;
+        })(),
+        lineStyle: { color: '#7a9e7e', width: 2, type: 'dotted' },
+        itemStyle: { color: '#7a9e7e' },
+        symbol: 'none'
+      }
+    ]
+  };
+
+  burndownChart.setOption(option);
+}
+
+// ========== 6. 12-WEEK TRACKER (DOM) ==========
+function renderTracker() {
+  const container = document.getElementById('tracker-container');
+  if (!container) return;
+  let html = '';
+  EXECUTION_SCORES.forEach(row => {
+    const pct = row.future ? 0 : (row.score / 10 * 100);
+    let barClass = '';
+    if (!row.future) {
+      if (row.score >= 8) barClass = 'success';
+      else if (row.score >= 6) barClass = 'warning';
+      else barClass = 'danger';
+    }
+    const weekClass = row.current ? 'current' : '';
+    const scoreColor = row.future ? 'var(--text-muted)' : (row.score >= 8 ? 'var(--success)' : row.score >= 6 ? 'var(--warning)' : 'var(--danger)');
+
+    html += '<div class="tracker-row">';
+    html += '<div class="tracker-week ' + weekClass + '">W' + row.week + '</div>';
+    html += '<div class="tracker-bar-wrap"><div class="tracker-bar ' + barClass + '" style="width:' + pct + '%"></div></div>';
+    html += '<div class="tracker-score" style="color:' + scoreColor + '">' + (row.future ? '-' : row.score.toFixed(1)) + '</div>';
+    html += '<div class="tracker-segments">';
+    for (let s = 1; s <= 12; s++) {
+      let segClass = '';
+      if (s < row.week) segClass = 'done';
+      else if (s === row.week && row.current) segClass = 'current';
+      html += '<div class="tracker-seg ' + segClass + '"></div>';
+    }
+    html += '</div></div>';
+  });
+  container.innerHTML = html;
+}
+
+// ========== SPHERE DETAIL MODAL ==========
+function showSphereModal(sphere) {
+  const overlay = document.getElementById('modal-overlay');
+  const title = document.getElementById('modal-title');
+  const content = document.getElementById('modal-content');
+
+  title.textContent = sphere.name;
+  title.style.color = sphere.color;
+
+  let goalsHtml = '<div class="sphere-goals">';
+  sphere.goals.forEach(g => {
+    const barColor = g.progress >= 75 ? 'var(--success)' : g.progress >= 40 ? 'var(--warning)' : 'var(--danger)';
+    const statusLabel = g.status === 'done' ? 'Выполнено' : g.status === 'ok' ? 'В процессе' : 'Риск';
+    const statusColor = g.status === 'done' ? 'var(--success)' : g.status === 'ok' ? 'var(--warning)' : 'var(--danger)';
+    goalsHtml += '<div class="sphere-goal-row">';
+    goalsHtml += '<div style="flex:1">';
+    goalsHtml += '<div style="font-size:13px;font-weight:600;margin-bottom:4px">' + g.title + '</div>';
+    goalsHtml += '<div class="sphere-goal-bar"><div class="sphere-goal-fill" style="width:' + g.progress + '%;background:' + barColor + '"></div></div>';
+    goalsHtml += '</div>';
+    goalsHtml += '<span style="font-size:11px;color:' + statusColor + ';font-weight:700;margin-left:10px">' + statusLabel + '</span>';
+    goalsHtml += '</div>';
+  });
+  goalsHtml += '</div>';
+
+  // Mini trend
+  const trendLabels = ['Нед 1', 'Нед 3', 'Нед 5', 'Нед 7', 'Нед 8'];
+  const trendValues = [
+    Math.max(1, sphere.prev + Math.floor(Math.random() * 2 - 1)),
+    sphere.prev,
+    Math.round((sphere.prev + sphere.current) / 2),
+    Math.max(1, sphere.current + Math.floor(Math.random() * 2 - 1)),
+    sphere.current
+  ];
+
+  content.innerHTML = `
+    <div style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px">
+        <div style="text-align:center">
+          <div style="font-size:36px;font-weight:800;color:${sphere.color}">${sphere.current}</div>
+          <div style="font-size:11px;color:var(--text-muted)">Текущий</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:24px;font-weight:700;color:#6b6560">${sphere.prev}</div>
+          <div style="font-size:11px;color:var(--text-muted)">Предыдущий</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:24px;font-weight:700;color:var(--text-muted)">${sphere.target}</div>
+          <div style="font-size:11px;color:var(--text-muted)">Цель</div>
+        </div>
+        <div style="flex:1"></div>
+        <div style="font-size:13px;color:${sphere.current >= sphere.prev ? 'var(--success)' : 'var(--danger)'};font-weight:700">
+          ${sphere.current >= sphere.prev ? '▲' : '▼'} ${Math.abs(sphere.current - sphere.prev)}
+        </div>
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Тренд</div>
+      <div style="display:flex;align-items:flex-end;gap:6px;height:60px">
+        ${trendValues.map((v, i) => `
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="font-size:10px;color:var(--text-muted)">${v}</div>
+            <div style="width:100%;height:${v * 6}px;background:${i === trendValues.length - 1 ? sphere.color : 'var(--border)'};border-radius:3px;transition:height 0.5s ease"></div>
+            <div style="font-size:9px;color:var(--text-muted)">${trendLabels[i]}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Цели в сфере</div>
+      ${goalsHtml}
+    </div>
+  `;
+
+  overlay.classList.add('show');
+}
+
+function closeModal(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+// Escape key closes modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ========== WEEKLY PRIORITIES TOGGLE ==========
+function togglePriority(el) {
+  const cb = el.querySelector('.priority-checkbox');
+  const txt = el.querySelector('.priority-text');
+  const isChecked = cb.classList.contains('checked');
+  if (isChecked) {
+    cb.classList.remove('checked');
+    cb.innerHTML = '<i class="fas fa-check"></i>';
+    txt.classList.remove('done');
+  } else {
+    cb.classList.add('checked');
+    cb.innerHTML = '<i class="fas fa-check"></i>';
+    txt.classList.add('done');
+  }
+}
+
+// ========== EXPORT TO PNG ==========
+function exportDashboard() {
+  // Collect all active chart canvases
+  const charts = [];
+  if (radarChart) charts.push(radarChart);
+  gaugeCharts.forEach(g => charts.push(g));
+  if (heatmapChart) charts.push(heatmapChart);
+  if (velocityChart) charts.push(velocityChart);
+  if (burndownChart) charts.push(burndownChart);
+
+  // Export each chart as PNG
+  charts.forEach((chart, i) => {
+    const url = chart.getDataURL({
+      type: 'png',
+      pixelRatio: 2,
+      backgroundColor: '#ffffff'
+    });
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'life-dashboard-chart-' + (i + 1) + '.png';
+    a.click();
+  });
+
+  // Show toast
+  showToast('Экспорт завершён: ' + charts.length + ' графиков сохранено');
+}
+
+function showToast(message) {
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed; bottom: 24px; right: 24px;
+    background: #2d2a26; color: #faf8f5;
+    padding: 12px 20px; border-radius: 12px;
+    font-size: 13px; font-weight: 600;
+    box-shadow: 0 4px 16px rgba(45,42,38,0.2);
+    z-index: 2000; animation: fadeIn 0.3s ease;
+  `;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s';
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
+// ========== RESPONSIVE RESIZE ==========
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    radarChart && radarChart.resize();
+    gaugeCharts.forEach(g => g.resize());
+    heatmapChart && heatmapChart.resize();
+    velocityChart && velocityChart.resize();
+    burndownChart && burndownChart.resize();
+  }, 200);
+});
+
+// ========== INIT ALL ==========
+document.addEventListener('DOMContentLoaded', () => {
+  initRadarChart();
+  initGauges();
+  initHeatmap();
+  initVelocity();
+  initBurndown();
+  renderTracker();
+
+  // Animate progress rings
+  setTimeout(() => {
+    document.getElementById('ring1-fill').style.strokeDashoffset = '102';
+    document.getElementById('ring2-fill').style.strokeDashoffset = '164';
+    document.getElementById('ring3-fill').style.strokeDashoffset = '33';
+  }, 300);
+});
+</script>
+</body>
+</html>
