@@ -127,3 +127,7 @@ calendar_integration/credentials.json
 calendar_integration/token*.json
 *.key
 *.secret
+
+# Build artifacts
+build/
+*.skill

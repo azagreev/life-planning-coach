@@ -2,6 +2,20 @@
 
 Интерактивный evidence-based life coach для диагностики жизни, постановки целей, еженедельных ретроспектив, визуализации прогресса и интеграции с Google Calendar.
 
+**Версия:** 0.1.0
+**Автор:** Andrey Zagreev — [@zagreev](https://t.me/zagreev)
+**Лицензия:** [MIT](LICENSE)
+**Целевая платформа:** Claude.ai
+
+---
+
+## Установка скилла для Claude
+
+1. Скачайте `life-planning-coach.skill` из [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
+2. В claude.ai: **Settings → Capabilities → Skills → Upload skill**
+3. Выберите файл `.skill` — он развернётся автоматически
+4. После установки скилл будет триггериться автоматически — отдельно вызывать не нужно
+
 ---
 
 ## Быстрый старт

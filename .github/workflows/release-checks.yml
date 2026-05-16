@@ -1,0 +1,76 @@
+name: Release Checks
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  release-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify version metadata
+        run: |
+          skill_version="$(awk -F': ' '/^version:/ {print $2; exit}' SKILL.md)"
+          readme_version="$(sed -n 's/^\*\*Версия:\*\* //p' README.md | head -1)"
+          if [ -n "$readme_version" ]; then
+            test "$skill_version" = "$readme_version"
+          fi
+          if [[ "${GITHUB_REF_TYPE}" == "tag" && "${GITHUB_REF_NAME}" == v* ]]; then
+            test "${GITHUB_REF_NAME#v}" = "$skill_version"
+          fi
+
+      - name: Verify Python compiles
+        run: |
+          python3 -m py_compile calendar_integration/*.py
+
+      - name: Run release tests
+        run: python3 -m unittest discover -s tests/release -v
+
+      - name: Build dry-run archive
+        run: |
+          STAGE="life-planning-coach"
+          mkdir -p "build/$STAGE"
+          cp SKILL.md README.md LICENSE CONTRIBUTING.md SECURITY.md "build/$STAGE/"
+          cp -r references "build/$STAGE/"
+          cd build
+          zip -r "../life-planning-coach.skill" "$STAGE"
+          cd ..
+          unzip -t life-planning-coach.skill
+          unzip -l life-planning-coach.skill | grep 'life-planning-coach/LICENSE'
+          unzip -l life-planning-coach.skill | grep 'life-planning-coach/CONTRIBUTING.md'
+          unzip -l life-planning-coach.skill | grep 'life-planning-coach/SECURITY.md'
+
+      - name: Upload dry-run skill archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: life-planning-coach-skill-dryrun
+          path: life-planning-coach.skill
+          retention-days: 14
+
+      - name: Verify package markdown links
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          root = Path("build/life-planning-coach").resolve()
+          failures = []
+          for path in sorted(root.rglob("*.md")):
+              text = path.read_text(encoding="utf-8")
+              for match in re.finditer(r"\[[^\]]+\]\(([^)#][^)]+)\)", text):
+                  link = match.group(1)
+                  if "://" in link or link.startswith("mailto:"):
+                      continue
+                  target = (path.parent / link).resolve()
+                  try:
+                      target.relative_to(root)
+                  except ValueError:
+                      failures.append(f"{path.relative_to(root)} links outside package: {link}")
+                      continue
+                  if not target.exists():
+                      line = text.count("\n", 0, match.start()) + 1
+                      failures.append(f"{path.relative_to(root)}:{line} missing {link}")
+          if failures:
+              raise SystemExit("\n".join(failures))
+          PY

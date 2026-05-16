@@ -1,0 +1,50 @@
+name: Build and publish .skill
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run release tests
+        run: python3 -m unittest discover -s tests/release -v
+
+      - name: Package skill archive
+        run: |
+          STAGE="life-planning-coach"
+          mkdir -p "build/$STAGE"
+          cp SKILL.md README.md LICENSE CONTRIBUTING.md SECURITY.md "build/$STAGE/"
+          cp -r references "build/$STAGE/"
+          cd build
+          zip -r "../life-planning-coach.skill" "$STAGE"
+
+      - name: Verify skill archive
+        run: |
+          unzip -t life-planning-coach.skill
+          unzip -l life-planning-coach.skill | grep 'life-planning-coach/SKILL.md'
+          unzip -l life-planning-coach.skill | grep 'life-planning-coach/README.md'
+          unzip -l life-planning-coach.skill | grep 'life-planning-coach/LICENSE'
+          unzip -l life-planning-coach.skill | grep 'life-planning-coach/CONTRIBUTING.md'
+          unzip -l life-planning-coach.skill | grep 'life-planning-coach/SECURITY.md'
+
+      - name: Report release asset upload policy
+        run: |
+          echo "Release upload policy: overwrite_files=true."
+          echo "Repeated tag pushes are allowed only for explicit release repair with an unchanged target commit."
+
+      - name: Attach to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: life-planning-coach.skill
+          draft: false
+          prerelease: false
+          overwrite_files: true
+          fail_on_unmatched_files: true

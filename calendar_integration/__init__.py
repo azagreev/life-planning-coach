@@ -45,7 +45,7 @@ from .exceptions import (
 from .models import CalendarEvent, CalendarTask, FreeBusyWindow, Reminder, TimeSlot
 from .tasks_manager import TasksManager
 
-__version__ = "1.0.0"
+__version__ = "0.1.0"
 __author__ = "Life Planning Skill"
 
 __all__ = [
