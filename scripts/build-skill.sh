@@ -82,6 +82,18 @@ mkdir -p "${SKILL_FOLDER}"
 # Required: SKILL.md
 cp "${SKILL_MD}" "${SKILL_FOLDER}/SKILL.md"
 
+# Required: README.md
+cp "${PROJECT_ROOT}/README.md" "${SKILL_FOLDER}/README.md"
+
+# Required: LICENSE
+cp "${PROJECT_ROOT}/LICENSE" "${SKILL_FOLDER}/LICENSE"
+
+# Required: CONTRIBUTING.md
+cp "${PROJECT_ROOT}/CONTRIBUTING.md" "${SKILL_FOLDER}/CONTRIBUTING.md"
+
+# Required: SECURITY.md
+cp "${PROJECT_ROOT}/SECURITY.md" "${SKILL_FOLDER}/SECURITY.md"
+
 # Optional: references/ (methodologies, guides, templates)
 if [[ -d "${PROJECT_ROOT}/references" ]]; then
     cp -r "${PROJECT_ROOT}/references" "${SKILL_FOLDER}/references"
