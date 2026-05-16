@@ -12,12 +12,12 @@ with open("calendar_integration/requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="life-planning-calendar",
-    version="2.0.0",
+    version="0.1.0",
     author="Life Planning Coach",
     description="Google Calendar и Tasks интеграция для life planning",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/life-planning-coach",
+    url="https://github.com/azagreev/life-planning-coach",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",
