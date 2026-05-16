@@ -1,6 +1,8 @@
+> **Архив:** Это исторический план миграции на MCP версии 0.2.0. Выполнен и заменён актуальной реализацией. Сохранён для контекста.
+
 # FINAL PLAN: Migrate to Official Google Calendar MCP
 
-> **Status**: Awaiting user approval  
+> **Status**: Completed (archived)  
 > **Branch**: `feature/mcp-experiment` → eventual merge to `main`  
 > **Approach**: Official Calendar MCP (zero-setup) + domain logic as prompt constants
 

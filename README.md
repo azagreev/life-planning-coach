@@ -5,9 +5,11 @@
 **Чем отличается от простого промпта к Claude:**
 - **Emotional Landing Protocol** — никаких тестов и оценок до эмоционального контакта. Скилл начинает с валидации, а не с вопросов.
 - **Без давления** — в диалоге не используются слова «надо», «должен», «нужно». Только «можно», «если захотите», «попробовать».
+- **Stage 1.5: Фильтр аутентичных целей** — перед постановкой целей скилл проверяет: чья это цель, есть ли энергия, нет ли социального давления. Радар из 5 осей + портфель целей (активные / на паузе / паттерны).
+- **Адаптация стиля коммуникации** — скилл калибруется под вашу личность (Big Five × TTM × MI): от «Нежного родителя» до «Провокационного консультанта».
 - **Evidence-based foundation** — каждая методика (Wheel of Life, WOOP, OKR) имеет научную валидацию с указанием эффект-сайзов.
 
-**Версия:** 0.4.0  
+**Версия:** 0.6.0  
 **Автор:** Andrey Zagreev — [@zagreev](https://t.me/zagreev)  
 **Лицензия:** [MIT](LICENSE)  
 **Целевая платформа:** Claude.ai (Pro для загрузки skills; Google Drive — free plan)
@@ -27,8 +29,9 @@
 ## Какую ценность принесёт
 
 **После первой сессии (20-40 минут)**
-- Полная диагностика 8 сфер жизни (Wheel of Life) с числовыми оценками
+- Полная диагностика 11 сфер жизни (Wheel of Life) с числовыми оценками
 - Ранжирование личных ценностей (Schwartz PVQ)
+- Калибровка стиля коммуникации (2 вопроса)
 - Первый инсайт: "вот почему я чувствую то, что чувствую"
 
 **После 2-3 сессий**
@@ -69,10 +72,18 @@
 ```
 Неделя 0: Диагностика
 ├── Emotional Landing (эмоциональный контакт)
-├── Wheel of Life (оценка 8 сфер 1-10)
+├── Style Calibration (калибровка стиля коммуникации)
+├── Wheel of Life (оценка 11 сфер 1-10)
 ├── Values Clarification (10 ценностей Schwartz)
 ├── Designing Your Life (Workview + Odyssey Plans)
 └── Ikigai + Life Story (пиковые моменты, провалы)
+
+Неделя 0.5: Фильтр целей (Stage 1.5)
+├── Red Flag Detector (6+1 красных флагов)
+├── Deep Why (3 уровня «почему»)
+├── Societal Pressure Test (4 вопроса)
+├── True Goal Score (радар из 5 осей)
+└── Goal Portfolio (активные / на паузе / паттерны)
 
 Неделя 1: Архитектура целей
 ├── BHAG — одна цель на всю жизнь
@@ -90,7 +101,7 @@
 ```
 
 **Данные, которые собирает скилл:**
-- Wheel of Life scores (8 чисел 1-10)
+- Wheel of Life scores (11 чисел 1-10)
 - Values ranking (10 ценностей с весами)
 - BHAG текст
 - Life Themes: objective + 3-5 key results каждая
@@ -219,12 +230,13 @@ start life-planning-dashboard.html       # Windows
 ## Архитектура: 5 Stage
 
 ```
-Stage 1: Diagnostic        Stage 2: Goal Architecture   Stage 3: Weekly Review
-+-- Emotional Landing      +-- BHAG (10-25 лет)         +-- GTD: Get Clear/Current/Creative
-+-- Wheel of Life          +-- OKR Life Themes (1-3 г.) +-- Scrum Retro
-+-- Values Clarification   +-- 12-Week Quarter          +-- Progress Audit
-+-- Designing Your Life    +-- Weekly Priorities        +-- Adjustment Protocol
-+-- Ikigai + Life Story    +-- Daily WOOP
+Stage 1: Diagnostic        Stage 1.5: Goal Filter       Stage 2: Goal Architecture   Stage 3: Weekly Review
++-- Emotional Landing      +-- Red Flag Detector        +-- BHAG (10-25 лет)         +-- GTD: Get Clear/Current/Creative
++-- Style Calibration      +-- Deep Why (3 levels)      +-- OKR Life Themes (1-3 г.) +-- Scrum Retro
++-- Wheel of Life (11)     +-- Societal Pressure Test   +-- 12-Week Quarter          +-- Progress Audit
++-- Values Clarification   +-- True Goal Score (radar)  +-- Weekly Priorities        +-- Adjustment Protocol
++-- Designing Your Life    +-- Goal Portfolio           +-- Daily WOOP
++-- Ikigai + Life Story
 
 Stage 4: Dashboard              Stage 5: Calendar Integration (MCP)
 +-- Tab: Overview               +-- Zero-setup OAuth via claude.ai
@@ -268,6 +280,8 @@ life-planning-coach/
 │
 ├── references/                        # Документация методик
 │   ├── diagnostic_methods.md          # Stage 1 протоколы
+│   ├── authentic_goal_filter.md       # Stage 1.5 протоколы
+│   ├── communication_style.md         # Адаптация стиля коммуникации
 │   ├── goal_architecture.md           # Stage 2 протоколы
 │   ├── weekly_review.md              # Stage 3 протоколы
 │   ├── science_backing.md            # Научная валидация
