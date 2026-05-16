@@ -131,3 +131,4 @@ calendar_integration/token*.json
 # Build artifacts
 build/
 *.skill
+.build/
