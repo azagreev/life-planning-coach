@@ -87,6 +87,40 @@ class TestZipArtifactExists:
         """.skill file is kept for backward compatibility."""
         assert SKILL_PATH.exists(), f".skill file not found: {SKILL_PATH}"
 
+    def test_zip_integrity_crc32(self):
+        """Verify ZIP is not corrupted — check CRC32 of every entry."""
+        with zipfile.ZipFile(ZIP_PATH, "r") as zf:
+            bad_file = zf.testzip()
+            assert bad_file is None, (
+                f"ZIP is corrupted, failed CRC32 check on file: {bad_file}"
+            )
+
+    def test_zip_extracts_without_errors(self, tmp_path):
+        """Unpack ZIP to temp dir and verify all files extract cleanly."""
+        with zipfile.ZipFile(ZIP_PATH, "r") as zf:
+            zf.extractall(tmp_path)
+
+        extracted_folder = tmp_path / "life-planning-coach"
+        assert extracted_folder.exists(), "Extracted folder not found after unzip"
+        assert (extracted_folder / "SKILL.md").exists(), "SKILL.md missing after extraction"
+
+        # Verify every file from ZIP manifest exists on disk and is readable
+        with zipfile.ZipFile(ZIP_PATH, "r") as zf:
+            for info in zf.infolist():
+                if info.is_dir():
+                    continue
+                extracted_file = tmp_path / info.filename
+                assert extracted_file.exists(), f"File missing after extraction: {info.filename}"
+                assert extracted_file.stat().st_size == info.file_size, (
+                    f"Size mismatch for {info.filename}: "
+                    f"expected {info.file_size}, got {extracted_file.stat().st_size}"
+                )
+                # Try reading the file
+                content = extracted_file.read_bytes()
+                assert len(content) == info.file_size, (
+                    f"Read size mismatch for {info.filename}"
+                )
+
 
 class TestZipStructure:
     """Verify ZIP contains folder at root level (Anthropic requirement)."""
