@@ -48,18 +48,18 @@ Stage 1: Diagnostic        Stage 2: Goal Architecture   Stage 3: Weekly Review
 +-- Designing Your Life    +-- Weekly Priorities         +-- Adjustment Protocol
 +-- Ikigai + Life Story    +-- Daily WOOP
 
-Stage 4: Dashboard              Stage 5: Calendar Integration
-+-- Tab: Overview               +-- OAuth 2.0 + Fernet encryption
+Stage 4: Dashboard              Stage 5: Calendar Integration (MCP)
++-- Tab: Overview               +-- Zero-setup OAuth via claude.ai
 |   +-- Wheel of Life Radar     +-- CRUD Events
-|   +-- OKR Progress Rings      +-- CRUD Tasks
-|   +-- Confidence Gauges       +-- Free/ Busy Slots
-+-- Tab: Retrospective          +-- 6 Life Planning Presets
-|   +-- Calendar Heatmap        |   +-- Weekly Review Reminder
-|   +-- Velocity Chart          |   +-- WOOP Morning Session
-|   +-- Burndown Chart          |   +-- 12-Week Milestones
-+-- Tab: Goals                  |   +-- Daily Top-3 Tasks
-    +-- 12-Week Tracker         |   +-- Deep Work Time Blocks
-    +-- Weekly Priorities       |   +-- Find Available Slots
+|   +-- OKR Progress Rings      +-- Free/ Busy Slots
+|   +-- Confidence Gauges       +-- 4 Life Planning Presets
++-- Tab: Retrospective          |   +-- Weekly Review Reminder
+|   +-- Calendar Heatmap        |   +-- WOOP Morning Session
+|   +-- Velocity Chart          |   +-- 12-Week Milestones
+|   +-- Burndown Chart          |   +-- Deep Work Time Blocks
++-- Tab: Goals                  +-- Daily Top-3 (text, conversation state)
+    +-- 12-Week Tracker
+    +-- Weekly Priorities
     +-- WOOP Cards
     +-- BHAG Roadmap
 ```
@@ -87,7 +87,6 @@ life-planning-coach/
 ├── life-planning-dashboard.html       # Интерактивный дашборд
 ├── life-planning-coach.skill          # Упакованный skill
 │
-
 ├── references/                        # Документация методик
 │   ├── diagnostic_methods.md          # Stage 1 протоколы
 │   ├── goal_architecture.md           # Stage 2 протоколы
