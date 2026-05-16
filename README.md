@@ -112,18 +112,21 @@
 ### Шаг 1. Скачать скилл
 
 1. Открой [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
-2. Скачай файл `life-planning-coach.skill`
+2. Скачай файл `life-planning-coach.zip`
 
-> **Примечание для разработчиков:** файл `.skill` — это переименованный `SKILL.md` с метаданными. Собрать из исходников: переименуйте `SKILL.md` → `life-planning-coach.skill` (Claude принимает `.skill` как Markdown).
+> **Примечание для разработчиков:** файл `.zip` — это ZIP-архив папки скилла по требованиям Anthropic. Собрать из исходников: `bash scripts/build-skill.sh` (создаёт `life-planning-coach.zip` и `life-planning-coach.skill` для обратной совместимости).
 
 ### Шаг 2. Загрузить в Claude
 
-1. Войди в [claude.ai](https://claude.ai) (нужна подписка Pro для загрузки skills)
-2. Открой **Settings** (шестерёнка в правом верхнем углу)
-3. Перейди во вкладку **Capabilities**
-4. В разделе **Skills** нажми **Upload skill**
-5. Выбери скачанный файл `life-planning-coach.skill`
-6. Дождись сообщения "Skill uploaded successfully"
+> **Skills доступны на всех планах, включая Free.** Не требуется подписка Pro.
+
+1. Войди в [claude.ai](https://claude.ai)
+2. Включи **Code execution**: **Settings → Capabilities → Code execution and file creation** → ON
+3. Перейди в **Customize → Skills**
+4. Нажми **+** → **+ Create skill** → **Upload a skill**
+5. Выбери скачанный файл `life-planning-coach.zip`
+6. Дождись сообщения об успешной загрузке
+7. Включи скилл тумблером в списке Skills
 
 ### Шаг 3. Активировать
 
@@ -260,7 +263,8 @@ life-planning-coach/
 ├── README.md                          # Этот файл
 ├── SKILL.md                           # Основной skill (для AI-агента)
 ├── life-planning-dashboard.html       # Интерактивный дашборд
-├── life-planning-coach.skill          # Упакованный skill
+├── life-planning-coach.zip            # Упакованный skill (ZIP по требованиям Anthropic)
+├── life-planning-coach.skill          # Упакованный skill (legacy, для обратной совместимости)
 │
 ├── references/                        # Документация методик
 │   ├── diagnostic_methods.md          # Stage 1 протоколы
@@ -312,7 +316,7 @@ life-planning-coach/
 
 **Как обновить скилл до новой версии**
 1. Settings → Capabilities → Skills → life-planning-coach → Remove.
-2. Загрузите новый файл `life-planning-coach.skill`.
+2. Загрузите новый файл `life-planning-coach.zip`.
 3. Активация сохранится автоматически.
 
 **Как удалить скилл**

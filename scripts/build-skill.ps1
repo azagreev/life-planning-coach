@@ -1,8 +1,11 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Build script for the life-planning-coach.skill artifact.
-    A .skill file is a renamed Markdown file with YAML frontmatter metadata.
+    Build script for the life-planning-coach skill artifact.
+    Creates a ZIP archive of the skill folder per Anthropic's official requirements.
+    https://support.claude.com/en/articles/12512180-use-skills-in-claude
+
+    The ZIP must contain the skill folder at the root level, not just SKILL.md.
 #>
 
 [CmdletBinding()]
@@ -11,10 +14,13 @@ param()
 $ErrorActionPreference = 'Stop'
 
 # ── Configuration ──────────────────────────────────────────────────────────────
-$ScriptDir  = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$ScriptDir   = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $ProjectRoot = Resolve-Path (Join-Path $ScriptDir '..') | Select-Object -ExpandProperty Path
 $SkillMd     = Join-Path $ProjectRoot 'SKILL.md'
-$OutputFile  = Join-Path $ProjectRoot 'life-planning-coach.skill'
+$BuildDir    = Join-Path $ProjectRoot '.build'
+$SkillFolder = Join-Path $BuildDir 'life-planning-coach'
+$OutputZip   = Join-Path $ProjectRoot 'life-planning-coach.zip'
+$OutputSkill = Join-Path $ProjectRoot 'life-planning-coach.skill'
 
 # ── 1. Validate source file exists ─────────────────────────────────────────────
 if (-not (Test-Path -Path $SkillMd -PathType Leaf)) {
@@ -25,7 +31,6 @@ if (-not (Test-Path -Path $SkillMd -PathType Leaf)) {
 # ── 2. Parse frontmatter ─────────────────────────────────────────────────────
 $content = Get-Content -Raw -Path $SkillMd
 
-# Extract the YAML frontmatter block (content between the first two '---' lines)
 $frontmatterMatch = [regex]::Match($content, '^---\r?\n(.*?)\r?\n---', [System.Text.RegularExpressions.RegexOptions]::Singleline)
 
 if (-not $frontmatterMatch.Success) {
@@ -35,10 +40,9 @@ if (-not $frontmatterMatch.Success) {
 
 $frontmatter = $frontmatterMatch.Groups[1].Value
 
-# Helper: extract a YAML key's value (handles quoted and unquoted values)
 function Extract-Value {
     param([string]$Key, [string]$YamlBlock)
-    $pattern = "^${Key}:\s*(?:['""""])?(.+?)(?:['""""])?\s*$"
+    $pattern = "^${Key}:\s*(?:['\"\"\"])?(.+?)(?:['\"\"\"])?\s*$"
     $match = [regex]::Match($YamlBlock, $pattern, [System.Text.RegularExpressions.RegexOptions]::Multiline)
     if ($match.Success) {
         return $match.Groups[1].Value.Trim()
@@ -72,14 +76,57 @@ if ($errors -gt 0) {
     exit 1
 }
 
-# ── 4. Build the artifact ────────────────────────────────────────────────────
-Copy-Item -Path $SkillMd -Destination $OutputFile -Force
+# ── 4. Clean and create build directory ──────────────────────────────────────
+if (Test-Path $BuildDir) {
+    Remove-Item -Recurse -Force $BuildDir
+}
+New-Item -ItemType Directory -Path $SkillFolder -Force | Out-Null
 
-# ── 5. Verify output ─────────────────────────────────────────────────────────
-if (-not (Test-Path -Path $OutputFile -PathType Leaf)) {
-    Write-Error "Failed to create $OutputFile"
+# ── 5. Copy skill contents ───────────────────────────────────────────────────
+Copy-Item -Path $SkillMd -Destination (Join-Path $SkillFolder 'SKILL.md')
+
+$ReferencesDir = Join-Path $ProjectRoot 'references'
+if (Test-Path $ReferencesDir -PathType Container) {
+    Copy-Item -Recurse -Path $ReferencesDir -Destination (Join-Path $SkillFolder 'references')
+}
+
+$DashboardFile = Join-Path $ProjectRoot 'life-planning-dashboard.html'
+if (Test-Path $DashboardFile -PathType Leaf) {
+    Copy-Item -Path $DashboardFile -Destination (Join-Path $SkillFolder 'life-planning-dashboard.html')
+}
+
+# ── 6. Validate skill folder structure ───────────────────────────────────────
+$BuiltSkillMd = Join-Path $SkillFolder 'SKILL.md'
+if (-not (Test-Path $BuiltSkillMd -PathType Leaf)) {
+    Write-Error "SKILL.md not found in build folder"
     exit 1
 }
 
-# ── 6. Success ───────────────────────────────────────────────────────────────
-Write-Host "Built life-planning-coach.skill (version $skillVersion)"
+# ── 7. Create ZIP archive ────────────────────────────────────────────────────
+if (Test-Path $OutputZip) {
+    Remove-Item -Force $OutputZip
+}
+
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+[System.IO.Compression.ZipFile]::CreateFromDirectory($BuildDir, $OutputZip)
+
+# ── 8. Also create .skill file (backward compatibility) ─────────────────────
+Copy-Item -Path $SkillMd -Destination $OutputSkill -Force
+
+# ── 9. Verify outputs ────────────────────────────────────────────────────────
+if (-not (Test-Path $OutputZip -PathType Leaf)) {
+    Write-Error "Failed to create $OutputZip"
+    exit 1
+}
+
+$zipSize = (Get-Item $OutputZip).Length
+$zipSizeMb = [math]::Round($zipSize / 1MB, 2)
+
+# ── 10. Success ──────────────────────────────────────────────────────────────
+Write-Host "Built life-planning-coach.zip (version $skillVersion, size: ${zipSizeMb} MB)"
+Write-Host "Built life-planning-coach.skill (backward compatibility)"
+Write-Host ""
+Write-Host "Upload to Claude.ai:"
+Write-Host "  1. Settings -> Capabilities -> enable 'Code execution and file creation'"
+Write-Host "  2. Customize -> Skills -> '+' -> 'Upload a skill'"
+Write-Host "  3. Select: $OutputZip"

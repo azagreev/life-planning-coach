@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 #
-# Build script for the life-planning-coach.skill artifact.
-# A .skill file is a renamed Markdown file with YAML frontmatter metadata.
+# Build script for the life-planning-coach skill artifact.
+# Creates a ZIP archive of the skill folder per Anthropic's official requirements:
+# https://support.claude.com/en/articles/12512180-use-skills-in-claude
 #
+# The ZIP must contain the skill folder at the root level, not just SKILL.md.
 
 set -euo pipefail
 
@@ -10,7 +12,10 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 SKILL_MD="${PROJECT_ROOT}/SKILL.md"
-OUTPUT_FILE="${PROJECT_ROOT}/life-planning-coach.skill"
+BUILD_DIR="${PROJECT_ROOT}/.build"
+SKILL_FOLDER="${BUILD_DIR}/life-planning-coach"
+OUTPUT_ZIP="${PROJECT_ROOT}/life-planning-coach.zip"
+OUTPUT_SKILL="${PROJECT_ROOT}/life-planning-coach.skill"
 
 # ── 1. Validate source file exists ─────────────────────────────────────────────
 if [[ ! -f "${SKILL_MD}" ]]; then
@@ -19,7 +24,6 @@ if [[ ! -f "${SKILL_MD}" ]]; then
 fi
 
 # ── 2. Parse frontmatter ─────────────────────────────────────────────────────
-# Extract the YAML frontmatter block (content between the first two '---' lines)
 frontmatter=$(sed -n '/^---$/,/^---$/p' "${SKILL_MD}" | sed '1d;$d')
 
 if [[ -z "${frontmatter}" ]]; then
@@ -27,7 +31,6 @@ if [[ -z "${frontmatter}" ]]; then
     exit 1
 fi
 
-# Helper: extract a YAML key's value (handles quoted and unquoted values)
 extract_value() {
     local key="$1"
     local raw
@@ -36,10 +39,8 @@ extract_value() {
         echo ""
         return
     fi
-    # Remove key and leading whitespace
     raw="${raw#*:}"
     raw="${raw# }"
-    # Strip surrounding quotes if present
     raw="${raw%\"}"
     raw="${raw#\"}"
     raw="${raw%\'}"
@@ -73,14 +74,50 @@ if [[ ${errors} -gt 0 ]]; then
     exit 1
 fi
 
-# ── 4. Build the artifact ────────────────────────────────────────────────────
-cp "${SKILL_MD}" "${OUTPUT_FILE}"
+# ── 4. Clean and create build directory ──────────────────────────────────────
+rm -rf "${BUILD_DIR}"
+mkdir -p "${SKILL_FOLDER}"
 
-# ── 5. Verify output ─────────────────────────────────────────────────────────
-if [[ ! -f "${OUTPUT_FILE}" ]]; then
-    echo "Error: Failed to create ${OUTPUT_FILE}" >&2
+# ── 5. Copy skill contents ───────────────────────────────────────────────────
+# Required: SKILL.md
+cp "${SKILL_MD}" "${SKILL_FOLDER}/SKILL.md"
+
+# Optional: references/ (methodologies, guides, templates)
+if [[ -d "${PROJECT_ROOT}/references" ]]; then
+    cp -r "${PROJECT_ROOT}/references" "${SKILL_FOLDER}/references"
+fi
+
+# Optional: dashboard HTML (used by skill)
+if [[ -f "${PROJECT_ROOT}/life-planning-dashboard.html" ]]; then
+    cp "${PROJECT_ROOT}/life-planning-dashboard.html" "${SKILL_FOLDER}/life-planning-dashboard.html"
+fi
+
+# ── 6. Validate skill folder structure ───────────────────────────────────────
+if [[ ! -f "${SKILL_FOLDER}/SKILL.md" ]]; then
+    echo "Error: SKILL.md not found in build folder" >&2
     exit 1
 fi
 
-# ── 6. Success ───────────────────────────────────────────────────────────────
-echo "✓ Built life-planning-coach.skill (version ${skill_version})"
+# ── 7. Create ZIP archive ────────────────────────────────────────────────────
+rm -f "${OUTPUT_ZIP}"
+(cd "${BUILD_DIR}" && zip -r "${OUTPUT_ZIP}" "life-planning-coach" >/dev/null)
+
+# ── 8. Also create .skill file (backward compatibility) ─────────────────────
+cp "${SKILL_MD}" "${OUTPUT_SKILL}"
+
+# ── 9. Verify outputs ────────────────────────────────────────────────────────
+if [[ ! -f "${OUTPUT_ZIP}" ]]; then
+    echo "Error: Failed to create ${OUTPUT_ZIP}" >&2
+    exit 1
+fi
+
+zip_size=$(du -h "${OUTPUT_ZIP}" | cut -f1)
+
+# ── 10. Success ──────────────────────────────────────────────────────────────
+echo "✓ Built life-planning-coach.zip (version ${skill_version}, size: ${zip_size})"
+echo "✓ Built life-planning-coach.skill (backward compatibility)"
+echo ""
+echo "Upload to Claude.ai:"
+echo "  1. Settings → Capabilities → enable 'Code execution and file creation'"
+echo "  2. Customize → Skills → '+' → 'Upload a skill'"
+echo "  3. Select: ${OUTPUT_ZIP}"
