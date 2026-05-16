@@ -13,7 +13,7 @@ description: >
   "помоги найти себя", "life compass", "жизненный компас", "план на 5 лет".
   НЕ активировать на: конкретные бизнес-задачи, проектный менеджмент, tech troubleshooting.
   Язык: русский (может адаптироваться к языку пользователя).
-version: 0.5.0
+version: 0.6.0
 min_claude_version: "4.6"
 runtime: "claude.ai"
 requires_mcp: "google-calendar (optional), google-drive (optional for wiki persistence)"
@@ -32,6 +32,7 @@ Evidence-based skill для жизненного планирования. Ст�
 5. **Self-Determination**: Поддерживаем autonomy, competence, relatedness (Deci & Ryan)
 6. **User Owns Data**: Нейтральный тон, без осуждения, полная прозрачность
 7. **First Session Value Contract**: Пользователь обязательно уходит с первой сессии с чем-то ценным — эмоциональным облегчением, новым взглядом, конкретным действием на сегодня, или рабочим инструментом
+8. **Adaptive Style**: Стиль коучинга адаптируется под пользователя — не «один размер подходит всем». Калибруется в Phase 0, динамически корректируется на всех этапах (Big Five × TTM × MI). Загрузи `references/communication_style.md` для полного протокола.
 
 ## Emotional Intelligence Backbone (Критически важно)
 
@@ -69,6 +70,11 @@ Evidence-based skill для жизненного планирования. Ст�
 2. **ИСПОЛЬЗУЙТЕ**: "можно", "если захотите", "попробовать", "интересно"
 3. **Валидируйте перед советом**: "Понятно, что вы так чувствуете. [совет]"
 4. **Вопросы лучше утверждений**: "Как вы думаете, что это может значить?" vs "Это означает..."
+5. **Goal Ownership Language** (autonomy support):
+   - "**Ты** решаешь" vs "Давайте решим" (pull vs push)
+   - "**Что** для тебя важно?" vs "Вот что важно:"
+   - "**Если** захочешь" vs "Нужно сделать"
+   - "**Твой** путь" vs "Правильный путь"
 
 ### First Session Value Contract
 
@@ -106,6 +112,23 @@ Evidence-based skill для жизненного планирования. Ст�
 **Readiness Gate Protocol**: После КАЖДОЙ фазы спросить "На шкале 1-10, насколько комфортно?" Если < 6 — предложить паузу.
 
 **Загрузи `references/diagnostic_methods.md` перед началом Stage 1.**
+
+### Stage 1.5: Authentic Goal Filter (Фильтр аутентичности)
+**Цель:** Отделить аутентичные цели от интроектов (навязанных внутренних голосов) перед постановкой.
+
+**Когда:** После Stage 1 (диагностика), перед Stage 2 (цели).
+
+**Протокол для КАЖДОЙ цели:**
+1. **Red Flag Detector** (6+1) — быстрый скрининг навязанных паттернов
+2. **Values Alignment** — оценка по топ-3 ценностям (1-10)
+3. **Energy Check** — соматический маркер (лёгкость/тяжесть, опционально)
+4. **Deep Why** (3 уровня) — копаем до корневой мотивации
+5. **Societal Pressure Test** (4 вопроса) — проверка внутренней vs внешней мотивации
+6. **True Goal Score** — радар из 5 осей (не формула!): Ценности, Энергия, Влияние, Реалистичность, Аутентичность
+
+**Результат:** Goal Portfolio — 🟢 Active / 🟡 On Pause / 🔍 Pattern Analysis
+
+**Загрузи `references/authentic_goal_filter.md` перед началом Stage 1.5.**
 
 ### Stage 2: Goal Architecture (Построение целей)
 **Цель**: Создать многоуровневую систему целей от 25 лет до дня.
@@ -153,13 +176,16 @@ Evidence-based skill для жизненного планирования. Ст�
   ],
   "life_wheel": {
     "health": 7,
-    "career": 4,
     "finances": 6,
-    "relationships": 8,
+    "career": 4,
+    "family": 8,
+    "romance": 7,
+    "social": 6,
     "personal_growth": 5,
+    "meaning": 6,
     "fun_recreation": 3,
-    "physical_environment": 6,
-    "family_friends": 7
+    "contribution": 5,
+    "physical_environment": 6
   },
   "values": {
     "self_direction": 0.85,
@@ -173,6 +199,15 @@ Evidence-based skill для жизненного планирования. Ст�
     "twelve_week": {"objectives": [], "key_results": []},
     "weekly": ["..."],
     "daily_woop": [{"wish": "...", "outcome": "...", "obstacle": "...", "plan": "..."}]
+  },
+  "goal_filter": {
+    "active_goals": [{"goal": "...", "radar": {"values": 9, "energy": 8, "impact": 9, "feasibility": 7, "authenticity": 8}}],
+    "paused_goals": [{"goal": "...", "red_flags": ["RF3"], "insight": "..."}],
+    "patterns": [{"red_flag": "RF3", "count": 2, "insight": "..."}]
+  },
+  "communication_style": {
+    "baseline": {"softness": "soft|neutral|direct", "structure": "high|medium|low"},
+    "current_intensity": "nurturing|exploratory|collaborative|challenging"
   },
   "weekly_reviews": [
     {
@@ -206,6 +241,15 @@ Evidence-based skill для жизненного планирования. Ст�
 3. **Dependency**: Поздние вопросы строятся на ранних
 4. **Complexity gradient**: Простое -> сложное
 5. **Sensitivity gradient**: Нейтральное -> личное
+
+### Style Calibration (Phase 0 Enhancement)
+После Emotional Landing — 2 опциональных вопроса (1 минута, не блокирует onboarding):
+```
+1. "Когда вы получаете feedback — мягкая поддержка или прямая правда?"
+2. "Чёткий план с шагами или свобода экспериментировать?"
+```
+Результат: baseline профиль (soft/structured/direct/exploratory). Корректируется динамически.
+Загрузи `references/communication_style.md` для полного протокола адаптации.
 
 ### Commitment Check
 После каждого действия спрашивай: "На шкале 1-10, насколько вы готовы к этому?"
@@ -825,7 +869,9 @@ Since Google Tasks API is not available via official MCP:
 
 ## References
 
-- `references/diagnostic_methods.md` — детальные протокols Stage 1 (включая Emotional Landing)
+- `references/diagnostic_methods.md` — детальные протокols Stage 1 (включая Emotional Landing + Style Calibration)
+- `references/authentic_goal_filter.md` — детальные протокols Stage 1.5 (Red Flags, Radar, Portfolio)
+- `references/communication_style.md` — adaptive coaching layer (Big Five, TTM, MI, OARS)
 - `references/goal_architecture.md` — детальные протокols Stage 2 (BHAG → OKR → Daily WOOP)
 - `references/weekly_review.md` — детальные протокols Stage 3 (GTD + Scrum Retro)
 - `references/science_backing.md` — научная валидация (эффект sizes, meta-analyses)
@@ -834,15 +880,16 @@ Since Google Tasks API is not available via official MCP:
 
 ## Key Metrics for Quality
 
-- Diagnostic coverage: все 8 сфер Wheel of Life + 10 ценностей PVQ
+- Diagnostic coverage: все 11 сфер Wheel of Life + 10 ценностей PVQ
 - Quick track: ≤30 мин, ≤30 вопросов, результат — Wheel of Life + топ-3 ценности + действие
 - Deep track: разбит на 2-4 сессии, сохранение прогресса между сессиями
-- Quick track completion rate: % пользователей, завершивших Track A
-- Deep track opt-in rate: % пользователей, выбравших Track B после Quick
-- Goal layers: минимум BHAG + OKR + Weekly + Daily
+- Stage 1.5: Authentic Goal Filter completion rate
+- Goal Portfolio: Active vs On Pause ratio, Pattern Analysis detection rate
+- Goal layers: минимум BHAG + OKR + Weekly + Daily (только 🟢 Active goals)
 - Weekly review: GTD + Scrum + Progress Audit
+- Communication Style: calibration rate, dynamic adaptation triggers
 - Scientific accuracy: правильные эффект sizes, верные citations
-- User experience: progressive disclosure, pausable sessions, emotional landing, readiness gates
+- User experience: progressive disclosure, pausable sessions, emotional landing, readiness gates, style calibration
 - Dashboard: 3 таба (Overview + Retrospective + Goals), ECharts/Chart.js, responsive
 - Calendar: MCP integration + 4 presets (weekly review, WOOP, milestones, time blocks) + free slots + text daily top-3
 - Persistence: zero-setup default, Memory recording, graceful fallback
