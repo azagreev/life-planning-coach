@@ -1,46 +1,183 @@
 # Life Planning Coach
 
-Интерактивный evidence-based life coach для диагностики жизни, постановки целей, еженедельных ретроспектив, визуализации прогресса и интеграции с Google Calendar.
+Интерактивный evidence-based life coach для постановки целей и планирования жизни. Помогает разобраться, куда двигаться, построить систему целей от 25 лет до сегодняшнего дня и поддерживать регулярную ретроспективу.
 
-**Версия:** 0.1.0
-**Автор:** Andrey Zagreev — [@zagreev](https://t.me/zagreev)
-**Лицензия:** [MIT](LICENSE)
-**Целевая платформа:** Claude.ai
+**Чем отличается от простого промпта к Claude:**
+- **Emotional Landing Protocol** — никаких тестов и оценок до эмоционального контакта. Скилл начинает с валидации, а не с вопросов.
+- **Без давления** — в диалоге не используются слова «надо», «должен», «нужно». Только «можно», «если захотите», «попробовать».
+- **Evidence-based foundation** — каждая методика (Wheel of Life, WOOP, OKR) имеет научную валидацию с указанием эффект-сайзов.
+
+**Версия:** 0.2.0  
+**Автор:** Andrey Zagreev — [@zagreev](https://t.me/zagreev)  
+**Лицензия:** [MIT](LICENSE)  
+**Целевая платформа:** Claude.ai (требуется подписка Pro для MCP)
 
 ---
 
-## Установка скилла для Claude
+## Для кого этот скилл
 
-1. Скачайте `life-planning-coach.skill` из [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
-2. В claude.ai: **Settings → Capabilities → Skills → Upload skill**
-3. Выберите файл `.skill` — он развернётся автоматически
-4. После установки скилл будет триггериться автоматически — отдельно вызывать не нужно
+- Чувствуешь, что "жизнь проходит мимо", но не понимаешь, что именно хочешь изменить
+- На перепутье: смена профессии, релокация, развод, выгорание
+- Есть амбиции, но нет чёткой системы: цели расплывчатые, мотивация падает
+- Пробовал планировать, но бросал: таблицы, трекеры, приложения не прижились
+- Хочешь регулярную ретроспективу жизни, но нет инструмента, который бы не бросить
+
+---
+
+## Какую ценность принесёт
+
+**После первой сессии (20-40 минут)**
+- Полная диагностика 8 сфер жизни (Wheel of Life) с числовыми оценками
+- Ранжирование личных ценностей (Schwartz PVQ)
+- Первый инсайт: "вот почему я чувствую то, что чувствую"
+
+**После 2-3 сессий**
+- BHAG — одна большая цель на 10-25 лет
+- 3-5 жизненных тем (Life Themes) на 1-3 года
+- Конкретные OKR на 12 недель
+- Система еженедельных приоритетов
+
+**После 4+ сессий**
+- Еженедельная ретроспектива (GTD + Scrum Retro)
+- Ежедневные WOOP-сессии (Wish-Outcome-Obstacle-Plan)
+- Интеграция с Google Calendar: автоматические напоминания, time blocks
+- Интерактивный дашборд прогресса (HTML, offline)
+
+---
+
+## Что нужно на входе
+
+**От пользователя:**
+- Готовность честно отвечать на вопросы (5-10 минут на блок)
+- 20-40 минут на первую диагностику
+- Желание регулярно возвращаться (еженедельно или по мере необходимости)
+
+**Технически:**
+- Аккаунт Claude.ai (Pro для подключения Google Calendar)
+- Google-аккаунт (если нужна календарная интеграция)
+- Современный браузер (для дашборда)
+
+**Не нужно:**
+- ❌ Устанавливать Python, зависимости, credentials.json
+- ❌ Платить за API Google
+- ❌ Заполнять таблицы вручную — всё ведёт скилл
+
+---
+
+## Как проходит работа после диагностики
+
+```
+Неделя 0: Диагностика
+├── Emotional Landing (эмоциональный контакт)
+├── Wheel of Life (оценка 8 сфер 1-10)
+├── Values Clarification (10 ценностей Schwartz)
+├── Designing Your Life (Workview + Odyssey Plans)
+└── Ikigai + Life Story (пиковые моменты, провалы)
+
+Неделя 1: Архитектура целей
+├── BHAG — одна цель на всю жизнь
+├── 3-5 Life Themes (1-3 года)
+├── 12-Week Objectives + Key Results
+├── Weekly Priorities
+└── Daily WOOP (if-then намерения)
+
+Неделя 2+: Поддержка ритма
+├── Weekly Review (каждое воскресенье, можно в календаре)
+├── Daily Top-3 (три приоритета на день)
+├── Time Blocks (блокировка времени на важное)
+├── Корректировка целей по ходу
+└── Dashboard — визуализация прогресса
+```
+
+**Данные, которые собирает скилл:**
+- Wheel of Life scores (8 чисел 1-10)
+- Values ranking (10 ценностей с весами)
+- BHAG текст
+- Life Themes: objective + 3-5 key results каждая
+- 12-Week OKR: objectives + key results с дедлайнами
+- Weekly priorities (список строк)
+- Daily WOOP: wish + outcome + obstacle + plan (4 строки)
+- Weekly reviews: что работало / не работало / корректировки
+- Daily Top-3: список задач со статусом выполнения
+
+Все данные хранятся в контексте текущего разговора с Claude и доступны только вам. При длинных диалогах или смене темы контекст может сжиматься — рекомендуется экспортировать после каждой сессии: скажите «Экспортируй мои данные в JSON» или «Сохрани прогресс в Markdown».
+
+---
+
+## Установка скилла (пошагово)
+
+### Шаг 1. Скачать скилл
+
+1. Открой [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
+2. Скачай файл `life-planning-coach.skill`
+
+> **Примечание для разработчиков:** файл `.skill` — это переименованный `SKILL.md` с метаданными. Собрать из исходников: переименуйте `SKILL.md` → `life-planning-coach.skill` (Claude принимает `.skill` как Markdown).
+
+### Шаг 2. Загрузить в Claude
+
+1. Войди в [claude.ai](https://claude.ai) (нужна подписка Pro)
+2. Открой **Settings** (шестерёнка в правом верхнем углу)
+3. Перейди во вкладку **Capabilities**
+4. В разделе **Skills** нажми **Upload skill**
+5. Выбери скачанный файл `life-planning-coach.skill`
+6. Дождись сообщения "Skill uploaded successfully"
+
+### Шаг 3. Активировать
+
+- Скилл активируется автоматически при фразах: "помоги спланировать жизнь", "не знаю куда двигаться", "wheel of life", "life planning"
+- Или напиши напрямую: `/life-planning-coach` или "запусти life coach"
+
+---
+
+## Настройка Google Calendar (опционально)
+
+Если хочешь, чтобы скилл автоматически создавал события (Weekly Review, WOOP, Time Blocks):
+
+### Шаг 1. Подключить MCP
+
+1. В claude.ai открой **Settings → MCP**
+2. Найди **Google Calendar** в списке доступных коннекторов
+3. Нажми **Authorize**
+4. Войди в свой Google-аккаунт и дай разрешение
+5. Вернись в Claude — коннектор должен показать статус "Connected"
+
+### Шаг 2. Проверить
+
+Скажи скиллу: "Создай напоминание о Weekly Review каждое воскресенье в 19:00"
+
+Если MCP работает — скилл создаст событие в календаре и подтвердит.
+
+### Если подключение не работает
+
+- Скилл продолжит работу в текстовом режиме
+- Все планы останутся в разговоре с Claude
+- Попробуй переподключить: Settings → MCP → Google Calendar → Disconnect → Authorize
 
 ---
 
 ## Быстрый старт
 
-### 1. Дашборд (без установки)
+### Первый разговор со скиллом (1 минута)
 
-Открой `life-planning-dashboard.html` в браузере. Все данные встроены, интернет не нужен.
+После установки напишите Claude любую фразу-триггер:
+> «Я чувствую, что жизнь проходит мимо, помоги разобраться»
+
+Скилл начнёт с **Emotional Landing** — эмоционального контакта, а не с тестов. Первые 5–10 минут — валидация вашего состояния и одно конкретное действие на сегодня.
+
+Другие рабочие триггеры:
+- «Не знаю, куда двигаться»
+- «Хочу поставить цели на год»
+- «Сделай Wheel of Life»
+- `/life-planning-coach`
+
+### Дашборд (без установки)
+
+Открой `life-planning-dashboard.html` в браузере — все данные встроены, интернет не нужен.
 
 ```bash
 open life-planning-dashboard.html        # macOS
 xdg-open life-planning-dashboard.html    # Linux
 start life-planning-dashboard.html       # Windows
-```
-
-### 2. Google Calendar интеграция
-
-```bash
-cd calendar_integration
-pip install -r requirements.txt
-
-# Первая настройка (один раз)
-export CALENDAR_ENCRYPTION_KEY="your-secret-key-here"
-
-# Запуск примеров
-python example_usage.py
 ```
 
 ---
@@ -50,23 +187,23 @@ python example_usage.py
 ```
 Stage 1: Diagnostic        Stage 2: Goal Architecture   Stage 3: Weekly Review
 +-- Emotional Landing      +-- BHAG (10-25 лет)         +-- GTD: Get Clear/Current/Creative
-+-- Wheel of Life          +-- OKR Life Themes (1-3 г.)  +-- Scrum Retro
-+-- Values Clarification   +-- 12-Week Quarter           +-- Progress Audit
-+-- Designing Your Life    +-- Weekly Priorities         +-- Adjustment Protocol
++-- Wheel of Life          +-- OKR Life Themes (1-3 г.) +-- Scrum Retro
++-- Values Clarification   +-- 12-Week Quarter          +-- Progress Audit
++-- Designing Your Life    +-- Weekly Priorities        +-- Adjustment Protocol
 +-- Ikigai + Life Story    +-- Daily WOOP
 
-Stage 4: Dashboard              Stage 5: Calendar Integration
-+-- Tab: Overview               +-- OAuth 2.0 + Fernet encryption
+Stage 4: Dashboard              Stage 5: Calendar Integration (MCP)
++-- Tab: Overview               +-- Zero-setup OAuth via claude.ai
 |   +-- Wheel of Life Radar     +-- CRUD Events
-|   +-- OKR Progress Rings      +-- CRUD Tasks
-|   +-- Confidence Gauges       +-- Free/ Busy Slots
-+-- Tab: Retrospective          +-- 6 Life Planning Presets
-|   +-- Calendar Heatmap        |   +-- Weekly Review Reminder
-|   +-- Velocity Chart          |   +-- WOOP Morning Session
-|   +-- Burndown Chart          |   +-- 12-Week Milestones
-+-- Tab: Goals                  |   +-- Daily Top-3 Tasks
-    +-- 12-Week Tracker         |   +-- Deep Work Time Blocks
-    +-- Weekly Priorities       |   +-- Find Available Slots
+|   +-- OKR Progress Rings      +-- Free/ Busy Slots
+|   +-- Confidence Gauges       +-- 4 Life Planning Presets
++-- Tab: Retrospective          |   +-- Weekly Review Reminder
+|   +-- Calendar Heatmap        |   +-- WOOP Morning Session
+|   +-- Velocity Chart          |   +-- 12-Week Milestones
+|   +-- Burndown Chart          |   +-- Deep Work Time Blocks
++-- Tab: Goals                  +-- Daily Top-3 (text, conversation state)
+    +-- 12-Week Tracker
+    +-- Weekly Priorities
     +-- WOOP Cards
     +-- BHAG Roadmap
 ```
@@ -94,93 +231,15 @@ life-planning-coach/
 ├── life-planning-dashboard.html       # Интерактивный дашборд
 ├── life-planning-coach.skill          # Упакованный skill
 │
-├── calendar_integration/              # Python модуль
-│   ├── __init__.py
-│   ├── auth.py                        # OAuth + Fernet encryption
-│   ├── calendar_manager.py            # CRUD событий + presets
-│   ├── tasks_manager.py               # CRUD задачи + presets
-│   ├── config.py                      # Цвета, настройки
-│   ├── models.py                      # Dataclasses
-│   ├── exceptions.py                  # Иерархия ошибок
-│   ├── example_usage.py               # 7 примеров
-│   └── requirements.txt               # Зависимости
-│
 ├── references/                        # Документация методик
 │   ├── diagnostic_methods.md          # Stage 1 протоколы
 │   ├── goal_architecture.md           # Stage 2 протоколы
 │   ├── weekly_review.md              # Stage 3 протоколы
 │   ├── science_backing.md            # Научная валидация
 │   ├── dashboard_guide.md            # Гайд по дашборду
-│   └── calendar_integration.md       # Гайд по Calendar API
+│   └── calendar_integration.md       # Гайд по Calendar MCP
 │
 └── setup.py                           # Python package installer
-```
-
----
-
-## Настройка Google Calendar
-
-### 1. Создать проект в Google Cloud
-
-1. Открой [Google Cloud Console](https://console.cloud.google.com/)
-2. Создай новый проект: **Life Planning Coach**
-3. Включи API:
-   - **Google Calendar API**
-   - **Google Tasks API**
-4. Настрой **OAuth Consent Screen** (External)
-5. Создай **OAuth 2.0 Credentials** (Desktop app)
-6. Скачай `credentials.json` и положи в `calendar_integration/`
-
-### 2. Установить зависимости
-
-```bash
-cd calendar_integration
-pip install -r requirements.txt
-```
-
-### 3. Запустить первую авторизацию
-
-```python
-from calendar_integration import CalendarAuth
-
-auth = CalendarAuth(
-    client_secrets_file="credentials.json",
-    encryption_key="your-secure-password-here"
-)
-auth.authenticate()  # Откроется браузер для авторизации
-```
-
-Токен сохранится в зашифрованном виде. При следующих запусках браузер не понадобится.
-
-### 4. Использовать
-
-```python
-from calendar_integration import CalendarAuth, CalendarManager, TasksManager
-
-auth = CalendarAuth(client_secrets_file="credentials.json",
-                    encryption_key="your-secure-password")
-calendar = CalendarManager(auth)
-tasks = TasksManager(auth)
-
-# Weekly Review каждое воскресенье в 19:00
-calendar.create_weekly_review_reminder(timezone="Europe/Moscow")
-
-# WOOP каждый будний день в 7:00
-calendar.create_woop_reminder(timezone="Europe/Moscow")
-
-# 3 приоритета на сегодня в Google Tasks
-tasks.create_daily_top3(
-    priorities=["Написать главу книги", "Позвонить клиенту", "Пробежать 5км"],
-    due=date.today()
-)
-
-# Найти свободные слоты на сегодня
-free_slots = calendar.get_free_slots(
-    target_date=date.today(),
-    duration_minutes=90,
-    work_start=9,
-    work_end=18
-)
 ```
 
 ---
@@ -189,19 +248,43 @@ free_slots = calendar.get_free_slots(
 
 | Компонент | Требования |
 |-----------|-----------|
+| Claude.ai | Подписка Pro (для загрузки skills + MCP) |
 | Дашборд | Любой современный браузер (Chrome, Firefox, Safari) |
-| Python модуль | Python 3.9+, `google-api-python-client`, `google-auth-oauthlib`, `cryptography` |
-| Google Calendar | Аккаунт Google, проект в Google Cloud Console |
+| Google Calendar | Аккаунт Google, авторизация через MCP в claude.ai |
 
 ---
 
 ## Безопасность
 
-- **Fernet-шифрование** (AES-128-CBC + HMAC) для токенов
-- **Случайный salt** для PBKDF2 (хранится отдельно, права 0o600)
-- **Encryption key обязателен** — нет insecure fallback
-- **OAuth 2.0** с автоматическим refresh токена
-- **Никакие credentials не хранятся в коде**
+**Техническая:**
+- **OAuth 2.0** через официальный MCP-коннектор Google (управляется Anthropic)
+- **Никакие credentials не хранятся в коде скилла**
+- **Zero-trust**: скилл не имеет прямого доступа к токенам, все вызовы через MCP
+
+**Психологическая:**
+- Этот скилл — инструмент для самопознания и планирования, **не замена психотерапии или психиатрической помощи**.
+- Если вы испытываете устойчивое чувство безысходности, мысли о самоповреждении или все сферы жизни оцениваются на 1–2 из 10 — скилл порекомендует обратиться к профессионалу.
+- Вы можете пропустить любой вопрос или прервать сессию в любой момент.
+
+---
+
+## FAQ и устранение неполадок
+
+**Скилл не активируется на триггер-фразы**
+- Убедитесь, что файл загружен: Settings → Capabilities → Skills → life-planning-coach должен быть в списке.
+- Попробуйте прямую команду: `/life-planning-coach` или «запусти life coach».
+
+**Данные пропали после долгого перерыва в разговоре**
+- Claude хранит данные в контексте текущего разговора. При смене темы или длинном диалоге контекст может сжиматься.
+- Рекомендация: экспортируйте данные командой «Экспортируй мои данные в JSON» или «Сохрани мой прогресс в Markdown» после каждой сессии.
+
+**Как обновить скилл до новой версии**
+1. Settings → Capabilities → Skills → life-planning-coach → Remove.
+2. Загрузите новый файл `life-planning-coach.skill`.
+3. Активация сохранится автоматически.
+
+**Как удалить скилл**
+- Settings → Capabilities → Skills → life-planning-coach → Remove. Все данные останутся в истории разговоров Claude.
 
 ---
 
