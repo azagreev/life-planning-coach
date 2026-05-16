@@ -273,6 +273,9 @@ Stage 4: Dashboard              Stage 5: Calendar Integration (MCP)
 ```
 life-planning-coach/
 ├── README.md                          # Этот файл
+├── CHANGELOG.md                       # История изменений проекта
+├── ROADMAP.md                         # Планы будущих релизов
+├── BACKLOG.md                         # Бэклог идей
 ├── SKILL.md                           # Основной skill (для AI-агента)
 ├── life-planning-dashboard.html       # Интерактивный дашборд
 ├── life-planning-coach.zip            # Упакованный skill (ZIP по требованиям Anthropic)
