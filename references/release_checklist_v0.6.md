@@ -38,6 +38,8 @@
 
 - [x] Все изменения закоммичены
 - [x] Commit message описывает суть изменений
+- [x] **`git push origin main` выполнен**
+- [x] **Проверка на GitHub: README.md показывает актуальную версию**
 - [x] Тег `v0.6.0` создан (`git tag v0.6.0`)
 - [x] Тег запушен на GitHub (`git push origin v0.6.0`)
 
@@ -53,6 +55,7 @@
 - [x] PR создан и влит в `main`
 - [x] Feature branch удалён
 - [x] Тесты на `main` проходят
+- [x] **Проверка: `git status` показывает `nothing to commit, working tree clean` и `Your branch is up to date with 'origin/main'`**
 - [x] Release checklist заархивирован в `references/`
 
 ---
