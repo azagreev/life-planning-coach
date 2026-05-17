@@ -142,3 +142,38 @@
 - **Триггер:** Вместе с регулярностью (v0.7.0+) или при жалобе "я постоянно пропускаю Weekly Review"
 - **Статус:** 💡 Идея
 - **Источник:** Motivational Interviewing (Roll with Resistance), behavioral relapse prevention
+
+### Unified Release Notes — CHANGELOG.md как единый источник правды (Вариант B)
+- **Описание:** Сейчас релиз-ноты дублируются: CHANGELOG.md содержит всю историю, а отдельные файлы `RELEASE_NOTES_vX.Y.Z.md` (в `references/archive/`) используются для GitHub Release. Это приводит к:
+  - Дублированию информации (одно и то же в двух местах)
+  - Риску рассинхронизации (CHANGELOG обновлён, а RELEASE_NOTES — нет)
+  - Загрязнению репозитория (каждый релиз = новый файл)
+- **Цель:** Сделать CHANGELOG.md единым источником правды. Релиз-ноты для GitHub Release генерируются автоматически — извлечением секции `[X.Y.Z]` из CHANGELOG.md.
+- **Текущее состояние (что есть сейчас):**
+  - `CHANGELOG.md` — Keep a Changelog формат, секции `[Unreleased]`, `[0.6.0]`, `[0.5.0]` и т.д.
+  - `references/archive/RELEASE_NOTES_v0.6.1.md` — отдельный файл для GitHub Release
+  - `scripts/release.sh:118` — жёстко ищет `RELEASE_NOTES_$TAG.md` в корне (уже частично fixed — теперь `references/archive/`)
+- **Предлагаемое решение:**
+  1. **Формат CHANGELOG.md** — добавить маркеры для автоматического извлечения:
+     ```markdown
+     ## [0.7.0] — 2026-06-01
+     <!-- release-notes-start -->
+     ### 🎯 Главное
+     - Фича A
+     - Фича B
+     <!-- release-notes-end -->
+     ### Added
+     - ...
+     ```
+  2. **Скрипт `scripts/extract-release-notes.py`** — извлекает секцию между маркерами для указанной версии
+  3. **Обновить `scripts/release.sh`** — вместо `--notes-file RELEASE_NOTES_$TAG.md` использовать `--notes "$(python3 scripts/extract-release-notes.py $TAG)"`
+  4. **Удалить все `RELEASE_NOTES*.md`** из репозитория (они в `references/archive/`)
+  5. **Обновить `AGENTS.md`** — документировать новый процесс
+- **Альтернативный формат (без маркеров):**
+  - Извлекать всю секцию `## [X.Y.Z]` целиком (включая Added/Changed/Fixed)
+  - Плюс: ничего не менять в CHANGELOG.md
+  - Минус: GitHub Release будет содержать raw markdown с заголовками, что менее читаемо
+- **Триггер:** Перед v0.7.0 или при создании следующего релиза
+- **Статус:** 💡 Идея
+- **Источник:** Техдолг — устранение дублирования после фикса root cause (RELEASE_NOTES_v0.6.1.md в корне)
+- **Связанные файлы:** `CHANGELOG.md`, `scripts/release.sh`, `references/archive/RELEASE_NOTES*.md`
