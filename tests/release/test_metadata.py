@@ -89,20 +89,22 @@ class TestSkillArchive(unittest.TestCase):
     """.skill archive must contain required files."""
 
     def test_skill_archive_structure(self):
-        # Check .zip archive (primary artifact)
-        zip_path = Path("life-planning-coach.zip")
+        # Check versioned artifact in dist/ (primary artifact)
+        dist_dir = Path("dist")
+        zip_files = sorted(dist_dir.glob("life-planning-coach-v*.zip"), reverse=True)
+        zip_path = zip_files[0] if zip_files else Path("life-planning-coach.zip")
+
         if not zip_path.exists():
-            self.skipTest("life-planning-coach.zip not built yet")
+            self.skipTest(f"{zip_path} not built yet")
 
         with zipfile.ZipFile(zip_path, "r") as zf:
             names = zf.namelist()
             prefix = "life-planning-coach/"
+            # Core skill files (dev docs like README/LICENSE are excluded by design)
             required = [
                 f"{prefix}SKILL.md",
-                f"{prefix}README.md",
-                f"{prefix}LICENSE",
-                f"{prefix}CONTRIBUTING.md",
-                f"{prefix}SECURITY.md",
+                f"{prefix}life-planning-dashboard.html",
+                f"{prefix}references/",
             ]
             for req in required:
                 self.assertIn(

@@ -15,6 +15,11 @@ import yaml
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 SKILL_MD = PROJECT_ROOT / "SKILL.md"
 REFERENCES_DIR = PROJECT_ROOT / "references"
+DIST_DIR = PROJECT_ROOT / "dist"
+
+# Find versioned artifacts in dist/ (e.g., life-planning-coach-v0.6.1.zip)
+_zip_files = sorted(DIST_DIR.glob("life-planning-coach-v*.zip"), reverse=True)
+ZIP_PATH = _zip_files[0] if _zip_files else PROJECT_ROOT / "life-planning-coach.zip"
 
 
 class TestYamlFrontmatter:
@@ -287,7 +292,7 @@ class TestZipStructure:
 
     def test_zip_has_skill_folder_as_root(self):
         """AC-21: ZIP contains life-planning-coach/ directly at root."""
-        zip_path = PROJECT_ROOT / "life-planning-coach-v0.6.1.zip"
+        zip_path = ZIP_PATH
         if not zip_path.exists():
             pytest.skip("ZIP not found — build with scripts/build-skill.sh")
 
@@ -303,7 +308,7 @@ class TestZipStructure:
 
     def test_zip_contains_skill_md(self):
         """AC-21: ZIP contains SKILL.md inside skill folder."""
-        zip_path = PROJECT_ROOT / "life-planning-coach-v0.6.1.zip"
+        zip_path = ZIP_PATH
         if not zip_path.exists():
             pytest.skip("ZIP not found — build with scripts/build-skill.sh")
 
