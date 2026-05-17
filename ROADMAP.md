@@ -11,8 +11,8 @@
 |--------|--------|----------------|---------------|
 | v0.6.0 | ✅ Released | 2026-05-16 | Authentic Goals + Portfolio + Adaptive Style |
 | v0.7.0 | ✅ Released | 2026-05-17 | Эмоциональная регуляция (minimal) + BUG-001 fix |
-| v0.7.1 | 🔄 In Progress | TBD | Execution Layer — patch (3 фичи из конкурентного анализа) |
-| v0.8.0 | 📋 Planned | TBD | Интеграция привычек (Habit Loop) + Execution Layer v2 |
+| v0.7.1 | ✅ Released | 2026-05-18 | Execution Layer — patch (Win Alert, Recovery, Energy Scheduling) |
+| v0.8.0 | 🔄 In Progress | TBD | Habit Loop Framework + Execution Layer v2 (6 фич) |
 | v0.9.0 | 📋 Planned | TBD | Мобильная адаптация + краткие сессии |
 
 ---
@@ -50,9 +50,9 @@
 **Scope:** Patch — 3 reference-файла, ~6–8 часов. Не трогает SKILL.md инструкции (≤500 строк).
 
 **Входит:**
-- [ ] **Win Alert Protocol** (`references/win_alert.md`) — структурированное празднование побед: что достигнуто → домен Wheel of Life → почему важно → ресурсы пользователя → следующий шаг. Адаптируется под Communication Style quadrant. НЕ применяется во время кризиса/Emotional Landing.
-- [ ] **Recovery Protocol MVP** (`references/recovery_protocol.md`, ≤200 строк) — 3 стратегии + Recovery для 2+ пропусков: Reschedule → Catch-up Mini-Session (15 мин, 3 вопроса) → Skip with Reflection → Recovery Protocol (Emotional Landing → Wheel of Life → 1 приоритет). Паттерн-анализ conversational-only (не декларативный).
-- [ ] **Energy-Based Scheduling** (`references/energy_scheduling.md`, ≤80 строк) — 3 уровня энергии → маппинг на тип задачи → 1 калибровочный вопрос → защита пиковых часов фокус-блоками. Связь с AC-8 (Energy Check) и Seasonal Planning.
+- [x] **Win Alert Protocol** (`references/win_alert.md`) — структурированное празднование побед: что достигнуто → домен Wheel of Life → почему важно → ресурсы пользователя → следующий шаг. Адаптируется под Communication Style quadrant. НЕ применяется во время кризиса/Emotional Landing.
+- [x] **Recovery Protocol MVP** (`references/recovery_protocol.md`, ≤200 строк) — 3 стратегии + Recovery для 2+ пропусков: Reschedule → Catch-up Mini-Session (15 мин, 3 вопроса) → Skip with Reflection → Recovery Protocol (Emotional Landing → Wheel of Life → 1 приоритет). Паттерн-анализ conversational-only (не декларативный).
+- [x] **Energy-Based Scheduling** (`references/energy_scheduling.md`, ≤80 строк) — 3 уровня энергии → маппинг на тип задачи → 1 калибровочный вопрос → защита пиковых часов фокус-блоками. Связь с AC-8 (Energy Check) и Seasonal Planning.
 
 **Не входит (отложено в v0.8.0):**
 - Markdown-таблицы как UI (DEFER, conf 8/10 — ждёт dashboard fix + MI review)
@@ -64,30 +64,32 @@
 
 ---
 
-## v0.8.0 — Интеграция привычек (Habit Loop) + Execution Layer v2
+## v0.8.0 — Habit Loop Framework + Execution Layer v2
 
 **Цель:** Мост между целями и ежедневными действиями через привычки. Закрыть execution layer пробелы, отложенные из v0.7.1.
 
-**Планируемые фичи (Habit Loop):**
-- [ ] **Habit Loop Framework** — Cue-Routine-Reward + Implementation Intentions
-- [ ] **Habit Tracker** — визуализация цепочек (streaks) в Dashboard
-- [ ] **Tiny Habits** — методика BJ Fogg (начинать с 30 секунд)
-- [ ] **Habit Stacking** — привязка к существующим рутинам
+**Scope:** 6 фич (сокращено с 12 — realistic minor release).
 
-**Планируемые фичи (Execution Layer v2 — из конкурентного анализа):**
-- [ ] **Markdown-таблицы как UI** — Weekly Plan, Wheel of Life Review, Progress Check, Course Correction (строго в `references/`, zero tables в SKILL.md)
-- [ ] **Task Breakdown с чекпоинтами** — разбиение действий WOOP на шаги с verification (opt-in, только для Career/Finances/Health/Home/Learning)
-- [ ] **Auto-Review Triggers** — 7+ дней → Weekly Pulse, новый месяц → Monthly Scan, новый квартал → Quarterly Reflection (требует structured session metadata)
-- [ ] **Adaptive Response Length** — Clarification / Exploration / Crystallization (требует спецификации интеграции с Deep Why и Energy Check)
-- [ ] **Calendar Event Copy Review** — полный ревизия текстов событий календаря (убрать "надо/должен", добавить мотивацию и domain-awareness)
-- [ ] **Weak Goal Taxonomy (full)** — 5 паттернов слабых целей + Sanity-Check Framework (Coverage, Balance, Feasibility, Measurability, Alignment)
-- [ ] **Structured Growth Report** — Summary → Growth Areas → Strengths → Actions → Resources (требует re-assessment flow)
-- [ ] **Status Icon System** — единая визуальная нотация (⬜🔄✅❌⏸️⚠️ + 🔴🟡🟢)
+**Входит:**
+- [x] **Habit Loop Framework** (`references/habit_loop.md`) — Cue-Routine-Reward + Tiny Habits + Habit Stacking + Timeline (Lally)
+- [x] **Task Breakdown with Checkpoints** (`references/action_breakdown_template.md`) — WOOP → шаги с ✓-чекпоинтами
+- [x] **Markdown Tables as UI** (`references/markdown_tables.md`) — 4 шаблона, stage-appropriate
+- [x] **Weak Goal Taxonomy (full)** (`references/weak_goal_taxonomy.md`) — 5 паттернов + Sanity-Check Framework
+- [x] **Status Icon System** (`references/status_icons.md`) — ⬜🔄✅❌⏸️⚠️ + accessibility fallback
+- [x] **AGENTS.md overhaul** — актуализация после v0.7.1
+
+**Не входит (отложено в v0.9.0+):**
+- Habit Tracker / Dashboard streaks (требует dashboard рефакторинг)
+- Auto-Review Triggers (требует structured session metadata)
+- Structured Growth Report (требует re-assessment flow)
+- Adaptive Response Length (требует интеграции с Deep Why/Energy Check)
+- Calendar Event Copy Review (scope ambiguity)
 
 **Методики:**
 - Tiny Habits (Fogg, 2019)
 - Habit Stacking (Clear, 2018)
-- Implementation Intentions (Gollwitzer) — уже используется в WOOP
+- Context-Dependent Repetition (Wood & Neal, 2007)
+- Habit Timeline (Lally et al., 2010)
 
 ---
 

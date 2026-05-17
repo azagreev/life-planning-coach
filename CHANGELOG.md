@@ -27,6 +27,43 @@
 
 ---
 
+## [0.8.0] — 2026-05-18
+
+### Added
+- **Habit Loop Framework** (`references/habit_loop.md`, 254 строки) — мост между целями и ежедневными действиями
+  - Cue-Routine-Reward (Duhigg, Wood & Neal)
+  - Tiny Habits (Fogg): B = MAP, ≤30 секунд, anchor, celebration
+  - Habit Stacking (Clear): "После [X], я [Y]"
+  - Timeline: median 66 дней (Lally)
+  - Integration with WOOP, Calendar, Energy Scheduling, Recovery Protocol, Win Alert
+- **Task Breakdown with Checkpoints** (`references/action_breakdown_template.md`, 128 строк) — разбиение WOOP на шаги
+  - 5 шагов: finish line → sub-steps → checkpoints → time estimate → first step
+  - Checkpoints: verifiable, binary (да/нет)
+  - Opt-in: Career/Finances/Health/Home/Learning
+- **Markdown Tables as UI** (`references/markdown_tables.md`, 109 строк) — 4 шаблона
+  - Weekly Plan, Wheel of Life Review (11 доменов), Progress Check (OKR), Course Correction
+  - Stage-appropriate: только Preparation/Action stages
+  - Zero tables в SKILL.md
+- **Weak Goal Taxonomy + Sanity-Check** (`references/weak_goal_taxonomy.md`, 133 строки)
+  - 5 паттернов слабых целей: Vague, Output-as-Outcome, Missing Baseline, Sandbagging, Moonshots
+  - Sanity-Check: Coverage, Balance, Feasibility, Measurability, Alignment
+  - Integration: расширение `authentic_goal_filter.md` (Stage 1.5)
+- **Status Icon System** (`references/status_icons.md`, 61 строка)
+  - ⬜🔄✅❌⏸️⚠️ + 🔴🟡🟢 priority
+  - Accessibility: текстовый fallback для screen readers
+  - Emotional safety: High N users — opt-in, без ❌/⚠️
+- Интеграция в `SKILL.md`: 5 новых ссылок + хуки в Phase 1.5, 2, 3, 5
+- 34 системных теста на v0.8.0 контент (`tests/system/test_v080_features.py`)
+
+### Changed
+- `AGENTS.md` — полная актуализация после v0.7.1 (version, test counts, structure, removed fixed bugs)
+- `ROADMAP.md` — v0.8.0 scope сокращён с 12 до 6 фич (realistic minor release)
+
+### Research
+- Habit formation: Fogg (Tiny Habits), Clear (Atomic Habits), Wood (context-dependent repetition), Lally (66-day timeline), Duhigg (habit loop)
+
+---
+
 ## [0.7.1] — 2026-05-18
 
 ### Added

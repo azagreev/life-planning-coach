@@ -15,6 +15,7 @@
 - **Источник:** Анализ паттернов в Authentic Goal Filter (энергия как ось радара)
 
 ### Habit Loop Integration
+- **Статус:** ✅ Реализовано в v0.8.0 (`references/habit_loop.md`, 254 строки)
 - **Описание:** Мост между целями и ежедневными привычками (Tiny Habits, Habit Stacking)
 - **Триггер:** Востребовано 3+ пользователями или включено в ROADMAP v0.8.0
 - **Статус:** 📋 В ROADMAP v0.8.0
@@ -184,7 +185,7 @@
 ### Markdown Tables as Structured UI
 - **Описание:** Использовать markdown-таблицы для Weekly Plan, Wheel of Life Review, Progress Check, Course Correction. Stage-appropriate: только Preparation/Action stages.
 - **Триггер:** v0.8.0 Execution Layer
-- **Статус:** 📋 В ROADMAP v0.8.0
+- **Статус:** ✅ Реализовано в v0.8.0 (`references/markdown_tables.md`, 109 строк)
 - **Источник:** Borrowed from GTD Coach Plugin + PM OKR Skill
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 8/10). Ждёт: dashboard 8→11 fix, MI-compliance review, zero tables в SKILL.md.
 
@@ -212,14 +213,14 @@
 ### Weak Goal Taxonomy + Sanity-Check
 - **Описание:** Паттерны слабых целей: Vague, Output-as-Outcome, Missing Baseline, Sandbagging, Moonshots. Sanity-Check: Coverage, Balance, Feasibility, Measurability, Alignment.
 - **Триггер:** v0.7.1 (lightweight pilot, 5 yes/no questions) / v0.8.0 (full taxonomy)
-- **Статус:** 📋 В ROADMAP v0.8.0
+- **Статус:** ✅ Реализовано в v0.8.0 (`references/weak_goal_taxonomy.md`, 133 строки)
 - **Источник:** Borrowed from PM OKR Skill
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Пилот возможен в v0.7.1, full — в v0.8.0.
 
 ### Task Breakdown with Checkpoints
 - **Описание:** Разбиение действий WOOP на шаги с чекпоинтами (✓ Чекпоинт: [критерий выполнения]). Opt-in, только для Career/Finances/Health/Home/Learning.
 - **Триггер:** v0.8.0
-- **Статус:** 📋 В ROADMAP v0.8.0
+- **Статус:** ✅ Реализовано в v0.8.0 (`references/action_breakdown_template.md`, 128 строк)
 - **Источник:** Borrowed from GTD Coach Plugin
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 8/10). Требует валидации потребности через GitHub Discussion.
 
