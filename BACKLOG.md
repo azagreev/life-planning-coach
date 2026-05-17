@@ -65,10 +65,33 @@
 | CI/CD через GitHub Actions | P1 | Перед v0.7.0 | Автоматический запуск тестов при PR |
 | Coverage report | P2 | Когда >100 тестов | pytest-cov + badge |
 | Pre-commit hooks (ruff, mypy) | P2 | Перед v0.7.0 | Качество кода |
+| **Фикс зависших тестов** | **P1** | **Сразу** | **3 теста устарели/неполные после v0.6.1 cleanup** |
 | Удалить `.build/` из истории | P3 | При чистке репозитория | Сейчас `.build/` не в `.gitignore` |
 | Архивировать старые планы в `references/archive/` | P3 | При накоплении 5+ планов | Упорядочить references |
 
 ---
+
+### Tech Debt: Зависшие тесты после v0.6.1 cleanup
+- **Описание:** После изменений в build-skill.sh (убраны dev-only файлы из ZIP, версия в имени файла) и релизном процессе (tag-only titles) 3 теста устарели или стали неполными.
+- **Проблемы:**
+  1. **`tests/release/test_metadata.py::test_skill_archive_structure`** — УСТАРЕЛ
+     - Ищет `life-planning-coach.zip` в корне (старое имя), а сейчас `dist/life-planning-coach-v0.6.1.zip`
+     - Требует внутри ZIP: README.md, LICENSE, CONTRIBUTING.md, SECURITY.md — мы их удрали из скилла
+     - **Результат:** Всегда `skipTest("not built yet")` — тест никогда не проверяет реальную структуру
+     - **Фикс:** Обновить путь на `dist/life-planning-coach-v*.zip`, убрать dev-файлы из `required`, добавить проверку `references/templates/`
+  2. **`tests/unit/test_dashboard.py`** — НЕПОЛНЫЙ (не ловит BUG-001)
+     - Проверяет размер, CDN, doctype, ключевые слова чартов
+     - **Не проверяет:** количество доменов Wheel of Life (8 vs 11)
+     - Дашборд явно делит сумму на 8: `(reduce(...) / 8).toFixed(1)`
+     - **Фикс:** Добавить `test_wheel_has_11_domains` — проверить что `WHEEL_SPHERES.length === 11` и что присутствуют: Здоровье, Карьера, Финансы, Романтика, Семья, Социальная, Вклад, Смысл, Рост, Развлечения, Среда
+  3. **`tests/system/test_version_consistency.py::test_github_release_exists_for_tag`** — ХРУПКИЙ
+     - Проверяет что для `git describe --tags --abbrev=0` есть GitHub Release
+     - После cleanup: v0.2.0 — только тег, без релиза (мы удалили дубль)
+     - Если checkout на v0.2.0 и запуск тестов → `gh release view v0.2.0` вернёт ошибку
+     - **Фикс:** Добавить whitelist тегов без релиза (`v0.2.0`) или проверять `git tag -l` отдельно от `git describe`
+- **Триггер:** Перед v0.7.0 или при первом же падении тестов на checkout к старому тегу
+- **Статус:** 📋 Техдолг
+- **Источник:** Аудит тестов после build cleanup (v0.6.1+)
 
 ## Исследования
 
