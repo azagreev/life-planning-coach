@@ -10,28 +10,35 @@
 | Версия | Статус | Ожидаемая дата | Ключевая фича |
 |--------|--------|----------------|---------------|
 | v0.6.0 | ✅ Released | 2026-05-16 | Authentic Goals + Portfolio + Adaptive Style |
-| v0.7.0 | 🚧 Planned | TBD | Эмоциональная регуляция + Resilience |
+| v0.7.0 | 🚧 In Progress | TBD | Эмоциональная регуляция (minimal) + BUG-001 fix |
 | v0.8.0 | 📋 Planned | TBD | Интеграция привычек (Habit Loop) |
 | v0.9.0 | 📋 Planned | TBD | Мобильная адаптация + краткие сессии |
 
 ---
 
-## v0.7.0 — Эмоциональная регуляция + Resilience
+## v0.7.0 — Эмоциональная регуляция (Minimal Scope)
 
-**Цель:** Дать пользователю инструменты для управления эмоциональным состоянием на пути к целям.
+**Цель:** Дать пользователю инструменты для управления эмоциональным состоянием на пути к целям. + Закрыть P1-баг BUG-001.
 
-**Планируемые фичи:**
-- [ ] **Emotion Regulation Protocol** — 3 техники (cognitive reappraisal, breathing, grounding)
-- [ ] **Resilience Assessment** — опросник на устойчивость к стрессу (Connor-Davidson или аналог)
-- [ ] **Failure Recovery Protocol** — что делать, когда цель провалилась (не «провал», а «данные»)
-- [ ] **Energy Management** — отслеживание энергии (не только времени)
+**Scope:** Minimal — 3 задачи, ~6-7 часов. [Подробный план](references/plan_v0.7.0.md).
+
+**Входит:**
+- [ ] **BUG-001: Dashboard 8→11 доменов** — P1-баг, дашборд показывает 8 сфер вместо 11
+- [ ] **Emotion Regulation Protocol** — 3 техники (cognitive reappraisal, grounding, self-compassion)
+- [ ] **Фикс зависших тестов** — 3 теста устарели после v0.6.1 cleanup
+
+**Не входит (отложено в v0.7.1/v0.8.0):**
+- Resilience Assessment (требует психометрии)
+- Failure Recovery Protocol
+- Energy Management
+- Dashboard Self-Contained (большой рефакторинг)
+- Calendar Event Copy Review
 
 **Методики:**
 - Cognitive Reappraisal (Gross, 1998) — d = 0.45
-- Self-Compassion (Neff) — связь с мотивацией
-- Post-Traumatic Growth
+- Self-Compassion (Neff) — r = 0.47
 
-**Детали планирования:** `references/plan_v0.7.0.md` (будет создан при старте разработки)
+**Детали планирования:** [`references/plan_v0.7.0.md`](references/plan_v0.7.0.md)
 
 ---
 
