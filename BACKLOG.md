@@ -96,3 +96,22 @@
 - **BUGS.md** — активные баги и известные проблемы
 - **references/plan_vX.Y.Z.md** — детальное планирование конкретного релиза
 - **references/release_checklist_vX.Y.Z.md** — чеклист перед выпуском
+
+### Dashboard Redesign — Self-Contained & Dependency-Free
+- **Описание:** Полный пересмотр life-planning-dashboard.html: визуальный дизайн, информационная архитектура, наполнение. Цель — сделать дашборд полностью самодостаточным standalone HTML-файлом без внешних зависимостей (CDN, внешние скрипты, внешние стили). Все данные — inline или встроенные в файл. Дашборд должен открываться и работать локально в браузере без интернета.
+- **Триггер:** Перед v0.7.0 или при накоплении 3+ жалоб на UX дашборда
+- **Статус:** 💡 Идея
+- **Источник:** Технический долг + UX-улучшение
+- **Детали:**
+  - Убрать зависимость от Font Awesome CDN → inline SVG иконки
+  - Убрать зависимость от Google Fonts → system fonts или inline @font-face
+  - Убрать зависимость от Chart.js/Plotly CDN → inline Canvas/SVG графики
+  - Убрать зависимость от Tailwind CDN → inline CSS
+  - Все стили — в `<style>` внутри файла
+  - Все скрипты — в `<script>` внутри файла
+  - Все данные (WHEEL_SPHERES, EXECUTION_SCORES) — встроены в JS
+  - Размер целевой: <500 KB в одном файле
+  - Работает offline (file:// protocol)
+  - Мобильная адаптивность как first-class citizen
+  - Dark/light mode toggle
+  - Печать/PDF экспорт одной кнопкой
