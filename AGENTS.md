@@ -174,7 +174,7 @@ python3 -m pytest tests/system/ -v
 
 - **Никогда** не хардкодить API-ключи в SKILL.md или скриптах
 - User data: только с явного согласия, therapy disclaimer обязателен
-- Google Drive/Calendar: graceful fallback при geo-блокировке (разработчик в РФ)
+- Google Drive/Calendar: graceful fallback при недоступности MCP (разработчик не тестирует connectors live)
 
 ---
 
