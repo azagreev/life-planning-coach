@@ -269,8 +269,8 @@ class TestSkillMdIntegration:
         lines = text.splitlines()
         found = []
         for i, line in enumerate(lines, 1):
-            # Skip Language Rules section where words are listed as forbidden
-            if "Language Rules" in line or "ЗАПРЕЩЕНО" in line or "не используй" in line:
+            # Skip Language Rules and Gotchas sections where words are listed as forbidden
+            if "Language Rules" in line or "ЗАПРЕЩЕНО" in line or "не используй" in line.lower() or "Gotchas" in line:
                 continue
             for word in forbidden:
                 if word in line.lower():
