@@ -11,7 +11,8 @@
 |--------|--------|----------------|---------------|
 | v0.6.0 | ✅ Released | 2026-05-16 | Authentic Goals + Portfolio + Adaptive Style |
 | v0.7.0 | ✅ Released | 2026-05-17 | Эмоциональная регуляция (minimal) + BUG-001 fix |
-| v0.8.0 | 📋 Planned | TBD | Интеграция привычек (Habit Loop) |
+| v0.7.1 | 🔄 In Progress | TBD | Execution Layer — patch (3 фичи из конкурентного анализа) |
+| v0.8.0 | 📋 Planned | TBD | Интеграция привычек (Habit Loop) + Execution Layer v2 |
 | v0.9.0 | 📋 Planned | TBD | Мобильная адаптация + краткие сессии |
 
 ---
@@ -42,15 +43,46 @@
 
 ---
 
-## v0.8.0 — Интеграция привычек (Habit Loop)
+## v0.7.1 — Execution Layer Patch (конкурентный анализ 2026-05-17)
 
-**Цель:** Мост между целями и ежедневными действиями через привычки.
+**Цель:** Закрыть критичные пробелы в execution layer на основе конкурентного анализа 7 скиллов. 3 фичи прошли 3-цикловой дебат Advocate/Critic и получили вердикт **IMPLEMENT**.
 
-**Планируемые фичи:**
+**Scope:** Patch — 3 reference-файла, ~6–8 часов. Не трогает SKILL.md инструкции (≤500 строк).
+
+**Входит:**
+- [ ] **Win Alert Protocol** (`references/win_alert.md`) — структурированное празднование побед: что достигнуто → домен Wheel of Life → почему важно → ресурсы пользователя → следующий шаг. Адаптируется под Communication Style quadrant. НЕ применяется во время кризиса/Emotional Landing.
+- [ ] **Recovery Protocol MVP** (`references/recovery_protocol.md`, ≤200 строк) — 3 стратегии + Recovery для 2+ пропусков: Reschedule → Catch-up Mini-Session (15 мин, 3 вопроса) → Skip with Reflection → Recovery Protocol (Emotional Landing → Wheel of Life → 1 приоритет). Паттерн-анализ conversational-only (не декларативный).
+- [ ] **Energy-Based Scheduling** (`references/energy_scheduling.md`, ≤80 строк) — 3 уровня энергии → маппинг на тип задачи → 1 калибровочный вопрос → защита пиковых часов фокус-блоками. Связь с AC-8 (Energy Check) и Seasonal Planning.
+
+**Не входит (отложено в v0.8.0):**
+- Markdown-таблицы как UI (DEFER, conf 8/10 — ждёт dashboard fix + MI review)
+- Status Icon System (DEFER, conf 7/10 — ждёт Execution Layer v2)
+- Clarifying-Questions-First (DEFER, conf 7/10 — пересекается с Phase 0/Track A)
+- Weak Goal Taxonomy (DEFER, conf 7/10 — lightweight pilot возможен в v0.7.1, full в v0.8.0)
+
+**Детали анализа:** [`references/competitive_research_2026.md`](references/competitive_research_2026.md)
+
+---
+
+## v0.8.0 — Интеграция привычек (Habit Loop) + Execution Layer v2
+
+**Цель:** Мост между целями и ежедневными действиями через привычки. Закрыть execution layer пробелы, отложенные из v0.7.1.
+
+**Планируемые фичи (Habit Loop):**
 - [ ] **Habit Loop Framework** — Cue-Routine-Reward + Implementation Intentions
 - [ ] **Habit Tracker** — визуализация цепочек (streaks) в Dashboard
 - [ ] **Tiny Habits** — методика BJ Fogg (начинать с 30 секунд)
 - [ ] **Habit Stacking** — привязка к существующим рутинам
+
+**Планируемые фичи (Execution Layer v2 — из конкурентного анализа):**
+- [ ] **Markdown-таблицы как UI** — Weekly Plan, Wheel of Life Review, Progress Check, Course Correction (строго в `references/`, zero tables в SKILL.md)
+- [ ] **Task Breakdown с чекпоинтами** — разбиение действий WOOP на шаги с verification (opt-in, только для Career/Finances/Health/Home/Learning)
+- [ ] **Auto-Review Triggers** — 7+ дней → Weekly Pulse, новый месяц → Monthly Scan, новый квартал → Quarterly Reflection (требует structured session metadata)
+- [ ] **Adaptive Response Length** — Clarification / Exploration / Crystallization (требует спецификации интеграции с Deep Why и Energy Check)
+- [ ] **Calendar Event Copy Review** — полный ревизия текстов событий календаря (убрать "надо/должен", добавить мотивацию и domain-awareness)
+- [ ] **Weak Goal Taxonomy (full)** — 5 паттернов слабых целей + Sanity-Check Framework (Coverage, Balance, Feasibility, Measurability, Alignment)
+- [ ] **Structured Growth Report** — Summary → Growth Areas → Strengths → Actions → Resources (требует re-assessment flow)
+- [ ] **Status Icon System** — единая визуальная нотация (⬜🔄✅❌⏸️⚠️ + 🔴🟡🟢)
 
 **Методики:**
 - Tiny Habits (Fogg, 2019)

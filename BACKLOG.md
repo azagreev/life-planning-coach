@@ -53,8 +53,9 @@
 ### Calendar Event Copy Review
 - **Описание:** Полный ревизия всех событий календаря: названия (summary), описания (description), тексты напоминаний. Сделать их более мотивирующими, персонализированными и aligned с коучинговым тоном скилла. Проверить на отсутствие «надо/должен» в текстах событий.
 - **Триггер:** Перед v0.7.0 или при первой жалобе пользователя на «роботизированные» напоминания
-- **Статус:** 💡 Идея
+- **Статус:** 📋 В ROADMAP v0.8.0
 - **Источник:** Пользовательская обратная связь, UX-калибровка
+- **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 8/10). Причина: scope ambiguity (generic warm vs dynamic personalized), требуется v0.8.0 habit integration для holistic design.
 
 ---
 
@@ -156,15 +157,85 @@
   1. **Reschedule** — перенести на ближайшее удобное время (не откладывать на "потом", а конкретно: "среда 20:00")
   2. **Catch-up Mini-Session** — ускоренная версия: 15 минут вместо 2 часов. Только 3 вопроса: (1) что было главное на прошлой неделе? (2) что не получилось и почему? (3) один приоритет на эту неделю?
   3. **Skip with Reflection** — не просто пропустить, а записать причину: "пропустил из-за командировки" → данные для анализа паттернов пропусков. Если причина повторяется 3+ раза — это сигнал к изменению расписания или формата сессии.
-  4. **Stack with Next** — добавить пропущенное к следующей сессии (не рекомендуется: риск перегрузки)
   5. **Recovery Protocol (2+ пропуска подряд)** — если пропущено 2 и более сессий:
      - Не нагонять всё сразу
      - Начать с Emotional Landing (5 мин) → быстрый Wheel of Life (5 мин) → один приоритет
      - Пересмотреть формат: может, 2 часа — слишком долго? Попробовать 30-минутную версию?
      - Проверить alignment: а актуальны ли ещё цели? Может, пропуски — сигнал, что цели не мои?
 - **Триггер:** Вместе с регулярностью (v0.7.0+) или при жалобе "я постоянно пропускаю Weekly Review"
-- **Статус:** 💡 Идея
+- **Статус:** 🔄 В ROADMAP v0.7.1 (MVP, ≤200 строк)
 - **Источник:** Motivational Interviewing (Roll with Resistance), behavioral relapse prevention
+- **Дебат:** Advocate/Critic 3 цикла → **IMPLEMENT (MVP)** (conf 7/10). Stack with Next удалён (анти-паттерн). Pattern detection — conversational-only.
+
+### Win Alert Protocol
+- **Описание:** Структурированное празднование побед: что достигнуто → домен Wheel of Life → почему важно → ресурсы/качества пользователя → следующий шаг. Адаптируется под Communication Style quadrant. НЕ применяется во время кризиса/Emotional Landing.
+- **Триггер:** Пользователь сообщает о достижении или проходит Weekly Review
+- **Статус:** 🔄 В ROADMAP v0.7.1
+- **Источник:** Borrowed from GTD Coach Plugin
+- **Дебат:** Advocate/Critic 3 цикла → **IMPLEMENT** (conf 7/10). Научная база: savoring (Bryant & Veroff), SDT competence feedback (Deci & Ryan), VIA character strengths.
+
+### Energy-Based Scheduling
+- **Описание:** При создании событий в календаре учитывать энергию пользователя: высокая энергия → творческая/Deep Work блоки, низкая энергия → рутина/админ, пиковые часы → защитить фокус-блоками. Связь с AC-8 (Energy Check) и Seasonal Planning.
+- **Триггер:** Пользователь работает с календарём (Phase 5)
+- **Статус:** 🔄 В ROADMAP v0.7.1
+- **Источник:** Borrowed from Weekly Planning approach (popular r/ClaudeAI pattern 2026)
+- **Дебат:** Advocate/Critic 3 цикла → **IMPLEMENT** (conf 7/10). Ограничение: ≤80 строк, новый файл `references/energy_scheduling.md`, НЕ append в `calendar_constants.md`.
+
+### Markdown Tables as Structured UI
+- **Описание:** Использовать markdown-таблицы для Weekly Plan, Wheel of Life Review, Progress Check, Course Correction. Stage-appropriate: только Preparation/Action stages.
+- **Триггер:** v0.8.0 Execution Layer
+- **Статус:** 📋 В ROADMAP v0.8.0
+- **Источник:** Borrowed from GTD Coach Plugin + PM OKR Skill
+- **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 8/10). Ждёт: dashboard 8→11 fix, MI-compliance review, zero tables в SKILL.md.
+
+### Status Icon System
+- **Описание:** Единая визуальная нотация: ⬜ Todo, 🔄 In Progress, ✅ Completed, ❌ Cancelled, ⏸️ Paused, ⚠️ At Risk + 🔴 P0, 🟡 P1, 🟢 P2 + 🏆 Win, 💡 Insight, 📊 Data, 🔥 Blocker.
+- **Триггер:** v0.8.0+ Execution Layer
+- **Статус:** 📋 В ROADMAP v0.9.0+
+- **Источник:** Borrowed from GTD Coach Plugin
+- **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Риски: accessibility, emotional harm для High N, screen readers.
+
+### Auto-Review Triggers
+- **Описание:** 7+ дней → Weekly Pulse, новый месяц → Monthly Scan, новый квартал → Quarterly Reflection. Permission-based offer, не mandatory prompt.
+- **Триггер:** v0.8.0
+- **Статус:** 📋 В ROADMAP v0.8.0
+- **Источник:** Borrowed from GTD Coach Plugin
+- **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Требует structured session metadata first.
+
+### Adaptive Response Length
+- **Описание:** Три режима: Clarification (2-3 предложения), Exploration (4-6), Crystallization (полный протокол). Интеграция с Communication Style quadrant.
+- **Триггер:** v0.8.0
+- **Статус:** 📋 В ROADMAP v0.8.0
+- **Источник:** Borrowed from Developmental Coach
+- **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Требует спецификации интеграции с Deep Why, Energy Check, Attachment Style.
+
+### Weak Goal Taxonomy + Sanity-Check
+- **Описание:** Паттерны слабых целей: Vague, Output-as-Outcome, Missing Baseline, Sandbagging, Moonshots. Sanity-Check: Coverage, Balance, Feasibility, Measurability, Alignment.
+- **Триггер:** v0.7.1 (lightweight pilot, 5 yes/no questions) / v0.8.0 (full taxonomy)
+- **Статус:** 📋 В ROADMAP v0.8.0
+- **Источник:** Borrowed from PM OKR Skill
+- **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Пилот возможен в v0.7.1, full — в v0.8.0.
+
+### Task Breakdown with Checkpoints
+- **Описание:** Разбиение действий WOOP на шаги с чекпоинтами (✓ Чекпоинт: [критерий выполнения]). Opt-in, только для Career/Finances/Health/Home/Learning.
+- **Триггер:** v0.8.0
+- **Статус:** 📋 В ROADMAP v0.8.0
+- **Источник:** Borrowed from GTD Coach Plugin
+- **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 8/10). Требует валидации потребности через GitHub Discussion.
+
+### Structured Growth Report
+- **Описание:** Шаблон периодического обзора: Summary → Prioritized Growth Areas (Why + Evidence + Recommendation) → Observed Strengths → Actions → Recommended Resources.
+- **Триггер:** v0.8.0
+- **Статус:** 📋 В ROADMAP v0.8.0
+- **Источник:** Borrowed from Composio developer-growth-analysis
+- **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Требует re-assessment flow для Wheel of Life.
+
+### Clarifying-Questions-First
+- **Описание:** Перед глубоким протоколом — 2–3 уточняющих вопроса (домен, опыт, формат). Интеграция с Checkpoint-and-Resume.
+- **Триггер:** v0.8.0
+- **Статус:** 📋 В ROADMAP v0.8.0
+- **Источник:** Borrowed from Composio file-organizer skill
+- **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Пересекается с Phase 0 calibration, Track A/B, Readiness Gate. Решение: `references/session_recalibration.md`, ≤2 строки в SKILL.md.
 
 ### Unified Release Notes — CHANGELOG.md как единый источник правды (Вариант B)
 - **Описание:** Сейчас релиз-ноты дублируются: CHANGELOG.md содержит всю историю, а отдельные файлы `RELEASE_NOTES_vX.Y.Z.md` (в `references/archive/`) используются для GitHub Release. Это приводит к:
