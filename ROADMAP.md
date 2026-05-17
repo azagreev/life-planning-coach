@@ -10,7 +10,7 @@
 | Версия | Статус | Ожидаемая дата | Ключевая фича |
 |--------|--------|----------------|---------------|
 | v0.6.0 | ✅ Released | 2026-05-16 | Authentic Goals + Portfolio + Adaptive Style |
-| v0.7.0 | 🚧 In Progress | TBD | Эмоциональная регуляция (minimal) + BUG-001 fix |
+| v0.7.0 | ✅ Released | 2026-05-17 | Эмоциональная регуляция (minimal) + BUG-001 fix |
 | v0.8.0 | 📋 Planned | TBD | Интеграция привычек (Habit Loop) |
 | v0.9.0 | 📋 Planned | TBD | Мобильная адаптация + краткие сессии |
 
@@ -23,9 +23,9 @@
 **Scope:** Minimal — 3 задачи, ~6-7 часов. [Подробный план](references/plan_v0.7.0.md).
 
 **Входит:**
-- [ ] **BUG-001: Dashboard 8→11 доменов** — P1-баг, дашборд показывает 8 сфер вместо 11
-- [ ] **Emotion Regulation Protocol** — 3 техники (cognitive reappraisal, grounding, self-compassion)
-- [ ] **Фикс зависших тестов** — 3 теста устарели после v0.6.1 cleanup
+- [x] **BUG-001: Dashboard 8→11 доменов** — P1-баг, дашборд показывает 8 сфер вместо 11
+- [x] **Emotion Regulation Protocol** — 3 техники (cognitive reappraisal, grounding, self-compassion)
+- [x] **Фикс зависших тестов** — 3 теста устарели после v0.6.1 cleanup
 
 **Не входит (отложено в v0.7.1/v0.8.0):**
 - Resilience Assessment (требует психометрии)
