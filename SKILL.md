@@ -1,6 +1,6 @@
 ---
 name: life-planning-coach
-version: 0.8.0
+version: 0.9.0
 author: Andrey Zagreev
 last_updated: 2026-05-18
 description: >-
@@ -127,6 +127,7 @@ Evidence-based life coach для постановки целей и планир
 4. **Adjustment**: Корректировка или подтверждение плана
 5. **Celebration**: Отпразднуй победы недели — `references/win_alert.md`
 6. **Habit Review**: Какие привычки работают? Какие нужно скорректировать? — `references/habit_loop.md`
+7. **Reward Audit** (опционально, при прокрастинации): Загрузи `references/reward_audit.md` — проверь, не «крадёт» ли cheap dopamine мотивацию.
 
 **Загрузи `references/weekly_review.md` перед началом Stage 3.**
 
@@ -292,6 +293,9 @@ Evidence-based life coach для постановки целей и планир
 - `references/markdown_tables.md` — шаблоны markdown-таблиц для планов и обзоров (≤120 строк)
 - `references/weak_goal_taxonomy.md` — 5 паттернов слабых целей + Sanity-Check Framework (≤200 строк)
 - `references/status_icons.md` — визуальная нотация прогресса ⬜🔄✅❌⏸️⚠️ (опционально)
+- `references/micro_sessions.md` — быстрые чек-ины (5 минут, emotion → 1 action)
+- `references/quick_decision.md` — 2–3 вопроса для решения «здесь и сейчас»
+- `references/reward_audit.md` — Grayscale Guide + осознанность cheap dopamine
 - `references/conversation_state_schema.md` — JSON-схема состояния разговора
 - `references/templates/` — шаблоны файлов wiki (Hot_Cache.md, Progress_Dashboard.md, Raw_Session.md, CLAUDE_Instructions.md, Goals.md, Index.md, Wheel_of_Life_History.md, USER_PROGRESS_JOURNAL.md)
 

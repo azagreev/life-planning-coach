@@ -8,8 +8,13 @@
 - **Stage 1.5: Фильтр аутентичных целей** — перед постановкой целей скилл проверяет: чья это цель, есть ли энергия, нет ли социального давления. Радар из 5 осей + портфель целей (активные / на паузе / паттерны).
 - **Адаптация стиля коммуникации** — скилл калибруется под вашу личность (Big Five × TTM × MI): от «Нежного родителя» до «Провокационного консультанта».
 - **Evidence-based foundation** — каждая методика (Wheel of Life, WOOP, OKR) имеет научную валидацию с указанием эффект-сайзов.
+- **Habit Tracker / Dashboard Streaks** — визуализация серий привычек (active_habits, digital, sugar, focus)
+- **Mobile Dashboard (responsive)** — адаптивный дашборд для телефонов
+- **5-Minute Micro-Sessions** — быстрые чек-ины на 5 минут для сохранения momentum
+- **Quick Decision Protocol** — 2–3 вопроса для принятия решения «здесь и сейчас»
+- **Reward Audit (Grayscale Guide)** — осознанность cheap dopamine: инструкции Grayscale для iOS/Android
 
-**Версия:** 0.8.0  
+**Версия:** 0.9.0  
 **Автор:** Andrey Zagreev — [@zagreev](https://t.me/zagreev)  
 **Лицензия:** [MIT](LICENSE)  
 **Целевая платформа:** Claude.ai (Free, Pro, Max, Team, Enterprise — skills доступны на всех планах)
