@@ -22,6 +22,9 @@
 - README.md: версия 0.4.0 → 0.6.0, добавлены Stage 1.5 и адаптация стиля
 - GitHub Release v0.6.0: переписан на русский язык
 
+### Removed
+- Удалена секция `[0.3.0]` — этот релиз никогда не существовал. Все описанные в нём фичи (dashboard, presets, goals, weekly review, WOOP) фактически были выпущены в v0.1.0–v0.2.0. Секция была ошибочно добавлена в CHANGELOG задним числом.
+
 ---
 
 ## [0.6.0] — 2026-05-16
@@ -81,17 +84,6 @@
 
 ---
 
-## [0.3.0] — 2026-05-15
-
-### Added
-- Интерактивный HTML Dashboard (`life-planning-dashboard.html`)
-- 4 Life Planning Presets для Google Calendar
-- Двухуровневая система goals (BHAG + Life Themes + OKR)
-- Weekly Review Protocol (GTD + Scrum Retro)
-- Daily WOOP-сессии (Wish-Outcome-Obstacle-Plan)
-
----
-
 ## [0.2.0] — 2026-05-14
 
 ### Added
@@ -119,10 +111,10 @@
 
 ---
 
-[Unreleased]: https://github.com/azagreev/life-planning-coach/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/azagreev/life-planning-coach/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.6.1
 [0.6.0]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.6.0
 [0.5.0]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.5.0
 [0.4.0]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.4.0
-[0.3.0]: https://github.com/azagreev/life-planning-coach/compare/v0.4.0...v0.3.0
-[0.2.0]: https://github.com/azagreev/life-planning-coach/compare/v0.3.0...v0.2.0
+[0.2.0]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.2.0
 [0.1.0]: https://github.com/azagreev/life-planning-coach/compare/v0.2.0...v0.1.0
