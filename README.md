@@ -125,7 +125,7 @@
 1. Открой [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
 2. Скачай файл `life-planning-coach.zip`
 
-> **Примечание для разработчиков:** файл `.zip` — это ZIP-архив папки скилла по требованиям Anthropic. Собрать из исходников: `bash scripts/build-skill.sh` (создаёт `life-planning-coach.zip` и `life-planning-coach.skill` для обратной совместимости).
+> **Примечание для разработчиков:** файл `.zip` — это ZIP-архив папки скилла по требованиям Anthropic. Собрать из исходников: `bash scripts/build-skill.sh` (создаёт `life-planning-coach.zip` и `life-planning-coach.skill` — оба файла идентичны, ZIP-архив папки скилла).
 
 ### Шаг 2. Загрузить в Claude
 
@@ -279,7 +279,7 @@ life-planning-coach/
 ├── SKILL.md                           # Основной skill (для AI-агента)
 ├── life-planning-dashboard.html       # Интерактивный дашборд
 ├── life-planning-coach.zip            # Упакованный skill (ZIP по требованиям Anthropic)
-├── life-planning-coach.skill          # Упакованный skill (legacy, для обратной совместимости)
+├── life-planning-coach.skill          # ZIP-архив скилла (альтернативное расширение)
 │
 ├── references/                        # Документация методик
 │   ├── diagnostic_methods.md          # Stage 1 протоколы

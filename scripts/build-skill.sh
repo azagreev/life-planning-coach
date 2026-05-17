@@ -115,7 +115,7 @@ rm -f "${OUTPUT_ZIP}"
 (cd "${BUILD_DIR}" && zip -r "${OUTPUT_ZIP}" "life-planning-coach" >/dev/null)
 
 # ── 8. Also create .skill file (backward compatibility) ─────────────────────
-cp "${SKILL_MD}" "${OUTPUT_SKILL}"
+cp "${OUTPUT_ZIP}" "${OUTPUT_SKILL}"
 
 # ── 9. Verify outputs ────────────────────────────────────────────────────────
 if [[ ! -f "${OUTPUT_ZIP}" ]]; then
@@ -127,7 +127,7 @@ zip_size=$(du -h "${OUTPUT_ZIP}" | cut -f1)
 
 # ── 10. Success ──────────────────────────────────────────────────────────────
 echo "✓ Built life-planning-coach.zip (version ${skill_version}, size: ${zip_size})"
-echo "✓ Built life-planning-coach.skill (backward compatibility)"
+echo "✓ Built life-planning-coach.skill (ZIP archive)"
 echo ""
 echo "Upload to Claude.ai:"
 echo "  1. Settings → Capabilities → enable 'Code execution and file creation'"

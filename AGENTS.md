@@ -7,7 +7,7 @@
 ## 1. Проект: Общая информация
 
 - **Название:** `life-planning-coach` — evidence-based coaching skill for Claude
-- **Платформа:** Claude.ai (web), ZIP-архив (.skill)
+- **Платформа:** Claude.ai (web), ZIP-архив (`life-planning-coach.zip` или `life-planning-coach.skill` — идентичны, оба ZIP)
 - **Язык контента:** Русский (primary), адаптируется под пользователя
 - **Версия:** v0.6.1 (источник правды — git tag)
 - **Репозиторий:** https://github.com/azagreev/life-planning-coach
