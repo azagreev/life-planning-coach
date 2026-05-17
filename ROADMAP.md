@@ -107,12 +107,13 @@
 | **P0** | **Mobile Dashboard** | `life-planning-dashboard.html` | Habit Tracker (данные) | Адаптивная вёрстка: 11 сфер Wheel of Life + Habit streaks + mobile responsiveness. BUG-001 (8→11) уже исправлен. |
 | **P1** | **5-Minute Micro-Sessions** | `references/micro_sessions.md` | — | Быстрые чек-ины: эмоция → 1 действие. ≤100 строк, opt-in через «у меня 5 минут». Tiny Habits (<30 сек). |
 | **P1** | **Quick Decision Protocol** | `references/quick_decision.md` | — | 2–3 вопроса для решения «здесь и сейчас». Интеграция с Communication Style quadrant. |
-| **P2** | **Reward Audit** | `references/reward_audit.md` | — | **Killer feature (авторский override).** Weekly reflection на источники cheap dopamine + correlation с completion rate. ≤120 строк, opt-in, framing «Reward Management». См. [`references/research/prd_reward_audit.md`](references/research/prd_reward_audit.md). |
+| **P2** | **Reward Audit** | `references/reward_audit.md` | — | **Killer feature (авторский override).** Weekly reflection на источники cheap dopamine + correlation с completion rate. ≤120 строк, opt-in, framing «Reward Management». Доставляемый артефакт: `references/reward_audit.md` + hook в SKILL.md. См. [`references/research/prd_reward_audit.md`](references/research/prd_reward_audit.md). |
 
 **Порядок реализации (согласовано):**
 1. Habit Tracker / Dashboard Streaks (data model)
 2. Mobile Dashboard (CSS поверх готового data model)
 3. 5-Minute Micro-Sessions + Quick Decision Protocol (параллельно, независимые reference-файлы)
+4. Reward Audit — написание `references/reward_audit.md` (≤120 строк) + hook в SKILL.md (≤3 строки)
 
 **Не входит (отложено в v0.9.1+):**
 - Voice-Optimized Output (conf 6/10 — ждёт метрики мобильного использования)
