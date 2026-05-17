@@ -246,7 +246,7 @@ class TestSkillMdIntegration:
         match = re.search(r"^version:\s*(.+)$", text, re.MULTILINE)
         assert match, "SKILL.md must have version in frontmatter"
         version = match.group(1).strip().strip('"').strip("'")
-        assert version == "0.6.1", f"Expected version 0.6.1, got: {version}"
+        assert version == "0.7.0", f"Expected version 0.7.0, got: {version}"
 
     def test_goal_ownership_language_rules(self):
         text = REPO_SKILL_MD.read_text(encoding="utf-8")
