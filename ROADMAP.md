@@ -99,11 +99,19 @@
 
 **Scope:** 4 фичи + Dashboard дополнение (streak-логика + mobile responsiveness).
 
-**Планируемые фичи:**
-- [ ] **5-Minute Micro-Sessions** (`references/micro_sessions.md`) — быстрые чек-ины: эмоция → 1 действие. ≤100 строк, opt-in через «у меня 5 минут».
-- [ ] **Mobile Dashboard** — адаптивная версия HTML Dashboard: 11 сфер Wheel of Life + Habit streaks + mobile responsiveness. BUG-001 (8→11) уже исправлен.
-- [ ] **Quick Decision Protocol** (`references/quick_decision.md`) — 2–3 вопроса для принятия решения «здесь и сейчас». Интеграция с Communication Style quadrant.
-- [ ] **Habit Tracker / Dashboard Streaks** — визуализация цепочек выполнения привычек в дашборде. Связь с `references/habit_loop.md` (Lally timeline). Требует: streak data model inline в HTML + CSS для mobile.
+**Приоритеты и порядок работы:**
+
+| Приоритет | Фича | Файл | Зависимости | Описание |
+|-----------|------|------|-------------|----------|
+| **P0** | **Habit Tracker / Dashboard Streaks** | inline в HTML | — | Визуализация цепочек привычек в дашборде. Streak data model inline в HTML. Связь с `habit_loop.md` (Lally timeline). |
+| **P0** | **Mobile Dashboard** | `life-planning-dashboard.html` | Habit Tracker (данные) | Адаптивная вёрстка: 11 сфер Wheel of Life + Habit streaks + mobile responsiveness. BUG-001 (8→11) уже исправлен. |
+| **P1** | **5-Minute Micro-Sessions** | `references/micro_sessions.md` | — | Быстрые чек-ины: эмоция → 1 действие. ≤100 строк, opt-in через «у меня 5 минут». Tiny Habits (<30 сек). |
+| **P1** | **Quick Decision Protocol** | `references/quick_decision.md` | — | 2–3 вопроса для решения «здесь и сейчас». Интеграция с Communication Style quadrant. |
+
+**Порядок реализации (согласовано):**
+1. Habit Tracker / Dashboard Streaks (data model)
+2. Mobile Dashboard (CSS поверх готового data model)
+3. 5-Minute Micro-Sessions + Quick Decision Protocol (параллельно, независимые reference-файлы)
 
 **Не входит (отложено в v0.9.1+):**
 - Voice-Optimized Output (conf 6/10 — ждёт метрики мобильного использования)

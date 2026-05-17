@@ -46,9 +46,9 @@
 - **Источник:** Borrowed from PM Decision Frameworks
 
 ### Mobile Dashboard
-- **Описание:** Адаптивная версия `life-planning-dashboard.html`: 11 сфер Wheel of Life + Habit streaks + offline-ready. Требует BUG-001 fix (8→11 доменов) + streak data model inline в HTML.
+- **Описание:** Адаптивная версия `life-planning-dashboard.html`: 11 сфер Wheel of Life + Habit streaks + offline-ready. Требует: streak data model inline в HTML + mobile CSS. BUG-001 (8→11) уже исправлен.
 - **Триггер:** v0.9.0
-- **Статус:** 📋 В ROADMAP v0.9.0
+- **Статус:** 📋 В ROADMAP v0.9.0 (P0)
 - **Источник:** Техдолг BUG-001 + Habit Loop Framework
 
 ### Group Coaching Mode
