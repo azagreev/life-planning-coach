@@ -140,7 +140,7 @@
 1. Войди в [claude.ai](https://claude.ai)
 2. Включи **Code execution**:
    - **Settings → Capabilities → Code execution and file creation** → ON
-   - (Для Team/Enterprise: владелец организации должен включить в **Organization settings > Skills**)
+   - (Для Team/Enterprise: владелец организации обязан включить в **Organization settings > Skills**)
 3. Перейди в **Customize → Skills**
 4. Нажми **+** → **+ Create skill**
 5. Выбери **Upload a skill**

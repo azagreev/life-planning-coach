@@ -13,9 +13,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 SKILL_MD="${PROJECT_ROOT}/SKILL.md"
 BUILD_DIR="${PROJECT_ROOT}/.build"
+DIST_DIR="${PROJECT_ROOT}/dist"
 SKILL_FOLDER="${BUILD_DIR}/life-planning-coach"
-OUTPUT_ZIP="${PROJECT_ROOT}/life-planning-coach.zip"
-OUTPUT_SKILL="${PROJECT_ROOT}/life-planning-coach.skill"
+OUTPUT_ZIP="${DIST_DIR}/life-planning-coach.zip"
+OUTPUT_SKILL="${DIST_DIR}/life-planning-coach.skill"
+mkdir -p "${DIST_DIR}"
 
 # ── 1. Validate source file exists ─────────────────────────────────────────────
 if [[ ! -f "${SKILL_MD}" ]]; then
@@ -114,7 +116,7 @@ fi
 rm -f "${OUTPUT_ZIP}"
 (cd "${BUILD_DIR}" && zip -r "${OUTPUT_ZIP}" "life-planning-coach" >/dev/null)
 
-# ── 8. Also create .skill file (backward compatibility) ─────────────────────
+# ── 8. Also create .skill file (same ZIP, alternative extension) ─────────────
 cp "${OUTPUT_ZIP}" "${OUTPUT_SKILL}"
 
 # ── 9. Verify outputs ────────────────────────────────────────────────────────
@@ -126,10 +128,13 @@ fi
 zip_size=$(du -h "${OUTPUT_ZIP}" | cut -f1)
 
 # ── 10. Success ──────────────────────────────────────────────────────────────
-echo "✓ Built life-planning-coach.zip (version ${skill_version}, size: ${zip_size})"
-echo "✓ Built life-planning-coach.skill (ZIP archive)"
+echo "✓ Built dist/life-planning-coach.zip (version ${skill_version}, size: ${zip_size})"
+echo "✓ Built dist/life-planning-coach.skill (ZIP archive, same content)"
 echo ""
 echo "Upload to Claude.ai:"
 echo "  1. Settings → Capabilities → enable 'Code execution and file creation'"
 echo "  2. Customize → Skills → '+' → 'Upload a skill'"
 echo "  3. Select: ${OUTPUT_ZIP}"
+echo ""
+echo "Or attach to GitHub Release:"
+echo "  gh release upload v${skill_version} ${OUTPUT_ZIP} ${OUTPUT_SKILL}"
