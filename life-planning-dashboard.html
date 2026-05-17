@@ -225,11 +225,55 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
       .grid-4 { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 768px) {
-      .dashboard { padding: 12px; }
-      .grid-4 { grid-template-columns: 1fr; }
+      /* Шрифты */
+      body { font-size: 14px; }
+      h1 { font-size: 1.5rem; }
+      h2 { font-size: 1.2rem; }
+      .header-title { font-size: 18px; }
+      .card-title { font-size: 14px; }
+
+      /* Layout */
+      .dashboard { padding: 10px; }
+      .card { padding: 16px; margin-bottom: 12px; }
+
+      /* Header & Tabs */
       .header { flex-direction: column; align-items: flex-start; }
       .tabs { width: 100%; }
       .tab-btn { flex: 1; justify-content: center; padding: 10px 8px; font-size: 13px; }
+
+      /* Grid */
+      .grid-4 { grid-template-columns: 1fr; }
+
+      /* Wheel of Life / Charts */
+      #radar-chart { height: 300px !important; }
+      .chart-container-sm { height: 220px !important; }
+      .chart-container-lg { height: 340px !important; }
+
+      /* OKR Rings */
+      .ring-wrap { width: 120px; height: 120px; }
+      .ring-svg { width: 120px; height: 120px; }
+      .ring-value { font-size: 22px; }
+
+      /* Streaks */
+      .streak-card { flex-direction: row; align-items: center; padding: 8px; gap: 10px; flex-wrap: wrap; }
+      .streak-icon { font-size: 1.5rem; width: 40px; height: 40px; flex-shrink: 0; }
+      .streak-header { flex: 1; }
+      .streak-bar-wrap { flex: 1 1 100%; }
+
+      /* Touch-friendly */
+      button, .clickable, .tab-btn, .priority-item, .priority-checkbox, .modal-close, .export-btn { min-height: 44px; min-width: 44px; }
+
+      /* Modal */
+      .modal { padding: 20px; max-width: 96%; }
+      .modal-title { font-size: 16px; }
+
+      /* Stats */
+      .stat-row { gap: 8px; }
+      .stat-item { min-width: 70px; padding: 10px; }
+      .stat-value { font-size: 18px; }
+
+      /* No horizontal scroll */
+      html, body { overflow-x: hidden; }
     }
 
     /* ========== CARD ========== */
