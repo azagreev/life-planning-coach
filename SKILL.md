@@ -103,6 +103,8 @@ Evidence-based life coach для постановки целей и планир
 
 **Результат**: Goal Portfolio — 🟢 Active / 🟡 On Pause / 🔍 Pattern Analysis
 
+🎉 **Прошедшие фильтр цели** — отпразднуй достижения через `references/win_alert.md`.
+
 **Загрузи `references/authentic_goal_filter.md` перед началом Stage 1.5.**
 
 ### 5. Phase 2: Goal Architecture (Построение целей)
@@ -123,6 +125,7 @@ Evidence-based life coach для постановки целей и планир
 2. **Scrum Retro**: Что работало / что нет / что меняем
 3. **Progress Audit**: Lead vs Lag measures по каждой цели
 4. **Adjustment**: Корректировка или подтверждение плана
+5. **Celebration**: Отпразднуй победы недели — `references/win_alert.md`
 
 **Загрузи `references/weekly_review.md` перед началом Stage 3.**
 
@@ -149,6 +152,8 @@ Evidence-based life coach для постановки целей и планир
 - Daily WOOP → Утреннее напоминание (ежедневное)
 - Time Blocks → Блоки глубокой работы (цвета из COLOR_MAP)
 
+**Учитывай энергию** при планировании — загрузи `references/energy_scheduling.md`.
+
 **Если Calendar недоступен**:
 1. Сохранить все pending events в `conversation_state.persistence_retry.calendar.pending_events`
 2. Явно предупредить: «Без календаря твои цели остаются намерениями без временных якорей. 60% намерений без временного слота забываются через 48 часов. Рекомендую подключить календарь — один клик, и я автоматически создам напоминания для всех целей.»
@@ -161,6 +166,7 @@ Evidence-based life coach для постановки целей и планир
 **Checkpoint-and-Resume**:
 - Каждая сессия сохраняет прогресс
 - При возобновлении: 2-предложенный recap + "Где остановились?"
+- Если пропуск >7 дней — загрузи `references/recovery_protocol.md`
 - Максимум 8-10 вопросов за сессию, затем предложи перерыв
 - Поддерживай микро-сессии (2-3 минуты)
 
@@ -237,6 +243,7 @@ Evidence-based life coach для постановки целей и планир
 | Google Drive недоступен (гео-блокировка, отозван доступ) | Graceful fallback: "Сейчас не могу подключиться к Drive. Работаем в обычном режиме, данные сохраняются в памяти." Переключись на Claude Memory. |
 | Calendar MCP не работает | Предложи text-only планирование. Все планы остаются в разговоре. |
 | Пользователь просит пропустить вопрос | Всегда разрешай. "Конечно, давай перейдём дальше." |
+| Пользователь пропустил сессию | Загрузи `references/recovery_protocol.md` — выбери стратегию по длительности пропуска |
 | Пользователь в кризисе (все сферы < 3, мысли о самоповреждении) | Немедленная эскалация: предоставь ресурсы, порекомендуй профессионала. Не пытайся "вылечить". |
 | Memory переполнена / контекст сжался | Предложи подключить Google Drive для wiki persistence. Hot_Cache экономит ~60-75% токенов. |
 | Пользователь говорит "я не знаю что хочу" | Это нормально. Начни с Emotional Landing + Values Clarification (что важно, а не что хочется). |
@@ -261,6 +268,9 @@ Evidence-based life coach для постановки целей и планир
 - `references/science_backing.md` — научная валидация (эффект sizes, meta-analyses)
 - `references/dashboard_guide.md` — руководство по интерактивному дашборду
 - `references/calendar_constants.md` — константы календаря (COLOR_MAP, presets, failure modes)
+- `references/energy_scheduling.md` — планирование с учётом энергии (3 уровня, colorId mapping)
+- `references/win_alert.md` — структурированное празднование побед (5 шагов, 4 квадранта стиля)
+- `references/recovery_protocol.md` — восстановление после пропусков (3 стратегии, без streak tracking)
 - `references/conversation_state_schema.md` — JSON-схема состояния разговора
 - `references/templates/` — шаблоны файлов wiki (Hot_Cache.md, Progress_Dashboard.md, Raw_Session.md, CLAUDE_Instructions.md, Goals.md, Index.md, Wheel_of_Life_History.md, USER_PROGRESS_JOURNAL.md)
 
