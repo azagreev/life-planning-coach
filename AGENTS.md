@@ -9,7 +9,7 @@
 - **Название:** `life-planning-coach` — evidence-based coaching skill for Claude
 - **Платформа:** Claude.ai (web), ZIP-архив (`life-planning-coach.zip` или `life-planning-coach.skill` — идентичны, оба ZIP)
 - **Язык контента:** Русский (primary), адаптируется под пользователя
-- **Версия:** v0.7.1 (источник правды — git tag)
+- **Версия:** v0.9.1 (источник правды — git tag)
 - **Репозиторий:** https://github.com/azagreev/life-planning-coach
 - **Ветка:** `main` (единственная)
 
@@ -130,6 +130,26 @@ bash scripts/release.sh X.Y.Z
 ```
 Шаги: preconditions → sync-version → commit → push → verify → tag → GitHub Release.
 
+**ЗАПРЕЩЕНО создавать релизы вручную** (через GitHub UI, `gh release create --title`, или API).
+Нарушение приводит к неконсистентным названиям релизов, как произошло с v0.9.0/v0.9.1.
+
+**Конвенция названий релизов** (since commit 856706d):
+- Title = **только тег** (`v0.9.1`), без описания
+- Описание = **только в теле release notes** (RELEASE_NOTES_vX.Y.Z.md)
+- Примеры некорректных: `v0.9.1 — Apple-style Dashboard Redesign` ❌
+- Примеры корректных: `v0.9.1` ✅
+
+**Система защиты (3 уровня):**
+1. **Git hook** (`.github/hooks/pre-push-release-guard`) — блокирует `git push` тега без RELEASE_NOTES файла
+2. **GitHub Actions** (`.github/workflows/release-guard.yml`) — при создании/редактировании релиза: автофикс title + комментарий-предупреждение + tracking issue
+3. **AGENTS.md** — этот документ запрещает ручное создание релизов для всех AI-агентов
+
+**Установка hook'а:**
+```bash
+cp .github/hooks/pre-push-release-guard .git/hooks/pre-push
+chmod +x .git/hooks/pre-push
+```
+
 ### 4.3 Post-commit hook
 При коммите выводится предупреждение если есть unpushed commits:
 ```
@@ -213,4 +233,4 @@ bash scripts/release.sh X.Y.Z
 ---
 
 *Обновлено: 2026-05-18*  
-*Версия: 2.0 (для life-planning-coach v0.7.1+)*
+*Версия: 2.1 (для life-planning-coach v0.9.1+)*

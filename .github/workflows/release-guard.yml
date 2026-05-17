@@ -1,0 +1,79 @@
+name: Release Guard
+
+on:
+  release:
+    types: [created, edited]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  enforce-tag-only-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate & auto-fix release title
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RELEASE_ID="${{ github.event.release.id }}"
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          RELEASE_NAME="${{ github.event.release.name }}"
+          REPO="${{ github.repository }}"
+
+          if [ "$RELEASE_NAME" = "$TAG_NAME" ]; then
+            echo "✅ Release title is correct: $RELEASE_NAME"
+            exit 0
+          fi
+
+          echo "🔴 VIOLATION: Release title does not match tag-only convention"
+          echo "   Expected: '$TAG_NAME'"
+          echo "   Got:      '$RELEASE_NAME'"
+          echo ""
+          echo "   Use: bash scripts/release.sh ${TAG_NAME#v}"
+          echo "   Docs: AGENTS.md §4.2 — Release process"
+          echo ""
+
+          # Auto-fix the title
+          gh api "repos/$REPO/releases/$RELEASE_ID" \
+            --method PATCH \
+            -f name="$TAG_NAME" \
+            >/dev/null
+
+          echo "✅ Auto-fixed title to: $TAG_NAME"
+
+      - name: Post warning comment on release
+        if: github.event.release.name != github.event.release.tag_name
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          REPO="${{ github.repository }}"
+          RELEASE_ID="${{ github.event.release.id }}"
+
+          gh api "repos/$REPO/releases/$RELEASE_ID" \
+            --method PATCH \
+            -f body="${{ github.event.release.body }}\n\n---\n\n> ⚠️ **System notice:** This release was created with a non-standard title ('${{ github.event.release.name }}'). The title has been auto-corrected to tag-only format per project convention ([commit 856706d](https://github.com/$REPO/commit/856706d)).\n> \n> **Always use:** \`bash scripts/release.sh ${TAG_NAME#v}\`\n> \n> **Never use:** \`gh release create --title '...'\` or GitHub UI." \
+            >/dev/null
+
+          echo "📝 Warning comment appended to release body"
+
+      - name: Create tracking issue for manual intervention audit
+        if: github.event.release.name != github.event.release.tag_name
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          REPO="${{ github.repository }}"
+
+          gh api "repos/$REPO/issues" \
+            --method POST \
+            -f title="[release-guard] Manual release detected: $TAG_NAME" \
+            -f body="A release was created bypassing \`scripts/release.sh\`. Title was auto-corrected from '${{ github.event.release.name }}' to '$TAG_NAME'.\n\n**Action required:** Review release notes for completeness.\n\n- Release: https://github.com/$REPO/releases/tag/$TAG_NAME\n- Convention: [AGENTS.md §4.2](https://github.com/$REPO/blob/main/AGENTS.md)" \
+            -f labels="bug,automation" \
+            >/dev/null
+
+          echo "🎫 Tracking issue created"

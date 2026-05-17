@@ -1,0 +1,39 @@
+#!/bin/bash
+# pre-push-release-guard — блокировка ручного пуша тегов без RELEASE_NOTES
+#
+# Установка:
+#   cp .github/hooks/pre-push-release-guard .git/hooks/pre-push
+#   chmod +x .git/hooks/pre-push
+#
+# Логика: если пушится тег вида vX.Y.Z, проверяем наличие RELEASE_NOTES файла.
+# Если файла нет — блокируем пуш с инструкцией использовать scripts/release.sh
+
+while read local_ref local_sha remote_ref remote_sha; do
+    # Проверяем только теги (refs/tags/)
+    if [[ "$remote_ref" == refs/tags/v* ]]; then
+        TAG="${remote_ref#refs/tags/}"
+        RELEASE_NOTES="references/archive/RELEASE_NOTES_${TAG}.md"
+
+        if [ ! -f "$RELEASE_NOTES" ]; then
+            echo ""
+            echo "🔴 RELEASE GUARD: Попытка ручного пуша тега $TAG"
+            echo ""
+            echo "   Отсутствует файл: $RELEASE_NOTES"
+            echo ""
+            echo "   Ручное создание релизов ЗАПРЕЩЕНО."
+            echo "   Используйте атомарный скрипт:"
+            echo ""
+            echo "      bash scripts/release.sh ${TAG#v}"
+            echo ""
+            echo "   Скрипт гарантирует:"
+            echo "      ✓ Title = tag only (vX.Y.Z)"
+            echo "      ✓ Release notes на русском"
+            echo "      ✓ ZIP + .skill артефакты"
+            echo "      ✓ Консистентность версий"
+            echo ""
+            exit 1
+        fi
+
+        echo "✅ RELEASE GUARD: Тег $TAG — RELEASE_NOTES найден, пропускаю"
+    fi
+done
