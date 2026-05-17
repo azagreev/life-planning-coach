@@ -123,11 +123,11 @@
 ### Шаг 1. Скачать скилл
 
 1. Открой [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
-2. Скачай файл `life-planning-coach-vX.Y.Z.zip` (где X.Y.Z — последняя версия, например `v0.6.1`)
+2. Скачай файл `life-planning-coach-vX.Y.Z.zip` (где X.Y.Z — последняя версия, например `0.6.1`)
 
 > **Примечание:** доступны два файла:
 > - `life-planning-coach-vX.Y.Z.zip` — ZIP-архив
-> - `life-planning-coach.skill` — тот же ZIP-архив с расширением `.skill`
+> - `life-planning-coach-vX.Y.Z.skill` — тот же ZIP-архив с расширением `.skill`
 >
 > Оба файла идентичны — выбирай любой. Anthropic рекомендует ZIP.
 >
@@ -144,7 +144,7 @@
 3. Перейди в **Customize → Skills**
 4. Нажми **+** → **+ Create skill**
 5. Выбери **Upload a skill**
-6. Выбери скачанный файл (`life-planning-coach-vX.Y.Z.zip` или `.skill`)
+6. Выбери скачанный ZIP-файл (`life-planning-coach-vX.Y.Z.zip` или `.skill`)
 7. Дождись сообщения об успешной загрузке
 8. Включи скилл тумблером в списке Skills
 
@@ -290,8 +290,9 @@ life-planning-coach/
 ├── BACKLOG.md                         # Бэклог идей
 ├── SKILL.md                           # Основной skill (для AI-агента)
 ├── life-planning-dashboard.html       # Интерактивный дашборд
-├── life-planning-coach.zip            # Упакованный skill (ZIP по требованиям Anthropic)
-├── life-planning-coach.skill          # ZIP-архив скилла (альтернативное расширение)
+├── dist/                                # Сборочные артефакты (не в git)
+│   ├── life-planning-coach-vX.Y.Z.zip   # Упакованный skill (ZIP по требованиям Anthropic)
+│   └── life-planning-coach-vX.Y.Z.skill # Тот же ZIP с расширением .skill
 │
 ├── references/                        # Документация методик
 │   ├── diagnostic_methods.md          # Stage 1 протоколы

@@ -119,11 +119,17 @@ else
     if [ -f "$RELEASE_NOTES_FILE" ]; then
         # Title = tag only (minimalist format, as React/Node.js do)
         # Release notes contain the full description
+        ZIP_FILE="dist/life-planning-coach-v${VERSION}.zip"
+        SKILL_FILE="dist/life-planning-coach-v${VERSION}.skill"
+        if [ ! -f "$ZIP_FILE" ] || [ ! -f "$SKILL_FILE" ]; then
+            echo "❌ Build artifacts not found. Run: bash scripts/build-skill.sh"
+            exit 1
+        fi
         gh release create "$TAG" \
             --title "$TAG" \
             --notes-file "$RELEASE_NOTES_FILE" \
-            life-planning-coach.zip \
-            life-planning-coach.skill
+            "$ZIP_FILE" \
+            "$SKILL_FILE"
         echo "✅ Release $TAG создан из $RELEASE_NOTES_FILE"
     else
         echo "⚠️  Файл $RELEASE_NOTES_FILE не найден"
