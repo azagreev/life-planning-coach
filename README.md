@@ -9,7 +9,7 @@
 - **Адаптация стиля коммуникации** — скилл калибруется под вашу личность (Big Five × TTM × MI): от «Нежного родителя» до «Провокационного консультанта».
 - **Evidence-based foundation** — каждая методика (Wheel of Life, WOOP, OKR) имеет научную валидацию с указанием эффект-сайзов.
 
-**Версия:** 0.6.0  
+**Версия:** 0.6.1  
 **Автор:** Andrey Zagreev — [@zagreev](https://t.me/zagreev)  
 **Лицензия:** [MIT](LICENSE)  
 **Целевая платформа:** Claude.ai (Pro для загрузки skills; Google Drive — free plan)

@@ -223,7 +223,7 @@ class TestSkillMdContent:
         version_match = re.search(r"^version\s*:\s*['\"]?(.*?)['\"]?\s*$", frontmatter, re.MULTILINE)
         assert version_match, "Frontmatter missing 'version' field"
         version = version_match.group(1).strip('"').strip("'")
-        assert version == "0.6.0", f"Expected version 0.6.0, got: {version}"
+        assert version == "0.6.1", f"Expected version 0.6.1, got: {version}"
 
     def test_skill_md_is_under_token_limit(self, skill_md_from_zip):
         """
