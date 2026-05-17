@@ -9,7 +9,7 @@
 - **Название:** `life-planning-coach` — evidence-based coaching skill for Claude
 - **Платформа:** Claude.ai (web), ZIP-архив (`life-planning-coach.zip` или `life-planning-coach.skill` — идентичны, оба ZIP)
 - **Язык контента:** Русский (primary), адаптируется под пользователя
-- **Версия:** v0.6.1 (источник правды — git tag)
+- **Версия:** v0.7.1 (источник правды — git tag)
 - **Репозиторий:** https://github.com/azagreev/life-planning-coach
 - **Ветка:** `main` (единственная)
 
@@ -19,10 +19,10 @@
 
 ```
 life-planning-coach/
-├── SKILL.md                    # Главный файл скилла (245 строк, ≤5000 слов)
+├── SKILL.md                    # Главный файл скилла (292 строки, ≤5000 слов)
 ├── README.md                   # Документация для пользователей
 ├── setup.py                    # Python package metadata (version must match git tag)
-├── life-planning-dashboard.html # HTML Dashboard (⚠️ сейчас 8 сфер, должно быть 11)
+├── life-planning-dashboard.html # HTML Dashboard
 ├── CHANGELOG.md                # История изменений
 ├── ROADMAP.md                  # План развития
 ├── BACKLOG.md                  # Идеи без привязки к версии
@@ -33,15 +33,21 @@ life-planning-coach/
 │   ├── calendar_constants.md
 │   ├── conversation_state_schema.md
 │   ├── acceptance_criteria_v0.7.md  # Текущие AC
+│   ├── emotion_regulation.md
+│   ├── energy_scheduling.md
+│   ├── recovery_protocol.md
+│   ├── win_alert.md
 │   └── ...
-├── calendar_integration/        # Python package (auth, calendar_manager, tasks)
 ├── tests/                       # Системные и интеграционные тесты
 │   └── system/
 │       ├── test_version_consistency.py
 │       ├── test_github_sync.py
 │       ├── test_readme_integrity.py
-│       └── test_skill_structure.py  # AC v0.7 compliance (23 tests)
+│       ├── test_skill_structure.py  # AC v0.7 compliance (23 tests)
+│       └── test_v071_features.py
 └── scripts/
+    ├── build-skill.ps1
+    ├── build-skill.sh
     ├── release.sh               # Атомарный релиз
     └── sync-version.sh          # Синхронизация версий
 ```
@@ -52,7 +58,7 @@ life-planning-coach/
 
 ### 3.1 Version Consistency — источник правды: git tag
 ```bash
-git describe --tags --abbrev=0  # → v0.6.1
+git describe --tags --abbrev=0  # → v0.7.1
 ```
 Версия должна совпадать во всех файлах:
 - `SKILL.md` YAML frontmatter `version:`
@@ -61,15 +67,15 @@ git describe --tags --abbrev=0  # → v0.6.1
 
 **Как обновить:** запускать `bash scripts/release.sh X.Y.Z` (атомарно).
 
-### 3.2 Acceptance Criteria v0.7 — 17 AC
+### 3.2 Acceptance Criteria v0.7 — 19 AC
 
 | Приоритет | Кол-во | Что проверяется |
 |-----------|--------|-----------------|
-| P0 | 10 | Stage 1.5, Authentic Goal Filter, Communication Style, YAML frontmatter, размер ≤500 строк, обязательные разделы, версия |
-| P1 | 5 | Deep Why, TTM, MI, Triggering Precision |
+| P0 | 11 | Stage 1.5, Authentic Goal Filter, Communication Style, YAML frontmatter, размер ≤500 строк, обязательные разделы, версия |
+| P1 | 4 | Deep Why, TTM, MI, Triggering Precision |
 | P2 | 4 | Energy Check, Wheel of Life 11 доменов, Progressive Disclosure, ZIP структура |
 
-**Как проверить:** `python3 -m pytest tests/system/ -v` → **39 passed, 2 skipped**.
+**Как проверить:** `python3 -m pytest tests/system/ -v` → **61 passed, 3 skipped**.
 
 ### 3.3 SKILL.md Structure (Anthropic Compliance)
 
@@ -109,8 +115,6 @@ life-planning-coach.zip
 10. 🌍 Вклад в общество и наследие
 11. 🏠 Дом и окружение
 
-⚠️ **Важно:** `life-planning-dashboard.html` всё ещё показывает 8 сфер — это известный баг.
-
 ---
 
 ## 4. Git Workflow
@@ -136,7 +140,7 @@ bash scripts/release.sh X.Y.Z
 ВСЕ тесты должны проходить перед релизом:
 ```bash
 python3 -m pytest tests/system/ -v
-# Expected: 39 passed, 2 skipped
+# Expected: 61 passed, 3 skipped
 ```
 
 ---
@@ -182,7 +186,6 @@ python3 -m pytest tests/system/ -v
 
 | Issue | Файл | Приоритет |
 |-------|------|-----------|
-| Dashboard: 8 сфер вместо 11 | `life-planning-dashboard.html` | P1 |
 | Calendar Event Copy Review | `references/calendar_constants.md` | P2 (в BACKLOG) |
 | SSH key permissions (0777) | `~/.ssh/id_ed25519_github` | ✅ Fixed |
 
@@ -209,5 +212,5 @@ bash scripts/release.sh X.Y.Z
 
 ---
 
-*Обновлено: 2026-05-17*  
-*Версия: 2.0 (для life-planning-coach v0.6.1+)*
+*Обновлено: 2026-05-18*  
+*Версия: 2.0 (для life-planning-coach v0.7.1+)*
