@@ -78,10 +78,11 @@
 
 ### Reward Audit (Бюджет Дофамина / Cheap Dopamine Tracker)
 - **Описание:** Модуль для логирования источников «дешёвого дофамина» (сахар, скролл соцсетей, Shorts, игры) и корреляции их с completion rate целей. Dopamine Load Score (0–10), weekly insights, интеграция в planning flow. Фрейминг: «Reward Management для достижения целей», не guilt-trip.
-- **Триггер:** 3+ запроса пользователей на «почему я прокрастинирую» или при расширении Habit Tracker (v0.9.0+)
-- **Статус:** 💡 Идея (PRD готов)
+- **Триггер:** Решение автора проекта — killer feature, без pilot/проверки
+- **Статус:** 🎯 **Решение принято: IMPLEMENT** (авторский override после Advocate/Critic дебата)
 - **Источник:** Научный ресёрч (Rada 2005, Avena 2008, Lembke 2021, Kushlev 2025) + конкурентный анализ (Elqi, Opal, BePresent)
-- **Дебат:** Advocate/Critic — требуется. Риски: научный backlash (oversimplification), guilt-trip восприятие, privacy.
+- **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 6/10). **Авторский override:** реализовать без пилота, как killer feature.
+- **Scope для скилла:** Lightweight reference (`references/reward_audit.md`, ≤120 строк) + hook в SKILL.md (≤3 строки). Conversational weekly reflection, не standalone tracker.
 - **Полный PRD:** [`references/research/prd_reward_audit.md`](references/research/prd_reward_audit.md)
 
 ---
