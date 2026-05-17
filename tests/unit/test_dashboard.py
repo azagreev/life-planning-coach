@@ -34,10 +34,15 @@ class TestDashboardHtml(unittest.TestCase):
 
     def test_doctype_and_html_lang(self):
         self.assertIn("<!DOCTYPE html>", self.content, "Must have <!DOCTYPE html>")
-        self.assertIn('<html lang="ru">', self.content, 'Must have <html lang="ru">')
+        import re
+        self.assertTrue(
+            bool(re.search(r'<html[^>]*\blang=["\']ru["\']', self.content)),
+            'Must have <html lang="ru">'
+        )
 
     def test_contains_expected_chart_keywords(self):
-        keywords = ["ECharts", "Chart.js", "radar", "heatmap"]
+        """v0.9.1: Pure SVG/CSS replaces ECharts/Chart.js. Keep heatmap."""
+        keywords = ["heatmap", "ring-fill", "streak", "liquid-glass"]
         for kw in keywords:
             with self.subTest(keyword=kw):
                 self.assertIn(kw.lower(), self.content.lower(),

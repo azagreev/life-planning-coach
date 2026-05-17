@@ -27,6 +27,35 @@
 
 ---
 
+## [0.9.1] — 2026-05-18
+
+### Added
+- **Apple-style Dashboard Redesign** — полностью переработанный `life-planning-dashboard.html`
+  - Activity Rings (SVG) — 3 кольца прогресса: Баланс, Исполнение, Консистентность
+  - Liquid Glass карточки — `backdrop-filter: blur(40px)` с graceful degradation
+  - Dark/Light mode toggle — переключение темы с сохранением в `localStorage`
+  - macOS-style sidebar + segmented control tabs (Обзор / Ретроспектива / Цели)
+  - Confidence Gauges (SVG) — 4 показателя уверенности
+  - CSS Grid Heatmap — 365 дней активности без внешних библиотек
+  - 12-Week Tracker — бары прогресса по 12 неделям
+  - WOOP Cards + BHAG Roadmap + OKR Summary
+  - Velocity & Burndown sparklines (SVG)
+  - Weekly Priorities с чекбоксами
+  - Accessibility: `prefers-reduced-motion`, focus-visible, aria-labels, semantic HTML
+  - Mobile-first responsive: breakpoints 375px / 768px / 992px / 1200px+
+
+### Changed
+- **Удалены внешние зависимости** — ECharts (~1 MB), Chart.js (~200 KB), Font Awesome (~100 KB) заменены на чистый SVG + CSS
+- **Размер файла**: 1,403 KB → ~61 KB (уменьшение в 23×)
+- **Шрифты**: системный стек вместо Google Fonts (Inter) — полная offline-совместимость
+- **System font stack**: `-apple-system`, `BlinkMacSystemFont`, `SF Pro Display`, `Segoe UI`, Roboto
+
+### Fixed
+- `test_contains_expected_chart_keywords` обновлён под новую архитектуру (SVG вместо ECharts/Chart.js)
+- `test_doctype_and_html_lang` поддерживает атрибуты в теге `<html>`
+
+---
+
 ## [0.9.0] — 2026-05-18
 
 ### Added
