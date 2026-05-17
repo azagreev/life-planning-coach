@@ -117,6 +117,8 @@ if gh release view "$TAG" >/dev/null 2>&1; then
 else
     RELEASE_NOTES_FILE="references/archive/RELEASE_NOTES_$TAG.md"
     if [ -f "$RELEASE_NOTES_FILE" ]; then
+        # Title = tag only (minimalist format, as React/Node.js do)
+        # Release notes contain the full description
         gh release create "$TAG" \
             --title "$TAG" \
             --notes-file "$RELEASE_NOTES_FILE" \
