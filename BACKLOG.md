@@ -30,8 +30,26 @@
 ### Voice-Optimized Output
 - **Описание:** Ответы скилла, удобные для голосового чтения на мобильных
 - **Триггер:** 50%+ сессий на мобильных устройствах или запрос 3+ пользователей
-- **Статус:** 📋 В ROADMAP v0.9.0
+- **Статус:** 📋 В ROADMAP v0.9.1+ (отложено из v0.9.0)
 - **Источник:** Пользовательский опыт (мобильное использование)
+
+### 5-Minute Micro-Sessions
+- **Описание:** Быстрые чек-ины для режима нехватки времени: эмоция → 1 действие. ≤100 строк, opt-in через фразу пользователя "у меня 5 минут". Интеграция с Habit Loop (Tiny Habits: <30 сек).
+- **Триггер:** v0.9.0 мобильная адаптация
+- **Статус:** 📋 В ROADMAP v0.9.0
+- **Источник:** Borrowed from Developmental Coach + Tiny Habits (Fogg)
+
+### Quick Decision Protocol
+- **Описание:** 2–3 вопроса для принятия решения «здесь и сейчас». Адаптируется под Communication Style quadrant (High A = больше контекста, High N = больше безопасности).
+- **Триггер:** v0.9.0 мобильная адаптация
+- **Статус:** 📋 В ROADMAP v0.9.0
+- **Источник:** Borrowed from PM Decision Frameworks
+
+### Mobile Dashboard
+- **Описание:** Адаптивная версия `life-planning-dashboard.html`: 11 сфер Wheel of Life + Habit streaks + offline-ready. Требует BUG-001 fix (8→11 доменов) + streak data model inline в HTML.
+- **Триггер:** v0.9.0
+- **Статус:** 📋 В ROADMAP v0.9.0
+- **Источник:** Техдолг BUG-001 + Habit Loop Framework
 
 ### Group Coaching Mode
 - **Описание:** Парный или групповой коучинг (2+ человека + скилл)
@@ -149,8 +167,8 @@
   3. **Micro-commitments** — начинать с 1 события в неделю, постепенно наращивать
   4. **Social accountability** — опциональное напоминание другу/партнёру
   5. **Streak tracking** — визуализация цепочки выполненных сессий в дашборде
-- **Триггер:** v0.8.0 (Habit Loop Framework) или при жалобе "я постоянно пропускаю Weekly Review"
-- **Статус:** 💡 Идея
+- **Триггер:** v0.9.0 (Mobile Dashboard + Habit Tracker)
+- **Статус:** 📋 В ROADMAP v0.9.0 (через Habit Tracker / Dashboard Streaks)
 - **Источник:** BJ Fogg (Tiny Habits), James Clear (Atomic Habits), Milkman et al. (2021) — planning fallacy + implementation intentions
 ### Recovery Protocol — что делать если пропустил сессию
 - **Описание:** Пропуск Weekly Review (или любой регулярной сессии) — нормально. Но важно иметь чёткий протокол восстановления, чтобы один пропуск не превратился в полный срыв.
@@ -190,23 +208,23 @@
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 8/10). Ждёт: dashboard 8→11 fix, MI-compliance review, zero tables в SKILL.md.
 
 ### Status Icon System
-- **Описание:** Единая визуальная нотация: ⬜ Todo, 🔄 In Progress, ✅ Completed, ❌ Cancelled, ⏸️ Paused, ⚠️ At Risk + 🔴 P0, 🟡 P1, 🟢 P2 + 🏆 Win, 💡 Insight, 📊 Data, 🔥 Blocker.
-- **Триггер:** v0.8.0+ Execution Layer
-- **Статус:** 📋 В ROADMAP v0.9.0+
+- **Описание:** Единая визуальная нотация: ⬜ Todo, 🔄 In Progress, ✅ Completed, ❌ Cancelled, ⏸️ Paused, ⚠️ At Risk. Accessibility fallback + High N safety.
+- **Триггер:** v0.8.0 Execution Layer
+- **Статус:** ✅ Реализовано в v0.8.0 (`references/status_icons.md`, 61 строка)
 - **Источник:** Borrowed from GTD Coach Plugin
-- **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Риски: accessibility, emotional harm для High N, screen readers.
+- **Дебат:** Advocate/Critic 3 цикла → **IMPLEMENT** (conf 7/10). Риски: accessibility, emotional harm для High N, screen readers.
 
 ### Auto-Review Triggers
 - **Описание:** 7+ дней → Weekly Pulse, новый месяц → Monthly Scan, новый квартал → Quarterly Reflection. Permission-based offer, не mandatory prompt.
-- **Триггер:** v0.8.0
-- **Статус:** 📋 В ROADMAP v0.8.0
+- **Триггер:** v0.9.0+
+- **Статус:** 📋 В ROADMAP v0.9.0+
 - **Источник:** Borrowed from GTD Coach Plugin
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Требует structured session metadata first.
 
 ### Adaptive Response Length
 - **Описание:** Три режима: Clarification (2-3 предложения), Exploration (4-6), Crystallization (полный протокол). Интеграция с Communication Style quadrant.
-- **Триггер:** v0.8.0
-- **Статус:** 📋 В ROADMAP v0.8.0
+- **Триггер:** v0.9.0+
+- **Статус:** 📋 В ROADMAP v0.9.0+
 - **Источник:** Borrowed from Developmental Coach
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Требует спецификации интеграции с Deep Why, Energy Check, Attachment Style.
 
@@ -226,8 +244,8 @@
 
 ### Structured Growth Report
 - **Описание:** Шаблон периодического обзора: Summary → Prioritized Growth Areas (Why + Evidence + Recommendation) → Observed Strengths → Actions → Recommended Resources.
-- **Триггер:** v0.8.0
-- **Статус:** 📋 В ROADMAP v0.8.0
+- **Триггер:** v0.9.0+
+- **Статус:** 📋 В ROADMAP v0.9.0+
 - **Источник:** Borrowed from Composio developer-growth-analysis
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Требует re-assessment flow для Wheel of Life.
 

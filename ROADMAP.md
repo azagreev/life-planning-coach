@@ -12,8 +12,8 @@
 | v0.6.0 | ✅ Released | 2026-05-16 | Authentic Goals + Portfolio + Adaptive Style |
 | v0.7.0 | ✅ Released | 2026-05-17 | Эмоциональная регуляция (minimal) + BUG-001 fix |
 | v0.7.1 | ✅ Released | 2026-05-18 | Execution Layer — patch (Win Alert, Recovery, Energy Scheduling) |
-| v0.8.0 | 🔄 In Progress | TBD | Habit Loop Framework + Execution Layer v2 (6 фич) |
-| v0.9.0 | 📋 Planned | TBD | Мобильная адаптация + краткие сессии |
+| v0.8.0 | ✅ Released | 2026-05-17 | Habit Loop Framework + Execution Layer v2 (6 фич) |
+| v0.9.0 | 🔄 In Progress | TBD | Мобильная адаптация + Habit Tracker + краткие сессии |
 
 ---
 
@@ -79,11 +79,11 @@
 - [x] **AGENTS.md overhaul** — актуализация после v0.7.1
 
 **Не входит (отложено в v0.9.0+):**
-- Habit Tracker / Dashboard streaks (требует dashboard рефакторинг)
 - Auto-Review Triggers (требует structured session metadata)
 - Structured Growth Report (требует re-assessment flow)
 - Adaptive Response Length (требует интеграции с Deep Why/Energy Check)
 - Calendar Event Copy Review (scope ambiguity)
+- Voice-Optimized Output (отложено из v0.9.0, conf 6/10 — ждёт метрики мобильного использования)
 
 **Методики:**
 - Tiny Habits (Fogg, 2019)
@@ -93,15 +93,23 @@
 
 ---
 
-## v0.9.0 — Мобильная адаптация + краткие сессии
+## v0.9.0 — Мобильная адаптация + Habit Tracker + краткие сессии
 
-**Цель:** Скилл должен работать эффективно на мобильных устройствах и в режиме нехватки времени.
+**Цель:** Скилл должен работать эффективно на мобильных устройствах, поддерживать отслеживание привычек и давать быстрые инструменты в режиме нехватки времени.
+
+**Scope:** 4 фичи + Dashboard рефакторинг (8→11 сфер + streak-логика).
 
 **Планируемые фичи:**
-- [ ] **5-Minute Micro-Sessions** — быстрые чек-ины (эмоция → 1 действие)
-- [ ] **Voice-Optimized Output** — ответы, удобные для голосового чтения
-- [ ] **Mobile Dashboard** — адаптивная версия HTML Dashboard
-- [ ] **Quick Decision Protocol** — 2-3 вопроса для принятия решения «здесь и сейчас»
+- [ ] **5-Minute Micro-Sessions** (`references/micro_sessions.md`) — быстрые чек-ины: эмоция → 1 действие. ≤100 строк, opt-in через «у меня 5 минут».
+- [ ] **Mobile Dashboard** — адаптивная версия HTML Dashboard: 11 сфер Wheel of Life + Habit streaks + offline-ready. Требует BUG-001 fix (8→11 доменов).
+- [ ] **Quick Decision Protocol** (`references/quick_decision.md`) — 2–3 вопроса для принятия решения «здесь и сейчас». Интеграция с Communication Style quadrant.
+- [ ] **Habit Tracker / Dashboard Streaks** — визуализация цепочек выполнения привычек в дашборде. Связь с `references/habit_loop.md` (Lally timeline). Требует: (1) Dashboard 8→11 fix, (2) streak data model inline в HTML.
+
+**Не входит (отложено в v0.9.1+):**
+- Voice-Optimized Output (conf 6/10 — ждёт метрики мобильного использования)
+- Auto-Review Triggers (требует session metadata persistence)
+- Structured Growth Report (требует re-assessment flow)
+- Adaptive Response Length (требует интеграции Deep Why + Energy Check)
 
 ---
 
