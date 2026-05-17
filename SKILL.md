@@ -126,6 +126,7 @@ Evidence-based life coach для постановки целей и планир
 3. **Progress Audit**: Lead vs Lag measures по каждой цели
 4. **Adjustment**: Корректировка или подтверждение плана
 5. **Celebration**: Отпразднуй победы недели — `references/win_alert.md`
+6. **Habit Review**: Какие привычки работают? Какие нужно скорректировать? — `references/habit_loop.md`
 
 **Загрузи `references/weekly_review.md` перед началом Stage 3.**
 
@@ -151,6 +152,7 @@ Evidence-based life coach для постановки целей и планир
 - Weekly Priorities → Weekly Review (воскресенье, рекуррентное)
 - Daily WOOP → Утреннее напоминание (ежедневное)
 - Time Blocks → Блоки глубокой работы (цвета из COLOR_MAP)
+- Habit Loop → Ежедневные микро-привычки (загрузи `references/habit_loop.md`)
 
 **Учитывай энергию** при планировании — загрузи `references/energy_scheduling.md`.
 
@@ -160,6 +162,20 @@ Evidence-based life coach для постановки целей и планир
 3. В следующей сессии — повторить попытку (retry protocol)
 
 **Загрузи `references/calendar_constants.md` перед работой с календарём.**
+
+### 5.1 Task Breakdown (разбиение на шаги)
+
+Для сложных действий из WOOP — разбей на шаги с чекпоинтами:
+- Загрузи `references/action_breakdown_template.md`
+- Opt-in: только для Career/Finances/Health/Home/Learning
+- Каждый шаг ≤30 минут или с бинарным критерием выполнения
+
+### 5.2 Markdown Tables (структурированный UI)
+
+При запросе "покажи таблицу", "структурируй план" — используй шаблоны из `references/markdown_tables.md`:
+- Weekly Plan, Wheel of Life Review, Progress Check, Course Correction
+- Только для Preparation/Action stages
+- Zero tables в SKILL.md
 
 ### 9. Session Management & Persistence
 
@@ -271,6 +287,11 @@ Evidence-based life coach для постановки целей и планир
 - `references/energy_scheduling.md` — планирование с учётом энергии (3 уровня, colorId mapping)
 - `references/win_alert.md` — структурированное празднование побед (5 шагов, 4 квадранта стиля)
 - `references/recovery_protocol.md` — восстановление после пропусков (3 стратегии, без streak tracking)
+- `references/habit_loop.md` — привычки: Cue-Routine-Reward, Tiny Habits, Habit Stacking (≤250 строк)
+- `references/action_breakdown_template.md` — разбиение WOOP на шаги с чекпоинтами (≤150 строк)
+- `references/markdown_tables.md` — шаблоны markdown-таблиц для планов и обзоров (≤120 строк)
+- `references/weak_goal_taxonomy.md` — 5 паттернов слабых целей + Sanity-Check Framework (≤200 строк)
+- `references/status_icons.md` — визуальная нотация прогресса ⬜🔄✅❌⏸️⚠️ (опционально)
 - `references/conversation_state_schema.md` — JSON-схема состояния разговора
 - `references/templates/` — шаблоны файлов wiki (Hot_Cache.md, Progress_Dashboard.md, Raw_Session.md, CLAUDE_Instructions.md, Goals.md, Index.md, Wheel_of_Life_History.md, USER_PROGRESS_JOURNAL.md)
 
