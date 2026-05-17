@@ -2,7 +2,7 @@
 name: life-planning-coach
 version: 0.6.1
 author: Andrey Zagreev
-last_updated: 2026-05-17
+last_updated: 2026-05-18
 description: >-
   Проведи полную диагностику жизни, построй систему целей от 25 лет до сегодняшнего дня и поддерживай еженедельную ретроспективу.
   Используй при запросах: "помоги спланировать жизнь", "не знаю куда двигаться", "какие у меня цели", "life planning",
@@ -47,7 +47,27 @@ Evidence-based life coach для постановки целей и планир
 - "Чёткий план с шагами или свобода экспериментировать?"
 - Результат: baseline профиль (soft/direct/structured/exploratory). Загрузи `references/communication_style.md` для полного протокола.
 
-### 2. Phase 1: Diagnostic (Оценка текущего состояния)
+### 2. Phase 0.5: Emotion Regulation Protocol (3-7 минут, по необходимости)
+
+Если после Emotional Landing эмоция слишком сильна и мешает дальнейшей работе — используй один из 3 протоколов:
+
+1. **Cognitive Reappraisal** — переосмысление ситуации (Gross, 1998, d = 0.45)
+   - Когда: пользователь застрял на негативной интерпретации ("я не справился — я безнадёжен")
+   - 4 шага: Name emotion → Identify thought → Generate alternatives → Choose perspective
+   
+2. **Grounding (5-4-3-2-1)** — возврат в настоящее (Najavits, 2002, d = 0.38)
+   - Когда: тревога, руминация, паника, физические симптомы
+   - 5 вещей, которые видите → 4 звука → 3 ощущения → 2 запаха → 1 действие
+   
+3. **Self-Compassion Break** — сострадание к себе (Neff, 2003, r = 0.47)
+   - Когда: жёсткая самокритика ("я тупой/ленивый/бесполезный")
+   - 3 шага: Mindfulness → Common humanity → Self-kindness
+
+**После ER Protocol:** проверь Readiness Gate (1-10). Если ≥ 6 — вернись к текущей цели. Если < 6 — предложи паузу или короткую микро-сессию.
+
+**Загрузи `references/emotion_regulation.md` перед использованием ER Protocol.**
+
+### 3. Phase 1: Diagnostic (Оценка текущего состояния)
 
 Выбери трек в зависимости от готовности пользователя:
 
@@ -69,7 +89,7 @@ Evidence-based life coach для постановки целей и планир
 
 **Загрузи `references/diagnostic_methods.md` перед началом Stage 1.**
 
-### 3. Phase 1.5: Authentic Goal Filter (Фильтр аутентичности)
+### 4. Phase 1.5: Authentic Goal Filter (Фильтр аутентичности)
 
 После диагностики, перед постановкой целей — отдели аутентичные цели от интроектов:
 
@@ -85,7 +105,7 @@ Evidence-based life coach для постановки целей и планир
 
 **Загрузи `references/authentic_goal_filter.md` перед началом Stage 1.5.**
 
-### 4. Phase 2: Goal Architecture (Построение целей)
+### 5. Phase 2: Goal Architecture (Построение целей)
 
 Создай многоуровневую систему целей от 25 лет до дня:
 
@@ -97,7 +117,7 @@ Evidence-based life coach для постановки целей и планир
 
 **Загрузи `references/goal_architecture.md` перед началом Stage 2.**
 
-### 5. Phase 3: Weekly Review (Еженедельный срез)
+### 6. Phase 3: Weekly Review (Еженедельный срез)
 
 1. **GTD Phase**: Get Clear / Get Current / Get Creative
 2. **Scrum Retro**: Что работало / что нет / что меняем
@@ -106,7 +126,7 @@ Evidence-based life coach для постановки целей и планир
 
 **Загрузи `references/weekly_review.md` перед началом Stage 3.**
 
-### 6. Phase 4: Interactive Dashboard
+### 7. Phase 4: Interactive Dashboard
 
 При запросе "покажи дашборд" или "визуализируй прогресс":
 1. Прочитай текущее состояние (JSON data)
@@ -115,7 +135,7 @@ Evidence-based life coach для постановки целей и планир
 
 **Загрузи `references/dashboard_guide.md` перед генерацией дашборда.**
 
-### 7. Phase 5: Execution Backbone — Google Calendar Integration (via MCP)
+### 8. Phase 5: Execution Backbone — Google Calendar Integration (via MCP)
 
 > **Почему календарь критичен:** 60% намерений без временного слота забываются через 48 часов (Milkman et al., 2021). Запланированное событие в календаре имеет 80%+ вероятность выполнения vs 30% для списка задач. «Лучше тупой карандаш, чем острый ум» — календарь — это твой карандаш.
 
@@ -136,7 +156,7 @@ Evidence-based life coach для постановки целей и планир
 
 **Загрузи `references/calendar_constants.md` перед работой с календарём.**
 
-### 8. Session Management & Persistence
+### 9. Session Management & Persistence
 
 **Checkpoint-and-Resume**:
 - Каждая сессия сохраняет прогресс
@@ -233,6 +253,7 @@ Evidence-based life coach для постановки целей и планир
 ## References
 
 - `references/diagnostic_methods.md` — детальные протоколы Stage 1 (Emotional Landing, Style Calibration, Wheel of Life 11 сфер)
+- `references/emotion_regulation.md` — протоколы эмоциональной регуляции: Cognitive Reappraisal, Grounding, Self-Compassion (Gross, Najavits, Neff)
 - `references/authentic_goal_filter.md` — детальные протоколы Stage 1.5 (Red Flags, Radar, Portfolio)
 - `references/communication_style.md` — adaptive coaching layer (Big Five, TTM, MI, OARS)
 - `references/goal_architecture.md` — детальные протоколы Stage 2 (BHAG → OKR → Daily WOOP)
