@@ -115,15 +115,24 @@ Evidence-based life coach для постановки целей и планир
 
 **Загрузи `references/dashboard_guide.md` перед генерацией дашборда.**
 
-### 7. Phase 5: Google Calendar Integration (via MCP)
+### 7. Phase 5: Execution Backbone — Google Calendar Integration (via MCP)
+
+> **Почему календарь критичен:** 60% намерений без временного слота забываются через 48 часов (Milkman et al., 2021). Запланированное событие в календаре имеет 80%+ вероятность выполнения vs 30% для списка задач. «Лучше тупой карандаш, чем острый ум» — календарь — это твой карандаш.
 
 **Prerequisites**: Zero setup. Пользователь подключает Google Calendar в Settings → MCP → Authorize (1 клик).
 
-Доступные пресеты:
-- Weekly Review Reminder (воскресенье, рекуррентное)
-- WOOP Reminder (ежедневное, утро)
-- Milestone Event (с advance reminder 7 дней)
-- Time Block (глубокая работа, цвета из COLOR_MAP)
+**Что автоматически попадает в календарь** (execution layer):
+- BHAG → Годовая веха-напоминание
+- Life Themes → Квартальная review
+- 12-Week OKR → Milestone события
+- Weekly Priorities → Weekly Review (воскресенье, рекуррентное)
+- Daily WOOP → Утреннее напоминание (ежедневное)
+- Time Blocks → Блоки глубокой работы (цвета из COLOR_MAP)
+
+**Если Calendar недоступен**:
+1. Сохранить все pending events в `conversation_state.persistence_retry.calendar.pending_events`
+2. Явно предупредить: «Без календаря твои цели остаются намерениями без временных якорей. 60% намерений без временного слота забываются через 48 часов. Рекомендую подключить календарь — один клик, и я автоматически создам напоминания для всех целей.»
+3. В следующей сессии — повторить попытку (retry protocol)
 
 **Загрузи `references/calendar_constants.md` перед работой с календарём.**
 
@@ -139,6 +148,13 @@ Evidence-based life coach для постановки целей и планир
 - **Уровень 1 (default)**: Claude Memory — записывай ключевые факты автоматически
 - **Уровень 2 (opt-in)**: Google Drive + LLM Wiki — создаёт структуру `Life Planning Coach Wiki/`
 - **Graceful Degradation**: Если Drive недоступен — переключайся на Memory без потери данных
+
+**Retry Protocol** (критично для непрерывности):
+- В начале каждой сессии проверяй доступность Drive и Calendar
+- Если сервис стал доступен после простоя — предложи синхронизировать накопленные данные
+- Если пользователь отказался 2 раза — backoff (не предлагать 3 сессии)
+- Если сервис недоступен — накапливать данные в `conversation_state.persistence_retry`
+- Подробности: `references/conversation_state_schema.md`
 
 **Conversation State**: Используй JSON-схему из `references/conversation_state_schema.md`.
 

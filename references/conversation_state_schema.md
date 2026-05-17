@@ -83,6 +83,53 @@
 | `goal_filter` | object | Результаты Stage 1.5: Active, Paused, Patterns |
 | `communication_style` | object | Базовый профиль и текущая интенсивность |
 | `weekly_reviews` | array | История еженедельных ревью |
+| `persistence_retry` | object | Состояние retry для Drive/Calendar (см. ниже) |
+
+## Retry Persistence
+
+При недоступности Google Drive или Calendar важно не потерять прогресс между сессиями.
+
+```json
+{
+  "persistence_retry": {
+    "drive": {
+      "available_last_session": true,
+      "failed_consecutive_sessions": 0,
+      "unsaved_sessions_count": 0,
+      "unsaved_sessions_dates": [],
+      "backoff_until_session": 0,
+      "user_declined_count": 0
+    },
+    "calendar": {
+      "available_last_session": true,
+      "failed_consecutive_sessions": 0,
+      "pending_events_count": 0,
+      "pending_events": [],
+      "backoff_until_session": 0,
+      "user_declined_count": 0
+    }
+  }
+}
+```
+
+### Протокол Retry (в начале каждой сессии)
+
+**Drive Retry:**
+1. Проверить доступность Drive MCP
+2. Если доступен И `failed_consecutive_sessions > 0`:
+   - «В прошлый раз не удалось сохранить прогресс в Drive. Сейчас всё работает — могу синхронизировать данные за [N] сессий?»
+   - Если согласен → batch-запись накопленных данных, сбросить счётчики
+   - Если отказался → `user_declined_count += 1`
+3. Если `user_declined_count >= 2` → `backoff_until_session = current_session + 3` (не предлагать 3 сессии)
+4. Если Drive недоступен → `failed_consecutive_sessions += 1`, продолжить в Memory mode
+
+**Calendar Retry:**
+1. Проверить доступность Calendar MCP
+2. Если доступен И `pending_events_count > 0`:
+   - «У тебя [N] запланированных событий (вехи, напоминания) в очереди. Сейчас календарь работает — создать?»
+   - Если согласен → создать все pending events, очистить очередь
+3. Если Calendar недоступен → добавить новые events в `pending_events`, `failed_consecutive_sessions += 1`
+4. Предупредить пользователя: «Без календаря твои цели остаются намерениями без временных якорей. 60% намерений без временного слота забываются через 48 часов.»
 
 ## Протокол checkpoint-and-resume
 

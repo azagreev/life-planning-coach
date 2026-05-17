@@ -117,6 +117,22 @@ create_event(
 
 ---
 
+## Retry Persistence Protocol
+
+Если Google Calendar недоступен в текущей сессии, важно не потерять запланированные события:
+
+1. **Сохранить в очередь**: Все pending events добавляются в `conversation_state.persistence_retry.calendar.pending_events`
+2. **Отметить статус**: `available_last_session = false`, `failed_consecutive_sessions += 1`
+3. **Предупредить пользователя**: «Без календаря твои цели остаются намерениями без временных якорей. 60% намерений без временного слота забываются через 48 часов. Рекомендую подключить календарь — один клик, и я автоматически создам напоминания для всех целей.»
+4. **В следующей сессии**: Проверить доступность Calendar MCP
+   - Если доступен И `pending_events_count > 0` → предложить создать накопленные события
+   - Если пользователь согласен → batch-create, очистить очередь
+   - Если отказался → `user_declined_count += 1`
+   - Если `user_declined_count >= 2` → `backoff_until_session = current_session + 3` (не предлагать 3 сессии)
+5. **После успешной синхронизации**: Сбросить все retry-счётчики
+
+---
+
 ## Troubleshooting
 
 | Issue | Cause | Solution |
