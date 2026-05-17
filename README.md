@@ -12,7 +12,7 @@
 **Версия:** 0.6.1  
 **Автор:** Andrey Zagreev — [@zagreev](https://t.me/zagreev)  
 **Лицензия:** [MIT](LICENSE)  
-**Целевая платформа:** Claude.ai (Pro для загрузки skills; Google Drive — free plan)
+**Целевая платформа:** Claude.ai (Free, Pro, Max, Team, Enterprise — skills доступны на всех планах)
 
 ---
 
@@ -56,7 +56,7 @@
 - Желание регулярно возвращаться (еженедельно или по мере необходимости)
 
 **Технически:**
-- Аккаунт Claude.ai (Pro для загрузки skills)
+- Аккаунт Claude.ai (любой план — Free, Pro, Max)
 - Современный браузер (для дашборда)
 - Google-аккаунт — опционально (для календаря и автосохранения в Drive)
 
@@ -123,21 +123,30 @@
 ### Шаг 1. Скачать скилл
 
 1. Открой [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
-2. Скачай файл `life-planning-coach.zip`
+2. Скачай файл `life-planning-coach-vX.Y.Z.zip` (где X.Y.Z — последняя версия, например `v0.6.1`)
 
-> **Примечание для разработчиков:** файл `.zip` — это ZIP-архив папки скилла по требованиям Anthropic. Собрать из исходников: `bash scripts/build-skill.sh` (создаёт `life-planning-coach.zip` и `life-planning-coach.skill` — оба файла идентичны, ZIP-архив папки скилла).
+> **Примечание:** доступны два файла:
+> - `life-planning-coach-vX.Y.Z.zip` — ZIP-архив
+> - `life-planning-coach.skill` — тот же ZIP-архив с расширением `.skill`
+>
+> Оба файла идентичны — выбирай любой. Anthropic рекомендует ZIP.
+>
+> **Для разработчиков:** собрать из исходников: `bash scripts/build-skill.sh`
 
 ### Шаг 2. Загрузить в Claude
 
-> **Skills доступны на всех планах, включая Free.** Не требуется подписка Pro.
+> **Skills доступны на всех планах: Free, Pro, Max, Team, Enterprise.** Подписка Pro не требуется.
 
 1. Войди в [claude.ai](https://claude.ai)
-2. Включи **Code execution**: **Settings → Capabilities → Code execution and file creation** → ON
+2. Включи **Code execution**:
+   - **Settings → Capabilities → Code execution and file creation** → ON
+   - (Для Team/Enterprise: владелец организации должен включить в **Organization settings > Skills**)
 3. Перейди в **Customize → Skills**
-4. Нажми **+** → **+ Create skill** → **Upload a skill**
-5. Выбери скачанный файл `life-planning-coach.zip`
-6. Дождись сообщения об успешной загрузке
-7. Включи скилл тумблером в списке Skills
+4. Нажми **+** → **+ Create skill**
+5. Выбери **Upload a skill**
+6. Выбери скачанный файл (`life-planning-coach-vX.Y.Z.zip` или `.skill`)
+7. Дождись сообщения об успешной загрузке
+8. Включи скилл тумблером в списке Skills
 
 ### Шаг 3. Активировать
 
@@ -146,9 +155,11 @@
 
 ---
 
-## Настройка Google Drive (опционально, рекомендуется)
+## Настройка Google Drive (опционально)
 
-Если хочешь, чтобы скилл автоматически сохранял прогресс между сессиями:
+Если хочешь, чтобы скилл автоматически сохранял прогресс между сессиями в облаке:
+
+> ⚠️ **Для пользователей из России:** Google Drive и Google Calendar могут быть недоступны из-за geo-блокировки. Скилл работает полностью в текстовом режиме без облака — данные сохраняются в памяти Claude (Claude Memory) и в файле разговора.
 
 ### Шаг 1. Подключить Google Drive
 
@@ -301,7 +312,7 @@ life-planning-coach/
 
 | Компонент | Требования |
 |-----------|-----------|
-| Claude.ai | Подписка Pro (для загрузки skills + MCP) |
+| Claude.ai | Любой план (Free+) — skills доступны на всех тарифах |
 | Дашборд | Любой современный браузер (Chrome, Firefox, Safari) |
 | Google Calendar | Аккаунт Google, авторизация через MCP в claude.ai |
 
