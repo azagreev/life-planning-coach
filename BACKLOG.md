@@ -76,6 +76,14 @@
 - **Источник:** Пользовательская обратная связь, UX-калибровка
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 8/10). Причина: scope ambiguity (generic warm vs dynamic personalized), требуется v0.8.0 habit integration для holistic design.
 
+### Reward Audit (Бюджет Дофамина / Cheap Dopamine Tracker)
+- **Описание:** Модуль для логирования источников «дешёвого дофамина» (сахар, скролл соцсетей, Shorts, игры) и корреляции их с completion rate целей. Dopamine Load Score (0–10), weekly insights, интеграция в planning flow. Фрейминг: «Reward Management для достижения целей», не guilt-trip.
+- **Триггер:** 3+ запроса пользователей на «почему я прокрастинирую» или при расширении Habit Tracker (v0.9.0+)
+- **Статус:** 💡 Идея (PRD готов)
+- **Источник:** Научный ресёрч (Rada 2005, Avena 2008, Lembke 2021, Kushlev 2025) + конкурентный анализ (Elqi, Opal, BePresent)
+- **Дебат:** Advocate/Critic — требуется. Риски: научный backlash (oversimplification), guilt-trip восприятие, privacy.
+- **Полный PRD:** [`references/research/prd_reward_audit.md`](references/research/prd_reward_audit.md)
+
 ---
 
 ## Техдолг
