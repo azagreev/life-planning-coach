@@ -132,3 +132,5 @@ calendar_integration/token*.json
 build/
 *.skill
 .build/
+*.zip
+life-planning-coach-*.zip
