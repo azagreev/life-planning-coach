@@ -15,9 +15,6 @@ SKILL_MD="${PROJECT_ROOT}/SKILL.md"
 BUILD_DIR="${PROJECT_ROOT}/.build"
 DIST_DIR="${PROJECT_ROOT}/dist"
 SKILL_FOLDER="${BUILD_DIR}/life-planning-coach"
-OUTPUT_ZIP="${DIST_DIR}/life-planning-coach-v${skill_version}.zip"
-OUTPUT_SKILL="${DIST_DIR}/life-planning-coach-v${skill_version}.skill"
-mkdir -p "${DIST_DIR}"
 
 # ── 1. Validate source file exists ─────────────────────────────────────────────
 if [[ ! -f "${SKILL_MD}" ]]; then
@@ -81,24 +78,23 @@ rm -rf "${BUILD_DIR}"
 mkdir -p "${SKILL_FOLDER}"
 
 # ── 5. Copy skill contents ───────────────────────────────────────────────────
-# Required: SKILL.md
+# Required: SKILL.md (the only file Anthropic requires)
 cp "${SKILL_MD}" "${SKILL_FOLDER}/SKILL.md"
 
-# Required: README.md
-cp "${PROJECT_ROOT}/README.md" "${SKILL_FOLDER}/README.md"
-
-# Required: LICENSE
-cp "${PROJECT_ROOT}/LICENSE" "${SKILL_FOLDER}/LICENSE"
-
-# Required: CONTRIBUTING.md
-cp "${PROJECT_ROOT}/CONTRIBUTING.md" "${SKILL_FOLDER}/CONTRIBUTING.md"
-
-# Required: SECURITY.md
-cp "${PROJECT_ROOT}/SECURITY.md" "${SKILL_FOLDER}/SECURITY.md"
-
 # Optional: references/ (methodologies, guides, templates)
+# Exclude dev-only content: acceptance criteria, plans, checklists, research, tasks, archive
 if [[ -d "${PROJECT_ROOT}/references" ]]; then
-    cp -r "${PROJECT_ROOT}/references" "${SKILL_FOLDER}/references"
+    mkdir -p "${SKILL_FOLDER}/references"
+    rsync -a \
+        --exclude='acceptance_criteria_*' \
+        --exclude='plan_v*.md' \
+        --exclude='release_checklist_*.md' \
+        --exclude='persistence_research_plan.md' \
+        --exclude='research/' \
+        --exclude='research_*.md' \
+        --exclude='tasks/' \
+        --exclude='archive/' \
+        "${PROJECT_ROOT}/references/" "${SKILL_FOLDER}/references/"
 fi
 
 # Optional: dashboard HTML (used by skill)
@@ -112,14 +108,19 @@ if [[ ! -f "${SKILL_FOLDER}/SKILL.md" ]]; then
     exit 1
 fi
 
-# ── 7. Create ZIP archive ────────────────────────────────────────────────────
+# ── 7. Define output filenames (after version is parsed) ─────────────────────
+OUTPUT_ZIP="${DIST_DIR}/life-planning-coach-v${skill_version}.zip"
+OUTPUT_SKILL="${DIST_DIR}/life-planning-coach-v${skill_version}.skill"
+mkdir -p "${DIST_DIR}"
+
+# ── 8. Create ZIP archive ────────────────────────────────────────────────────
 rm -f "${OUTPUT_ZIP}"
 (cd "${BUILD_DIR}" && zip -r "${OUTPUT_ZIP}" "life-planning-coach" >/dev/null)
 
-# ── 8. Also create .skill file (same ZIP, alternative extension) ─────────────
+# ── 9. Also create .skill file (same ZIP, alternative extension) ─────────────
 cp "${OUTPUT_ZIP}" "${OUTPUT_SKILL}"
 
-# ── 9. Verify outputs ────────────────────────────────────────────────────────
+# ── 10. Verify outputs ───────────────────────────────────────────────────────
 if [[ ! -f "${OUTPUT_ZIP}" ]]; then
     echo "Error: Failed to create ${OUTPUT_ZIP}" >&2
     exit 1
@@ -127,7 +128,7 @@ fi
 
 zip_size=$(du -h "${OUTPUT_ZIP}" | cut -f1)
 
-# ── 10. Success ──────────────────────────────────────────────────────────────
+# ── 11. Success ──────────────────────────────────────────────────────────────
 echo "✓ Built ${OUTPUT_ZIP} (version ${skill_version}, size: ${zip_size})"
 echo "✓ Built ${OUTPUT_SKILL} (ZIP archive, same content)"
 echo ""
