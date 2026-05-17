@@ -43,6 +43,28 @@ class TestDashboardHtml(unittest.TestCase):
                 self.assertIn(kw.lower(), self.content.lower(),
                               f"Dashboard must contain keyword: {kw}")
 
+    def test_wheel_has_11_domains(self):
+        """BUG-001: Dashboard must show 11 Wheel of Life domains."""
+        import re
+        match = re.search(r'const WHEEL_SPHERES = \[(.*?)\];', self.content, re.DOTALL)
+        self.assertIsNotNone(match, "WHEEL_SPHERES array not found")
+        array_text = match.group(1)
+        ids = re.findall(r"id: '([^']+)'", array_text)
+        self.assertEqual(len(ids), 11, f"Expected 11 domains, found {len(ids)}: {ids}")
+
+        expected_ids = [
+            'health', 'finances', 'career', 'family', 'romance',
+            'social', 'growth', 'spirituality', 'fun', 'contribution', 'environment'
+        ]
+        for eid in expected_ids:
+            with self.subTest(domain_id=eid):
+                self.assertIn(eid, ids, f"Missing domain: {eid}")
+
+    def test_wheel_avg_divides_by_11(self):
+        """Average score must divide by 11, not 8."""
+        self.assertIn('/ 11).toFixed(1)', self.content,
+                      "Average calculation must divide by 11 (was / 8)")
+
 
 if __name__ == "__main__":
     unittest.main()

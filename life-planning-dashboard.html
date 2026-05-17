@@ -564,7 +564,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
         <div class="card-header">
           <div>
             <div class="card-title"><i class="fas fa-life-ring"></i> Wheel of Life</div>
-            <div class="card-subtitle">Баланс 8 сфер жизни — клик по сфере для деталей</div>
+            <div class="card-subtitle">Баланс 11 сфер жизни — клик по сфере для деталей</div>
           </div>
           <span class="card-badge badge-success" id="balance-score-badge">6.0</span>
         </div>
@@ -900,45 +900,60 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
 
 // ========== DEMO DATA ==========
 
-// 8 сфер Wheel of Life
+// 11 сфер Wheel of Life (AC-10 v0.7)
 const WHEEL_SPHERES = [
-  { id: 'health', name: 'Здоровье и фитнес', short: 'Здоровье', current: 7, prev: 6, target: 9, color: '#7a9e7e', icon: 'heartbeat',
+  { id: 'health', name: 'Здоровье и физическая форма', short: 'Здоровье', current: 7, prev: 6, target: 9, color: '#7a9e7e', icon: 'heartbeat',
     goals: [
       { title: 'Бегать 3x в неделю', progress: 100, status: 'done' },
       { title: 'Спать 7+ часов', progress: 65, status: 'risk' },
       { title: 'Пить 2.5л воды', progress: 80, status: 'ok' },
     ]},
-  { id: 'career', name: 'Карьера и бизнес', short: 'Карьера', current: 6, prev: 5, target: 8, color: '#6b8cae', icon: 'briefcase',
-    goals: [
-      { title: 'Закончить курс повышения', progress: 45, status: 'risk' },
-      { title: 'Записать коучинг-программу', progress: 55, status: 'ok' },
-    ]},
-  { id: 'finances', name: 'Финансы', short: 'Финансы', current: 5, prev: 5, target: 7, color: '#c4a55a', icon: 'coins',
+  { id: 'finances', name: 'Финансы и материальное благополучие', short: 'Финансы', current: 5, prev: 5, target: 7, color: '#c4a55a', icon: 'coins',
     goals: [
       { title: 'Откладывать 20% дохода', progress: 91, status: 'ok' },
       { title: 'Инвестиционный портфель', progress: 30, status: 'risk' },
     ]},
-  { id: 'romance', name: 'Отношения', short: 'Отношения', current: 8, prev: 7, target: 9, color: '#c4858a', icon: 'heart',
+  { id: 'career', name: 'Карьера и работа', short: 'Карьера', current: 6, prev: 5, target: 8, color: '#6b8cae', icon: 'briefcase',
+    goals: [
+      { title: 'Закончить курс повышения', progress: 45, status: 'risk' },
+      { title: 'Записать коучинг-программу', progress: 55, status: 'ok' },
+    ]},
+  { id: 'family', name: 'Семья и близкие', short: 'Семья', current: 7, prev: 7, target: 8, color: '#8a9ec4', icon: 'users',
+    goals: [
+      { title: 'Звонок родителям', progress: 85, status: 'ok' },
+      { title: 'Семейный ужин 2x/нед', progress: 70, status: 'ok' },
+    ]},
+  { id: 'romance', name: 'Романтика и партнёрство', short: 'Романтика', current: 8, prev: 7, target: 9, color: '#c4858a', icon: 'heart',
     goals: [
       { title: 'Еженедельное свидание', progress: 90, status: 'ok' },
       { title: 'Ежедневная благодарность', progress: 75, status: 'ok' },
     ]},
-  { id: 'family', name: 'Семья и друзья', short: 'Семья', current: 7, prev: 7, target: 8, color: '#8a9ec4', icon: 'users',
+  { id: 'social', name: 'Дружба и социальные связи', short: 'Дружба', current: 6, prev: 5, target: 8, color: '#6a8ac4', icon: 'comments',
     goals: [
-      { title: 'Звонок родителям', progress: 85, status: 'ok' },
       { title: 'Встреча с друзьями', progress: 60, status: 'ok' },
+      { title: 'Нетворкинг 1x/мес', progress: 40, status: 'risk' },
     ]},
-  { id: 'growth', name: 'Личный рост', short: 'Рост', current: 6, prev: 5, target: 8, color: '#8a6bc4', icon: 'book',
+  { id: 'growth', name: 'Личностный рост и обучение', short: 'Рост', current: 6, prev: 5, target: 8, color: '#8a6bc4', icon: 'book',
     goals: [
       { title: 'Читать 2 книги/мес', progress: 50, status: 'ok' },
       { title: 'Медитация ежедневно', progress: 40, status: 'risk' },
     ]},
-  { id: 'fun', name: 'Развлечения', short: 'Отдых', current: 4, prev: 3, target: 7, color: '#6bc4a2', icon: 'gamepad',
+  { id: 'spirituality', name: 'Духовность, смысл и ценности', short: 'Смысл', current: 5, prev: 4, target: 8, color: '#9e7ac4', icon: 'praying-hands',
+    goals: [
+      { title: 'Ежедневная рефлексия', progress: 55, status: 'ok' },
+      { title: 'Волонтёрство 1x/мес', progress: 30, status: 'risk' },
+    ]},
+  { id: 'fun', name: 'Отдых, хобби и радость', short: 'Отдых', current: 4, prev: 3, target: 7, color: '#6bc4a2', icon: 'gamepad',
     goals: [
       { title: 'Хобби в выходные', progress: 30, status: 'risk' },
       { title: 'Путешествие в квартал', progress: 0, status: 'todo' },
     ]},
-  { id: 'environment', name: 'Окружение', short: 'Дом', current: 7, prev: 6, target: 8, color: '#c4966a', icon: 'home',
+  { id: 'contribution', name: 'Вклад в общество и наследие', short: 'Вклад', current: 5, prev: 4, target: 7, color: '#c4a26a', icon: 'hand-holding-heart',
+    goals: [
+      { title: 'Менторство junior', progress: 45, status: 'ok' },
+      { title: 'Open source contribution', progress: 20, status: 'risk' },
+    ]},
+  { id: 'environment', name: 'Дом и окружение', short: 'Дом', current: 7, prev: 6, target: 8, color: '#c4966a', icon: 'home',
     goals: [
       { title: 'Порядок на рабочем месте', progress: 80, status: 'ok' },
       { title: 'Ремонт балкона', progress: 25, status: 'risk' },
@@ -1050,7 +1065,7 @@ function initRadarChart() {
   const names = WHEEL_SPHERES.map(s => s.short);
   const currentScores = WHEEL_SPHERES.map(s => s.current);
   const previousScores = WHEEL_SPHERES.map(s => s.prev);
-  const avg = (currentScores.reduce((a,b)=>a+b,0) / 8).toFixed(1);
+  const avg = (currentScores.reduce((a,b)=>a+b,0) / 11).toFixed(1);
   document.getElementById('balance-score-badge').textContent = avg;
 
   const option = {
