@@ -115,7 +115,7 @@ echo "[7/7] GitHub Release..."
 if gh release view "$TAG" >/dev/null 2>&1; then
     echo "⚠️  Release $TAG уже существует"
 else
-    RELEASE_NOTES_FILE="RELEASE_NOTES_$TAG.md"
+    RELEASE_NOTES_FILE="references/archive/RELEASE_NOTES_$TAG.md"
     if [ -f "$RELEASE_NOTES_FILE" ]; then
         gh release create "$TAG" \
             --title "$TAG" \
