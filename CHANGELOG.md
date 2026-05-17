@@ -27,6 +27,35 @@
 
 ---
 
+## [0.7.1] — 2026-05-18
+
+### Added
+- **Win Alert Protocol** (`references/win_alert.md`) — структурированное празднование побед
+  - 5 шагов: WHAT → WHEEL DOMAIN → WHY IT MATTERS → RESOURCES/QUALITIES → NEXT STEP
+  - Адаптация под 4 квадранта стиля коммуникации (Nurturing/Challenging/Exploratory/Collaborative)
+  - Научная база: savoring (Bryant & Veroff), SDT competence feedback, growth mindset (Dweck)
+  - Safety: не trait-based похвала, не пустые комплименты
+- **Recovery Protocol MVP** (`references/recovery_protocol.md`) — восстановление после пропусков
+  - 3 стратегии по тяжести: LIGHT (Reschedule) → MEDIUM (Catch-up Mini-Session, 15 мин) → HEAVY (Recovery Protocol)
+  - Без streak tracking, без shame language, без «нагонять пропущенное»
+  - Pattern detection — только conversational, не декларативный
+  - Научная база: MI Roll with Resistance, relapse prevention (Marlatt), self-compassion (Neff)
+- **Energy-Based Scheduling** (`references/energy_scheduling.md`) — планирование с учётом энергии
+  - 3 уровня энергии → маппинг на тип задачи → colorId из COLOR_MAP
+  - 1 калибровочный вопрос о пике энергии
+  - Связь с AC-8 (Energy Check), Seasonal Planning, True Goal Score
+- Интеграция в `SKILL.md`: 3 новые ссылки в References + хуки в Phase 1.5, 3, 5, 9
+- 23 системных теста на v0.7.1 контент (`tests/system/test_v071_features.py`)
+
+### Changed
+- `ROADMAP.md`: добавлена секция v0.7.1, обновлены v0.8.0/v0.9.0
+- `BACKLOG.md`: результаты конкурентного анализа (12 фич, 3 IMPLEMENT → v0.7.1, 9 DEFER → v0.8.0+)
+
+### Research
+- `references/competitive_research_2026.md` — анализ 7 конкурентных скиллов + capability mapping
+
+---
+
 ## [0.6.0] — 2026-05-16
 
 ### Added

@@ -163,21 +163,21 @@
      - Пересмотреть формат: может, 2 часа — слишком долго? Попробовать 30-минутную версию?
      - Проверить alignment: а актуальны ли ещё цели? Может, пропуски — сигнал, что цели не мои?
 - **Триггер:** Вместе с регулярностью (v0.7.0+) или при жалобе "я постоянно пропускаю Weekly Review"
-- **Статус:** 🔄 В ROADMAP v0.7.1 (MVP, ≤200 строк)
+- **Статус:** ✅ Реализовано в v0.7.1 (`references/recovery_protocol.md`, 132 строки)
 - **Источник:** Motivational Interviewing (Roll with Resistance), behavioral relapse prevention
 - **Дебат:** Advocate/Critic 3 цикла → **IMPLEMENT (MVP)** (conf 7/10). Stack with Next удалён (анти-паттерн). Pattern detection — conversational-only.
 
 ### Win Alert Protocol
 - **Описание:** Структурированное празднование побед: что достигнуто → домен Wheel of Life → почему важно → ресурсы/качества пользователя → следующий шаг. Адаптируется под Communication Style quadrant. НЕ применяется во время кризиса/Emotional Landing.
 - **Триггер:** Пользователь сообщает о достижении или проходит Weekly Review
-- **Статус:** 🔄 В ROADMAP v0.7.1
+- **Статус:** ✅ Реализовано в v0.7.1 (`references/win_alert.md`, 112 строк)
 - **Источник:** Borrowed from GTD Coach Plugin
 - **Дебат:** Advocate/Critic 3 цикла → **IMPLEMENT** (conf 7/10). Научная база: savoring (Bryant & Veroff), SDT competence feedback (Deci & Ryan), VIA character strengths.
 
 ### Energy-Based Scheduling
 - **Описание:** При создании событий в календаре учитывать энергию пользователя: высокая энергия → творческая/Deep Work блоки, низкая энергия → рутина/админ, пиковые часы → защитить фокус-блоками. Связь с AC-8 (Energy Check) и Seasonal Planning.
 - **Триггер:** Пользователь работает с календарём (Phase 5)
-- **Статус:** 🔄 В ROADMAP v0.7.1
+- **Статус:** ✅ Реализовано в v0.7.1 (`references/energy_scheduling.md`, 64 строки)
 - **Источник:** Borrowed from Weekly Planning approach (popular r/ClaudeAI pattern 2026)
 - **Дебат:** Advocate/Critic 3 цикла → **IMPLEMENT** (conf 7/10). Ограничение: ≤80 строк, новый файл `references/energy_scheduling.md`, НЕ append в `calendar_constants.md`.
 
