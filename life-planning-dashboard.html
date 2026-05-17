@@ -519,6 +519,41 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     .badge-success { background: var(--success-light); color: var(--success); }
     .badge-warning { background: var(--warning-light); color: #a07830; }
     .badge-danger { background: var(--danger-light); color: var(--danger); }
+
+    /* ========== HABIT STREAKS ========== */
+    .streak-card {
+      background: var(--bg-primary);
+      border-radius: var(--r-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .streak-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .streak-icon {
+      width: 36px; height: 36px;
+      background: var(--bg-card);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+    .streak-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+    .streak-meta { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+    .streak-status { margin-left: auto; font-size: 11px; font-weight: 700; }
+    .streak-bar-wrap {
+      height: 6px; border-radius: 3px;
+      background: var(--border-light);
+      overflow: hidden;
+    }
+    .streak-bar {
+      height: 100%; border-radius: 3px;
+      transition: width 0.8s ease;
+    }
   </style>
 </head>
 <body>
@@ -683,6 +718,17 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
         <div id="gauge3" class="chart-container-sm"></div>
         <div id="gauge4" class="chart-container-sm"></div>
       </div>
+    </div>
+
+    <!-- Row 3: Habit Streaks -->
+    <div class="card section">
+      <div class="card-header">
+        <div>
+          <div class="card-title"><i class="fas fa-fire"></i> Habit Streaks</div>
+          <div class="card-subtitle">Текущие серии привычек — дней подряд</div>
+        </div>
+      </div>
+      <div class="grid-4" id="streak-container"></div>
     </div>
 
   </div><!-- /tab-overview -->
@@ -1035,6 +1081,13 @@ function generateBurndownData() {
 }
 
 const BURNDOWN_DATA = generateBurndownData();
+
+const STREAK_DATA = [
+  { category: 'active_habits', label: 'Привычки', current: 5, best: 12, status: 'on_track', icon: '✅' },
+  { category: 'digital', label: 'Экраны', current: 2, best: 7, status: 'at_risk', icon: '📱' },
+  { category: 'sugar', label: 'Сахар', current: 0, best: 3, status: 'off_track', icon: '🍬' },
+  { category: 'focus', label: 'Фокус', current: 4, best: 10, status: 'on_track', icon: '🎯' }
+];
 
 // ========== TAB SWITCHING ==========
 function switchTab(tabName) {
@@ -1544,6 +1597,32 @@ function renderTracker() {
   container.innerHTML = html;
 }
 
+// ========== 7. HABIT STREAKS ==========
+function renderStreaks() {
+  const container = document.getElementById('streak-container');
+  if (!container) return;
+  const statusColor = { on_track: 'var(--success)', at_risk: 'var(--warning)', off_track: 'var(--danger)' };
+  const statusLabel = { on_track: 'В норме', at_risk: 'Риск', off_track: 'Прерывание' };
+  container.innerHTML = STREAK_DATA.map(s => {
+    const pct = s.best ? Math.round((s.current / s.best) * 100) : 0;
+    return `
+      <div class="streak-card">
+        <div class="streak-header">
+          <div class="streak-icon">${s.icon}</div>
+          <div>
+            <div class="streak-name">${s.label}</div>
+            <div class="streak-meta">${s.current} / ${s.best} дней</div>
+          </div>
+          <div class="streak-status" style="color:${statusColor[s.status]}">${statusLabel[s.status]}</div>
+        </div>
+        <div class="streak-bar-wrap">
+          <div class="streak-bar" style="width:${pct}%;background:${statusColor[s.status]}"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 // ========== SPHERE DETAIL MODAL ==========
 function showSphereModal(sphere) {
   const overlay = document.getElementById('modal-overlay');
@@ -1713,6 +1792,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initVelocity();
   initBurndown();
   renderTracker();
+  renderStreaks();
 
   // Animate progress rings
   setTimeout(() => {
