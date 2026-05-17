@@ -21,9 +21,16 @@ import pytest
 
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent.resolve()
-ZIP_PATH = PROJECT_ROOT / "life-planning-coach.zip"
-SKILL_PATH = PROJECT_ROOT / "life-planning-coach.skill"
+DIST_DIR = PROJECT_ROOT / "dist"
 SKILL_MD_PATH = PROJECT_ROOT / "SKILL.md"
+
+# Find versioned artifacts in dist/ (e.g., life-planning-coach-v0.6.1.zip)
+# Falls back to root directory for backward compatibility
+_zip_files = sorted(DIST_DIR.glob("life-planning-coach-v*.zip"), reverse=True)
+ZIP_PATH = _zip_files[0] if _zip_files else PROJECT_ROOT / "life-planning-coach.zip"
+
+_skill_files = sorted(DIST_DIR.glob("life-planning-coach-v*.skill"), reverse=True)
+SKILL_PATH = _skill_files[0] if _skill_files else PROJECT_ROOT / "life-planning-coach.skill"
 
 # Maximum ZIP size (10 MB) — Anthropic may have limits
 MAX_ZIP_SIZE_BYTES = 10 * 1024 * 1024
@@ -47,6 +54,23 @@ FORBIDDEN_FILES = {
     "TESTING_ALTERNATIVES.md",
     "AGENTS.md",
     ".github",
+    "README.md",
+    "LICENSE",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "ROADMAP.md",
+    "BACKLOG.md",
+    "BUGS.md",
+    "VERSION_SOURCES.md",
+    "references/archive",
+    "references/acceptance_criteria",
+    "references/plan_v",
+    "references/release_checklist",
+    "references/research",
+    "references/research_",
+    "references/tasks",
+    "references/persistence_research_plan.md",
     "tests",
     "scripts",             # build scripts are not part of the skill
     "domain",
