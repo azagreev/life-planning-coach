@@ -64,6 +64,18 @@
 
 ---
 
+## Advanced Patterns — Research Debt (из AC v0.6, вынесено в v0.7)
+
+Следующие паттерны были удалены из формальных Acceptance Criteria v0.7 как over-engineering для текущей версии, но сохранены как research direction в `references/communication_style.md`:
+
+| Бывший AC | Паттерн | Почему вынесено | Когда вернуть |
+|-----------|---------|-----------------|---------------|
+| AC-13 | Attachment Style Awareness (4 стиля) | Невозможно протестировать без реальных пользователей; требует психометрии | v0.7+ при расширении Emotional Regulation |
+| AC-14 | Dynamic Adaptation Triggers (5+ triggers) | Мета-уровень, покрывается AC-6 (4 квадранта); сложно измерить | v0.8+ при полноценном Habit Loop |
+| AC-15 | Goal Ownership Language Rules | Дублирует AC-6/AC-7; лучше как style guide, не AC | Встроить в AC-6 как подпункт при рефакторинге Communication Style |
+
+---
+
 ## Идеи без привязки к версии (см. BACKLOG.md)
 
 | Идея | Триггер | Источник |
