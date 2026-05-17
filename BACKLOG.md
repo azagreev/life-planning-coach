@@ -82,8 +82,13 @@
 - **Статус:** 🎯 **Решение принято: IMPLEMENT** (авторский override после Advocate/Critic дебата)
 - **Источник:** Научный ресёрч (Rada 2005, Avena 2008, Lembke 2021, Kushlev 2025) + конкурентный анализ (Elqi, Opal, BePresent)
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 6/10). **Авторский override:** реализовать без пилота, как killer feature.
-- **Scope для скилла:** Lightweight reference (`references/reward_audit.md`, ≤120 строк) + hook в SKILL.md (≤3 строки). Conversational weekly reflection, не standalone tracker.
+- **Scope для скилла (после анализа PRD v7.0):**
+  - **Главное:** Grayscale Guide — one-time recommendation с инструкцией (iOS/Android) + научный backing (Holte –37.9 min, NYT –40%). Zero tracking.
+  - **Дополнительно:** Conversational check-in (4 категории cheap dopamine) + qualitative insight.
+  - **Не делаем:** Dopamine Load Score, графики, Screen Time API, Libre, MCP, геймификация.
+  - **Артефакт:** `references/reward_audit.md` (≤120 строк) + hook в SKILL.md (≤3 строки).
 - **Полный PRD:** [`references/research/prd_reward_audit.md`](references/research/prd_reward_audit.md)
+- **Анализ PRD:** [`references/research/prd_reward_audit_analysis.md`](references/research/prd_reward_audit_analysis.md) — разбор каждого раздела PRD v7.0: что берём, что откладываем
 
 ---
 
