@@ -97,13 +97,13 @@
 
 **Цель:** Скилл должен работать эффективно на мобильных устройствах, поддерживать отслеживание привычек и давать быстрые инструменты в режиме нехватки времени.
 
-**Scope:** 4 фичи + Dashboard рефакторинг (8→11 сфер + streak-логика).
+**Scope:** 4 фичи + Dashboard дополнение (streak-логика + mobile responsiveness).
 
 **Планируемые фичи:**
 - [ ] **5-Minute Micro-Sessions** (`references/micro_sessions.md`) — быстрые чек-ины: эмоция → 1 действие. ≤100 строк, opt-in через «у меня 5 минут».
-- [ ] **Mobile Dashboard** — адаптивная версия HTML Dashboard: 11 сфер Wheel of Life + Habit streaks + offline-ready. Требует BUG-001 fix (8→11 доменов).
+- [ ] **Mobile Dashboard** — адаптивная версия HTML Dashboard: 11 сфер Wheel of Life + Habit streaks + mobile responsiveness. BUG-001 (8→11) уже исправлен.
 - [ ] **Quick Decision Protocol** (`references/quick_decision.md`) — 2–3 вопроса для принятия решения «здесь и сейчас». Интеграция с Communication Style quadrant.
-- [ ] **Habit Tracker / Dashboard Streaks** — визуализация цепочек выполнения привычек в дашборде. Связь с `references/habit_loop.md` (Lally timeline). Требует: (1) Dashboard 8→11 fix, (2) streak data model inline в HTML.
+- [ ] **Habit Tracker / Dashboard Streaks** — визуализация цепочек выполнения привычек в дашборде. Связь с `references/habit_loop.md` (Lally timeline). Требует: streak data model inline в HTML + CSS для mobile.
 
 **Не входит (отложено в v0.9.1+):**
 - Voice-Optimized Output (conf 6/10 — ждёт метрики мобильного использования)
