@@ -9,7 +9,7 @@
 - **Адаптация стиля коммуникации** — скилл калибруется под вашу личность (Big Five × TTM × MI): от «Нежного родителя» до «Провокационного консультанта».
 - **Evidence-based foundation** — каждая методика (Wheel of Life, WOOP, OKR) имеет научную валидацию с указанием эффект-сайзов.
 
-**Версия:** 0.6.1  
+**Версия:** 0.7.0  
 **Автор:** Andrey Zagreev — [@zagreev](https://t.me/zagreev)  
 **Лицензия:** [MIT](LICENSE)  
 **Целевая платформа:** Claude.ai (Free, Pro, Max, Team, Enterprise — skills доступны на всех планах)
@@ -123,7 +123,7 @@
 ### Шаг 1. Скачать скилл
 
 1. Открой [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
-2. Скачай файл `life-planning-coach-vX.Y.Z.zip` (где X.Y.Z — последняя версия, например `0.6.1`)
+2. Скачай файл `life-planning-coach-vX.Y.Z.zip` (где X.Y.Z — последняя версия, например `0.7.0`)
 
 > **Примечание:** доступны два файла:
 > - `life-planning-coach-vX.Y.Z.zip` — ZIP-архив
