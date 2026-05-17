@@ -247,7 +247,16 @@ class TestSkillMdContent:
         version_match = re.search(r"^version\s*:\s*['\"]?(.*?)['\"]?\s*$", frontmatter, re.MULTILINE)
         assert version_match, "Frontmatter missing 'version' field"
         version = version_match.group(1).strip('"').strip("'")
-        assert version == "0.7.0", f"Expected version 0.7.0, got: {version}"
+        # Version should match latest git tag
+        import subprocess
+        git_tag = subprocess.run(
+            ["git", "describe", "--tags", "--abbrev=0"],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip().lstrip("v")
+        assert version == git_tag, f"Expected version {git_tag}, got: {version}"
 
     def test_skill_md_is_under_token_limit(self, skill_md_from_zip):
         """

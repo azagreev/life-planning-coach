@@ -241,12 +241,20 @@ class TestSkillMdIntegration:
             "SKILL.md must reference Communication Style"
         )
 
-    def test_version_is_0_6_0(self):
+    def test_version_matches_git_tag(self):
         text = REPO_SKILL_MD.read_text(encoding="utf-8")
         match = re.search(r"^version:\s*(.+)$", text, re.MULTILINE)
         assert match, "SKILL.md must have version in frontmatter"
         version = match.group(1).strip().strip('"').strip("'")
-        assert version == "0.7.0", f"Expected version 0.7.0, got: {version}"
+        import subprocess
+        git_tag = subprocess.run(
+            ["git", "describe", "--tags", "--abbrev=0"],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip().lstrip("v")
+        assert version == git_tag, f"Expected version {git_tag}, got: {version}"
 
     def test_goal_ownership_language_rules(self):
         text = REPO_SKILL_MD.read_text(encoding="utf-8")
