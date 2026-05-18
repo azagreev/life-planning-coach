@@ -170,15 +170,19 @@ else
         # Release notes contain the full description
         ZIP_FILE="dist/life-planning-coach-v${VERSION}.zip"
         SKILL_FILE="dist/life-planning-coach-v${VERSION}.skill"
+        GROK_FILE="dist/life-planning-coach-v${VERSION}-grok.md"
+        KIMI_FILE="dist/life-planning-coach-v${VERSION}-kimi.md"
         if [ ! -f "$ZIP_FILE" ] || [ ! -f "$SKILL_FILE" ]; then
             echo "❌ Build artifacts not found. Run: bash scripts/build-skill.sh"
             exit 1
         fi
+        UPLOAD_ARGS=("$ZIP_FILE" "$SKILL_FILE")
+        [ -f "$GROK_FILE" ] && UPLOAD_ARGS+=("$GROK_FILE")
+        [ -f "$KIMI_FILE" ] && UPLOAD_ARGS+=("$KIMI_FILE")
         gh release create "$TAG" \
             --title "$TAG" \
             --notes-file "$RELEASE_NOTES_FILE" \
-            "$ZIP_FILE" \
-            "$SKILL_FILE"
+            "${UPLOAD_ARGS[@]}"
         echo "✅ Release $TAG создан из $RELEASE_NOTES_FILE"
     else
         echo "⚠️  Файл $RELEASE_NOTES_FILE не найден"
