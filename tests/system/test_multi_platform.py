@@ -264,8 +264,9 @@ class TestBuildScript:
             capture_output=True,
             text=True,
         )
-        # Script doesn't have --help, but should fail gracefully
-        assert result.returncode != 0 or "Usage" in result.stdout
+        # --help now prints usage and exits 0
+        assert result.returncode == 0, f"--help failed: {result.stderr}"
+        assert "Usage:" in (result.stdout + result.stderr), "Usage text not found in output"
 
     def test_build_outputs_all_platforms(self):
         result = subprocess.run(

@@ -17,7 +17,10 @@
 **Версия:** 0.9.2  
 **Автор:** Andrey Zagreev — [@zagreev](https://t.me/zagreev)  
 **Лицензия:** [MIT](LICENSE)  
-**Целевая платформа:** Claude.ai (Free, Pro, Max, Team, Enterprise — skills доступны на всех планах)
+**Целевые платформы:**
+- **Claude.ai** (primary) — skills, ZIP-архив, MCP-интеграция
+- **Grok 4.3** (xAI) — sandbox skills, file I/O, session-only
+- **Kimi K2.6** (Moonshot AI) — agent skills, `memory_space`, `KIMI_REF`
 
 ---
 
@@ -152,6 +155,33 @@
 6. Выбери скачанный ZIP-файл (`life-planning-coach-vX.Y.Z.zip` или `.skill`)
 7. Дождись сообщения об успешной загрузке
 8. Включи скилл тумблером в списке Skills
+
+### Установка на Grok 4.3 (xAI)
+
+Grok использует markdown-скиллы в sandbox-окружении. Файлы не сохраняются между сессиями.
+
+1. Скачай `life-planning-coach-vX.Y.Z-grok.md` из [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
+2. Скопируй содержимое в файл `/root/.grok/skills/life-planning-coach/SKILL.md`
+   ```bash
+   mkdir -p /root/.grok/skills/life-planning-coach
+   cp life-planning-coach-vX.Y.Z-grok.md /root/.grok/skills/life-planning-coach/SKILL.md
+   ```
+3. Grok автоматически прочитает SKILL.md при запуске через `read_file`
+4. **Важно:** сохраняй `conversation_state.json` в конце сессии — sandbox очищается
+
+### Установка на Kimi K2.6 (Moonshot AI)
+
+Kimi использует skill-файлы в OK Computer mode (`kimi.com/agent`).
+
+1. Скачай `life-planning-coach-vX.Y.Z-kimi.md` из [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
+2. Скопируй содержимое в файл `/app/.kimi/skills/life-planning-coach/SKILL.md`
+   ```bash
+   mkdir -p /app/.kimi/skills/life-planning-coach
+   cp life-planning-coach-vX.Y.Z-kimi.md /app/.kimi/skills/life-planning-coach/SKILL.md
+   ```
+3. Используй **OK Computer mode** (`kimi.com/agent`) для полной диагностики
+4. Для Base Chat (10 шагов) используй микро-сессии: «у меня 5 минут»
+5. **Важно:** `memory_space` tool обязателен для сохранения контекста
 
 ### Шаг 3. Активировать
 
@@ -293,13 +323,24 @@ life-planning-coach/
 ├── CHANGELOG.md                       # История изменений проекта
 ├── ROADMAP.md                         # Планы будущих релизов
 ├── BACKLOG.md                         # Бэклог идей
-├── SKILL.md                           # Основной skill (для AI-агента)
+├── SKILL.md                           # Claude skill (backward compat, generated)
+├── SKILL.master.md                    # Platform-agnostic canonical source
+├── platforms/                         # Generated platform-specific skills
+│   ├── claude/SKILL.md                # Claude.ai skill
+│   ├── grok/SKILL.md                  # Grok 4.3 skill
+│   └── kimi/SKILL.md                  # Kimi K2.6 skill
 ├── life-planning-dashboard.html       # Интерактивный дашборд
 ├── dist/                                # Сборочные артефакты (не в git)
-│   ├── life-planning-coach-vX.Y.Z.zip   # Упакованный skill (ZIP по требованиям Anthropic)
-│   └── life-planning-coach-vX.Y.Z.skill # Тот же ZIP с расширением .skill
+│   ├── life-planning-coach-vX.Y.Z.zip   # Claude skill (ZIP)
+│   ├── life-planning-coach-vX.Y.Z.skill # Claude skill (.skill)
+│   ├── life-planning-coach-vX.Y.Z-grok.md # Grok 4.3 skill
+│   └── life-planning-coach-vX.Y.Z-kimi.md # Kimi K2.6 skill
 │
 ├── references/                        # Документация методик
+│   ├── platforms/                     # Platform overlays for skill generation
+│   │   ├── claude.overlay.yaml
+│   │   ├── grok.overlay.yaml
+│   │   └── kimi.overlay.yaml
 │   ├── diagnostic_methods.md          # Stage 1 протоколы
 │   ├── authentic_goal_filter.md       # Stage 1.5 протоколы
 │   ├── communication_style.md         # Адаптация стиля коммуникации
@@ -310,6 +351,11 @@ life-planning-coach/
 │   ├── calendar_integration.md       # Гайд по Calendar MCP
 │   └── USER_GUIDE_DRIVE.md           # Гайд по подключению Google Drive
 │
+├── scripts/
+│   ├── build-skill.sh                 # Сборка всех артефактов
+│   ├── build-platform-skill.py        # Генератор platform-specific skills
+│   └── release.sh                     # Релизный скрипт
+│
 └── setup.py                           # Python package installer
 ```
 
@@ -317,11 +363,13 @@ life-planning-coach/
 
 ## Требования
 
-| Компонент | Требования |
+| Платформа | Требования |
 |-----------|-----------|
-| Claude.ai | Любой план (Free+) — skills доступны на всех тарифах |
+| Claude.ai | Любой план (Free+) — skills + MCP connectors |
+| Grok 4.3 | xAI sandbox с file I/O (`read_file`, `write_file`) |
+| Kimi K2.6 | OK Computer mode (`kimi.com/agent`) для полной диагностики |
 | Дашборд | Любой современный браузер (Chrome, Firefox, Safari) |
-| Google Calendar | Аккаунт Google, авторизация через MCP в claude.ai |
+| Google Calendar | Аккаунт Google, авторизация через MCP в claude.ai (только Claude) |
 
 ---
 

@@ -9,6 +9,7 @@ Outputs:
     platforms/{platform}/SKILL.md
 """
 
+import os
 import re
 import sys
 import yaml
@@ -19,6 +20,37 @@ PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 MASTER_PATH = PROJECT_ROOT / "SKILL.master.md"
 OVERLAY_DIR = PROJECT_ROOT / "references" / "platforms"
 OUTPUT_DIR = PROJECT_ROOT / "platforms"
+
+PLATFORMS = ["claude", "grok", "kimi"]
+
+
+def detect_platform() -> str | None:
+    """Auto-detect platform from environment.
+
+    Checks (in order):
+    1. Grok: /root/.grok/ exists or GROK_ENV is set
+    2. Kimi: /app/.kimi/ exists or KIMI_ENV is set
+    3. Claude: fallback if none detected
+    """
+    def _path_exists(path: str) -> bool:
+        try:
+            return Path(path).exists()
+        except PermissionError:
+            return False
+
+    # Grok detection
+    if _path_exists("/root/.grok") or os.environ.get("GROK_ENV"):
+        return "grok"
+
+    # Kimi detection
+    if _path_exists("/app/.kimi") or os.environ.get("KIMI_ENV"):
+        return "kimi"
+
+    # Claude is default — no reliable env marker, but we can check for claude-specific paths
+    if _path_exists("/tmp/claude") or os.environ.get("CLAUDE_ENV"):
+        return "claude"
+
+    return None
 
 
 def parse_frontmatter(text: str) -> tuple[dict, str]:
@@ -115,15 +147,41 @@ def build_platform(platform: str) -> Path:
     return output_path
 
 
-def main():
-    platforms = ["claude", "grok", "kimi"]
+def print_usage():
+    print(f"Usage: {sys.argv[0]} [claude|grok|kimi|all|--detect]", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("Options:", file=sys.stderr)
+    print("  claude|grok|kimi    Build skill for specific platform", file=sys.stderr)
+    print("  all                 Build skills for all platforms (default)", file=sys.stderr)
+    print("  --detect            Auto-detect platform from environment", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("Auto-detect heuristics:", file=sys.stderr)
+    print("  Grok: /root/.grok exists or GROK_ENV is set", file=sys.stderr)
+    print("  Kimi: /app/.kimi exists or KIMI_ENV is set", file=sys.stderr)
+    print("  Claude: fallback (no reliable env marker)", file=sys.stderr)
 
-    if len(sys.argv) < 2 or sys.argv[1] == "all":
-        targets = platforms
+
+def main():
+    if len(sys.argv) < 2:
+        # Default: build all
+        targets = PLATFORMS
+    elif sys.argv[1] in ("-h", "--help"):
+        print_usage()
+        sys.exit(0)
+    elif sys.argv[1] == "--detect":
+        detected = detect_platform()
+        if detected:
+            print(f"Detected platform: {detected}")
+            targets = [detected]
+        else:
+            print("Could not auto-detect platform. Falling back to 'all'.", file=sys.stderr)
+            targets = PLATFORMS
+    elif sys.argv[1] == "all":
+        targets = PLATFORMS
     else:
-        targets = [p for p in sys.argv[1:] if p in platforms]
+        targets = [p for p in sys.argv[1:] if p in PLATFORMS]
         if not targets:
-            print(f"Usage: {sys.argv[0]} [claude|grok|kimi|all]", file=sys.stderr)
+            print_usage()
             sys.exit(1)
 
     for platform in targets:
