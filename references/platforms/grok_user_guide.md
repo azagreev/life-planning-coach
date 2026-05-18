@@ -1,6 +1,6 @@
 # User Guide: Life Planning Coach на Grok 4.3 (xAI)
 
-> **Важно:** Grok 4.3 не имеет официального Skill Store (в отличие от Claude.ai). Этот гайд описывает 3 проверенных способа загрузки скилла в Grok — от простого к продвинутому.
+> **Важно:** Grok 4.3 не имеет официального Skill Store. Этот гайд описывает 4 проверенных способа загрузки скилла в Grok — от простого к продвинутому.
 
 ---
 
@@ -12,13 +12,7 @@
 | Скачанный `life-planning-coach-vX.Y.Z-grok.md` | Файл скилла для Grok |
 | Любой текстовый редактор | Для копирования содержимого |
 
-**Ограничения Grok 4.3:**
-- ❌ Нет persistent memory между сессиями (sandbox сбрасывается)
-- ❌ Нет native calendar integration
-- ❌ Нет Google Drive MCP connector
-- ✅ Есть sandbox file I/O (`read_file`, `write_file`, `edit_file`)
-- ✅ Есть web search и image generation
-- ✅ Можно генерировать HTML-дашборд через `render_file`
+**Возможности Grok 4.3:** ✅ Persistent memory • ✅ Native Google Calendar connector • ✅ Native Google Drive connector • ✅ Sandbox file I/O (`read_file`, `write_file`, `edit_file`, `bash`) • ✅ Web search и image generation • ✅ Grok Projects • ✅ Skills directory (`~/.grok/skills/`) • ✅ Collections • ✅ `render_file` component
 
 ---
 
@@ -28,12 +22,11 @@
 
 ### Шаг 1. Открыть Grok
 1. Перейди на [grok.com](https://grok.com) или открой мобильное приложение
-2. Убедись, что выбрана модель **Grok 4.3** (в селекторе моделей)
+2. Убедись, что выбрана модель **Grok 4.3**
 
 ### Шаг 2. Вставить скилл
-1. Открой скачанный файл `life-planning-coach-vX.Y.Z-grok.md`
-2. Скопируй **всё содержимое** (Ctrl+A → Ctrl+C)
-3. Вставь в первое сообщение Grok:
+1. Открой `life-planning-coach-vX.Y.Z-grok.md`, скопируй всё содержимое (Ctrl+A → Ctrl+C)
+2. Вставь в первое сообщение:
 
 ```
 Ниже — инструкции для тебя как AI-ассистента. Следуй им во всём разговоре.
@@ -48,128 +41,168 @@
 ### Шаг 3. Начать диалог
 Grok прочитает инструкции и начнёт с Emotional Landing Protocol.
 
-**⚠️ Важно:** При закрытии вкладки или новой сессии скилл нужно будет вставлять заново.
+**💡 Совет:** С включённой Persistent Memory контекст сохраняется между сессиями даже при Direct Prompt.
 
 ---
 
-## Способ 2. Custom Instructions (если доступно в UI)
+## Способ 2. Grok Projects (рекомендуемый)
 
-**Лучше для:** регулярного использования, сохранение инструкций между сессиями.
+**Лучше для:** регулярного использования, workspace-specific контекст, постоянный доступ к файлам.
 
-> **Примечание:** xAI периодически добавляет функции. Если в настройках Grok появилось поле "Custom Instructions" или "System Prompt" — используй этот способ.
+### Шаг 1. Создать Project
+1. В Grok нажми **New Project** (или «+» рядом с Projects)
+2. Название: **Life Planning Coach**, описание: «Коучинг по жизненному планированию»
 
-### Шаг 1. Проверить наличие Custom Instructions
-1. В Grok App нажми на **профиль / настройки** (обычно в правом верхнем углу)
-2. Ищи раздел: **"Custom Instructions"**, **"System Prompt"**, **"Persona"** или **"Memory"**
+### Шаг 2. Добавить инструкции
+1. Открой `life-planning-coach-vX.Y.Z-grok.md`, скопируй содержимое
+2. В Project → **Context** (или «Instructions») вставь текст скилла → сохрани
 
-### Шаг 2. Загрузить скилл
-1. Открой `life-planning-coach-vX.Y.Z-grok.md`
-2. Скопируй содержимое
-3. Вставь в поле Custom Instructions
-4. Сохрани
+### Шаг 3. Загрузить reference-файлы
+В Project → **Files** нажми **Upload**, загрузи файлы из папки `references/`.
 
-### Шаг 3. Активировать
-- Скилл будет автоматически применяться ко всем новым сессиям
-- Триггер-фразы: "помоги спланировать жизнь", "не знаю куда двигаться", "wheel of life"
-
-**Если Custom Instructions НЕ доступны** — используй Способ 1 или 3.
+### Шаг 4. Активировать
+Открывай Project **Life Planning Coach** — скилл применяется автоматически.
 
 ---
 
-## Способ 3. API + Sandbox (продвинутый, для разработчиков)
+## Способ 3. Skills Directory (`~/.grok/skills/`)
 
-**Лучше для:** полноценной работы с сохранением `conversation_state.json`, автоматизации.
+**Лучше для:** persistent скиллы, доступные во всех сессиях и проектах. Grok auto-discovers skills.
 
-> Требует доступа к xAI API и tool calling.
+### Структура директории
+```
+~/.grok/skills/
+└── life-planning-coach/
+    ├── SKILL.md          ← основные инструкции
+    ├── metadata.json     ← название, версия, теги
+    └── references/       ← дополнительные материалы
+```
 
-### Шаг 1. Получить API-ключ
-1. Перейди на [console.x.ai](https://console.x.ai)
-2. Создай API Key
-3. Убедись, что у тебя есть доступ к Grok 4.3 с tool use
+### Создание через sandbox
+```
+Создай директорию `~/.grok/skills/life-planning-coach/references/`.
+Запиши в `~/.grok/skills/life-planning-coach/SKILL.md` следующее содержимое:
 
-### Шаг 2. Загрузить скилл в sandbox
-Используй API-вызов с `write_file` tool:
+---
+[вставь содержимое life-planning-coach-vX.Y.Z-grok.md]
+---
+```
+
+### Активация
+В начале сессии:
+```
+Загрузи скилл life-planning-coach из ~/.grok/skills/ и начни с Emotional Landing.
+```
+
+---
+
+## Способ 4. API + Collections (продвинутый)
+
+**Лучше для:** автоматизации, persistent document storage через Collections API.
+
+### Шаг 1. API-ключ
+[console.x.ai](https://console.x.ai) → создай API Key с доступом к Grok 4.3 + tool use.
+
+### Шаг 2. Создать Collection
+Collections — persistent хранилище документов между сессиями:
 
 ```python
 import openai
-
-client = openai.OpenAI(
-    api_key="YOUR_XAI_API_KEY",
-    base_url="https://api.x.ai/v1",
-)
-
-# Читаем скилл
-with open("life-planning-coach-v0.9.2-grok.md", "r") as f:
-    skill_content = f.read()
-
-# Создаём сессию и записываем skill в sandbox
-response = client.chat.completions.create(
+client = openai.OpenAI(api_key="YOUR_KEY", base_url="https://api.x.ai/v1")
+with open("life-planning-coach-v0.9.2-grok.md") as f:
+    skill = f.read()
+client.chat.completions.create(
     model="grok-4.3",
-    messages=[
-        {"role": "system", "content": "You are Grok, built by xAI."},
-        {"role": "user", "content": f"""
-Создай файл `/root/.grok/skills/life-planning-coach/SKILL.md` со следующим содержимым:
-
-```
-{skill_content}
-```
-
-Затем прочитай этот файл через read_file и подтверди, что скилл загружен.
-"""}
-    ],
-    tools=[
-        {"type": "function", "function": {"name": "write_file", "description": "Write a file"}},
-        {"type": "function", "function": {"name": "read_file", "description": "Read a file"}},
-    ],
+    messages=[{"role": "user", "content": f"""
+Создай Collection "Life Planning Coach" и добавь документ "SKILL.md":
+```\n{skill}\n```
+"""}],
 )
 ```
 
-### Шаг 3. Активировать скилл
-В следующих сессиях начинай с:
-
+### Шаг 3. Использовать Collection
 ```
-Прочитай `/root/.grok/skills/life-planning-coach/SKILL.md` и следуй инструкциям.
+Загрузи документ "SKILL.md" из Collection "Life Planning Coach".
 Начни с Emotional Landing.
 ```
 
-### Шаг 4. Сохранение контекста
-В конце каждой сессии Grok должен сохранить `conversation_state.json`:
+---
+
+## Как включить connectors
+
+Grok поддерживает встроенные connectors для внешних сервисов:
+
+### Google Calendar
+[grok.com/connectors](https://grok.com/connectors) → **New Connector** → **Google Calendar** → OAuth (разреши create/update/delete/search/RSVP).
+
+### Google Drive
+Там же → **Google Drive** → OAuth (разреши search/read/write/create/upload).
+
+> **Важно:** Google Drive connector — нативный, НЕ MCP. Работает напрямую через OAuth.
+
+### Другие connectors
+Outlook Calendar, OneDrive, SharePoint, Salesforce, Teams — тот же OAuth-флоу.
+
+---
+
+## Настройка Persistent Memory
+
+Grok запоминает контекст между сессиями через Memory.
+
+### Включить
+Settings → Data Controls → Memory → **ON**
+
+### Управление
+- **Просмотр:** Settings → Data Controls → Memory → «View Memories»
+- **Удалить одно:** 🗑️ рядом с воспоминанием
+- **Удалить все:** Settings → Data Controls → Memory → «Clear All Memories»
+
+### Приватный режим (Private Chat)
+Иконка 👻 в чате — для чувствительных разговоров. В этом режиме Grok **не сохраняет** воспоминания.
+
+---
+
+## Кросс-платформенная непрерывность
+
+Переход с другого AI-ассистента на Grok? Всё остаётся на месте.
+
+Grok имеет нативный Google Drive connector — все файлы wiki доступны без пересоздания. Вставь в первое сообщение:
 
 ```
-Сохрани текущее состояние разговора в `/home/workdir/artifacts/conversation_state.json`
+Найди в моём Google Drive папку "Life Planning Coach Wiki".
+Прочитай файлы Index.md и Hot_Cache.md.
+Продолжи с того места, где мы остановились.
 ```
 
-**⚠️ Критично:** Скачай `conversation_state.json` перед закрытием сессии — sandbox очищается.
+Grok найдёт папку, прочитает состояние и продолжит диагностику.
 
 ---
 
 ## Сравнение способов
 
-| Способ | Сложность | Persistent | Calendar | Лучше для |
-|--------|-----------|------------|----------|-----------|
-| Direct Prompt | ⭐ Лёгкий | ❌ Нет | ❌ Text-only | Тестирование, одноразовые сессии |
-| Custom Instructions | ⭐ Средний | ✅ Да (если доступно) | ❌ Text-only | Регулярное использование |
-| API + Sandbox | ⭐⭐⭐ Сложный | ⚠️ Только с ручным save | ❌ Text-only | Разработчики, автоматизация |
+| Способ | Сложность | Persistent | Calendar | Drive | Лучше для |
+|--------|-----------|------------|----------|-------|-----------|
+| Direct Prompt | ⭐ Лёгкий | ⚠️ Только с Memory ON | ✅ Native | ✅ Native | Тестирование, быстрый старт |
+| Grok Projects | ⭐⭐ Средний | ✅ Да (Project context) | ✅ Native | ✅ Native | Регулярное использование |
+| Skills Directory | ⭐⭐ Средний | ✅ Да (auto-discover) | ✅ Native | ✅ Native | Постоянный доступ во всех сессиях |
+| API + Collections | ⭐⭐⭐ Сложный | ✅ Да (Collections API) | ✅ Native | ✅ Native | Разработчики, автоматизация |
 
 ---
 
 ## Первый запуск (общий флоу)
 
-Независимо от способа установки, первый разговор выглядит так:
-
 ### 1. Триггер-фраза
-Напиши любую из:
 - «Я чувствую, что жизнь проходит мимо, помоги разобраться»
 - «Не знаю, куда двигаться»
 - «Хочу поставить цели на год»
 - «Сделай Wheel of Life»
 
 ### 2. Emotional Landing (5-10 мин)
-Grok начнёт с валидации, а не с тестов:
+Grok начнёт с валидации:
 > «Это знакомо многим — чувство, что время уходит, а ты не туда движешься...»
 
 ### 3. Style Calibration (1 мин, опционально)
-Grok задаст 2 вопроса о предпочтительном стиле коммуникации.
+Два вопроса о предпочтительном стиле коммуникации.
 
 ### 4. Диагностика
 - **Track A** (20-30 мин): Wheel of Life + Values + одно действие
@@ -179,23 +212,24 @@ Grok задаст 2 вопроса о предпочтительном стил�
 
 ## Особенности Grok 4.3 (важно понимать)
 
-### Session-only Memory
-Grok **не запоминает** контекст между сессиями. В начале каждого нового разговора:
-1. Загрузи скилл заново (Способ 1) или попроси прочитать SKILL.md (Способ 3)
-2. Скажи: «Продолжаем с того места, где остановились. Последнее состояние: [кратко опиши прогресс]»
+### Persistent Memory
+Grok **запоминает** контекст между сессиями через Memory (Settings → Data Controls → Memory).
+- Включи Memory для автоматического сохранения контекста
+- Используй Private Chat (👻), когда не хочешь запоминать
+- Для полного контроля сохраняй `conversation_state.json` в sandbox
 
-### Text-only Calendar
-Grok **не может** создавать события в Google Calendar. Вместо этого:
-- Скилл предложит текстовый план с явными датами
-- Ты копируешь события вручную в свой календарь (Google, Apple, Outlook)
-- Формат: «Понедельник 19:00 — Weekly Review»
+### Native Calendar Connector
+Grok **может** создавать, обновлять и удалять события в Google Calendar через OAuth.
+- Подключи Calendar в grok.com/connectors
+- Скилл создаст события автоматически: «Понедельник 19:00 — Weekly Review»
+- Также доступен Outlook Calendar
 
 ### Dashboard
-Grok может генерировать HTML-дашборд через `render_file`:
+Grok генерирует HTML-дашборд через sandbox:
 1. Скажи: «Покажи дашборд»
-2. Grok создаст HTML-файл в sandbox
-3. Используй `render_file` для отображения
-4. **Скачай файл** — он не сохранится между сессиями
+2. Grok создаст HTML через `write_file`
+3. Используй `render_file` для отображения в чате
+4. **Скачай файл** — sandbox очищается при закрытии сессии
 
 ### Tool Limit
 Максимум **10 tool calls** за один turn. Grok автоматически batch'ит операции.
@@ -206,12 +240,12 @@ Grok может генерировать HTML-дашборд через `render_
 
 | Проблема | Решение |
 |----------|---------|
-| «Я не вижу скилл в списке» | Grok 4.3 не имеет Skill Store. Используй Direct Prompt или API. |
-| «Данные пропали после закрытия вкладки» | Нормально для Grok. Используй `conversation_state.json` и скачивай его. |
-| «Grok не начинает с Emotional Landing» | Убедись, что загружен именно Grok-вариант (`-grok.md`), не Claude. |
-| «Не могу подключить Google Calendar» | Grok не поддерживает MCP. Используй text-only планирование. |
-| «Дашборд не отображается» | Попроси Grok использовать `render_file` component или скачай HTML. |
-| «Слишком длинный скилл, не влезает в контекст» | Разбей на части: сначала загрузи Phase 0-2, потом Phase 3-5. |
+| «Я не вижу скилл в списке» | Grok 4.3 не имеет Skill Store. Используй Direct Prompt, Projects или Skills Directory. |
+| «Данные пропали после закрытия вкладки» | Включи Persistent Memory (Settings → Data Controls → Memory). Дополнительно сохраняй `conversation_state.json`. |
+| «Grok не начинает с Emotional Landing» | Убедись, что загружен именно Grok-вариант (`-grok.md`), не универсальный. |
+| «Не могу подключить Google Calendar» | Перейди на grok.com/connectors → New Connector → Google Calendar → пройди OAuth. |
+| «Дашборд не отображается» | Попроси Grok использовать `render_file` component для отображения HTML из sandbox. |
+| «Слишком длинный скилл, не влезает» | Разбей на части: сначала Phase 0-2, потом Phase 3-5. Или используй Grok Projects. |
 
 ---
 
@@ -220,12 +254,14 @@ Grok может генерировать HTML-дашборд через `render_
 ```
 1. Скачай life-planning-coach-v0.9.2-grok.md
 2. Открой grok.com → выбери Grok 4.3
-3. Скопируй содержимое файла
-4. Вставь в чат + напиши: "Следуй этим инструкциям. Начни с Emotional Landing."
-5. Напиши: "Я чувствую, что жизнь проходит мимо"
+3. Включи Persistent Memory: Settings → Data Controls → Memory → ON
+4. Подключи Google Drive: grok.com/connectors → Google Drive → OAuth
+5. Скопируй содержимое файла скилла
+6. Вставь в чат: "Следуй этим инструкциям. Начни с Emotional Landing."
+7. Напиши: "Я чувствую, что жизнь проходит мимо"
 ```
 
 ---
 
-*Документация основана на Grok 4.3 leaked system prompt и sandbox capabilities.*
+*Документация основана на Grok 4.3 leaked system prompt, sandbox capabilities и native connectors.*
 *Обновлено: 2026-05-18*

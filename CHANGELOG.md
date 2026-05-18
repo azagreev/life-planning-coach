@@ -11,15 +11,23 @@
 ### Added
 - **Multi-Platform Skill Adaptation** — скилл адаптирован под три платформы:
   - **Claude.ai** (primary) — ZIP-архив `.skill`, MCP-интеграция, Claude Memory
-  - **Grok 4.3** (xAI) — plain `SKILL.md`, sandbox file I/O, session-only persistence, `render_file` для дашборда
+  - **Grok 4.3** (xAI) — plain `SKILL.md`, sandbox file I/O, native persistent memory, native connectors, `render_file` для дашборда
   - **Kimi K2.6** (Moonshot AI) — plain `SKILL.md`, `memory_space` tool, `KIMI_REF` для артефактов, OK Computer / Base Chat guidance
   - Архитектура: `SKILL.master.md` (platform-agnostic) + `references/platforms/{claude,grok,kimi}.overlay.yaml` + генератор `scripts/build-platform-skill.py`
-  - 42 consistency tests: `tests/system/test_multi_platform.py`
+  - 53 consistency tests: `tests/system/test_multi_platform.py` (включая 11 фактчек-тестов для Grok)
 - Системные тесты: консистентность версий, целостность README, синхронизация с GitHub
 - Атомарный скрипт релиза: `scripts/release.sh`
 - Post-commit hook: предупреждение о незапушенных коммитах
 - `VERSION_SOURCES.md` — документация источников версии
 - `CHANGELOG.md`, `ROADMAP.md`, `BACKLOG.md` — управление проектом
+
+### Fixed
+- **Grok 4.3 документация**: исправлены 4 критические ошибки в `grok_user_guide.md` и `grok.overlay.yaml` после фактчека через xAI Docs MCP:
+  - Persistent Memory: Grok имеет native memory (апрель 2025), Grok Projects, Skills, Collections
+  - Calendar: Grok имеет native Google Calendar + Outlook connectors
+  - Drive: Grok имеет native Google Drive connector (не MCP)
+  - `render_file`: существует как render component (не API tool)
+- **Cross-platform continuity**: добавлена инструкция для чтения существующей `Life Planning Coach Wiki/` из Google Drive при переходе с Claude/Kimi на Grok
 
 ### Changed
 - `scripts/build-skill.sh` теперь собирает артефакты для всех платформ: `.skill` (Claude), `-grok.md`, `-kimi.md`

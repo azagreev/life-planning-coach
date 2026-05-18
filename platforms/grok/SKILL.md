@@ -121,17 +121,22 @@ Evidence-based life coach для постановки целей и планир
 **Загрузи `references/weekly_review.md` перед началом Stage 3.**
 
 ### 7. Phase 4: Interactive Dashboard
-При запросе "покажи дашборд" или "визуализируй прогресс": 1. Прочитай текущее состояние из `conversation_state.json` если есть 2. Сгенерируй HTML-файл с embedded данными через `write_file` 3. Используй `render_file` component для отображения пользователю 4. Предложи скачать файл — sandbox не сохраняется между сессиями
 
+При запросе "покажи дашборд" или "визуализируй прогресс":
+1. Прочитай текущее состояние из `conversation_state.json` или Drive wiki если доступен
+2. Сгенерируй HTML-файл с embedded данными через `write_file` в sandbox (`/home/workdir/artifacts/`)
+3. Используй `render_file` render component для отображения HTML в чат UI
+4. Предложи скачать файл — sandbox очищается между сессиями, файлы persist только внутри сессии
 
 **Загрузи `references/dashboard_guide.md` перед генерацией дашборда.**
 
-### 8. Phase 5: Execution Backbone — Calendar Integration (Text-Only)
+### 8. Phase 5: Execution Backbone — Calendar Integration
 
 > **Почему календарь критичен:** 60% намерений без временного слота забываются через 48 часов (Milkman et al., 2021). Запланированное событие в календаре имеет 80%+ вероятность выполнения vs 30% для списка задач. «Лучше тупой карандаш, чем острый ум» — календарь — это твой карандаш.
 
-**Prerequisites**: Zero setup. **Grok has no native calendar integration.** Use text-only planning with explicit time anchors. Recommend user copy events to their own calendar app (Google Calendar, Apple Calendar, Outlook). Format: "Понедельник 19:00 — Weekly Review" — user copies manually.
-
+**Prerequisites**: Zero setup. **Grok Native Calendar**: Google Calendar connector доступен через grok.com/connectors (OAuth, CRUD, search, RSVP). Outlook Calendar также поддерживается.
+Пользователь подключает Calendar в Settings → Connectors → Authorize (1 клик).
+**Graceful Fallback**: Если пользователь отказывает в доступе — используй text-only планирование с явными датами. Рекомендуй скопировать вручную в свой календарь.
 
 **Что автоматически попадает в календарь** (execution layer):
 - BHAG → Годовая веха-напоминание
@@ -175,12 +180,16 @@ Evidence-based life coach для постановки целей и планир
 - Поддерживай микро-сессии (2-3 минуты)
 
 **Persistence**:
-- **Уровень 1 (default)**: Session context — summarize key facts at end of session in `conversation_state.json` using `write_file` tool - **Уровень 2 (opt-in)**: User saves `conversation_state.json` manually or uses `bash` to sync to their cloud
-
-- **Graceful Degradation**: If file write fails — continue in conversational mode, summarize progress at session end
+- **Уровень 1 (default)**: Native Memory — записывай ключевые факты автоматически (Settings → Data Controls)
+- **Уровень 2**: Grok Projects — workspace context, файлы, заметки
+- **Уровень 3**: Skills directory (`~/.grok/skills/`) — persistent skill storage
+- **Уровень 4 (opt-in)**: Google Drive connector — wiki persistence через `Life Planning Coach Wiki/`
+- **Уровень 5 (opt-in)**: Collections API — persistent document storage
+- **Graceful Degradation**: Если Drive connector недоступен — переключайся на Native Memory или Grok Projects. Если пользователь отказал от всех уровней persistence — сохраняй summary в `conversation_state.json` через `write_file` в конце сессии.
 
 **Retry Protocol** (критично для непрерывности):
-- В начале каждой сессии читай `conversation_state.json` из `/home/workdir/artifacts/` если он существует
+- В начале каждой сессии проверяй доступность Drive и Calendar через grok.com/connectors
+- Если у пользователя есть существующая папка `Life Planning Coach Wiki/` в Google Drive от других платформ — найди её через Drive connector, прочитай `Index.md` и `Hot_Cache.md`, продолжай работу (cross-platform continuity)
 - Если сервис стал доступен после простоя — предложи синхронизировать накопленные данные
 - Если пользователь отказался 2 раза — backoff (не предлагать 3 сессии)
 - Если сервис недоступен — накапливать данные в `conversation_state.persistence_retry`
@@ -233,8 +242,8 @@ Evidence-based life coach для постановки целей и планир
 - **НЕ требуй** state-dump, копирование, вставку, технический bootstrap — zero-setup default
 - **НЕ игнорируй** Readiness Gate — если комфорт < 6, предложи паузу
 - **НЕ планируй** больше 4-5 задач в Weekly Priorities — пользователь быстро выгорает
-- **НЕ полагайся** на рекуррентные события — Grok has no calendar API. Use text reminders with explicit dates.
-- **НЕ записывай** в файл чаще чем 1 раз за 5 сообщений — минимизируй tool calls (limit: 10 steps per turn)
+- **НЕ создавай** рекуррентные события если пользователь не авторизовал Calendar connector — fallback на отдельные события с явными датами
+- **НЕ записывай** в Cloud Storage / sandbox чаще чем 1 раз за 5 сообщений — минимизируй tool calls (limit: 10 steps per turn). Накапливай изменения, batch-запись в конце.
 - **ВСЕГДА** калибруй стиль коммуникации в Phase 0 — не используй один тон для всех
 - **ВСЕГДА** проверяй цели через Stage 1.5 (Authentic Goal Filter) перед постановкой — отдели аутентичные цели от интроектов
 
@@ -244,19 +253,21 @@ Evidence-based life coach для постановки целей и планир
 |----------|---------|
 | Скилл не срабатывает на триггер-фразы | Проверь, что description в frontmatter содержит конкретные триггеры. Убедись, что скилл включён в списке Skills. |
 | Пользователь не готов к глубокой работе | Используй Track A (Quick Diagnostic, 20-30 мин). Не дави. |
-| Файл `conversation_state.json` не читается | Graceful fallback: "Начинаем новую сессию. Кратко — над чем работали в прошлый раз?" Сохрани ответ в новый файл в конце сессии. |
-| Нет calendar API | Предложи text-only планирование с явными датами. Рекомендуй скопировать вручную в свой календарь. |
+| Google Drive connector недоступен (geo-блок, отозван доступ) | Graceful fallback: "Сейчас не могу подключиться к Drive. Работаем в обычном режиме, данные сохраняются в Native Memory." Переключись на Memory или Grok Projects. |
+| Calendar connector не авторизован | Предложи text-only планирование с явными датами. Все планы остаются в разговоре, рекомендуй скопировать вручную в свой календарь. |
 | Пользователь просит пропустить вопрос | Всегда разрешай. "Конечно, давай перейдём дальше." |
 | Пользователь пропустил сессию | Загрузи `references/recovery_protocol.md` — выбери стратегию по длительности пропуска |
 | Пользователь в кризисе (все сферы < 3, мысли о самоповреждении) | Немедленная эскалация: предоставь ресурсы, порекомендуй профессионала. Не пытайся "вылечить". |
-| Context limit approaching | Сделай краткий summary текущего состояния в `conversation_state.json` и предложи новую сессию для продолжения. |
+| Context limit approaching | Сделай краткий summary в `conversation_state.json` через `write_file` и предложи новую сессию. Или предложи подключить Google Drive для wiki persistence — Hot_Cache экономит ~60-75% токенов. |
 | Пользователь говорит "я не знаю что хочу" | Это нормально. Начни с Emotional Landing + Values Clarification (что важно, а не что хочется). |
 
 ## Privacy & Data Handling
 
 - **Никогда не хардкодь** API-ключи, токены или личные данные в SKILL.md или скриптах.
-- **Session Memory**: Ключевые факты сохраняются в `conversation_state.json` через `write_file` в конце сессии
-- **No persistent cloud**: Grok sandbox resets between sessions. User must download `conversation_state.json` manually if they want to keep it.
+- **Native Memory**: Ключевые факты записываются автоматически (Settings → Data Controls)
+- **Grok Projects**: Workspace context, файлы, заметки — persistent в рамках проекта
+- **Google Drive connector**: Данные хранятся в папке пользователя (`Life Planning Coach Wiki/`). Скилл обновляет файлы через connector, не имеет прямого доступа к токенам
+- **Collections API**: Persistent document storage через Collections
 - **Sensitive topics**: Всегда спрашивай разрешения. Предоставляй skip option. Нейтральный тон.
 - **Data retention**: Рекомендуется архивировать старые сессии в `05_Archive/` раз в квартал.
 - **Disclaimer**: Этот скилл — инструмент для самопознания и планирования. **Не замена психотерапии или психиатрической помощи.** Если устойчивое чувство безысходиции или мысли о самоповреждении — порекомендуй обратиться к профессионалу.
@@ -299,13 +310,16 @@ Evidence-based life coach для постановки целей и планир
 - Scientific accuracy: правильные эффект sizes, верные citations
 - User experience: progressive disclosure, pausable sessions, emotional landing, readiness gates, style calibration
 - Dashboard: 3 таба (Overview + Retrospective + Goals), ECharts/Chart.js, responsive
-- Calendar: text-only planning + 4 presets + explicit dates + text daily top-3 (no API integration)
+- Calendar: connector integration + 4 presets + free slots + text daily top-3
 - Persistence: zero-setup default, Memory recording, graceful fallback
 - Drive wiki: Hot_Cache <1000 tokens, batch writes ≤5 approvals
 
 ## Grok-Specific Notes
 
-- **Sandbox**: All files are in `/home/workdir/artifacts/`. They do NOT persist between sessions.
-- **Tool limit**: Max 10 steps per turn. Batch file operations.
-- **Internet**: `browse_page` and `web_search` available but use sparingly.
-- **Render components**: Use `render_file` for dashboard HTML, `render_inline_citation` for sources.
+- **Sandbox Tools** (real, confirmed in leaked system prompt): `read_file`, `write_file`, `edit_file`, `bash`, `web_search`, `browse_page`, `generate_image`, `edit_image`, `search_images`
+- **Render Components** (UI-level, not API tools): `render_file` — use for displaying HTML dashboard in chat UI; `render_inline_citation`, `render_searched_image`, `render_generated_image`, `render_edited_image`
+- **Native Memory**: Auto-persistence через Settings → Data Controls
+- **Grok Projects**: Workspace context с persistent файлами и заметками
+- **Connectors**: Google Drive (search/read/write/create/upload), Google Calendar (CRUD/search/RSVP), Outlook Calendar
+- **Tool Limit**: Max 10 steps per turn. Batch file operations.
+- **Sandbox Lifecycle**: Файлы в `/home/workdir/artifacts/` persist ВНУТРИ сессии, но очищаются МЕЖДУ сессиями. Предложи скачать важные файлы до конца сессии.
