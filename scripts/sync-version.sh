@@ -39,6 +39,11 @@ sed -i "s/^version: .*/version: $NEW_VERSION/" SKILL.master.md
 echo "→ README.md"
 sed -i "s/\*\*Версия:\*\* [0-9.]*/**Версия:** $NEW_VERSION/" README.md
 
+# 4. AGENTS.md
+echo "→ AGENTS.md"
+sed -i "s/life-planning-coach v[0-9.]*/life-planning-coach v$NEW_VERSION/" AGENTS.md
+sed -i "s/Title = только тег (\`v[0-9.]*\`)/Title = только тег (\`v$NEW_VERSION\`)/" AGENTS.md
+
 # 4. Проверка: нет stale версий в других файлах
 echo "→ Проверка на stale версии..."
 STALE=$(grep -rn "version.*0\.[0-9]\+\.\?[0-9]*" --include="*.py" --include="*.md" --include="*.toml" . \
