@@ -68,9 +68,14 @@ fi
 echo "✅ Тесты проходят"
 
 # Проверка: нет незакоммиченных изменений
-if ! git diff-index --quiet HEAD --; then
+# Используем git diff (porcelain) вместо git diff-index (plumbing), потому что
+# porcelain с diff.autoRefreshIndex=true (default) корректно обрабатывает stat cache
+# mismatch при core.filemode=false (типично для WSL/Windows).
+# diff-index видит stat mismatch как dirty, даже если content идентичен.
+if ! git diff --quiet HEAD; then
     echo "❌ Есть незакоммиченные изменения:"
     git status --short
+    git diff --stat HEAD
     exit 1
 fi
 echo "✅ Рабочая директория чиста"
