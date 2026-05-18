@@ -12,7 +12,7 @@
 | Скачанный `life-planning-coach-vX.Y.Z-grok.md` | Файл скилла для Grok |
 | Любой текстовый редактор | Для копирования содержимого |
 
-**Возможности Grok 4.3:** ✅ Persistent memory • ✅ Native Google Calendar connector • ✅ Native Google Drive connector • ✅ Sandbox file I/O (`read_file`, `write_file`, `edit_file`, `bash`) • ✅ Web search и image generation • ✅ Grok Projects • ✅ Skills (`/home/workdir/.grok/skills/` — persistent через `init-skill.sh`) • ✅ Collections • ✅ `render_file` component
+**Возможности Grok 4.3:** ✅ Persistent memory • ✅ Native Google Calendar connector • ✅ Native Google Drive connector • ✅ Sandbox file I/O (`read_file`, `write_file`, `edit_file`, `bash`) • ✅ Web search и image generation • ✅ Grok Projects • ✅ Skills (forthcoming, leaked UI: Name/Description/Instruction + .md import) • ✅ Collections • ✅ `render_file` component
 
 ---
 
@@ -65,51 +65,29 @@ Grok прочитает инструкции и начнёт с Emotional Landin
 
 ---
 
-## Способ 3. Skills через `init-skill.sh` (официальный, persistent)
+## Способ 3. Grok Skills (реюзабельный скилл)
 
-**Лучше для:** скиллы, сохраняющиеся между сессиями. Единственный способ создания persistent skills в Grok 4.3.
+**Лучше для:** постоянный доступ к скиллу через slash command во всех сессиях.
 
-> **Важно:** Grok НЕ поддерживает загрузку готовых скиллов извне (external upload = false). Скилл можно только создать через официальный `init-skill.sh` внутри сессии.
+> ⚠️ **Статус:** Grok Skills — forthcoming feature. Leaked UI mockups (TestingCatalog, апр 2026) подтверждают поля Name / Description / Instruction и импорт `.md`, но feature flag пока False. Может быть недоступен для всех пользователей.
 
-### Где сохраняются skills
-| Тип | Путь | Persistent? |
-|-----|------|-------------|
-| **User skills** | `/home/workdir/.grok/skills/` | ✅ Да, между сессиями |
-| **Bundled skills** | `/root/.grok/skills/` | ❌ Нет, сбрасываются |
+### Шаг 1. Создать Project
+1. В Grok нажми **New Project** → название: **Life Planning Coach**
+2. Включи connectors: **Google Calendar** и **Google Drive**
 
-### Создание через sandbox
+### Шаг 2. Создать Skill
+1. В Project нажми **Create Skill** (или набери `/skill-create`)
+2. Название: **life-planning-coach**
+3. В поле **Instruction** вставь содержимое `life-planning-coach-vX.Y.Z-grok.md`
+4. Сохрани — Grok предложит сохранить скилл
 
-**Шаг 1.** Инициализируй скилл:
-```bash
-bash /root/.grok/skills/skill-creator/scripts/init-skill.sh life-planning-coach /home/workdir/.grok/skills --resources scripts,references,assets
+### Шаг 3. Активация
+В любом чате набери slash command:
+```
+/life-planning-coach
 ```
 
-**Шаг 2.** Запиши SKILL.md (попроси Grok использовать `write_file`):
-```
-Запиши в `/home/workdir/.grok/skills/life-planning-coach/SKILL.md` следующий контент:
-
----
-[вставь содержимое life-planning-coach-vX.Y.Z-grok.md]
----
-```
-
-**Шаг 3.** Загрузи reference-файлы (если нужны):
-```
-Создай файлы в `/home/workdir/.grok/skills/life-planning-coach/references/` из папки `references/` проекта.
-```
-
-**Шаг 4.** Валидация (обязательно):
-```bash
-bash /root/.grok/skills/skill-creator/scripts/validate-skill.sh /home/workdir/.grok/skills/life-planning-coach
-```
-
-### Активация
-В начале новой сессии:
-```
-Загрузи скилл life-planning-coach из /home/workdir/.grok/skills/ и начни с Emotional Landing.
-```
-
-**💡 Совет:** User skills имеют приоритет над bundled skills. Если создать скилл с таким же именем — user skill перекроет встроенный.
+**💡 Совет:** Если Skills UI недоступен — используй **Способ 2 (Grok Projects)**. Тот же результат через Project context.
 
 ---
 
@@ -201,7 +179,7 @@ Grok найдёт папку, прочитает состояние и прод�
 |--------|-----------|------------|----------|-------|-----------|
 | Direct Prompt | ⭐ Лёгкий | ⚠️ Только с Memory ON | ✅ Native | ✅ Native | Тестирование, быстрый старт |
 | Grok Projects | ⭐⭐ Средний | ✅ Да (Project context) | ✅ Native | ✅ Native | Регулярное использование |
-| Skills Directory | ⭐⭐ Средний | ✅ Да (auto-discover) | ✅ Native | ✅ Native | Постоянный доступ во всех сессиях |
+| Grok Skills | ⭐⭐ Средний | ✅ Да (slash command) | ✅ Native | ✅ Native | Reusable во всех сессиях |
 | API + Collections | ⭐⭐⭐ Сложный | ✅ Да (Collections API) | ✅ Native | ✅ Native | Разработчики, автоматизация |
 
 ---
