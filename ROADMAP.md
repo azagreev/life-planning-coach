@@ -87,7 +87,6 @@
 - Structured Growth Report (требует re-assessment flow)
 - Adaptive Response Length (требует интеграции с Deep Why/Energy Check)
 - Calendar Event Copy Review (scope ambiguity)
-- Voice-Optimized Output (отложено из v0.9.0, conf 6/10 — ждёт метрики мобильного использования)
 
 **Методики:**
 - Tiny Habits (Fogg, 2019)
@@ -120,7 +119,6 @@
 4. Reward Audit — написание `references/reward_audit.md` (≤120 строк) + hook в SKILL.md (≤3 строки)
 
 **Не входит (отложено в v0.9.1+):**
-- Voice-Optimized Output (conf 6/10 — ждёт метрики мобильного использования)
 - Auto-Review Triggers (требует session metadata persistence)
 - Structured Growth Report (требует re-assessment flow)
 - Adaptive Response Length (требует интеграции Deep Why + Energy Check)
