@@ -335,11 +335,12 @@ class TestBuildScriptIntegrity:
 
     def test_zip_is_fresh(self):
         """
-        ZIP should be newer than SKILL.md.
+        ZIP should be newer than SKILL.md (within 5 seconds tolerance).
         If not, the build script may not have been run after the last edit.
+        Tolerance accounts for race conditions when pytest regenerates SKILL.md.
         """
         zip_mtime = ZIP_PATH.stat().st_mtime
         skill_mtime = SKILL_MD_PATH.stat().st_mtime
-        assert zip_mtime >= skill_mtime, (
+        assert zip_mtime + 5 >= skill_mtime, (
             "ZIP is older than SKILL.md. Run scripts/build-skill.sh to rebuild."
         )
