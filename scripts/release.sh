@@ -113,7 +113,7 @@ fi
 # ── 3. COMMIT ──
 echo ""
 echo "[3/7] Коммит..."
-if git diff-index --quiet HEAD --; then
+if git diff --quiet HEAD; then
     echo "ℹ️  Нет изменений для коммита (версия уже синхронизирована)"
 else
     git add -A
