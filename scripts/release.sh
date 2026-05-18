@@ -147,9 +147,11 @@ echo "✅ Версия на GitHub проверена: $GITHUB_README"
 echo ""
 echo "[6/7] Создание тега..."
 if git rev-parse "$TAG" >/dev/null 2>&1; then
-    echo "⚠️  Тег $TAG уже существует"
+    echo "⚠️  Тег $TAG уже существует локально"
+    git push origin "$TAG"
+    echo "✅ Тег $TAG запушен"
 else
-    git tag "$TAG"
+    git tag -a "$TAG" -m "$TAG"
     git push origin "$TAG"
     echo "✅ Тег $TAG создан и запушен"
 fi
