@@ -30,6 +30,31 @@ TAG="v$VERSION"
 
 echo "=== Release $TAG ==="
 
+# ── 0. HOOK INSTALLATION ──
+echo ""
+echo "[0/7] Проверка git hooks..."
+
+HOOK_SRC=".github/hooks/pre-push-release-guard"
+HOOK_DST=".git/hooks/pre-push"
+
+if [ -f "$HOOK_SRC" ]; then
+    if [ ! -f "$HOOK_DST" ]; then
+        echo "→ Установка pre-push hook..."
+        cp "$HOOK_SRC" "$HOOK_DST"
+        chmod +x "$HOOK_DST"
+        echo "✅ pre-push hook установлен"
+    elif ! diff -q "$HOOK_SRC" "$HOOK_DST" >/dev/null 2>&1; then
+        echo "→ Обновление pre-push hook..."
+        cp "$HOOK_SRC" "$HOOK_DST"
+        chmod +x "$HOOK_DST"
+        echo "✅ pre-push hook обновлён"
+    else
+        echo "✅ pre-push hook актуален"
+    fi
+else
+    echo "⚠️  Шаблон hook'а не найден: $HOOK_SRC"
+fi
+
 # ── 1. PRECONDITION CHECKS ──
 echo ""
 echo "[1/7] Проверка preconditions..."
@@ -62,6 +87,18 @@ echo "✅ На ветке main"
 echo ""
 echo "[2/7] Синхронизация версии..."
 bash scripts/sync-version.sh "$VERSION"
+
+# ── 2.5. UPDATE ROADMAP STATUS TABLE ──
+echo ""
+echo "[2.5/7] Обновление ROADMAP..."
+ROADMAP_FILE="ROADMAP.md"
+# Remove released version from status table (Option B: no Released rows in ROADMAP)
+if grep -q "| v${VERSION} |" "$ROADMAP_FILE"; then
+    sed -i "/| v${VERSION} |/d" "$ROADMAP_FILE"
+    echo "✅ Удалена строка v${VERSION} из 'Текущий статус'"
+else
+    echo "ℹ️  Версия v${VERSION} не найдена в таблице статуса"
+fi
 
 # ── 3. COMMIT ──
 echo ""
