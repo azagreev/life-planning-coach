@@ -26,7 +26,20 @@ SKILL_MD_PATH = PROJECT_ROOT / "SKILL.md"
 
 # Find versioned artifacts in dist/ (e.g., life-planning-coach-v0.6.1.zip)
 # Falls back to root directory for backward compatibility
-_zip_files = sorted(DIST_DIR.glob("life-planning-coach-v*.zip"), reverse=True)
+# Sort by semver (parsed version tuple), not string order — v0.10.0 > v0.9.2
+
+def _parse_version_from_zip_name(path: Path) -> tuple:
+    """Parse semver from filename like life-planning-coach-v0.10.0.zip"""
+    match = re.search(r'v(\d+)\.(\d+)\.(\d+)', path.name)
+    if match:
+        return tuple(int(x) for x in match.groups())
+    return (0, 0, 0)
+
+_zip_files = sorted(
+    DIST_DIR.glob("life-planning-coach-v*.zip"),
+    key=_parse_version_from_zip_name,
+    reverse=True,
+)
 ZIP_PATH = _zip_files[0] if _zip_files else PROJECT_ROOT / "life-planning-coach.zip"
 
 _skill_files = sorted(DIST_DIR.glob("life-planning-coach-v*.skill"), reverse=True)
