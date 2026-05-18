@@ -40,7 +40,7 @@ L0 Request → L1 Extract → L2 Plan → L3 AC → Implement → Verify → Shi
 | **L2 → L3** (AC) | AC написаны? Пользователь одобрил через ExitPlanMode? | **Пользователь** |
 | **L3 → Implement** | AC одобрены? Git clean? Все тесты проходят? | Агент (pre-check) |
 | **Implement → Verify** | Все тесты проходят? AC проверены? | Агент (pytest) |
-| **Verify → Ship** | ROADMAP обновлён? CHANGELOG обновлён? Version synced? | Агент (checklist) |
+| **Verify → Ship** | ROADMAP 'Текущий статус' не содержит released версий? CHANGELOG обновлён? Version synced? | Агент (checklist) |
 
 ### 0.3 Session-start Pre-check
 
@@ -56,6 +56,20 @@ git describe --tags --abbrev=0
 ```
 
 Если что-то не так — **остановиться и сообщить пользователю** до начала любой работы.
+
+### 0.3a Session-end Checklist
+
+Перед окончанием сессии агент ОБЯЗАН выполнить:
+
+```bash
+# 1. Все изменения закоммичены
+git status --short          # Должно быть пусто
+# 2. Все тесты проходят
+python3 -m pytest tests/ -q
+# 3. Нет незакоммиченных файлов — включая новые тесты и планы
+```
+
+Если `git status --short` не пустое — **закоммитить или объяснить** до окончания сессии.
 
 ### 0.4 Research-обязательства (Context7 + Best Practices)
 
