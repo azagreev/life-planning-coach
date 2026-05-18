@@ -103,7 +103,7 @@ class TestYamlFrontmatter:
         body = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", body)
         forbidden = ["claude", "anthropic"]
         for word in forbidden:
-            # Allow if part of file path or technical term (e.g., CLAUDE_Instructions)
+            # Allow if part of file path or technical term (e.g., AI_Instructions)
             matches = re.findall(rf"\b{word}\b", body, re.IGNORECASE)
             # Filter out: file names with underscores, Memory references, role labels in examples
             cleaned = [m for m in matches if not re.search(

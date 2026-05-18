@@ -1,0 +1,77 @@
+# Grok 4.3 Platform Overlay for life-planning-coach
+# Merged with SKILL.master.md by build-platform-skill.py
+
+# Grok uses markdown skills without strict YAML frontmatter.
+# We keep name/version/description from master; drop platform-specific fields.
+
+frontmatter_remove:
+  - requires_connector
+  - runtime
+  - author
+  - last_updated
+
+replacements:
+  - old: "**Assistant**: "
+    new: "**Grok** говорит..."
+
+  - old: "### 8. Phase 5: Execution Backbone — Calendar Integration"
+    new: "### 8. Phase 5: Execution Backbone — Calendar Integration (Text-Only)"
+
+  - old: "Пользователь подключает Calendar в Settings → Connectors → Authorize (1 клик)."
+    new: >
+      **Grok has no native calendar integration.**
+      Use text-only planning with explicit time anchors.
+      Recommend user copy events to their own calendar app (Google Calendar, Apple Calendar, Outlook).
+      Format: "Понедельник 19:00 — Weekly Review" — user copies manually.
+
+  - old: "- **Уровень 1 (default)**: AI Memory — записывай ключевые факты автоматически\n- **Уровень 2 (opt-in)**: Cloud Storage + LLM Wiki — создаёт структуру `Life Planning Coach Wiki/`"
+    new: >
+      - **Уровень 1 (default)**: Session context — summarize key facts at end of session in `conversation_state.json` using `write_file` tool
+      - **Уровень 2 (opt-in)**: User saves `conversation_state.json` manually or uses `bash` to sync to their cloud
+
+  - old: "- **Graceful Degradation**: Если Drive недоступен — переключайся на Memory без потери данных"
+    new: "- **Graceful Degradation**: If file write fails — continue in conversational mode, summarize progress at session end"
+
+  - old: "- В начале каждой сессии проверяй доступность Drive и Calendar"
+    new: "- В начале каждой сессии читай `conversation_state.json` из `/home/workdir/artifacts/` если он существует"
+
+  - old: "- **НЕ создавай** рекуррентные события в Calendar если connector не поддерживает — fallback на отдельные события"
+    new: "- **НЕ полагайся** на рекуррентные события — Grok has no calendar API. Use text reminders with explicit dates."
+
+  - old: "- **НЕ записывай** в Cloud Storage во время сессии — накапливай в памяти, batch-запись в конце (≤5 approval'ов)"
+    new: "- **НЕ записывай** в файл чаще чем 1 раз за 5 сообщений — минимизируй tool calls (limit: 10 steps per turn)"
+
+  - old: "| Cloud Storage недоступен (гео-блокировка, отозван доступ) | Graceful fallback: \"Сейчас не могу подключиться к хранилищу. Работаем в обычном режиме, данные сохраняются в памяти.\" Переключись на AI Memory. |"
+    new: "| Файл `conversation_state.json` не читается | Graceful fallback: \"Начинаем новую сессию. Кратко — над чем работали в прошлый раз?\" Сохрани ответ в новый файл в конце сессии. |"
+
+  - old: "| Calendar connector не работает | Предложи text-only планирование. Все планы остаются в разговоре. |"
+    new: "| Нет calendar API | Предложи text-only планирование с явными датами. Рекомендуй скопировать вручную в свой календарь. |"
+
+  - old: "| Memory переполнена / контекст сжался | Предложи подключить Cloud Storage для wiki persistence. Hot_Cache экономит ~60-75% токенов. |"
+    new: "| Context limit approaching | Сделай краткий summary текущего состояния в `conversation_state.json` и предложи новую сессию для продолжения. |"
+
+  - old: "- **AI Memory**: Ключевые факты записываются автоматически в формате \"Запомни: пользователь [имя] работает над [цель]...\"\n- **Cloud Storage**: Данные хранятся в папке пользователя (`Life Planning Coach Wiki/`). Скилл только обновляет файлы, не имеет прямого доступа к токенам."
+    new: "- **Session Memory**: Ключевые факты сохраняются в `conversation_state.json` через `write_file` в конце сессии\n- **No persistent cloud**: Grok sandbox resets between sessions. User must download `conversation_state.json` manually if they want to keep it."
+
+  - old: "- Calendar: connector integration + 4 presets + free slots + text daily top-3"
+    new: "- Calendar: text-only planning + 4 presets + explicit dates + text daily top-3 (no API integration)"
+
+  # Dashboard generation specifics for Grok
+  - old: "### 7. Phase 4: Interactive Dashboard\n\nПри запросе \"покажи дашборд\" или \"визуализируй прогресс\":\n1. Прочитай текущее состояние (JSON data)\n2. Сгенерируй HTML-файл с embedded данными\n3. Предложи открыть в браузере (работает offline)"
+    new: >
+      ### 7. Phase 4: Interactive Dashboard
+
+      При запросе "покажи дашборд" или "визуализируй прогресс":
+      1. Прочитай текущее состояние из `conversation_state.json` если есть
+      2. Сгенерируй HTML-файл с embedded данными через `write_file`
+      3. Используй `render_file` component для отображения пользователю
+      4. Предложи скачать файл — sandbox не сохраняется между сессиями
+
+append_after_privacy: |
+
+  ## Grok-Specific Notes
+
+  - **Sandbox**: All files are in `/home/workdir/artifacts/`. They do NOT persist between sessions.
+  - **Tool limit**: Max 10 steps per turn. Batch file operations.
+  - **Internet**: `browse_page` and `web_search` available but use sparingly.
+  - **Render components**: Use `render_file` for dashboard HTML, `render_inline_citation` for sources.

@@ -161,13 +161,14 @@
 **Цель:** Закрыть техдолг, упростить релизный процесс, отполировать существующие фичи. Нет новых user-facing фич.
 
 **Scope:**
+- [x] **Multi-Platform Skill Adaptation** — адаптация скилла под Claude.ai, Grok 4.3 (xAI), Kimi K2.6 (Moonshot AI). Single Source of Truth: `SKILL.master.md` + platform overlays + генератор `scripts/build-platform-skill.py`. 42 consistency tests.
 - [ ] **CI/CD через GitHub Actions** — автоматический запуск тестов при push/PR (~3ч)
 - [ ] **Ревизия текстов событий календаря** — tone check, нет «надо/должен» (~2ч)
 - [ ] **Единые Release Notes из CHANGELOG** — генерация из CHANGELOG.md, удаление RELEASE_NOTES*.md (~1ч)
 - [ ] **PDF экспорт дашборда** — кнопка печати/PDF (~1ч)
 - [ ] **Архивация старых планов** — перенос plan_v*.md в references/archive/ (~30мин)
 
-**Не входит:** Новые reference-файлы, изменения SKILL.md, dashboard redesign (уже сделан).
+**Не входит:** Dashboard redesign (уже сделан).
 
 **Детали планирования:** [`references/plan_v0.10.0.md`](references/plan_v0.10.0.md)
 

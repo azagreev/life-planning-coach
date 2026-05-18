@@ -1,0 +1,78 @@
+# Kimi K2.6 Platform Overlay for life-planning-coach
+# Merged with SKILL.master.md by build-platform-skill.py
+
+# Kimi OK Computer uses YAML frontmatter with name + description only.
+# Base Chat has 10-step limit; full agent experience requires OK Computer mode.
+
+frontmatter_remove:
+  - requires_connector
+  - runtime
+  - author
+  - last_updated
+
+replacements:
+  - old: "**Assistant**: "
+    new: "**Kimi** говорит..."
+
+  - old: "### 8. Phase 5: Execution Backbone — Calendar Integration"
+    new: "### 8. Phase 5: Execution Backbone — Calendar Integration (Text-Only)"
+
+  - old: "Пользователь подключает Calendar в Settings → Connectors → Authorize (1 клик)."
+    new: >
+      **Kimi has no native calendar integration.**
+      Use text-only planning with explicit time anchors.
+      Recommend user copy events to their own calendar app (Google Calendar, Apple Calendar, Outlook).
+      Format: "Понедельник 19:00 — Weekly Review" — user copies manually.
+
+  - old: "- **Уровень 1 (default)**: AI Memory — записывай ключевые факты автоматически\n- **Уровень 2 (opt-in)**: Cloud Storage + LLM Wiki — создаёт структуру `Life Planning Coach Wiki/`"
+    new: >
+      - **Уровень 1 (default)**: `memory_space` tool — используй `memory_space_edits` с command="add" для сохранения ключевых фактов. НИКОГДА не говори "запомню" без вызова tool.
+      - **Уровень 2 (opt-in)**: Пользователь сохраняет `conversation_state.json` вручную через `write_file` или использует внешнее хранилище
+
+  - old: "- **Graceful Degradation**: Если Drive недоступен — переключайся на Memory без потери данных"
+    new: "- **Graceful Degradation**: Если `memory_space` недоступен — накапливай в контексте, batch-summary в конце сессии"
+
+  - old: "- В начале каждой сессии проверяй доступность Drive и Calendar"
+    new: "- В начале каждой сессии читай `memory_space` через tool call. Если память пуста — спроси пользователя о контексте."
+
+  - old: "- **НЕ создавай** рекуррентные события в Calendar если connector не поддерживает — fallback на отдельные события"
+    new: "- **НЕ полагайся** на рекуррентные события — Kimi has no calendar API. Use text reminders with explicit dates."
+
+  - old: "- **НЕ записывай** в Cloud Storage во время сессии — накапливай в памяти, batch-запись в конце (≤5 approval'ов)"
+    new: "- **НЕ записывай** в файл чаще чем 1 раз за 5 сообщений — экономь tool calls (max 10 steps in Base Chat)"
+
+  - old: "| Cloud Storage недоступен (гео-блокировка, отозван доступ) | Graceful fallback: \"Сейчас не могу подключиться к хранилищу. Работаем в обычном режиме, данные сохраняются в памяти.\" Переключись на AI Memory. |"
+    new: "| `memory_space` недоступен | Graceful fallback: \"Работаем в обычном режиме. В конце сессии сделаем summary для сохранения.\" |"
+
+  - old: "| Calendar connector не работает | Предложи text-only планирование. Все планы остаются в разговоре. |"
+    new: "| Нет calendar API | Предложи text-only планирование с явными датами. Рекомендуй скопировать вручную в свой календарь. |"
+
+  - old: "| Memory переполнена / контекст сжался | Предложи подключить Cloud Storage для wiki persistence. Hot_Cache экономит ~60-75% токенов. |"
+    new: "| Context limit approaching (Base Chat 10 steps) | Сделай краткий summary в `memory_space` и предложи перейти в OK Computer mode (kimi.com/agent) или продолжить новой сессией. |"
+
+  - old: "- **AI Memory**: Ключевые факты записываются автоматически в формате \"Запомни: пользователь [имя] работает над [цель]...\"\n- **Cloud Storage**: Данные хранятся в папке пользователя (`Life Planning Coach Wiki/`). Скилл только обновляет файлы, не имеет прямого доступа к токенам."
+    new: "- **`memory_space`**: Ключевые факты сохраняются через `memory_space_edits` tool. Content должен начинаться с \"User / 用户\". НИКОГДА не говори \"запомню\" без вызова tool.\n- **File export**: Для wiki persistence используй `write_file` → скачивание пользователем. Kimi не имеет встроенного Google Drive connector."
+
+  - old: "- Calendar: connector integration + 4 presets + free slots + text daily top-3"
+    new: "- Calendar: text-only planning + 4 presets + explicit dates + text daily top-3 (no API integration)"
+
+  # Dashboard generation specifics for Kimi
+  - old: "### 7. Phase 4: Interactive Dashboard\n\nПри запросе \"покажи дашборд\" или \"визуализируй прогресс\":\n1. Прочитай текущее состояние (JSON data)\n2. Сгенерируй HTML-файл с embedded данными\n3. Предложи открыть в браузере (работает offline)"
+    new: >
+      ### 7. Phase 4: Interactive Dashboard
+
+      При запросе "покажи дашборд" или "визуализируй прогресс":
+      1. Прочитай текущее состояние из `memory_space` или `conversation_state.json`
+      2. Сгенерируй HTML-файл с embedded данными через `write_file`
+      3. Добавь `KIMI_REF` tag в конце ответа: `<KIMI_REF type="file" path="/mnt/okcomputer/output/dashboard.html" />`
+      4. Предложи открыть файл — он доступен для скачивания
+
+append_after_privacy: |
+
+  ## Kimi-Specific Notes
+
+  - **Mode guidance**: For full diagnostic (Track B, 65-105 min), recommend OK Computer mode (kimi.com/agent). Base Chat has 10-step limit.
+  - **memory_space**: CRITICAL — you MUST call `memory_space_edits` tool to save anything. Never say "I'll remember" without tool call.
+  - **KIMI_REF**: All generated files must include KIMI_REF tag at the END of response.
+  - **Step budget**: Base Chat = max 10 steps per turn. Use micro-sessions for complex tasks.
+  - **Language**: `memory_space` content must start with "User" / "用户" and match conversation language.

@@ -1,13 +1,8 @@
 ---
 name: life-planning-coach
 version: 0.9.2
-author: Andrey Zagreev
-last_updated: 2026-05-18
 description: >-
   Проведи полную диагностику жизни, построй систему целей от 25 лет до сегодняшнего дня и поддерживай еженедельную ретроспективу. Используй при запросах: "помоги спланировать жизнь", "не знаю куда двигаться", "какие у меня цели", "life planning", "постановка целей", "хочу разобраться в себе", "нужен план на жизнь", "ретроспектива", "обзор недели", "wheel of life", "ikigai", "BHAG", "OKR для жизни", "WOOP", "жизненные цели", "самопознание", "баланс жизни", "помоги найти себя", "life compass", "план на 5 лет", "выгорание", "перепутье". НЕ активируй на: конкретные бизнес-задачи, проектный менеджмент, технический troubleshooting, юридические вопросы. Язык: русский (адаптируется к языку пользователя).
-min_claude_version: 4.6
-runtime: claude.ai
-requires_mcp: google-calendar (optional), google-drive (optional for wiki persistence)
 ---
 
 # Life Planning Coach
@@ -126,19 +121,17 @@ Evidence-based life coach для постановки целей и планир
 **Загрузи `references/weekly_review.md` перед началом Stage 3.**
 
 ### 7. Phase 4: Interactive Dashboard
+При запросе "покажи дашборд" или "визуализируй прогресс": 1. Прочитай текущее состояние из `conversation_state.json` если есть 2. Сгенерируй HTML-файл с embedded данными через `write_file` 3. Используй `render_file` component для отображения пользователю 4. Предложи скачать файл — sandbox не сохраняется между сессиями
 
-При запросе "покажи дашборд" или "визуализируй прогресс":
-1. Прочитай текущее состояние (JSON data)
-2. Сгенерируй HTML-файл с embedded данными
-3. Предложи открыть в браузере (работает offline)
 
 **Загрузи `references/dashboard_guide.md` перед генерацией дашборда.**
 
-### 8. Phase 5: Execution Backbone — Google Calendar Integration (via MCP)
+### 8. Phase 5: Execution Backbone — Calendar Integration (Text-Only)
 
 > **Почему календарь критичен:** 60% намерений без временного слота забываются через 48 часов (Milkman et al., 2021). Запланированное событие в календаре имеет 80%+ вероятность выполнения vs 30% для списка задач. «Лучше тупой карандаш, чем острый ум» — календарь — это твой карандаш.
 
-**Prerequisites**: Zero setup. Пользователь подключает Google Calendar в Settings → MCP → Authorize (1 клик).
+**Prerequisites**: Zero setup. **Grok has no native calendar integration.** Use text-only planning with explicit time anchors. Recommend user copy events to their own calendar app (Google Calendar, Apple Calendar, Outlook). Format: "Понедельник 19:00 — Weekly Review" — user copies manually.
+
 
 **Что автоматически попадает в календарь** (execution layer):
 - BHAG → Годовая веха-напоминание
@@ -182,12 +175,12 @@ Evidence-based life coach для постановки целей и планир
 - Поддерживай микро-сессии (2-3 минуты)
 
 **Persistence**:
-- **Уровень 1 (default)**: Claude Memory — записывай ключевые факты автоматически
-- **Уровень 2 (opt-in)**: Google Drive + LLM Wiki — создаёт структуру `Life Planning Coach Wiki/`
-- **Graceful Degradation**: Если Drive недоступен — переключайся на Memory без потери данных
+- **Уровень 1 (default)**: Session context — summarize key facts at end of session in `conversation_state.json` using `write_file` tool - **Уровень 2 (opt-in)**: User saves `conversation_state.json` manually or uses `bash` to sync to their cloud
+
+- **Graceful Degradation**: If file write fails — continue in conversational mode, summarize progress at session end
 
 **Retry Protocol** (критично для непрерывности):
-- В начале каждой сессии проверяй доступность Drive и Calendar
+- В начале каждой сессии читай `conversation_state.json` из `/home/workdir/artifacts/` если он существует
 - Если сервис стал доступен после простоя — предложи синхронизировать накопленные данные
 - Если пользователь отказался 2 раза — backoff (не предлагать 3 сессии)
 - Если сервис недоступен — накапливать данные в `conversation_state.persistence_retry`
@@ -222,15 +215,15 @@ Evidence-based life coach для постановки целей и планир
 
 ### Example 1: Triggering + Emotional Landing
 **User**: "Я чувствую, что жизнь проходит мимо, помоги разобраться"
-**Claude** говорит..."Это знакомо многим — чувство, что время уходит, а ты не туда движешься. (VALIDATE) Часто это сигнал, что внутренний компас и внешние ожидания разошлись. (REFLECT) Если хочешь — могу помочь разобраться глубже: есть быстрый способ увидеть картину целиком (20 минут) или более детальный (несколько сессий)."
+**Grok** говорит..."Это знакомо многим — чувство, что время уходит, а ты не туда движешься. (VALIDATE) Часто это сигнал, что внутренний компас и внешние ожидания разошлись. (REFLECT) Если хочешь — могу помочь разобраться глубже: есть быстрый способ увидеть картину целиком (20 минут) или более детальный (несколько сессий)."
 
 ### Example 2: Quick Diagnostic — Wheel of Life
 **User**: "Давай сделаем Wheel of Life"
-**Claude** говорит..."Отлично, начнём. Оцени каждую сферу от 1 до 10 — где 1 это "катастрофа", 10 это "идеально". (после Emotional Landing) Здоровье? Финансы? Карьера? ... (11 сфер) Спасибо! Вот твоя картина: самая высокая — Семья (8), самая низкая — Отдых (3). Это говорит о..."
+**Grok** говорит..."Отлично, начнём. Оцени каждую сферу от 1 до 10 — где 1 это "катастрофа", 10 это "идеально". (после Emotional Landing) Здоровье? Финансы? Карьера? ... (11 сфер) Спасибо! Вот твоя картина: самая высокая — Семья (8), самая низкая — Отдых (3). Это говорит о..."
 
 ### Example 3: Weekly Review
 **User**: "Сделаем обзор недели"
-**Claude** говорит..."Начнём с GTD: Get Clear — что висит в голове? Get Current — статус по целям недели. Get Creative — что нового придумали? (после ответов) Теперь Scrum Retro: что работало? Что не работало? Какие уроки? (после) Рекомендация на следующую неделю: фокус на сферу Отдых — одно действие: ..."
+**Grok** говорит..."Начнём с GTD: Get Clear — что висит в голове? Get Current — статус по целям недели. Get Creative — что нового придумали? (после ответов) Теперь Scrum Retro: что работало? Что не работало? Какие уроки? (после) Рекомендация на следующую неделю: фокус на сферу Отдых — одно действие: ..."
 
 ## Gotchas
 
@@ -240,8 +233,8 @@ Evidence-based life coach для постановки целей и планир
 - **НЕ требуй** state-dump, копирование, вставку, технический bootstrap — zero-setup default
 - **НЕ игнорируй** Readiness Gate — если комфорт < 6, предложи паузу
 - **НЕ планируй** больше 4-5 задач в Weekly Priorities — пользователь быстро выгорает
-- **НЕ создавай** рекуррентные события в Calendar если MCP не поддерживает — fallback на отдельные события
-- **НЕ записывай** в Google Drive во время сессии — накапливай в памяти, batch-запись в конце (≤5 approval'ов)
+- **НЕ полагайся** на рекуррентные события — Grok has no calendar API. Use text reminders with explicit dates.
+- **НЕ записывай** в файл чаще чем 1 раз за 5 сообщений — минимизируй tool calls (limit: 10 steps per turn)
 - **ВСЕГДА** калибруй стиль коммуникации в Phase 0 — не используй один тон для всех
 - **ВСЕГДА** проверяй цели через Stage 1.5 (Authentic Goal Filter) перед постановкой — отдели аутентичные цели от интроектов
 
@@ -251,19 +244,19 @@ Evidence-based life coach для постановки целей и планир
 |----------|---------|
 | Скилл не срабатывает на триггер-фразы | Проверь, что description в frontmatter содержит конкретные триггеры. Убедись, что скилл включён в списке Skills. |
 | Пользователь не готов к глубокой работе | Используй Track A (Quick Diagnostic, 20-30 мин). Не дави. |
-| Google Drive недоступен (гео-блокировка, отозван доступ) | Graceful fallback: "Сейчас не могу подключиться к Drive. Работаем в обычном режиме, данные сохраняются в памяти." Переключись на Claude Memory. |
-| Calendar MCP не работает | Предложи text-only планирование. Все планы остаются в разговоре. |
+| Файл `conversation_state.json` не читается | Graceful fallback: "Начинаем новую сессию. Кратко — над чем работали в прошлый раз?" Сохрани ответ в новый файл в конце сессии. |
+| Нет calendar API | Предложи text-only планирование с явными датами. Рекомендуй скопировать вручную в свой календарь. |
 | Пользователь просит пропустить вопрос | Всегда разрешай. "Конечно, давай перейдём дальше." |
 | Пользователь пропустил сессию | Загрузи `references/recovery_protocol.md` — выбери стратегию по длительности пропуска |
 | Пользователь в кризисе (все сферы < 3, мысли о самоповреждении) | Немедленная эскалация: предоставь ресурсы, порекомендуй профессионала. Не пытайся "вылечить". |
-| Memory переполнена / контекст сжался | Предложи подключить Google Drive для wiki persistence. Hot_Cache экономит ~60-75% токенов. |
+| Context limit approaching | Сделай краткий summary текущего состояния в `conversation_state.json` и предложи новую сессию для продолжения. |
 | Пользователь говорит "я не знаю что хочу" | Это нормально. Начни с Emotional Landing + Values Clarification (что важно, а не что хочется). |
 
 ## Privacy & Data Handling
 
 - **Никогда не хардкодь** API-ключи, токены или личные данные в SKILL.md или скриптах.
-- **Claude Memory**: Ключевые факты записываются автоматически в формате "Запомни: пользователь [имя] работает над [цель]..."
-- **Google Drive**: Данные хранятся в папке пользователя (`Life Planning Coach Wiki/`). Скилл только обновляет файлы, не имеет прямого доступа к токенам.
+- **Session Memory**: Ключевые факты сохраняются в `conversation_state.json` через `write_file` в конце сессии
+- **No persistent cloud**: Grok sandbox resets between sessions. User must download `conversation_state.json` manually if they want to keep it.
 - **Sensitive topics**: Всегда спрашивай разрешения. Предоставляй skip option. Нейтральный тон.
 - **Data retention**: Рекомендуется архивировать старые сессии в `05_Archive/` раз в квартал.
 - **Disclaimer**: Этот скилл — инструмент для самопознания и планирования. **Не замена психотерапии или психиатрической помощи.** Если устойчивое чувство безысходиции или мысли о самоповреждении — порекомендуй обратиться к профессионалу.
@@ -306,6 +299,13 @@ Evidence-based life coach для постановки целей и планир
 - Scientific accuracy: правильные эффект sizes, верные citations
 - User experience: progressive disclosure, pausable sessions, emotional landing, readiness gates, style calibration
 - Dashboard: 3 таба (Overview + Retrospective + Goals), ECharts/Chart.js, responsive
-- Calendar: MCP integration + 4 presets + free slots + text daily top-3
+- Calendar: text-only planning + 4 presets + explicit dates + text daily top-3 (no API integration)
 - Persistence: zero-setup default, Memory recording, graceful fallback
 - Drive wiki: Hot_Cache <1000 tokens, batch writes ≤5 approvals
+
+## Grok-Specific Notes
+
+- **Sandbox**: All files are in `/home/workdir/artifacts/`. They do NOT persist between sessions.
+- **Tool limit**: Max 10 steps per turn. Batch file operations.
+- **Internet**: `browse_page` and `web_search` available but use sparingly.
+- **Render components**: Use `render_file` for dashboard HTML, `render_inline_citation` for sources.

@@ -9,6 +9,12 @@
 ## [Unreleased]
 
 ### Added
+- **Multi-Platform Skill Adaptation** — скилл адаптирован под три платформы:
+  - **Claude.ai** (primary) — ZIP-архив `.skill`, MCP-интеграция, Claude Memory
+  - **Grok 4.3** (xAI) — plain `SKILL.md`, sandbox file I/O, session-only persistence, `render_file` для дашборда
+  - **Kimi K2.6** (Moonshot AI) — plain `SKILL.md`, `memory_space` tool, `KIMI_REF` для артефактов, OK Computer / Base Chat guidance
+  - Архитектура: `SKILL.master.md` (platform-agnostic) + `references/platforms/{claude,grok,kimi}.overlay.yaml` + генератор `scripts/build-platform-skill.py`
+  - 42 consistency tests: `tests/system/test_multi_platform.py`
 - Системные тесты: консистентность версий, целостность README, синхронизация с GitHub
 - Атомарный скрипт релиза: `scripts/release.sh`
 - Post-commit hook: предупреждение о незапушенных коммитах
@@ -16,6 +22,9 @@
 - `CHANGELOG.md`, `ROADMAP.md`, `BACKLOG.md` — управление проектом
 
 ### Changed
+- `scripts/build-skill.sh` теперь собирает артефакты для всех платформ: `.skill` (Claude), `-grok.md`, `-kimi.md`
+- `SKILL.md` вычищен от platform-specific терминов, теперь является generated из `SKILL.master.md` + `claude.overlay.yaml`
+- `references/templates/CLAUDE_Instructions.md` → `AI_Instructions.md` (platform-agnostic)
 - Удалён `pyproject.toml` как дублирующий `setup.py`
 
 ### Fixed

@@ -16,6 +16,13 @@ BUILD_DIR="${PROJECT_ROOT}/.build"
 DIST_DIR="${PROJECT_ROOT}/dist"
 SKILL_FOLDER="${BUILD_DIR}/life-planning-coach"
 
+# ── 0. Generate platform-specific skills ─────────────────────────────────────
+echo "Generating platform skills..."
+python3 "${SCRIPT_DIR}/build-platform-skill.py" all
+
+# ── 0.5. Sync Claude skill to root SKILL.md (backward compatibility) ──────────
+cp "${PROJECT_ROOT}/platforms/claude/SKILL.md" "${SKILL_MD}"
+
 # ── 1. Validate source file exists ─────────────────────────────────────────────
 if [[ ! -f "${SKILL_MD}" ]]; then
     echo "Error: SKILL.md not found at ${SKILL_MD}" >&2
@@ -64,10 +71,8 @@ if [[ -z "${skill_version}" ]]; then
     errors=$((errors + 1))
 fi
 
-if [[ -z "${requires_mcp}" ]]; then
-    echo "Error: Frontmatter is missing required field 'requires_mcp'" >&2
-    errors=$((errors + 1))
-fi
+# requires_mcp is optional for non-Claude platforms, but required for Claude ZIP
+# We keep validation for backward compatibility of the Claude artifact
 
 if [[ ${errors} -gt 0 ]]; then
     exit 1
@@ -120,6 +125,10 @@ rm -f "${OUTPUT_ZIP}"
 # ── 9. Also create .skill file (same ZIP, alternative extension) ─────────────
 cp "${OUTPUT_ZIP}" "${OUTPUT_SKILL}"
 
+# ── 9.5. Copy Grok and Kimi plain SKILL.md files to dist ─────────────────────
+cp "${PROJECT_ROOT}/platforms/grok/SKILL.md" "${DIST_DIR}/life-planning-coach-v${skill_version}-grok.md"
+cp "${PROJECT_ROOT}/platforms/kimi/SKILL.md" "${DIST_DIR}/life-planning-coach-v${skill_version}-kimi.md"
+
 # ── 10. Verify outputs ───────────────────────────────────────────────────────
 if [[ ! -f "${OUTPUT_ZIP}" ]]; then
     echo "Error: Failed to create ${OUTPUT_ZIP}" >&2
@@ -131,11 +140,16 @@ zip_size=$(du -h "${OUTPUT_ZIP}" | cut -f1)
 # ── 11. Success ──────────────────────────────────────────────────────────────
 echo "✓ Built ${OUTPUT_ZIP} (version ${skill_version}, size: ${zip_size})"
 echo "✓ Built ${OUTPUT_SKILL} (ZIP archive, same content)"
+echo "✓ Built ${DIST_DIR}/life-planning-coach-v${skill_version}-grok.md (Grok 4.3)"
+echo "✓ Built ${DIST_DIR}/life-planning-coach-v${skill_version}-kimi.md (Kimi K2.6)"
 echo ""
 echo "Upload to Claude.ai:"
 echo "  1. Settings → Capabilities → enable 'Code execution and file creation'"
 echo "  2. Customize → Skills → '+' → 'Upload a skill'"
 echo "  3. Select: ${OUTPUT_ZIP} (or ${OUTPUT_SKILL})"
 echo ""
+echo "Grok 4.3: Copy SKILL.md content to /root/.grok/skills/life-planning-coach/SKILL.md"
+echo "Kimi K2.6: Copy SKILL.md content to /app/.kimi/skills/life-planning-coach/SKILL.md"
+echo ""
 echo "Or attach to GitHub Release:"
-echo "  gh release upload v${skill_version} ${OUTPUT_ZIP} ${OUTPUT_SKILL}"
+echo "  gh release upload v${skill_version} ${OUTPUT_ZIP} ${OUTPUT_SKILL} ${DIST_DIR}/life-planning-coach-v${skill_version}-grok.md ${DIST_DIR}/life-planning-coach-v${skill_version}-kimi.md"

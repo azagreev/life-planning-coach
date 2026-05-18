@@ -45,8 +45,8 @@ git describe --tags --abbrev=0
 
 ## 1. Проект
 
-- **Название:** `life-planning-coach` — evidence-based coaching skill for Claude
-- **Платформа:** Claude.ai (web), ZIP-архив
+- **Название:** `life-planning-coach` — evidence-based coaching skill
+- **Платформы:** Claude.ai (primary), Grok 4.3 (xAI), Kimi K2.6 (Moonshot AI)
 - **Язык:** Русский (primary)
 - **Версия:** v0.9.2 (источник правды — git tag)
 - **Репозиторий:** https://github.com/azagreev/life-planning-coach
@@ -56,7 +56,7 @@ git describe --tags --abbrev=0
 
 ## 2. Структура
 
-`SKILL.md` (скилл), `README.md`, `setup.py`, `life-planning-dashboard.html`, `CHANGELOG.md`, `ROADMAP.md` (только будущее), `BACKLOG.md`, `references/`, `tests/`, `scripts/release.sh`, `.github/workflows/`.
+`SKILL.md` (Claude skill, backward compat), `SKILL.master.md` (platform-agnostic source), `platforms/`, `README.md`, `setup.py`, `life-planning-dashboard.html`, `CHANGELOG.md`, `ROADMAP.md` (только будущее), `BACKLOG.md`, `references/` (incl. `references/platforms/`), `tests/`, `scripts/build-skill.sh`, `scripts/build-platform-skill.py`, `.github/workflows/`.
 
 ---
 
@@ -135,8 +135,11 @@ git describe --tags --abbrev=0
 # Запустить тесты
 python3 -m pytest tests/ -q
 
-# Собрать ZIP
+# Собрать все платформы
 bash scripts/build-skill.sh
+
+# Только сгенерировать platform-файлы
+python3 scripts/build-platform-skill.py [claude|grok|kimi|all]
 
 # Релиз
 bash scripts/release.sh X.Y.Z
