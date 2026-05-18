@@ -80,6 +80,11 @@ if ! git diff --quiet HEAD; then
 fi
 echo "✅ Рабочая директория чиста"
 
+# Пересобираем артефакты после тестов, чтобы ZIP был свежим
+# (pytest TestBuildScript может перезаписать platforms/*/SKILL.md, делая ZIP "устаревшим")
+echo "→ Пересборка артефактов..."
+bash scripts/build-skill.sh >/dev/null 2>&1 || true
+
 # Проверка: мы на main
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 if [ "$CURRENT_BRANCH" != "main" ]; then
