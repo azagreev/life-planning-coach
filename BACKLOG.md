@@ -3,6 +3,7 @@
 > **Для кого:** Внутреннее планирование, идеи без привязки к конкретной версии.
 > **Принцип:** Каждая идея имеет триггер — условие, при котором она переходит в ROADMAP.
 > **Баги:** Активные баги — в [BUGS.md](BUGS.md).
+> **Язык:** Названия идей — на русском. Английские термины допустимы только в скобках для общепринятых понятий (API, MCP, HTML).
 
 ---
 
@@ -14,64 +15,64 @@
 - **Статус:** ✅ Реализовано в v0.7.0
 - **Источник:** Анализ паттернов в Authentic Goal Filter (энергия как ось радара)
 
-### Habit Loop Integration
+### Интеграция привычек (Habit Loop)
 - **Статус:** ✅ Реализовано в v0.8.0 (`references/habit_loop.md`, 254 строки)
 - **Описание:** Мост между целями и ежедневными привычками (Tiny Habits, Habit Stacking)
 - **Триггер:** Востребовано 3+ пользователями или включено в ROADMAP v0.8.0
 - **Статус:** 📋 В ROADMAP v0.8.0
 - **Источник:** Литература: Fogg (2019), Clear (2018)
 
-### Google Tasks MCP Integration
+### Интеграция с Google Tasks MCP
 - **Описание:** Синхронизация Daily Top-3 с Google Tasks через официальный MCP
 - **Триггер:** Google Tasks API станет доступен через MCP в claude.ai
 - **Статус:** ⏳ Ожидание внешнего события
 - **Источник:** Техническое ограничение v0.2.0 (MCP не поддерживает Tasks)
 
 
-### 5-Minute Micro-Sessions
+### Микросессии 5 минут
 - **Описание:** Быстрые чек-ины для режима нехватки времени: эмоция → 1 действие. ≤100 строк, opt-in через фразу пользователя "у меня 5 минут". Интеграция с Habit Loop (Tiny Habits: <30 сек).
 - **Триггер:** v0.9.0 мобильная адаптация
 - **Статус:** 📋 В ROADMAP v0.9.0
 - **Источник:** Borrowed from Developmental Coach + Tiny Habits (Fogg)
 
-### Quick Decision Protocol
+### Протокол быстрых решений
 - **Описание:** 2–3 вопроса для принятия решения «здесь и сейчас». Адаптируется под Communication Style quadrant (High A = больше контекста, High N = больше безопасности).
 - **Триггер:** v0.9.0 мобильная адаптация
 - **Статус:** 📋 В ROADMAP v0.9.0
 - **Источник:** Borrowed from PM Decision Frameworks
 
-### Mobile Dashboard
+### Мобильный дашборд
 - **Описание:** Адаптивная версия `life-planning-dashboard.html`: 11 сфер Wheel of Life + Habit streaks + offline-ready. Требует: streak data model inline в HTML + mobile CSS. BUG-001 (8→11) уже исправлен.
 - **Триггер:** v0.9.0
 - **Статус:** 📋 В ROADMAP v0.9.0 (P0)
 - **Источник:** Техдолг BUG-001 + Habit Loop Framework
 
-### Group Coaching Mode
+### Групповой коучинг
 - **Описание:** Парный или групповой коучинг (2+ человека + скилл)
 - **Триггер:** 5+ пользователей запросят
 - **Статус:** 💡 Идея
 - **Источник:** Потенциальный enterprise use-case
 
-### Fitness API Integration
+### Интеграция Fitness API
 - **Описание:** Подключение Apple Health / Google Fit для отслеживания энергии и здоровья
 - **Триггер:** Расширение сферы «Здоровье» в Wheel of Life до quantitative метрик
 - **Статус:** 💡 Идея
 - **Источник:** Расширение Wheel of Life
 
-### Multilingual Support
+### Мультиязычность
 - **Описание:** Поддержка английского языка (EN/RU toggle)
 - **Триггер:** 10+ запросов от англоязычных пользователей
 - **Статус:** 💡 Идея
 - **Источник:** Потенциал международного open source
 
-### Calendar Event Copy Review
+### Ревизия текстов событий календаря
 - **Описание:** Полный ревизия всех событий календаря: названия (summary), описания (description), тексты напоминаний. Сделать их более мотивирующими, персонализированными и aligned с коучинговым тоном скилла. Проверить на отсутствие «надо/должен» в текстах событий.
 - **Триггер:** Перед v0.7.0 или при первой жалобе пользователя на «роботизированные» напоминания
 - **Статус:** 📋 В ROADMAP v0.8.0
 - **Источник:** Пользовательская обратная связь, UX-калибровка
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 8/10). Причина: scope ambiguity (generic warm vs dynamic personalized), требуется v0.8.0 habit integration для holistic design.
 
-### Reward Audit (Бюджет Дофамина / Cheap Dopamine Tracker)
+### Аудит наград (Бюджет дофамина)
 - **Описание:** Модуль для логирования источников «дешёвого дофамина» (сахар, скролл соцсетей, Shorts, игры) и корреляции их с completion rate целей. Dopamine Load Score (0–10), weekly insights, интеграция в planning flow. Фрейминг: «Reward Management для достижения целей», не guilt-trip.
 - **Триггер:** Решение автора проекта — killer feature, без pilot/проверки
 - **Статус:** 🎯 **Решение принято: IMPLEMENT** (авторский override после Advocate/Critic дебата)
@@ -149,7 +150,7 @@
 - **references/plan_vX.Y.Z.md** — детальное планирование конкретного релиза
 - **references/release_checklist_vX.Y.Z.md** — чеклист перед выпуском
 
-### Dashboard Redesign — Self-Contained & Dependency-Free
+### Переделка дашборда (Self-Contained)
 - **Описание:** Полный пересмотр life-planning-dashboard.html: визуальный дизайн, информационная архитектура, наполнение. Цель — сделать дашборд полностью самодостаточным standalone HTML-файлом без внешних зависимостей (CDN, внешние скрипты, внешние стили). Все данные — inline или встроенные в файл. Дашборд должен открываться и работать локально в браузере без интернета.
 - **Триггер:** Перед v0.7.0 или при накоплении 3+ жалоб на UX дашборда
 - **Статус:** 🔄 Частично выполнено — ECharts и Font Awesome уже inline, Google Fonts не используются. Осталось: мобильная адаптивность, dark/light mode, PDF экспорт.
@@ -179,7 +180,7 @@
 - **Триггер:** v0.9.0 (Mobile Dashboard + Habit Tracker)
 - **Статус:** 📋 В ROADMAP v0.9.0 (через Habit Tracker / Dashboard Streaks)
 - **Источник:** BJ Fogg (Tiny Habits), James Clear (Atomic Habits), Milkman et al. (2021) — planning fallacy + implementation intentions
-### Recovery Protocol — что делать если пропустил сессию
+### Протокол восстановления после пропуска
 - **Описание:** Пропуск Weekly Review (или любой регулярной сессии) — нормально. Но важно иметь чёткий протокол восстановления, чтобы один пропуск не превратился в полный срыв.
 - **Варианты поведения при пропуске:**
   1. **Reschedule** — перенести на ближайшее удобное время (не откладывать на "потом", а конкретно: "среда 20:00")
@@ -195,77 +196,77 @@
 - **Источник:** Motivational Interviewing (Roll with Resistance), behavioral relapse prevention
 - **Дебат:** Advocate/Critic 3 цикла → **IMPLEMENT (MVP)** (conf 7/10). Stack with Next удалён (анти-паттерн). Pattern detection — conversational-only.
 
-### Win Alert Protocol
+### Протокол празднования побед
 - **Описание:** Структурированное празднование побед: что достигнуто → домен Wheel of Life → почему важно → ресурсы/качества пользователя → следующий шаг. Адаптируется под Communication Style quadrant. НЕ применяется во время кризиса/Emotional Landing.
 - **Триггер:** Пользователь сообщает о достижении или проходит Weekly Review
 - **Статус:** ✅ Реализовано в v0.7.1 (`references/win_alert.md`, 112 строк)
 - **Источник:** Borrowed from GTD Coach Plugin
 - **Дебат:** Advocate/Critic 3 цикла → **IMPLEMENT** (conf 7/10). Научная база: savoring (Bryant & Veroff), SDT competence feedback (Deci & Ryan), VIA character strengths.
 
-### Energy-Based Scheduling
+### Планирование с учётом энергии
 - **Описание:** При создании событий в календаре учитывать энергию пользователя: высокая энергия → творческая/Deep Work блоки, низкая энергия → рутина/админ, пиковые часы → защитить фокус-блоками. Связь с AC-8 (Energy Check) и Seasonal Planning.
 - **Триггер:** Пользователь работает с календарём (Phase 5)
 - **Статус:** ✅ Реализовано в v0.7.1 (`references/energy_scheduling.md`, 64 строки)
 - **Источник:** Borrowed from Weekly Planning approach (popular r/ClaudeAI pattern 2026)
 - **Дебат:** Advocate/Critic 3 цикла → **IMPLEMENT** (conf 7/10). Ограничение: ≤80 строк, новый файл `references/energy_scheduling.md`, НЕ append в `calendar_constants.md`.
 
-### Markdown Tables as Structured UI
+### Markdown-таблицы как UI
 - **Описание:** Использовать markdown-таблицы для Weekly Plan, Wheel of Life Review, Progress Check, Course Correction. Stage-appropriate: только Preparation/Action stages.
 - **Триггер:** v0.8.0 Execution Layer
 - **Статус:** ✅ Реализовано в v0.8.0 (`references/markdown_tables.md`, 109 строк)
 - **Источник:** Borrowed from GTD Coach Plugin + PM OKR Skill
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 8/10). Ждёт: dashboard 8→11 fix, MI-compliance review, zero tables в SKILL.md.
 
-### Status Icon System
+### Система статусных иконок
 - **Описание:** Единая визуальная нотация: ⬜ Todo, 🔄 In Progress, ✅ Completed, ❌ Cancelled, ⏸️ Paused, ⚠️ At Risk. Accessibility fallback + High N safety.
 - **Триггер:** v0.8.0 Execution Layer
 - **Статус:** ✅ Реализовано в v0.8.0 (`references/status_icons.md`, 61 строка)
 - **Источник:** Borrowed from GTD Coach Plugin
 - **Дебат:** Advocate/Critic 3 цикла → **IMPLEMENT** (conf 7/10). Риски: accessibility, emotional harm для High N, screen readers.
 
-### Auto-Review Triggers
+### Автотриггеры ревью
 - **Описание:** 7+ дней → Weekly Pulse, новый месяц → Monthly Scan, новый квартал → Quarterly Reflection. Permission-based offer, не mandatory prompt.
 - **Триггер:** v0.9.0+
 - **Статус:** 📋 В ROADMAP v0.9.0+
 - **Источник:** Borrowed from GTD Coach Plugin
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Требует structured session metadata first.
 
-### Adaptive Response Length
+### Адаптивная длина ответов
 - **Описание:** Три режима: Clarification (2-3 предложения), Exploration (4-6), Crystallization (полный протокол). Интеграция с Communication Style quadrant.
 - **Триггер:** v0.9.0+
 - **Статус:** 📋 В ROADMAP v0.9.0+
 - **Источник:** Borrowed from Developmental Coach
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Требует спецификации интеграции с Deep Why, Energy Check, Attachment Style.
 
-### Weak Goal Taxonomy + Sanity-Check
+### Таксономия слабых целей + Sanity-Check
 - **Описание:** Паттерны слабых целей: Vague, Output-as-Outcome, Missing Baseline, Sandbagging, Moonshots. Sanity-Check: Coverage, Balance, Feasibility, Measurability, Alignment.
 - **Триггер:** v0.7.1 (lightweight pilot, 5 yes/no questions) / v0.8.0 (full taxonomy)
 - **Статус:** ✅ Реализовано в v0.8.0 (`references/weak_goal_taxonomy.md`, 133 строки)
 - **Источник:** Borrowed from PM OKR Skill
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Пилот возможен в v0.7.1, full — в v0.8.0.
 
-### Task Breakdown with Checkpoints
+### Разбиение задач с чекпоинтами
 - **Описание:** Разбиение действий WOOP на шаги с чекпоинтами (✓ Чекпоинт: [критерий выполнения]). Opt-in, только для Career/Finances/Health/Home/Learning.
 - **Триггер:** v0.8.0
 - **Статус:** ✅ Реализовано в v0.8.0 (`references/action_breakdown_template.md`, 128 строк)
 - **Источник:** Borrowed from GTD Coach Plugin
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 8/10). Требует валидации потребности через GitHub Discussion.
 
-### Structured Growth Report
+### Структурированный отчёт о росте
 - **Описание:** Шаблон периодического обзора: Summary → Prioritized Growth Areas (Why + Evidence + Recommendation) → Observed Strengths → Actions → Recommended Resources.
 - **Триггер:** v0.9.0+
 - **Статус:** 📋 В ROADMAP v0.9.0+
 - **Источник:** Borrowed from Composio developer-growth-analysis
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Требует re-assessment flow для Wheel of Life.
 
-### Clarifying-Questions-First
+### Сначала уточняющие вопросы
 - **Описание:** Перед глубоким протоколом — 2–3 уточняющих вопроса (домен, опыт, формат). Интеграция с Checkpoint-and-Resume.
 - **Триггер:** v0.8.0
 - **Статус:** 📋 В ROADMAP v0.8.0
 - **Источник:** Borrowed from Composio file-organizer skill
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Пересекается с Phase 0 calibration, Track A/B, Readiness Gate. Решение: `references/session_recalibration.md`, ≤2 строки в SKILL.md.
 
-### Unified Release Notes — CHANGELOG.md как единый источник правды (Вариант B)
+### Единые Release Notes из CHANGELOG (Вариант Б)
 - **Описание:** Сейчас релиз-ноты дублируются: CHANGELOG.md содержит всю историю, а отдельные файлы `RELEASE_NOTES_vX.Y.Z.md` (в `references/archive/`) используются для GitHub Release. Это приводит к:
   - Дублированию информации (одно и то же в двух местах)
   - Риску рассинхронизации (CHANGELOG обновлён, а RELEASE_NOTES — нет)

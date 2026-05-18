@@ -119,6 +119,7 @@ bash scripts/release.sh X.Y.Z
 ## 5. Style Guidelines
 
 - Основной язык: **русский**
+- Названия фич в BACKLOG.md и ROADMAP.md — на русском (английские термины только в скобках)
 - Tone: поддерживающий, нейтральный, без осуждения
 - Therapy disclaimer обязателен в Privacy section
 - Python 3.12+, type hints где возможно
