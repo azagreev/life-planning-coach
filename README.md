@@ -158,16 +158,25 @@
 
 ### Установка на Grok 4.3 (xAI)
 
-Grok использует markdown-скиллы в sandbox-окружении. Файлы не сохраняются между сессиями.
+> **Подробный гайд:** [`references/platforms/grok_user_guide.md`](references/platforms/grok_user_guide.md) — 3 способа установки, troubleshooting, quick start.
 
+Grok 4.3 не имеет официального Skill Store. Доступны 3 способа загрузки скилла:
+
+**Способ 1. Direct Prompt (простой)**
 1. Скачай `life-planning-coach-vX.Y.Z-grok.md` из [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
-2. Скопируй содержимое в файл `/root/.grok/skills/life-planning-coach/SKILL.md`
-   ```bash
-   mkdir -p /root/.grok/skills/life-planning-coach
-   cp life-planning-coach-vX.Y.Z-grok.md /root/.grok/skills/life-planning-coach/SKILL.md
-   ```
-3. Grok автоматически прочитает SKILL.md при запуске через `read_file`
-4. **Важно:** сохраняй `conversation_state.json` в конце сессии — sandbox очищается
+2. Открой [grok.com](https://grok.com), выбери модель **Grok 4.3**
+3. Скопируй содержимое файла и вставь в первое сообщение
+4. Добавь: «Следуй этим инструкциям. Начни с Emotional Landing.»
+
+**Способ 2. Custom Instructions** (если доступно в UI настроек Grok)
+
+**Способ 3. API + Sandbox** (для разработчиков, через xAI API с tool calling)
+
+**Ограничения Grok 4.3:**
+- ❌ Нет persistent memory между сессиями — сохраняй `conversation_state.json` вручную
+- ❌ Нет Google Calendar MCP — text-only планирование
+- ✅ Есть sandbox file I/O, web search, image generation
+- ✅ HTML-дашборд через `render_file`
 
 ### Установка на Kimi K2.6 (Moonshot AI)
 
