@@ -57,8 +57,8 @@ class TestRoadmapIntegrity:
 
         stale = []
         for version in released_versions:
-            # Look for vX.Y.Z in the status table
-            if f"v{version}" in table_text:
+            # Look for | vX.Y.Z | in the status table (exact table row, not substring)
+            if f"| v{version} |" in table_text:
                 stale.append(version)
 
         if stale:
