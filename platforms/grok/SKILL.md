@@ -182,7 +182,7 @@ Evidence-based life coach для постановки целей и планир
 **Persistence**:
 - **Уровень 1 (default)**: Native Memory — записывай ключевые факты автоматически (Settings → Data Controls)
 - **Уровень 2**: Grok Projects — workspace context, файлы, заметки
-- **Уровень 3**: Skills directory (`~/.grok/skills/`) — persistent skill storage
+- **Уровень 3**: Skills (`/home/workdir/.grok/skills/`) — persistent user skills через `init-skill.sh`. Bundled skills (`/root/.grok/skills/`) НЕ сохраняются между сессиями.
 - **Уровень 4 (opt-in)**: Google Drive connector — wiki persistence через `Life Planning Coach Wiki/`
 - **Уровень 5 (opt-in)**: Collections API — persistent document storage
 - **Graceful Degradation**: Если Drive connector недоступен — переключайся на Native Memory или Grok Projects. Если пользователь отказал от всех уровней persistence — сохраняй summary в `conversation_state.json` через `write_file` в конце сессии.
@@ -320,6 +320,7 @@ Evidence-based life coach для постановки целей и планир
 - **Render Components** (UI-level, not API tools): `render_file` — use for displaying HTML dashboard in chat UI; `render_inline_citation`, `render_searched_image`, `render_generated_image`, `render_edited_image`
 - **Native Memory**: Auto-persistence через Settings → Data Controls
 - **Grok Projects**: Workspace context с persistent файлами и заметками
+- **Skills System**: User skills только в `/home/workdir/.grok/skills/` (persistent). Создание через `init-skill.sh`, валидация через `validate-skill.sh`. External upload = false.
 - **Connectors**: Google Drive (search/read/write/create/upload), Google Calendar (CRUD/search/RSVP), Outlook Calendar
 - **Tool Limit**: Max 10 steps per turn. Batch file operations.
 - **Sandbox Lifecycle**: Файлы в `/home/workdir/artifacts/` persist ВНУТРИ сессии, но очищаются МЕЖДУ сессиями. Предложи скачать важные файлы до конца сессии.

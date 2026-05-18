@@ -12,7 +12,7 @@
 | Скачанный `life-planning-coach-vX.Y.Z-grok.md` | Файл скилла для Grok |
 | Любой текстовый редактор | Для копирования содержимого |
 
-**Возможности Grok 4.3:** ✅ Persistent memory • ✅ Native Google Calendar connector • ✅ Native Google Drive connector • ✅ Sandbox file I/O (`read_file`, `write_file`, `edit_file`, `bash`) • ✅ Web search и image generation • ✅ Grok Projects • ✅ Skills directory (`~/.grok/skills/`) • ✅ Collections • ✅ `render_file` component
+**Возможности Grok 4.3:** ✅ Persistent memory • ✅ Native Google Calendar connector • ✅ Native Google Drive connector • ✅ Sandbox file I/O (`read_file`, `write_file`, `edit_file`, `bash`) • ✅ Web search и image generation • ✅ Grok Projects • ✅ Skills (`/home/workdir/.grok/skills/` — persistent через `init-skill.sh`) • ✅ Collections • ✅ `render_file` component
 
 ---
 
@@ -65,34 +65,51 @@ Grok прочитает инструкции и начнёт с Emotional Landin
 
 ---
 
-## Способ 3. Skills Directory (`~/.grok/skills/`)
+## Способ 3. Skills через `init-skill.sh` (официальный, persistent)
 
-**Лучше для:** persistent скиллы, доступные во всех сессиях и проектах. Grok auto-discovers skills.
+**Лучше для:** скиллы, сохраняющиеся между сессиями. Единственный способ создания persistent skills в Grok 4.3.
 
-### Структура директории
-```
-~/.grok/skills/
-└── life-planning-coach/
-    ├── SKILL.md          ← основные инструкции
-    ├── metadata.json     ← название, версия, теги
-    └── references/       ← дополнительные материалы
-```
+> **Важно:** Grok НЕ поддерживает загрузку готовых скиллов извне (external upload = false). Скилл можно только создать через официальный `init-skill.sh` внутри сессии.
+
+### Где сохраняются skills
+| Тип | Путь | Persistent? |
+|-----|------|-------------|
+| **User skills** | `/home/workdir/.grok/skills/` | ✅ Да, между сессиями |
+| **Bundled skills** | `/root/.grok/skills/` | ❌ Нет, сбрасываются |
 
 ### Создание через sandbox
+
+**Шаг 1.** Инициализируй скилл:
+```bash
+bash /root/.grok/skills/skill-creator/scripts/init-skill.sh life-planning-coach /home/workdir/.grok/skills --resources scripts,references,assets
 ```
-Создай директорию `~/.grok/skills/life-planning-coach/references/`.
-Запиши в `~/.grok/skills/life-planning-coach/SKILL.md` следующее содержимое:
+
+**Шаг 2.** Запиши SKILL.md (попроси Grok использовать `write_file`):
+```
+Запиши в `/home/workdir/.grok/skills/life-planning-coach/SKILL.md` следующий контент:
 
 ---
 [вставь содержимое life-planning-coach-vX.Y.Z-grok.md]
 ---
 ```
 
+**Шаг 3.** Загрузи reference-файлы (если нужны):
+```
+Создай файлы в `/home/workdir/.grok/skills/life-planning-coach/references/` из папки `references/` проекта.
+```
+
+**Шаг 4.** Валидация (обязательно):
+```bash
+bash /root/.grok/skills/skill-creator/scripts/validate-skill.sh /home/workdir/.grok/skills/life-planning-coach
+```
+
 ### Активация
-В начале сессии:
+В начале новой сессии:
 ```
-Загрузи скилл life-planning-coach из ~/.grok/skills/ и начни с Emotional Landing.
+Загрузи скилл life-planning-coach из /home/workdir/.grok/skills/ и начни с Emotional Landing.
 ```
+
+**💡 Совет:** User skills имеют приоритет над bundled skills. Если создать скилл с таким же именем — user skill перекроет встроенный.
 
 ---
 
