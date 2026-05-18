@@ -28,9 +28,12 @@ echo "=== Синхронизация версии $NEW_VERSION ==="
 echo "→ setup.py"
 sed -i "s/version=\"[^\"]*\"/version=\"$NEW_VERSION\"/" setup.py
 
-# 2. SKILL.md frontmatter
+# 2. SKILL.md frontmatter (root and master)
 echo "→ SKILL.md"
 sed -i "s/^version: .*/version: $NEW_VERSION/" SKILL.md
+
+echo "→ SKILL.master.md"
+sed -i "s/^version: .*/version: $NEW_VERSION/" SKILL.master.md
 
 # 3. README.md
 echo "→ README.md"
