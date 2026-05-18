@@ -27,6 +27,24 @@
 
 ---
 
+## [0.9.2] — 2026-05-18
+
+### Fixed
+- **Android Chrome compatibility** — 5 mobile-specific fixes, missed in v0.9.1:
+  - `-webkit-tap-highlight-color: transparent` — removes blue tap flash overlay on every touch
+  - `overscroll-behavior-y: contain` — prevents pull-to-refresh while scrolling dashboard content
+  - `100dvh` with `100vh` fallback — fixes content jumping as Chrome dynamic toolbar shows/hides
+  - `<meta name="theme-color">` with light/dark variants — colors Android address bar to match app theme
+  - `viewport-fit=cover` — enables edge-to-edge display on notched Android devices
+  - JS dynamic sync: `theme-color` updates instantly when user toggles dark/light mode
+
+### Added
+- **7 new dashboard tests** for mobile platform compatibility:
+  - Android Chrome: tap highlight, overscroll behavior, theme-color, viewport-fit, dvh units
+  - iOS Safari: `-webkit-backdrop-filter` regression guard
+
+---
+
 ## [0.9.1] — 2026-05-18
 
 ### Added

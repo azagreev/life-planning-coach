@@ -14,7 +14,7 @@
 - **Quick Decision Protocol** — 2–3 вопроса для принятия решения «здесь и сейчас»
 - **Reward Audit (Grayscale Guide)** — осознанность cheap dopamine: инструкции Grayscale для iOS/Android
 
-**Версия:** 0.9.1  
+**Версия:** 0.9.2  
 **Автор:** Andrey Zagreev — [@zagreev](https://t.me/zagreev)  
 **Лицензия:** [MIT](LICENSE)  
 **Целевая платформа:** Claude.ai (Free, Pro, Max, Team, Enterprise — skills доступны на всех планах)

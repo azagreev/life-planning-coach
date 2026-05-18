@@ -70,6 +70,40 @@ class TestDashboardHtml(unittest.TestCase):
         self.assertIn('/ 11).toFixed(1)', self.content,
                       "Average calculation must divide by 11 (was / 8)")
 
+    def test_android_chrome_tap_highlight_removed(self):
+        """Android Chrome shows blue tap highlight by default; must be disabled."""
+        self.assertIn('-webkit-tap-highlight-color', self.content.lower(),
+                      "Must disable tap highlight for Android Chrome")
+
+    def test_android_overscroll_behavior_set(self):
+        """Android pull-to-refresh and overscroll glow must be disabled."""
+        self.assertIn('overscroll-behavior', self.content.lower(),
+                      "Must set overscroll-behavior for Android")
+
+    def test_theme_color_meta_for_android_status_bar(self):
+        """Android Chrome address bar color must match app theme."""
+        self.assertIn('name="theme-color"', self.content,
+                      "Must have theme-color meta for Android status bar")
+        self.assertIn('prefers-color-scheme: light', self.content,
+                      "Must have light theme-color")
+        self.assertIn('prefers-color-scheme: dark', self.content,
+                      "Must have dark theme-color")
+
+    def test_ios_safari_backdrop_filter_prefix(self):
+        """Liquid Glass requires -webkit-backdrop-filter for iOS Safari."""
+        self.assertIn('-webkit-backdrop-filter', self.content,
+                      "Must have -webkit-backdrop-filter for iOS Safari")
+
+    def test_dynamic_viewport_units_present(self):
+        """100dvh must be present as progressive enhancement for Chrome Android."""
+        self.assertIn('100dvh', self.content,
+                      "Must have 100dvh for dynamic viewport on Chrome Android")
+
+    def test_viewport_has_viewport_fit_cover(self):
+        """Notched Android devices need viewport-fit=cover for edge-to-edge display."""
+        self.assertIn('viewport-fit=cover', self.content,
+                      "Must have viewport-fit=cover for notched Android devices")
+
 
 if __name__ == "__main__":
     unittest.main()
