@@ -158,24 +158,25 @@
 
 ### Установка на Grok 4.3 (xAI)
 
-> **Подробный гайд:** [`references/platforms/grok_user_guide.md`](references/platforms/grok_user_guide.md) — 3 способа установки, troubleshooting, quick start.
+> **Подробный гайд:** [`references/platforms/grok_user_guide.md`](references/platforms/grok_user_guide.md) — troubleshooting, quick start, connectors.
 
-Grok 4.3 не имеет официального Skill Store. Доступны 3 способа загрузки скилла:
+Grok 4.3 не имеет официального Skill Store. Доступен один способ загрузки скилла:
 
-**Способ 1. Direct Prompt (простой)**
+**Grok Skills (единственный способ)**
 1. Скачай `life-planning-coach-vX.Y.Z-grok.md` из [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
-2. Открой [grok.com](https://grok.com), выбери модель **Grok 4.3**
-3. Скопируй содержимое файла и вставь в первое сообщение
-4. Добавь: «Следуй этим инструкциям. Начни с Emotional Landing.»
+2. В Grok создай **New Project** → **Life Planning Coach** → включи Google Calendar + Google Drive
+3. Нажми **Create Skill** (или `/skill-create`) → назови **life-planning-coach**
+4. В поле **Instruction** вставь содержимое файла → сохрани
+5. В любом чате активируй: `/life-planning-coach`
 
-**Способ 2. Custom Instructions** (если доступно в UI настроек Grok)
+> ⚠️ Grok Skills — forthcoming feature (leaked UI от TestingCatalog, апр 2026). Если недоступен, используй Grok Projects: вставь скилл в Context/Instructions Project.
 
-**Способ 3. API + Sandbox** (для разработчиков, через xAI API с tool calling)
-
-**Ограничения Grok 4.3:**
-- ❌ Нет persistent memory между сессиями — сохраняй `conversation_state.json` вручную
-- ❌ Нет Google Calendar MCP — text-only планирование
-- ✅ Есть sandbox file I/O, web search, image generation
+**Особенности Grok 4.3:**
+- ✅ Native Memory (persistent между сессиями, Settings → Data Controls)
+- ✅ Native Google Calendar connector (OAuth через grok.com/connectors)
+- ✅ Native Google Drive connector (OAuth через grok.com/connectors)
+- ✅ Sandbox file I/O (`read_file`, `write_file`, `edit_file`, `bash`)
+- ✅ Web search, image generation
 - ✅ HTML-дашборд через `render_file`
 
 ### Установка на Kimi K2.6 (Moonshot AI)
