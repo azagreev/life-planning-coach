@@ -4,12 +4,137 @@
 
 ---
 
+## 0. Рабочий контракт (User ↔ AI)
+
+Этот раздел описывает, как мы работаем вместе. Любое нарушение = баг в процессе.
+
+### 0.1 Entry Points (Explicit Commands)
+
+Пользователь использует **ключевые слова** → агент запускает соответствующий workflow:
+
+| Команда пользователя | Workflow агента | Что делать |
+|----------------------|-----------------|------------|
+| "спланируй", "plan", "давай спланируем" | **Plan Mode** | Context7 + варианты + plan file + AC → ExitPlanMode для одобрения |
+| "ретро", "разберём что было", "retrospective" | **Retro Mode** | Собрать факты → root cause → action items → файл `RETRO_*.md` |
+| "пофикси", "fix", "bug" | **Bug Fix Mode** | Plan mode ОБЯЗАТЕЛЕН даже для hotfix'ов |
+| "релиз", "release" | **Release Mode** | Только `bash scripts/release.sh X.Y.Z` |
+| "проверь", "audit", "проанализируй" | **Research Mode** | Только исследование + отчёт. **Никакой реализации.** |
+| "системное решение", "как запретить" | **Architecture Mode** | Только планирование системы. **Никаких точечных фиксов.** |
+
+**Правило:** Если ключевое слово не распознано — уточнить у пользователя, какой workflow запускать.
+
+### 0.2 Lifecycle Gate Checklist
+
+```
+L0 Request → L1 Extract → L2 Plan → L3 AC → Implement → Verify → Ship
+   ↑            ↑           ↑         ↑        ↑          ↑       ↑
+  User       Agent       Agent     User    User       Agent   Agent
+```
+
+**Нельзя перепрыгивать уровни.** Каждый gate требует проверки:
+
+| Gate | Что проверяем | Кто валидирует |
+|------|---------------|----------------|
+| **L0 → L1** (Extract) | Intent ясен? Assumptions перечислены? | Агент (self-check) |
+| **L1 → L2** (Plan) | Context7 запрошен? Варианты сравнены? Plan file написан? | Агент (self-check) |
+| **L2 → L3** (AC) | AC написаны? Пользователь одобрил через ExitPlanMode? | **Пользователь** |
+| **L3 → Implement** | AC одобрены? Git clean? Все тесты проходят? | Агент (pre-check) |
+| **Implement → Verify** | Все тесты проходят? AC проверены? | Агент (pytest) |
+| **Verify → Ship** | ROADMAP обновлён? CHANGELOG обновлён? Version synced? | Агент (checklist) |
+
+### 0.3 Session-start Pre-check
+
+При начале каждой сессии агент ОБЯЗАН выполнить:
+
+```bash
+# 1. Прочитать AGENTS.md §0 (этот контракт)
+# 2. Проверить состояние репозитория
+git status --short          # Должно быть пусто или объяснено
+python3 -m pytest tests/ -q  # Должно быть 130+ passed
+# 3. Проверить версию
+git describe --tags --abbrev=0
+```
+
+Если что-то не так — **остановиться и сообщить пользователю** до начала любой работы.
+
+### 0.4 Research-обязательства (Context7 + Best Practices)
+
+Перед архитектурой, написанием тестов или критериев приёмки:
+
+1. **Запросить Context7** (MDN, актуальная документация)
+2. **Сравнить варианты** — найти оптимальное, "красивое", лёгкое, удобное
+3. **Быть проактивным в поиске** — но **ТОЛЬКО в поиске**, не в реализации
+
+### 0.5 Assumptions Surfacing
+
+Перед началом plan mode агент ОБЯЗАН явно перечислить свои допущения:
+
+```
+ASSUMPTIONS I'M MAKING:
+1. ...
+2. ...
+→ Correct me now or I'll proceed with these.
+```
+
+### 0.6 Anti-Rationalization
+
+Следующие мысли агента — ошибочны и должны игнорироваться:
+
+| Рационализация | Реальность |
+|----------------|------------|
+| "Это слишком мелко для плана" | Нет задач "слишком мелких" для процесса |
+| "Я просто быстро поправлю" | Быстрые правки = технический долг |
+| "Сначала соберу контекст" | Сбор контекста = работа, требует одобрения |
+| "Пользователь явно не сказал 'план'" | Если сказал "системное решение" — нужен план |
+| "Проверить = можно сразу сделать" | Проверить = отчёт. Делать = только после одобрения. |
+| "Тесты можно добавить потом" | "Потом" = никогда. Тесты = часть задачи. |
+| "Это hotfix, некогда на план" | Hotfix без плана = ещё один hotfix завтра. |
+| "Я уже знаю лучшее решение" | Знание ≠ обоснование. Нужен Context7 + сравнение. |
+
+### 0.7 Diagnostic Export (при ошибках)
+
+Если что-то пошло не так (тесты падают, релиз сломан, git conflict) — агент ОБЯЗАН собрать diagnostic context:
+
+```bash
+git status --short
+git log --oneline -5
+git describe --tags --abbrev=0
+python3 -m pytest tests/ -v --tb=short
+```
+
+И предоставить пользователю перед тем, как просить помощь.
+
+### 0.8 Progressive Refinement (L0→L1→L2→L3)
+
+Каждый user request проходит 4 уровня уточнения:
+
+| Уровень | Что происходит | Пример |
+|---------|----------------|--------|
+| **L0 Raw** | Пользователь говорит | "Сделай красиво" |
+| **L1 Extract** | Агент извлекает intent | "Редизайн дашборда" |
+| **L2 Plan** | Агент структурирует | "Apple-style: rings, glass, dark mode" |
+| **L3 AC** | Агент формализует критерии | "12 тестов, offline, responsive, Android Chrome fixes" |
+
+**Правило:** Нельзя перепрыгивать с L0 на L3. Каждый уровень — gate.
+
+### 0.9 Запрещённые действия (красные линии)
+
+| # | Запрет | Почему | Пример нарушения |
+|---|--------|--------|------------------|
+| 1 | **Никакой реализации без plan mode approval** | Предотвращает самодеятельность | Android-фиксы добавлены без плана |
+| 2 | **Никаких костылей/точечных фиксов когда запрошено "системное решение"** | Симптом ≠ причина | API call для исправления title'ов вместо guard-системы |
+| 3 | **Никакой реализации без written AC** | Критерии приёмки = контракт качества | — |
+| 4 | **Никакого кода без Context7 research** | Решение должно быть обосновано документацией | Android-фиксы без MDN research |
+| 5 | **Никаких ручных релизов** | Только `scripts/release.sh` | v0.9.0, v0.9.1 созданы вручную |
+
+---
+
 ## 1. Проект: Общая информация
 
 - **Название:** `life-planning-coach` — evidence-based coaching skill for Claude
 - **Платформа:** Claude.ai (web), ZIP-архив (`life-planning-coach.zip` или `life-planning-coach.skill` — идентичны, оба ZIP)
 - **Язык контента:** Русский (primary), адаптируется под пользователя
-- **Версия:** v0.9.1 (источник правды — git tag)
+- **Версия:** v0.9.2 (источник правды — git tag)
 - **Репозиторий:** https://github.com/azagreev/life-planning-coach
 - **Ветка:** `main` (единственная)
 
@@ -19,73 +144,68 @@
 
 ```
 life-planning-coach/
-├── SKILL.md                    # Главный файл скилла (292 строки, ≤5000 слов)
+├── SKILL.md                    # Главный файл скилла (≤500 строк, ≤5000 слов)
 ├── README.md                   # Документация для пользователей
 ├── setup.py                    # Python package metadata (version must match git tag)
-├── life-planning-dashboard.html # HTML Dashboard
+├── life-planning-dashboard.html # HTML Dashboard (offline-ready, file:// protocol)
 ├── CHANGELOG.md                # История изменений
 ├── ROADMAP.md                  # План развития
 ├── BACKLOG.md                  # Идеи без привязки к версии
+├── RETRO_*.md                  # Ретроспективы
+├── AGENTS.md                   # Этот файл
 ├── references/                 # Тяжёлый контент (>300 строк на тему)
 │   ├── diagnostic_methods.md
 │   ├── authentic_goal_filter.md
 │   ├── communication_style.md
 │   ├── calendar_constants.md
 │   ├── conversation_state_schema.md
-│   ├── acceptance_criteria_v0.7.md  # Текущие AC
+│   ├── acceptance_criteria_v0.7.md
 │   ├── emotion_regulation.md
 │   ├── energy_scheduling.md
 │   ├── recovery_protocol.md
 │   ├── win_alert.md
 │   └── ...
 ├── tests/                       # Системные и интеграционные тесты
+│   ├── unit/
+│   │   └── test_dashboard.py
 │   └── system/
 │       ├── test_version_consistency.py
 │       ├── test_github_sync.py
 │       ├── test_readme_integrity.py
-│       ├── test_skill_structure.py  # AC v0.7 compliance (23 tests)
-│       └── test_v071_features.py
-└── scripts/
-    ├── build-skill.ps1
-    ├── build-skill.sh
-    ├── release.sh               # Атомарный релиз
-    └── sync-version.sh          # Синхронизация версий
+│       ├── test_skill_structure.py
+│       ├── test_v071_features.py
+│       ├── test_v080_features.py
+│       └── test_v090_features.py
+├── scripts/
+│   ├── build-skill.ps1
+│   ├── build-skill.sh
+│   ├── release.sh               # Атомарный релиз (единственный способ!)
+│   └── sync-version.sh          # Синхронизация версий
+├── .github/
+│   ├── workflows/
+│   │   └── release-guard.yml    # Автофикс title'ов релизов
+│   └── hooks/
+│       └── pre-push-release-guard # Шаблон git hook
+└── ...
 ```
 
 ---
 
 ## 3. Критические правила (MUST)
 
-### 3.1 Research BEFORE Architecture / Tests / AC
-
-**Перед** началом архитектуры, написанием тестов или критериев приёмки — **обязательно**:
-
-1. **Запросить Context7** (MDN, best practices, актуальная документация)
-2. **Сравнить варианты** — найти наиболее оптимальное, "красивое", лёгкое, удобное решение
-3. **Быть проактивным в поиске** — но **ТОЛЬКО в поиске**, не в реализации
-
-**Запрещено:**
-- Начинать реализацию без plan mode approval
-- Делать "точечные фиксы" (костыли) когда запрошено "системное решение"
-- Исправлять симптом вместо причины (например: исправить title релиза вручную вместо создания guard-системы)
-
-**Пример ошибки (v0.9.1 → v0.9.2):**
-- Пользователь: "найди корневую причину и **план устранения**"
-- Ошибка агента: API call для исправления title'ов (костыль)
-- Правильно: план → архитектура guard-системы → реализация
-
-### 3.2 Version Consistency — источник правды: git tag
+### 3.1 Version Consistency — источник правды: git tag
 ```bash
-git describe --tags --abbrev=0  # → v0.7.1
+git describe --tags --abbrev=0  # → v0.9.2
 ```
 Версия должна совпадать во всех файлах:
 - `SKILL.md` YAML frontmatter `version:`
 - `setup.py` `version="..."`
 - `README.md` badge
+- `AGENTS.md` раздел 1
 
-**Как обновить:** запускать `bash scripts/release.sh X.Y.Z` (атомарно).
+**Как обновить:** запускать `bash scripts/sync-version.sh X.Y.Z` (атомарно).
 
-### 3.2 Acceptance Criteria v0.7 — 19 AC
+### 3.2 Acceptance Criteria
 
 | Приоритет | Кол-во | Что проверяется |
 |-----------|--------|-----------------|
@@ -93,7 +213,7 @@ git describe --tags --abbrev=0  # → v0.7.1
 | P1 | 4 | Deep Why, TTM, MI, Triggering Precision |
 | P2 | 4 | Energy Check, Wheel of Life 11 доменов, Progressive Disclosure, ZIP структура |
 
-**Как проверить:** `python3 -m pytest tests/system/ -v` → **61 passed, 3 skipped**.
+**Как проверить:** `python3 -m pytest tests/system/ -v` → **133 passed, 3 skipped**.
 
 ### 3.3 SKILL.md Structure (Anthropic Compliance)
 
@@ -152,15 +272,15 @@ bash scripts/release.sh X.Y.Z
 Нарушение приводит к неконсистентным названиям релизов, как произошло с v0.9.0/v0.9.1.
 
 **Конвенция названий релизов** (since commit 856706d):
-- Title = **только тег** (`v0.9.1`), без описания
+- Title = **только тег** (`v0.9.2`), без описания
 - Описание = **только в теле release notes** (RELEASE_NOTES_vX.Y.Z.md)
-- Примеры некорректных: `v0.9.1 — Apple-style Dashboard Redesign` ❌
-- Примеры корректных: `v0.9.1` ✅
+- Примеры некорректных: `v0.9.2 — Android Hotfix` ❌
+- Примеры корректных: `v0.9.2` ✅
 
 **Система защиты (3 уровня):**
 1. **Git hook** (`.github/hooks/pre-push-release-guard`) — блокирует `git push` тега без RELEASE_NOTES файла
 2. **GitHub Actions** (`.github/workflows/release-guard.yml`) — при создании/редактировании релиза: автофикс title + комментарий-предупреждение + tracking issue
-3. **AGENTS.md** — этот документ запрещает ручное создание релизов для всех AI-агентов
+3. **AGENTS.md §0** — этот документ запрещает ручное создание релизов для всех AI-агентов
 
 **Установка hook'а:**
 ```bash
@@ -178,7 +298,7 @@ chmod +x .git/hooks/pre-push
 ВСЕ тесты должны проходить перед релизом:
 ```bash
 python3 -m pytest tests/system/ -v
-# Expected: 61 passed, 3 skipped
+# Expected: 133 passed, 3 skipped
 ```
 
 ---
@@ -251,4 +371,4 @@ bash scripts/release.sh X.Y.Z
 ---
 
 *Обновлено: 2026-05-18*  
-*Версия: 2.1 (для life-planning-coach v0.9.1+)*
+*Версия: 3.0 (для life-planning-coach v0.9.2+)*
