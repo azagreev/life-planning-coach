@@ -63,6 +63,16 @@ class TestVersionConsistency:
             f"README.md version {match.group(1)} != git tag {git_tag_version}"
         )
 
+    def test_agents_md_version_matches_git_tag(self, git_tag_version):
+        """AGENTS.md version must match git tag."""
+        agents_md = PROJECT_ROOT / "AGENTS.md"
+        content = agents_md.read_text(encoding="utf-8")
+        match = re.search(r'\*\*Версия:\*\*\s*v?([0-9.]+)', content)
+        assert match, "Version not found in AGENTS.md"
+        assert match.group(1) == git_tag_version, (
+            f"AGENTS.md version {match.group(1)} != git tag {git_tag_version}"
+        )
+
     def test_no_pyproject_toml_exists(self):
         """pyproject.toml must not exist (was removed as duplicate)."""
         pyproject = PROJECT_ROOT / "pyproject.toml"
