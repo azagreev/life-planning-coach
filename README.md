@@ -1,423 +1,183 @@
-# Life Planning Coach
+# 🧭 Life Planning Coach
 
-Интерактивный evidence-based life coach для постановки целей и планирования жизни. Помогает разобраться, куда двигаться, построить систему целей от 25 лет до сегодняшнего дня и поддерживать регулярную ретроспективу.
-
-**Чем отличается от простого промпта к Claude:**
-- **Emotional Landing Protocol** — никаких тестов и оценок до эмоционального контакта. Скилл начинает с валидации, а не с вопросов.
-- **Без давления** — в диалоге не используются слова «надо», «должен», «нужно». Только «можно», «если захотите», «попробовать».
-- **Stage 1.5: Фильтр аутентичных целей** — перед постановкой целей скилл проверяет: чья это цель, есть ли энергия, нет ли социального давления. Радар из 5 осей + портфель целей (активные / на паузе / паттерны).
-- **Адаптация стиля коммуникации** — скилл калибруется под вашу личность (Big Five × TTM × MI): от «Нежного родителя» до «Провокационного консультанта».
-- **Evidence-based foundation** — каждая методика (Wheel of Life, WOOP, OKR) имеет научную валидацию с указанием эффект-сайзов.
-- **Habit Tracker / Dashboard Streaks** — визуализация серий привычек (active_habits, digital, sugar, focus)
-- **Mobile Dashboard (responsive)** — адаптивный дашборд для телефонов
-- **5-Minute Micro-Sessions** — быстрые чек-ины на 5 минут для сохранения momentum
-- **Quick Decision Protocol** — 2–3 вопроса для принятия решения «здесь и сейчас»
-- **Reward Audit (Grayscale Guide)** — осознанность cheap dopamine: инструкции Grayscale для iOS/Android
-
-**Версия:** 0.10.2  
-**Автор:** Andrey Zagreev — [@zagreev](https://t.me/zagreev)  
-**Лицензия:** [MIT](LICENSE)  
-**Целевые платформы:**
-- **Claude.ai** (primary) — skills, ZIP-архив, MCP-интеграция
-- **Grok 4.3** (xAI) — sandbox skills, file I/O, session-only
-- **Kimi K2.6** (Moonshot AI) — agent skills, `memory_space`, `KIMI_REF`
+> **Evidence-based life coaching** across Claude.ai, Grok (xAI), and Kimi (OK Computer + Code CLI).  
+> **Версия:** 0.10.2 | [Releases](https://github.com/azagreev/life-planning-coach/releases) | [CHANGELOG](CHANGELOG.md)
 
 ---
 
-## Для кого этот скилл
+## What Is This?
 
-- Чувствуешь, что "жизнь проходит мимо", но не понимаешь, что именно хочешь изменить
-- На перепутье: смена профессии, релокация, развод, выгорание
-- Есть амбиции, но нет чёткой системы: цели расплывчатые, мотивация падает
-- Пробовал планировать, но бросал: таблицы, трекеры, приложения не прижились
-- Хочешь регулярную ретроспективу жизни, но нет инструмента, который бы не бросить
+A modular, cross-platform coaching skill built on peer-reviewed methods:
 
----
+- **Wheel of Life** (11 сфер, incl. spirituality & values)
+- **Authentic Goal Filter** (Stage 1&period;5 / Фильтр аутентичных целей) — screens goals against intrinsic motivation
+- **Goal Architecture** — SMART+ goals with milestones and habits
+- **Weekly Review** — evidence-based retrospective protocol
+- **Habit Loop** — Cue-Routine-Reward with tracking
+- **Emotion Regulation** — DBT-informed techniques
+- **Triggering Precision** — pinpoint procrastination root causes
+- **Communication Style** — адаптивный стиль коучинга под пользователя
 
-## Какую ценность принесёт
-
-**После первой сессии (20-40 минут)**
-- Полная диагностика 11 сфер жизни (Wheel of Life) с числовыми оценками
-- Ранжирование личных ценностей (Schwartz PVQ)
-- Калибровка стиля коммуникации (2 вопроса)
-- Первый инсайт: "вот почему я чувствую то, что чувствую"
-
-**После 2-3 сессий**
-- BHAG — одна большая цель на 10-25 лет
-- 3-5 жизненных тем (Life Themes) на 1-3 года
-- Конкретные OKR на 12 недель
-- Система еженедельных приоритетов
-
-**После 4+ сессий**
-- Еженедельная ретроспектива (GTD + Scrum Retro)
-- Ежедневные WOOP-сессии (Wish-Outcome-Obstacle-Plan)
-- Интеграция с Google Calendar: автоматические напоминания, time blocks
-- Интерактивный дашборд прогресса (HTML, offline)
+**4-Stage Coaching Flow:**
+1. **Diagnostic** → 2. **Goal Architecture** → 3. **Execution** → 4. **Deep Work**
 
 ---
 
-## Что нужно на входе
+## Quick Platform Selector
 
-**От пользователя:**
-- Готовность честно отвечать на вопросы (5-10 минут на блок)
-- 20-40 минут на первую диагностику
-- Желание регулярно возвращаться (еженедельно или по мере необходимости)
+| Platform | Best For | Setup | Calendar | Drive | File |
+|----------|----------|-------|----------|-------|------|
+| **Claude.ai** | Power users, MCP | ZIP upload | ✅ MCP | ✅ MCP | `.zip` / `.skill` |
+| **Grok** (xAI) | xAI users, large context | Copy-paste | ✅ Native OAuth | ✅ Native OAuth | `-grok.md` |
+| **Kimi OK Computer** | Easy web setup | Web agent | ❌ Text-only | ❌ No | `-kimi.md` |
+| **Kimi Code CLI** | Developers, terminal | Dir + JSON | ✅ MCP (manual) | ✅ MCP (manual) | `-kimi-cli/` |
 
-**Технически:**
-- Аккаунт Claude.ai (любой план — Free, Pro, Max)
-- Современный браузер (для дашборда)
-- Google-аккаунт — опционально (для календаря и автосохранения в Drive)
-
-**Не нужно:**
-- ❌ Устанавливать Python, зависимости, credentials.json
-- ❌ Платить за API Google
-- ❌ Заполнять таблицы вручную — всё ведёт скилл
+**→ [Detailed Comparison](references/platforms/CROSS_PLATFORM_COMPARISON.md)**  
+**→ [Decision Tree](references/platforms/CROSS_PLATFORM_COMPARISON.md#decision-tree)**
 
 ---
 
-## Как проходит работа после диагностики
+## Quick Start
 
-```
-Неделя 0: Диагностика
-├── Emotional Landing (эмоциональный контакт)
-├── Style Calibration (калибровка стиля коммуникации)
-├── Wheel of Life (оценка 11 сфер 1-10)
-├── Values Clarification (10 ценностей Schwartz)
-├── Designing Your Life (Workview + Odyssey Plans)
-└── Ikigai + Life Story (пиковые моменты, провалы)
+### Claude.ai (ZIP Skill)
 
-Неделя 0.5: Фильтр целей (Stage 1.5)
-├── Red Flag Detector (6+1 красных флагов)
-├── Deep Why (3 уровня «почему»)
-├── Societal Pressure Test (4 вопроса)
-├── True Goal Score (радар из 5 осей)
-└── Goal Portfolio (активные / на паузе / паттерны)
+1. Download `life-planning-coach-v0.10.2.zip` from [Releases](https://github.com/azagreev/life-planning-coach/releases)
+2. Claude → Settings → Capabilities → enable "Code execution and file creation"
+3. Customize → Skills → + → Upload ZIP
+4. Type `/life-planning-coach` in any chat
 
-Неделя 1: Архитектура целей
-├── BHAG — одна цель на всю жизнь
-├── 3-5 Life Themes (1-3 года)
-├── 12-Week Objectives + Key Results
-├── Weekly Priorities
-└── Daily WOOP (if-then намерения)
+**→ [Full Claude Guide](references/platforms/USER_GUIDE_CLAUDE.md)**
 
-Неделя 2+: Поддержка ритма
-├── Weekly Review (каждое воскресенье, можно в календаре)
-├── Daily Top-3 (три приоритета на день)
-├── Time Blocks (блокировка времени на важное)
-├── Корректировка целей по ходу
-└── Dashboard — визуализация прогресса
-```
+### Grok (xAI) — Single File
 
-**Данные, которые собирает скилл:**
-- Wheel of Life scores (11 чисел 1-10)
-- Values ranking (10 ценностей с весами)
-- BHAG текст
-- Life Themes: objective + 3-5 key results каждая
-- 12-Week OKR: objectives + key results с дедлайнами
-- Weekly priorities (список строк)
-- Daily WOOP: wish + outcome + obstacle + plan (4 строки)
-- Weekly reviews: что работало / не работало / корректировки
-- Daily Top-3: список задач со статусом выполнения
+1. Download `life-planning-coach-v0.10.2-grok.md`
+2. Copy all content, paste into [grok.com](https://grok.com)
+3. Add: `Ты — Life Planning Coach. Начни сессию.`
 
-**Сохранение данных:**
-- **По умолчанию:** ключевые факты автоматически сохраняются в Claude Memory. При возвращении скилл вспомнит контекст через естественный диалог.
-- **Опционально:** подключите Google Drive — скилл создаст личную wiki с целями, прогрессом и инсайтами в вашем облаке. Данные не потеряются при смене устройства или закрытии вкладки.
-- При длинных диалогах контекст может сжиматься — для надёжности рекомендуется подключить Google Drive после 1-2 сессий.
+**→ [Full Grok Guide](references/platforms/USER_GUIDE_GROK.md)**
 
----
+### Kimi OK Computer (Web Agent)
 
-## Установка скилла (пошагово)
+1. Go to [kimi.com/agent](https://kimi.com/agent)
+2. Create Agent → paste `life-planning-coach-v0.10.2-kimi.md` into system prompt
+3. Save and chat
 
-### Шаг 1. Скачать скилл
+**→ [Full Kimi OK Computer Guide](references/platforms/USER_GUIDE_KIMI_OKCOMPUTER.md)**
 
-1. Открой [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
-2. Скачай файл `life-planning-coach-vX.Y.Z.zip` (где X.Y.Z — последняя версия, например `0.7.0`)
-
-> **Примечание:** доступны два файла:
-> - `life-planning-coach-vX.Y.Z.zip` — ZIP-архив
-> - `life-planning-coach-vX.Y.Z.skill` — тот же ZIP-архив с расширением `.skill`
->
-> Оба файла идентичны — выбирай любой. Anthropic рекомендует ZIP.
->
-> **Для разработчиков:** собрать из исходников: `bash scripts/build-skill.sh`
-
-### Шаг 2. Загрузить в Claude
-
-> **Skills доступны на всех планах: Free, Pro, Max, Team, Enterprise.** Подписка Pro не требуется.
-
-1. Войди в [claude.ai](https://claude.ai)
-2. Включи **Code execution**:
-   - **Settings → Capabilities → Code execution and file creation** → ON
-   - (Для Team/Enterprise: владелец организации обязан включить в **Organization settings > Skills**)
-3. Перейди в **Customize → Skills**
-4. Нажми **+** → **+ Create skill**
-5. Выбери **Upload a skill**
-6. Выбери скачанный ZIP-файл (`life-planning-coach-vX.Y.Z.zip` или `.skill`)
-7. Дождись сообщения об успешной загрузке
-8. Включи скилл тумблером в списке Skills
-
-### Установка на Grok 4.3 (xAI)
-
-> **Подробный гайд:** [`references/platforms/grok_user_guide.md`](references/platforms/grok_user_guide.md) — troubleshooting, quick start, connectors.
-
-Grok 4.3 не имеет официального Skill Store. Доступен один способ загрузки скилла:
-
-**Grok Skills (единственный способ)**
-1. Скачай `life-planning-coach-vX.Y.Z-grok.md` из [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
-2. В Grok создай **New Project** → **Life Planning Coach** → включи Google Calendar + Google Drive
-3. Нажми **Create Skill** (или `/skill-create`) → назови **life-planning-coach**
-4. В поле **Instruction** вставь содержимое файла → сохрани
-5. В любом чате активируй: `/life-planning-coach`
-
-> ⚠️ Grok Skills — forthcoming feature (leaked UI от TestingCatalog, апр 2026). Если недоступен, используй Grok Projects: вставь скилл в Context/Instructions Project.
-
-**Особенности Grok 4.3:**
-- ✅ Native Memory (persistent между сессиями, Settings → Data Controls)
-- ✅ Native Google Calendar connector (OAuth через grok.com/connectors)
-- ✅ Native Google Drive connector (OAuth через grok.com/connectors)
-- ✅ Sandbox file I/O (`read_file`, `write_file`, `edit_file`, `bash`)
-- ✅ Web search, image generation
-- ✅ HTML-дашборд через `render_file`
-
-### Установка на Kimi K2.6 (Moonshot AI)
-
-Kimi использует skill-файлы в OK Computer mode (`kimi.com/agent`).
-
-1. Скачай `life-planning-coach-vX.Y.Z-kimi.md` из [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
-2. Скопируй содержимое в файл `/app/.kimi/skills/life-planning-coach/SKILL.md`
-   ```bash
-   mkdir -p /app/.kimi/skills/life-planning-coach
-   cp life-planning-coach-vX.Y.Z-kimi.md /app/.kimi/skills/life-planning-coach/SKILL.md
-   ```
-3. Используй **OK Computer mode** (`kimi.com/agent`) для полной диагностики
-4. Для Base Chat (10 шагов) используй микро-сессии: «у меня 5 минут»
-5. **Важно:** `memory_space` tool обязателен для сохранения контекста
-
-### Шаг 3. Активировать
-
-- Скилл активируется автоматически при фразах: "помоги спланировать жизнь", "не знаю куда двигаться", "wheel of life", "life planning"
-- Или напиши напрямую: `/life-planning-coach` или "запусти life coach"
-
----
-
-## Настройка Google Drive (опционально)
-
-Если хочешь, чтобы скилл автоматически сохранял прогресс между сессиями в облаке:
-
-> **Без облака:** скилл работает полностью в текстовом режиме. Данные сохраняются в памяти Claude (Claude Memory) и в файле разговора. Google Drive/Calendar — опционально, для тех, кто хочет внешнее хранилище.
-
-### Шаг 1. Подключить Google Drive
-
-1. В claude.ai открой **Settings → MCP**
-2. Найди **Google Drive** в списке доступных коннекторов
-3. Нажми **Authorize**
-4. Войди в свой Google-аккаунт и дай разрешение
-5. Вернись в Claude — коннектор покажет статус "Connected"
-
-### Шаг 2. Согласиться на сохранение
-
-Во время сессии скилл предложит: "Хочешь, чтобы я сохранял твой прогресс в Google Drive?"
-
-Нажмите **Да** — скилл создаст папку "Life Planning Coach Wiki" в вашем Google Drive и будет автоматически обновлять файлы с целями, инсайтами и прогрессом.
-
-**Что вы получите:**
-- 📁 Папка "Life Planning Coach Wiki" в вашем Google Drive
-- 📄 Файлы на русском: цели, Wheel of Life, инсайты, дашборд
-- 🔄 Автоматическое обновление в конце каждой сессии
-- 📱 Доступ с любого устройства
-
-**Безопасность:** данные хранятся в вашем Google Drive, скилл только обновляет файлы.
-
----
-
-## Настройка Google Calendar (настоятельно рекомендуется)
-
-Calendar — это **Execution Backbone** скилла. Запланированное событие имеет 80% вероятность выполнения vs 30% для списка задач (Milkman et al., 2021). Без календаря цели остаются намерениями без временных якорей.
-
-После подключения скилл автоматически создаст события:
-
-### Шаг 1. Подключить MCP
-
-1. В claude.ai открой **Settings → MCP**
-2. Найди **Google Calendar** в списке доступных коннекторов
-3. Нажми **Authorize**
-4. Войди в свой Google-аккаунт и дай разрешение
-5. Вернись в Claude — коннектор должен показать статус "Connected"
-
-**Что автоматически попадёт в календарь:**
-- Weekly Review (воскресенье, 1.5–2 часа)
-- WOOP-сессии (ежедневно, 10 минут)
-- Time Blocks для важных целей
-- Deadline-напоминания по OKR
-
-### Если подключение не работает
-
-- Скилл продолжит работу в текстовом режиме — все планы остаются в разговоре
-- Попробуй переподключить: Settings → MCP → Google Calendar → Disconnect → Authorize
-
----
-
-## Быстрый старт
-
-### Первый разговор со скиллом (1 минута)
-
-После установки напишите Claude любую фразу-триггер:
-> «Я чувствую, что жизнь проходит мимо, помоги разобраться»
-
-Скилл начнёт с **Emotional Landing** — эмоционального контакта, а не с тестов. Первые 5–10 минут — валидация вашего состояния и одно конкретное действие на сегодня.
-
-Другие рабочие триггеры:
-- «Не знаю, куда двигаться»
-- «Хочу поставить цели на год»
-- «Сделай Wheel of Life»
-- `/life-planning-coach`
-
-### Дашборд (без установки)
-
-Открой `life-planning-dashboard.html` в браузере — все данные встроены, интернет не нужен.
+### Kimi Code CLI (Terminal)
 
 ```bash
-open life-planning-dashboard.html        # macOS
-xdg-open life-planning-dashboard.html    # Linux
-start life-planning-dashboard.html       # Windows
+mkdir -p ~/.kimi/skills/life-planning-coach
+cp -r platforms/kimi-cli/* ~/.kimi/skills/life-planning-coach/
+kimi skill use life-planning-coach
 ```
+
+**→ [Full Kimi CLI Guide](references/platforms/USER_GUIDE_KIMI_CLI.md)**
 
 ---
 
-## Архитектура: 5 Stage
-
-```
-Stage 1: Diagnostic        Stage 1.5: Goal Filter       Stage 2: Goal Architecture   Stage 3: Weekly Review
-+-- Emotional Landing      +-- Red Flag Detector        +-- BHAG (10-25 лет)         +-- GTD: Get Clear/Current/Creative
-+-- Style Calibration      +-- Deep Why (3 levels)      +-- OKR Life Themes (1-3 г.) +-- Scrum Retro
-+-- Wheel of Life (11)     +-- Societal Pressure Test   +-- 12-Week Quarter          +-- Progress Audit
-+-- Values Clarification   +-- True Goal Score (radar)  +-- Weekly Priorities        +-- Adjustment Protocol
-+-- Designing Your Life    +-- Goal Portfolio           +-- Daily WOOP
-+-- Ikigai + Life Story
-
-Stage 4: Dashboard              Stage 5: Calendar Integration (MCP)
-+-- Tab: Overview               +-- Zero-setup OAuth via claude.ai
-|   +-- Wheel of Life Radar     +-- CRUD Events
-|   +-- OKR Progress Rings      +-- Free/ Busy Slots
-|   +-- Confidence Gauges       +-- 4 Life Planning Presets
-+-- Tab: Retrospective          |   +-- Weekly Review Reminder
-|   +-- Calendar Heatmap        |   +-- WOOP Morning Session
-|   +-- Velocity Chart          |   +-- 12-Week Milestones
-|   +-- Burndown Chart          |   +-- Deep Work Time Blocks
-+-- Tab: Goals                  +-- Daily Top-3 (text, conversation state)
-    +-- 12-Week Tracker
-    +-- Weekly Priorities
-    +-- WOOP Cards
-    +-- BHAG Roadmap
-```
-
----
-
-## Методики (Evidence-Based)
-
-| Методика | Эффект | Источник | Применение |
-|----------|--------|----------|------------|
-| Goal-Setting Theory | d = 0.42-0.80 | Locke & Latham, 2002 | BHAG, OKR |
-| Implementation Intentions | d = 0.65 | Gollwitzer & Sheeran, 94 studies | Daily if-then plans |
-| WOOP / Mental Contrasting | g = 0.336 | Wang et al., 2021 | Daily WOOP sessions |
-| Self-Determination Theory | r = .46-.60 | Deci & Ryan, 2000 | Coaching framework |
-| Weekly Reflection | +23% performance | Di Stefano et al., Harvard | Weekly Review |
-
----
-
-## Структура проекта
+## Project Structure
 
 ```
 life-planning-coach/
-├── README.md                          # Этот файл
-├── CHANGELOG.md                       # История изменений проекта
-├── ROADMAP.md                         # Планы будущих релизов
-├── BACKLOG.md                         # Бэклог идей
-├── SKILL.md                           # Claude skill (backward compat, generated)
-├── SKILL.master.md                    # Platform-agnostic canonical source
-├── platforms/                         # Generated platform-specific skills
-│   ├── claude/SKILL.md                # Claude.ai skill
-│   ├── grok/SKILL.md                  # Grok 4.3 skill
-│   └── kimi/SKILL.md                  # Kimi K2.6 skill
-├── life-planning-dashboard.html       # Интерактивный дашборд
-├── dist/                                # Сборочные артефакты (не в git)
-│   ├── life-planning-coach-vX.Y.Z.zip   # Claude skill (ZIP)
-│   ├── life-planning-coach-vX.Y.Z.skill # Claude skill (.skill)
-│   ├── life-planning-coach-vX.Y.Z-grok.md # Grok 4.3 skill
-│   └── life-planning-coach-vX.Y.Z-kimi.md # Kimi K2.6 skill
-│
-├── references/                        # Документация методик
-│   ├── platforms/                     # Platform overlays for skill generation
-│   │   ├── claude.overlay.yaml
-│   │   ├── grok.overlay.yaml
-│   │   └── kimi.overlay.yaml
-│   ├── diagnostic_methods.md          # Stage 1 протоколы
-│   ├── authentic_goal_filter.md       # Stage 1.5 протоколы
-│   ├── communication_style.md         # Адаптация стиля коммуникации
-│   ├── goal_architecture.md           # Stage 2 протоколы
-│   ├── weekly_review.md              # Stage 3 протоколы
-│   ├── science_backing.md            # Научная валидация
-│   ├── dashboard_guide.md            # Гайд по дашборду
-│   ├── calendar_integration.md       # Гайд по Calendar MCP
-│   └── USER_GUIDE_DRIVE.md           # Гайд по подключению Google Drive
-│
+├── platforms/              # Platform-specific builds
+│   ├── claude/SKILL.md     # 311 lines, directory + read_file
+│   ├── grok/SKILL.md       # 1,190 lines, fully inlined
+│   ├── kimi/SKILL.md       # 815 lines, fully inlined
+│   └── kimi-cli/SKILL.md   # 323 lines, directory + read_file
+├── references/             # Coaching methods & guides
+│   ├── diagnostic_methods.md
+│   ├── communication_style.md
+│   ├── authentic_goal_filter.md
+│   ├── goal_architecture.md
+│   ├── weekly_review.md
+│   ├── habit_loop.md
+│   ├── emotion_regulation.md
+│   ├── dashboard_guide.md
+│   ├── science_backing.md
+│   ├── calendar_integration.md
+│   └── platforms/          # User guides & comparisons
+│       ├── USER_GUIDE_CLAUDE.md
+│       ├── USER_GUIDE_GROK.md
+│       ├── USER_GUIDE_KIMI_OKCOMPUTER.md
+│       ├── USER_GUIDE_KIMI_CLI.md
+│       └── CROSS_PLATFORM_COMPARISON.md
+├── tests/                  # 248+ tests (unit + system + e2e)
 ├── scripts/
-│   ├── build-skill.sh                 # Сборка всех артефактов
-│   ├── build-platform-skill.py        # Генератор platform-specific skills
-│   └── release.sh                     # Релизный скрипт
-│
-└── setup.py                           # Python package installer
+│   ├── build-skill.sh      # Build all platform artifacts
+│   └── build-platform-skill.py  # Generate platform SKILls
+├── dist/                   # Release artifacts
+├── SKILL.master.md         # Platform-agnostic source
+├── CHANGELOG.md
+├── ROADMAP.md
+└── BACKLOG.md
 ```
 
 ---
 
-## Требования
+## Building from Source
 
-| Платформа | Требования |
-|-----------|-----------|
-| Claude.ai | Любой план (Free+) — skills + MCP connectors |
-| Grok 4.3 | xAI sandbox с file I/O (`read_file`, `write_file`) |
-| Kimi K2.6 | OK Computer mode (`kimi.com/agent`) для полной диагностики |
-| Дашборд | Любой современный браузер (Chrome, Firefox, Safari) |
-| Google Calendar | Аккаунт Google, авторизация через MCP в claude.ai (только Claude) |
+```bash
+# Generate all platform files
+python3 scripts/build-platform-skill.py all
 
----
+# Build release artifacts (ZIP, .skill, .md files)
+bash scripts/build-skill.sh
 
-## Безопасность
-
-**Техническая:**
-- **OAuth 2.0** через официальный MCP-коннектор Google (управляется Anthropic)
-- **Никакие credentials не хранятся в коде скилла**
-- **Zero-trust**: скилл не имеет прямого доступа к токенам, все вызовы через MCP
-
-**Психологическая:**
-- Этот скилл — инструмент для самопознания и планирования, **не замена психотерапии или психиатрической помощи**.
-- Если вы испытываете устойчивое чувство безысходности, мысли о самоповреждении или все сферы жизни оцениваются на 1–2 из 10 — скилл порекомендует обратиться к профессионалу.
-- Вы можете пропустить любой вопрос или прервать сессию в любой момент.
+# Run tests
+python3 -m pytest tests/ -q
+```
 
 ---
 
-## FAQ и устранение неполадок
+## Testing
 
-**Скилл не активируется на триггер-фразы**
-- Убедитесь, что файл загружен: Settings → Capabilities → Skills → life-planning-coach должен быть в списке.
-- Попробуйте прямую команду: `/life-planning-coach` или «запусти life coach».
+- **248+ tests** covering structure, content, and platform compliance
+- **Golden dataset** (`tests/e2e/`) — 20 behavioral test cases
+- **Evaluation rubric** — LLM-as-a-Judge for coaching quality
+- **Manual test protocol** — `tests/e2e/MANUAL_TEST_RUN.md`
 
-**Данные пропали после закрытия вкладки**
-- Скилл использует Claude Memory для сохранения ключевых фактов между сессиями. При возвращении скилл вспомнит контекст через естественный диалог.
-- Для полной сохранности рекомендуется подключить Google Drive (1 клик в Settings → MCP → Google Drive).
-- Если данные всё же потеряны — просто расскажите скиллу, над чем работали, и он подхватит контекст.
-
-**Как обновить скилл до новой версии**
-1. Settings → Capabilities → Skills → life-planning-coach → Remove.
-2. Загрузите новый файл `life-planning-coach.zip`.
-3. Активация сохранится автоматически.
-
-**Как удалить скилл**
-- Settings → Capabilities → Skills → life-planning-coach → Remove. Все данные останутся в истории разговоров Claude.
+```bash
+python3 -m pytest tests/ -q
+```
 
 ---
 
-## Лицензия
+## Privacy & Disclaimer
 
-MIT License — свободное использование для личных и коммерческих целей.
+- **Not therapy.** This is coaching, not clinical treatment. For mental health concerns, consult a licensed professional.
+- **Your data:** Coaching content stays in your AI platform conversation. MCP/connector access is OAuth-scoped and controlled by you.
+- **No telemetry.** This project does not collect usage data.
+- See full privacy notice in each platform's `SKILL.md`.
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Key rules:
+
+- New code → new tests
+- Release only via `bash scripts/release.sh X.Y.Z`
+- Commit format: `<type>: <description>` (`feat`, `fix`, `docs`, `chore`, `test`, `refactor`)
+
+---
+
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for upcoming features and [BACKLOG.md](BACKLOG.md) for ideas.
+
+---
+
+## License
+
+MIT License — see [LICENSE](LICENSE)
+
+---
+
+<p align="center">
+  <a href="references/platforms/CROSS_PLATFORM_COMPARISON.md">Compare Platforms</a> •
+  <a href="references/platforms/USER_GUIDE_CLAUDE.md">Claude Guide</a> •
+  <a href="references/platforms/USER_GUIDE_GROK.md">Grok Guide</a> •
+  <a href="references/platforms/USER_GUIDE_KIMI_OKCOMPUTER.md">Kimi Web Guide</a> •
+  <a href="references/platforms/USER_GUIDE_KIMI_CLI.md">Kimi CLI Guide</a>
+</p>

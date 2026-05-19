@@ -129,6 +129,27 @@ cp "${OUTPUT_ZIP}" "${OUTPUT_SKILL}"
 cp "${PROJECT_ROOT}/platforms/grok/SKILL.md" "${DIST_DIR}/life-planning-coach-v${skill_version}-grok.md"
 cp "${PROJECT_ROOT}/platforms/kimi/SKILL.md" "${DIST_DIR}/life-planning-coach-v${skill_version}-kimi.md"
 
+# ── 9.6. Copy Kimi CLI skill directory to dist ───────────────────────────────
+KIMI_CLI_DIR="${DIST_DIR}/life-planning-coach-v${skill_version}-kimi-cli"
+mkdir -p "${KIMI_CLI_DIR}"
+cp "${PROJECT_ROOT}/platforms/kimi-cli/SKILL.md" "${KIMI_CLI_DIR}/SKILL.md"
+if [[ -d "${PROJECT_ROOT}/references" ]]; then
+    mkdir -p "${KIMI_CLI_DIR}/references"
+    rsync -a \
+        --exclude='acceptance_criteria_*' \
+        --exclude='plan_v*.md' \
+        --exclude='release_checklist_*.md' \
+        --exclude='persistence_research_plan.md' \
+        --exclude='research/' \
+        --exclude='research_*.md' \
+        --exclude='tasks/' \
+        --exclude='archive/' \
+        "${PROJECT_ROOT}/references/" "${KIMI_CLI_DIR}/references/"
+fi
+if [[ -f "${PROJECT_ROOT}/life-planning-dashboard.html" ]]; then
+    cp "${PROJECT_ROOT}/life-planning-dashboard.html" "${KIMI_CLI_DIR}/life-planning-dashboard.html"
+fi
+
 # ── 10. Verify outputs ───────────────────────────────────────────────────────
 if [[ ! -f "${OUTPUT_ZIP}" ]]; then
     echo "Error: Failed to create ${OUTPUT_ZIP}" >&2

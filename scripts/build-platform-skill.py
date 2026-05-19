@@ -22,7 +22,7 @@ OVERLAY_DIR = PROJECT_ROOT / "references" / "platforms"
 OUTPUT_DIR = PROJECT_ROOT / "platforms"
 REFERENCES_DIR = PROJECT_ROOT / "references"
 
-PLATFORMS = ["claude", "grok", "kimi"]
+PLATFORMS = ["claude", "grok", "kimi", "kimi-cli"]
 
 # P0 critical references that must be inlined for single-file platforms
 P0_REFS = [
