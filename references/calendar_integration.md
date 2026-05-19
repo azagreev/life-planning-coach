@@ -1,8 +1,9 @@
 # Google Calendar Integration Reference (MCP)
 
-> **Runtime**: claude.ai only (requires official Google Calendar MCP)  
-> **Setup**: Zero — MCP is built-in; user authorizes via Settings → MCP → Google Calendar  
-> **Version**: 0.2.0
+> **Runtime**: Claude.ai + Kimi Code CLI (requires Google Calendar MCP server)  
+> **Not supported**: Grok (uses native connectors), Kimi OK Computer (web, no MCP)  
+> **Setup**: Claude — 1-click in desktop app; Kimi CLI — manual JSON config  
+> **Version**: 0.2.1
 
 ---
 

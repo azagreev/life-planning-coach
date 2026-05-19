@@ -46,7 +46,7 @@ git describe --tags --abbrev=0
 ## 1. Проект
 
 - **Название:** `life-planning-coach` — evidence-based coaching skill
-- **Платформы:** Claude.ai (primary), Grok 4.3 (xAI), Kimi K2.6 (Moonshot AI)
+- **Платформы:** Claude.ai (primary), Grok (xAI), Kimi OK Computer (Moonshot AI), Kimi Code CLI (terminal)
 - **Язык:** Русский (primary)
 - **Версия:** v0.10.2 (источник правды — git tag)
 - **Репозиторий:** https://github.com/azagreev/life-planning-coach
@@ -139,7 +139,7 @@ python3 -m pytest tests/ -q
 bash scripts/build-skill.sh
 
 # Только сгенерировать platform-файлы
-python3 scripts/build-platform-skill.py [claude|grok|kimi|all]
+python3 scripts/build-platform-skill.py [claude|grok|kimi|kimi-cli|all]
 
 # Релиз
 bash scripts/release.sh X.Y.Z

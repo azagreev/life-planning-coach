@@ -46,18 +46,22 @@ xAI is testing native Skills/Custom GPTs. When available:
 
 Grok uses **xAI Native Connectors**, not MCP. These are pre-built integrations:
 
-### 3.1 Google Calendar
+### 3.1 Google Calendar Connector
 
 1. Go to [grok.com/connectors](https://grok.com/connectors) (or Settings → Connectors)
 2. Find **Google Calendar** → Click **Connect**
 3. OAuth with your Google account
 4. Grant calendar read/write permissions
 
-### 3.2 Google Drive
+> The Google Calendar connector is managed by xAI, not via MCP.
+
+### 3.2 Google Drive Connector
 
 1. Same [grok.com/connectors](https://grok.com/connectors) page
 2. Find **Google Drive** → Click **Connect**
 3. OAuth + grant Drive permissions
+
+> The Google Drive connector uses native OAuth, not MCP.
 
 ### 3.3 Other Connectors
 
@@ -97,9 +101,13 @@ Same 4-stage flow as Claude:
 |---------|------|--------|
 | Ref loading | Inlined (instant) | `read_file` (on-demand) |
 | File size | ~28 KB single file | ~170 KB ZIP |
-| Connectors | Native OAuth | MCP JSON config |
+| Connectors | Native connector (OAuth) | MCP JSON config |
 | Setup | Copy-paste prompt | ZIP upload |
 | Persistence | Projects (if available) | Conversation only |
+
+### 4.4 Cross-Platform Transition
+
+Moving from Claude or Kimi to Grok? Your data stays in Google Drive (if you used Drive MCP/connector). Ask Grok to read your existing `Life Planning Coach Wiki` folder and continue from where you left off.
 
 ---
 
@@ -135,7 +143,7 @@ This makes the file larger (~1190 lines) but ensures Grok has immediate access t
 
 - **No native Skills yet** — rely on Direct Prompt or Projects
 - **Connector availability varies by region**
-- **Context window:** ~1M tokens (very large, but no persistent memory between conversations)
+- **Context window:** ~1M tokens (very large; memory is conversation-scoped — use Grok Projects for cross-session persistence)
 - **Mobile:** Copy-paste is harder on mobile; use desktop for initial setup
 
 ---

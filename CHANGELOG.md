@@ -8,7 +8,41 @@
 
 ## [Unreleased]
 
+## [0.10.2] — 2026-05-19
+
+### Added
+- **Kimi Code CLI support** — новая платформа (terminal-based agent):
+  - `platforms/kimi-cli/SKILL.md` (323 lines) — directory-based skill с `references/` через `read_file`
+  - `references/platforms/kimi-cli.overlay.yaml` — overlay без inline, без `memory_space`
+  - MCP поддержка (Google Calendar + Google Drive) через manual JSON config
+  - Включён в `scripts/build-platform-skill.py` и `scripts/build-skill.sh`
+- **Полный rewrite README.md** — короткий value prop + quick-start + таблица платформ + ссылки на USER_GUIDE
+- **4 USER_GUIDE файла** (`references/platforms/`):
+  - `USER_GUIDE_CLAUDE.md` — ZIP upload, MCP 1-click, directory-based refs
+  - `USER_GUIDE_GROK.md` — Direct Prompt / Projects, native connectors (не MCP)
+  - `USER_GUIDE_KIMI_OKCOMPUTER.md` — web agent, `memory_space`, text-only calendar
+  - `USER_GUIDE_KIMI_CLI.md` — terminal setup, manual MCP JSON config
+- **`CROSS_PLATFORM_COMPARISON.md`** — feature matrix, decision tree, quick selector
+- **E2E behavioral testing framework** (`tests/e2e/`):
+  - `golden_dataset.json` — 20 тест-кейсов (LPC-001..LPC-020)
+  - `evaluation_rubric.md` — 5 критериев LLM-as-a-Judge
+  - `MANUAL_TEST_RUN.md` — протокол ручного прогона
+
+### Fixed
+- **README integrity** — все system tests проходят (11 доменов, Stage 1.5, communication style, core refs list, version format)
+- **`references/calendar_integration.md`** — убрано "Runtime: claude.ai only", добавлена поддержка Kimi CLI MCP
+- **`AGENTS.md`** — обновлены платформы (добавлен Kimi Code CLI), build-команда
+
+### Removed
+- `references/platforms/grok_user_guide.md` — заменён на `USER_GUIDE_GROK.md`
+- `RETRO_v091_v092.md` — удалён из публичного репозитория
+
 ## [0.10.1] — 2026-05-19
+
+### Fixed
+- **BUG-002**: Grok SKILL.md — инлайн 7 критичных reference-файлов (`diagnostic_methods`, `communication_style`, `authentic_goal_filter`, `goal_architecture`, `weekly_review`, `habit_loop`, `emotion_regulation`) через `<details>` tags. Ранее 21 ссылка "Загрузи `references/...`" не работала в Grok Web Chat (нет ФС).
+- **BUG-003**: Kimi SKILL.md — инлайн тех же 7 reference-файлов в агрессивно сжатом виде (ultra-condensed). Ранее ссылки были неработоспособны в OK Computer single-file режиме.
+- Удалены инструкции "Загрузи" для несжатых P1/P2 reference-файлов — заменены на нейтральные "См. `references/...`".
 
 ### Fixed
 - **BUG-002**: Grok SKILL.md — инлайн 7 критичных reference-файлов (`diagnostic_methods`, `communication_style`, `authentic_goal_filter`, `goal_architecture`, `weekly_review`, `habit_loop`, `emotion_regulation`) через `<details>` tags. Ранее 21 ссылка "Загрузи `references/...`" не работала в Grok Web Chat (нет ФС).
@@ -269,8 +303,15 @@
 
 ---
 
-[Unreleased]: https://github.com/azagreev/life-planning-coach/compare/v0.6.1...HEAD
-[0.6.1]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.6.1
+[Unreleased]: https://github.com/azagreev/life-planning-coach/compare/v0.10.2...HEAD
+[0.10.2]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.10.2
+[0.10.1]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.10.1
+[0.10.0]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.10.0
+[0.9.2]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.9.2
+[0.9.1]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.9.1
+[0.9.0]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.9.0
+[0.8.0]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.8.0
+[0.7.1]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.7.1
 [0.6.0]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.6.0
 [0.5.0]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.5.0
 [0.4.0]: https://github.com/azagreev/life-planning-coach/releases/tag/v0.4.0

@@ -20,7 +20,7 @@ MASTER_PATH = PROJECT_ROOT / "SKILL.master.md"
 OVERLAY_DIR = PROJECT_ROOT / "references" / "platforms"
 PLATFORMS_DIR = PROJECT_ROOT / "platforms"
 BUILD_SCRIPT = PROJECT_ROOT / "scripts" / "build-platform-skill.py"
-GROK_USER_GUIDE_PATH = PROJECT_ROOT / "references" / "platforms" / "grok_user_guide.md"
+GROK_USER_GUIDE_PATH = PROJECT_ROOT / "references" / "platforms" / "USER_GUIDE_GROK.md"
 GROK_OVERLAY_PATH = PROJECT_ROOT / "references" / "platforms" / "grok.overlay.yaml"
 
 PLATFORMS = ["claude", "grok", "kimi"]
@@ -298,7 +298,7 @@ class TestGrokFactCheck:
             "no persistent memory",
         ]
         for claim in false_claims:
-            assert claim not in text, f"grok_user_guide.md contains false claim: '{claim}'"
+            assert claim not in text, f"USER_GUIDE_GROK.md contains false claim: '{claim}'"
 
     def test_user_guide_no_false_calendar_claim(self):
         text = GROK_USER_GUIDE_PATH.read_text(encoding="utf-8").lower()
@@ -308,7 +308,7 @@ class TestGrokFactCheck:
             "нет calendar",
         ]
         for claim in false_claims:
-            assert claim not in text, f"grok_user_guide.md contains false claim: '{claim}'"
+            assert claim not in text, f"USER_GUIDE_GROK.md contains false claim: '{claim}'"
 
     def test_user_guide_no_false_drive_claim(self):
         text = GROK_USER_GUIDE_PATH.read_text(encoding="utf-8").lower()
@@ -317,18 +317,18 @@ class TestGrokFactCheck:
             "no google drive",
         ]
         for claim in false_claims:
-            assert claim not in text, f"grok_user_guide.md contains false claim: '{claim}'"
+            assert claim not in text, f"USER_GUIDE_GROK.md contains false claim: '{claim}'"
 
     def test_user_guide_has_native_connector_refs(self):
         text = GROK_USER_GUIDE_PATH.read_text(encoding="utf-8")
-        assert "Google Calendar connector" in text, "grok_user_guide.md missing 'Google Calendar connector'"
-        assert "Google Drive connector" in text, "grok_user_guide.md missing 'Google Drive connector'"
+        assert "Google Calendar connector" in text, "USER_GUIDE_GROK.md missing 'Google Calendar connector'"
+        assert "Google Drive connector" in text, "USER_GUIDE_GROK.md missing 'Google Drive connector'"
 
     def test_user_guide_has_cross_platform_continuity(self):
         text = GROK_USER_GUIDE_PATH.read_text(encoding="utf-8").lower()
         assert (
             "cross-platform" in text or "кросс-платформенная" in text
-        ), "grok_user_guide.md missing cross-platform continuity section"
+        ), "USER_GUIDE_GROK.md missing cross-platform continuity section"
 
     # --- grok.overlay.yaml ---
 
