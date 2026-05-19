@@ -33,6 +33,7 @@ P0_REFS = [
     "weekly_review.md",
     "habit_loop.md",
     "emotion_regulation.md",
+    "dashboard_guide.md",
 ]
 
 
@@ -117,6 +118,29 @@ def apply_frontmatter_changes(frontmatter: dict, overlay: dict) -> dict:
     return result
 
 
+def demote_headings(text: str, levels: int = 2) -> str:
+    """Demote all markdown headings by N levels (e.g., H1 -> H3)."""
+    lines = text.split("\n")
+    result = []
+    for line in lines:
+        stripped = line.lstrip()
+        if stripped.startswith("#"):
+            # Count leading # characters
+            hash_count = 0
+            for ch in stripped:
+                if ch == "#":
+                    hash_count += 1
+                else:
+                    break
+            new_level = hash_count + levels
+            if new_level > 6:
+                new_level = 6
+            result.append("#" * new_level + stripped[hash_count:])
+        else:
+            result.append(line)
+    return "\n".join(result)
+
+
 def condense_markdown(text: str, aggressive: bool = False) -> str:
     """Condense a reference markdown file for inline inclusion."""
     lines = text.split("\n")
@@ -165,7 +189,69 @@ def condense_markdown(text: str, aggressive: bool = False) -> str:
         if stripped.startswith("> **Версия:**") or stripped.startswith("> **База:**") or stripped.startswith("> **Цель:**"):
             continue
 
+        # Skip internal reference load instructions (these will be handled separately or are irrelevant when inlined)
+        if re.search(r"(?i)(загрузи|прочитай|см\.?).*`references/[^`]+\.md`", stripped):
+            continue
+
         result.append(line)
+
+    return "\n".join(result)
+
+
+def condense_dashboard(text: str) -> str:
+    """Aggressively condense dashboard_guide.md for inline inclusion.
+
+    Keep only:
+    - Coaching Display Rules (how to present data)
+    - JSON Data Contract (minimal example)
+    - Integration notes with skill
+    - Remove: CSS details, JS implementation, responsive design, a11y deep dives
+    """
+    lines = text.split("\n")
+    result = []
+    in_code = False
+    keep_section = False
+    section_name = ""
+
+    for line in lines:
+        stripped = line.strip()
+
+        # Code blocks
+        if stripped.startswith("```"):
+            in_code = not in_code
+            if not in_code:
+                continue
+            # Keep code blocks only if they contain JSON examples
+            if "json" in stripped.lower():
+                keep_section = True
+            else:
+                keep_section = False
+            continue
+        if in_code:
+            if keep_section:
+                result.append(line)
+            continue
+
+        # Identify sections to keep
+        if stripped.startswith("#"):
+            section_name = stripped.lower()
+            # Keep sections related to coaching display, data contract, integration
+            keep_section = any(kw in section_name for kw in [
+                "display rule", "data contract", "json", "integration",
+                "coaching", "skill integration", "how to use"
+            ])
+            if keep_section:
+                result.append(line)
+            continue
+
+        if keep_section:
+            # Skip CSS/JS implementation details
+            if any(kw in stripped.lower() for kw in [
+                "css", "javascript", "@media", "flexbox", "grid",
+                "webkit", "moz-", "backdrop-filter", "echarts"
+            ]):
+                continue
+            result.append(line)
 
     return "\n".join(result)
 
@@ -216,8 +302,9 @@ def inline_references(skill_text: str, platform: str) -> str:
         # Only inline P0 critical refs
         if ref not in P0_REFS:
             # Replace "Загрузи" with neutral "См." for non-inlined refs
+            # Handle markdown decoration around the keyword: **Загрузи** or _загрузи_
             skill_text = re.sub(
-                rf"(?i)(загрузи|прочитай|см\.?)\s*`references/{re.escape(ref)}`",
+                rf"(?i)[*_]*\s*(загрузи|прочитай|см\.?)\s*[_*]*\s*`references/{re.escape(ref)}`",
                 rf"См. `references/{ref}`",
                 skill_text,
             )
@@ -226,13 +313,19 @@ def inline_references(skill_text: str, platform: str) -> str:
         content = ref_path.read_text(encoding="utf-8")
 
         # Choose condensation level
-        if platform == "kimi":
+        if ref == "dashboard_guide.md":
+            # Custom condensation for dashboard: keep only coaching display rules + JSON contract
+            condensed = condense_dashboard(content)
+        elif platform == "kimi":
             condensed = ultra_condense(content)
         else:
             condensed = condense_markdown(content, aggressive=False)
 
         if not condensed.strip():
             continue
+
+        # Demote headings to preserve hierarchy (H1 -> H3, H2 -> H4)
+        condensed = demote_headings(condensed, levels=2)
 
         # Build inline block
         if platform == "grok":
