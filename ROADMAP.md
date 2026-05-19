@@ -90,6 +90,30 @@
 
 ---
 
+## v0.11.0 — Calendar Intelligence Layer (Audit-Driven)
+
+> **Источник:** [Audit Report `references/audit/AUDIT_CALENDAR_INTEGRATION.md`](references/audit/AUDIT_CALENDAR_INTEGRATION.md) — 15 gaps найдено, 4 критических.
+> **Цель:** Перевести календарную интеграцию из «документации» в «функциональность».
+
+### P0 (Блокирует релиз)
+- [ ] **`references/calendar_intelligence.md`** — Pre-flight protocol: `list_events` → density check → conflict detection → smart proposal → `create_event`
+- [ ] **Обновить 4 `platforms/*/SKILL.md`** — Phase 5 теперь требует проверки календаря перед созданием события
+- [ ] **Исправить `platforms/kimi/SKILL.md`** — удалить несостоятельный retry protocol, заменить на честный text-only flow
+- [ ] **Исправить dangling references** — `calendar_constants.md` + `calendar_integration.md` в `P0_REFS` для Grok/Kimi или убрать ссылки
+
+### P1 (Обязательно в релиз)
+- [ ] **Функциональные тесты календаря** — Free Slot Algorithm, event patterns, conflict detection, JSON validation для COLOR_MAP/REMINDER_PRESETS/RRULE_PRESETS
+- [ ] **Обновить `build-skill.yml`** — гонить ВСЕ тесты (`pytest tests/`), не только `tests/release`
+- [ ] **Провести PoC MCP** — Gate 0–2: OAuth + CRUD + `suggest_time` (заполнить `references/research/mcp_poc_log.md`)
+
+### P2 (Желательно)
+- [ ] **Интегрировать `energy_scheduling.md`** с calendar reading (energy peak → free slot search)
+- [ ] **User preference для work hours** — вместо hardcoded 9:00–18:00
+- [ ] **Kimi-CLI в multi-platform tests** — добавить `"kimi-cli"` в `PLATFORMS`
+- [ ] **Timezone intelligence** — определение timezone пользователя, DST handling
+
+---
+
 ## Идеи без привязки к версии (см. BACKLOG.md)
 
 | Идея | Триггер | Источник |
