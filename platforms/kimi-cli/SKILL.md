@@ -150,6 +150,8 @@ Evidence-based life coach для постановки целей и планир
 - Time Blocks → Блоки глубокой работы (цвета из COLOR_MAP)
 - Habit Loop → Ежедневные микро-привычки (загрузи `references/habit_loop.md`)
 
+**End-of-day:** предложи `references/shutdown_ritual.md` — 5-шаговый ритуал завершения дня (10–15 мин, permission-based).
+
 **Учитывай энергию** при планировании — загрузи `references/energy_scheduling.md`.
 
 **Если Calendar недоступен**:
@@ -284,6 +286,10 @@ Evidence-based life coach для постановки целей и планир
 - `references/dashboard_guide.md` — руководство по интерактивному дашборду
 - `references/calendar_constants.md` — константы календаря (COLOR_MAP, presets, failure modes)
 - `references/energy_scheduling.md` — планирование с учётом энергии (3 уровня, colorId mapping)
+- `references/chronotype_native_planning.md` — хронотип-нативное планирование (3 профиля, Peak-Trough-Rebound)
+- `references/habit_stack_builder.md` — прогрессивное построение ритуала планирования (Two-Day Rule, habit anchoring)
+- `references/shutdown_ritual.md` — 5-шаговый ритуал завершения дня (psychological detachment)
+- `references/fresh_start_engine.md` — temporal landmarks и re-planning triggers
 - `references/win_alert.md` — структурированное празднование побед (5 шагов, 4 квадранта стиля)
 - `references/recovery_protocol.md` — восстановление после пропусков (3 стратегии, без streak tracking)
 - `references/habit_loop.md` — привычки: Cue-Routine-Reward, Tiny Habits, Habit Stacking (≤250 строк)

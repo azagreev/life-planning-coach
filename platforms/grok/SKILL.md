@@ -904,7 +904,7 @@ Evidence-based life coach для постановки целей и планир
 ### Habit Loop Framework
 > **When to use:** Пользователь переходит от целей к ежедневным действиям, просит помочь с дисциплиной, хочет выработать привычку, бросить вредную привычку, или проходит Weekly Review и нуждается в execution layer.
 > **Duration:** 10–15 минут на первую привычку, +5 мин на каждую следующую
-> **Integration:** Stage 2 (Goal Architecture) → Stage 5 (Execution). Связь с WOOP (if-then), Calendar (time blocks), Energy Scheduling (когда энергия высокая — новые привычки), Recovery Protocol (пропуски — данные, не провал).
+> **Integration:** Stage 2 (Goal Architecture) → Stage 5 (Execution). Связь с WOOP (if-then), Calendar (time blocks), Energy Scheduling (когда энергия высокая — новые привычки), Recovery Protocol (пропуски — данные, не провал), Habit Stack Builder (прогрессивное построение ритуала планирования).
 ---
 #### Core Principle
 Привычки — это не про силу воли. Это про контекст, повторение и эмоциональное закрепление.
@@ -1018,6 +1018,8 @@ Evidence-based life coach для постановки целей и планир
 
 </details>
 <!-- END INLINED REF: habit_loop.md -->
+
+**End-of-day:** предложи `references/shutdown_ritual.md` — 5-шаговый ритуал завершения дня (10–15 мин, permission-based).
 
 **Учитывай энергию** при планировании —См. `references/energy_scheduling.md`.
 
@@ -1156,6 +1158,10 @@ Evidence-based life coach для постановки целей и планир
 - `references/dashboard_guide.md` — руководство по интерактивному дашборду
 - `references/calendar_constants.md` — константы календаря (COLOR_MAP, presets, failure modes)
 - `references/energy_scheduling.md` — планирование с учётом энергии (3 уровня, colorId mapping)
+- `references/chronotype_native_planning.md` — хронотип-нативное планирование (3 профиля, Peak-Trough-Rebound)
+- `references/habit_stack_builder.md` — прогрессивное построение ритуала планирования (Two-Day Rule, habit anchoring)
+- `references/shutdown_ritual.md` — 5-шаговый ритуал завершения дня (psychological detachment)
+- `references/fresh_start_engine.md` — temporal landmarks и re-planning triggers
 - `references/win_alert.md` — структурированное празднование побед (5 шагов, 4 квадранта стиля)
 - `references/recovery_protocol.md` — восстановление после пропусков (3 стратегии, без streak tracking)
 - `references/habit_loop.md` — привычки: Cue-Routine-Reward, Tiny Habits, Habit Stacking (≤250 строк)
