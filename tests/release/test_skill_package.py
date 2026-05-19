@@ -36,7 +36,7 @@ def _parse_version_from_zip_name(path: Path) -> tuple:
     return (0, 0, 0)
 
 _zip_files = sorted(
-    DIST_DIR.glob("life-planning-coach-v*.zip"),
+    [p for p in DIST_DIR.glob("life-planning-coach-v*.zip") if "-kimi-cli" not in p.name],
     key=_parse_version_from_zip_name,
     reverse=True,
 )

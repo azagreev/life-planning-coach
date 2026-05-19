@@ -150,6 +150,11 @@ if [[ -f "${PROJECT_ROOT}/life-planning-dashboard.html" ]]; then
     cp "${PROJECT_ROOT}/life-planning-dashboard.html" "${KIMI_CLI_DIR}/life-planning-dashboard.html"
 fi
 
+# ── 9.7. Create Kimi CLI ZIP ─────────────────────────────────────────────────
+KIMI_CLI_ZIP="${DIST_DIR}/life-planning-coach-v${skill_version}-kimi-cli.zip"
+rm -f "${KIMI_CLI_ZIP}"
+(cd "${DIST_DIR}" && zip -r "${KIMI_CLI_ZIP}" "life-planning-coach-v${skill_version}-kimi-cli" >/dev/null)
+
 # ── 10. Verify outputs ───────────────────────────────────────────────────────
 if [[ ! -f "${OUTPUT_ZIP}" ]]; then
     echo "Error: Failed to create ${OUTPUT_ZIP}" >&2
@@ -161,16 +166,24 @@ zip_size=$(du -h "${OUTPUT_ZIP}" | cut -f1)
 # ── 11. Success ──────────────────────────────────────────────────────────────
 echo "✓ Built ${OUTPUT_ZIP} (version ${skill_version}, size: ${zip_size})"
 echo "✓ Built ${OUTPUT_SKILL} (ZIP archive, same content)"
-echo "✓ Built ${DIST_DIR}/life-planning-coach-v${skill_version}-grok.md (Grok 4.3)"
-echo "✓ Built ${DIST_DIR}/life-planning-coach-v${skill_version}-kimi.md (Kimi K2.6)"
+echo "✓ Built ${DIST_DIR}/life-planning-coach-v${skill_version}-grok.md (Grok xAI)"
+echo "✓ Built ${DIST_DIR}/life-planning-coach-v${skill_version}-kimi.md (Kimi OK Computer)"
 echo ""
 echo "Upload to Claude.ai:"
 echo "  1. Settings → Capabilities → enable 'Code execution and file creation'"
 echo "  2. Customize → Skills → '+' → 'Upload a skill'"
 echo "  3. Select: ${OUTPUT_ZIP} (or ${OUTPUT_SKILL})"
 echo ""
-echo "Grok 4.3: Copy SKILL.md content to /root/.grok/skills/life-planning-coach/SKILL.md"
-echo "Kimi K2.6: Copy SKILL.md content to /app/.kimi/skills/life-planning-coach/SKILL.md"
+echo "✓ Built ${DIST_DIR}/life-planning-coach-v${skill_version}-kimi-cli.zip (Kimi Code CLI)"
+echo ""
+echo "Upload to Claude.ai:"
+echo "  1. Settings → Capabilities → enable 'Code execution and file creation'"
+echo "  2. Customize → Skills → '+' → 'Upload a skill'"
+echo "  3. Select: ${OUTPUT_ZIP} (or ${OUTPUT_SKILL})"
+echo ""
+echo "Grok (xAI): Copy SKILL.md content to /root/.grok/skills/life-planning-coach/SKILL.md"
+echo "Kimi OK Computer: Copy SKILL.md content to /app/.kimi/skills/life-planning-coach/SKILL.md"
+echo "Kimi Code CLI: Copy directory to ~/.kimi/skills/life-planning-coach/"
 echo ""
 echo "Or attach to GitHub Release:"
 echo "  gh release upload v${skill_version} ${OUTPUT_ZIP} ${OUTPUT_SKILL} ${DIST_DIR}/life-planning-coach-v${skill_version}-grok.md ${DIST_DIR}/life-planning-coach-v${skill_version}-kimi.md"

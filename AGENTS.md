@@ -147,5 +147,5 @@ bash scripts/release.sh X.Y.Z
 
 ---
 
-*Обновлено: 2026-05-18*  
-*AGENTS.md v4.0 (lean) для life-planning-coach v0.10.2+*
+*Обновлено: 2026-05-19*  
+*AGENTS.md v4.1 (lean) для life-planning-coach v0.10.2+*

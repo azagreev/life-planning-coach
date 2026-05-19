@@ -18,121 +18,75 @@
 
 Полный список выпущенных версий — в [CHANGELOG.md](CHANGELOG.md).
 
----
+<details>
+<summary><strong>v0.7.0 — v0.9.1 (выпущено, кликни для деталей)</strong></summary>
 
-## v0.7.0 — Эмоциональная регуляция (Minimal Scope)
+### v0.9.1 — Apple-style Dashboard Redesign
+- Activity Rings (SVG), Liquid Glass карточки, Dark/Light mode
+- Размер: 1,403 KB → ~61 KB (23× уменьшение)
+- Удалены внешние зависимости (ECharts, Chart.js, Font Awesome)
 
-**Цель:** Дать пользователю инструменты для управления эмоциональным состоянием на пути к целям. + Закрыть P1-баг BUG-001.
+### v0.9.0 — Мобильная адаптация + Habit Tracker
+- Habit streaks в дашборде, mobile responsive
+- 5-Minute Micro-Sessions, Quick Decision Protocol
+- Reward Audit (Dopamine Budget)
 
-**Scope:** Minimal — 3 задачи, ~6-7 часов. [Подробный план](references/plan_v0.7.0.md).
+### v0.8.0 — Habit Loop Framework + Execution Layer v2
+- Habit Loop (Cue-Routine-Reward, Tiny Habits, Habit Stacking)
+- Task Breakdown with Checkpoints, Markdown Tables as UI
+- Weak Goal Taxonomy + Sanity-Check
 
-**Входит:**
-- [x] **BUG-001: Dashboard 8→11 доменов** — P1-баг, дашборд показывает 8 сфер вместо 11
-- [x] **Emotion Regulation Protocol** — 3 техники (cognitive reappraisal, grounding, self-compassion)
-- [x] **Фикс зависших тестов** — 3 теста устарели после v0.6.1 cleanup
+### v0.7.1 — Execution Layer Patch
+- Win Alert Protocol, Recovery Protocol MVP, Energy-Based Scheduling
 
-**Не входит (отложено в v0.7.1/v0.8.0):**
-- Resilience Assessment (требует психометрии)
-- Failure Recovery Protocol
-- Energy Management
-- Dashboard Self-Contained (большой рефакторинг)
-- Calendar Event Copy Review
-
-**Методики:**
-- Cognitive Reappraisal (Gross, 1998) — d = 0.45
-- Self-Compassion (Neff) — r = 0.47
-
-**Детали планирования:** [`references/plan_v0.7.0.md`](references/plan_v0.7.0.md)
-
----
-
-## v0.7.1 — Execution Layer Patch (конкурентный анализ 2026-05-17)
-
-**Цель:** Закрыть критичные пробелы в execution layer на основе конкурентного анализа 7 скиллов. 3 фичи прошли 3-цикловой дебат Advocate/Critic и получили вердикт **IMPLEMENT**.
-
-**Scope:** Patch — 3 reference-файла, ~6–8 часов. Не трогает SKILL.md инструкции (≤500 строк).
-
-**Входит:**
-- [x] **Win Alert Protocol** (`references/win_alert.md`) — структурированное празднование побед: что достигнуто → домен Wheel of Life → почему важно → ресурсы пользователя → следующий шаг. Адаптируется под Communication Style quadrant. НЕ применяется во время кризиса/Emotional Landing.
-- [x] **Recovery Protocol MVP** (`references/recovery_protocol.md`, ≤200 строк) — 3 стратегии + Recovery для 2+ пропусков: Reschedule → Catch-up Mini-Session (15 мин, 3 вопроса) → Skip with Reflection → Recovery Protocol (Emotional Landing → Wheel of Life → 1 приоритет). Паттерн-анализ conversational-only (не декларативный).
-- [x] **Energy-Based Scheduling** (`references/energy_scheduling.md`, ≤80 строк) — 3 уровня энергии → маппинг на тип задачи → 1 калибровочный вопрос → защита пиковых часов фокус-блоками. Связь с AC-8 (Energy Check) и Seasonal Planning.
-
-**Не входит (отложено в v0.8.0):**
-- Markdown-таблицы как UI (DEFER, conf 8/10 — ждёт dashboard fix + MI review)
-- Status Icon System (DEFER, conf 7/10 — ждёт Execution Layer v2)
-- Clarifying-Questions-First (DEFER, conf 7/10 — пересекается с Phase 0/Track A)
-- Weak Goal Taxonomy (DEFER, conf 7/10 — lightweight pilot возможен в v0.7.1, full в v0.8.0)
-
-**Детали анализа:** [`references/competitive_research_2026.md`](references/competitive_research_2026.md)
+### v0.7.0 — Эмоциональная регуляция
+- Emotion Regulation Protocol (cognitive reappraisal, grounding, self-compassion)
+- Dashboard 8→11 доменов (BUG-001 fix)
+</details>
 
 ---
 
-## v0.8.0 — Habit Loop Framework + Execution Layer v2
+## v0.10.0 — Polish & Infrastructure
 
-**Цель:** Мост между целями и ежедневными действиями через привычки. Закрыть execution layer пробелы, отложенные из v0.7.1.
+**Цель:** Закрыть техдолг, упростить релизный процесс, отполировать существующие фичи.
 
-**Scope:** 6 фич (сокращено с 12 — realistic minor release).
-
-**Входит:**
-- [x] **Habit Loop Framework** (`references/habit_loop.md`) — Cue-Routine-Reward + Tiny Habits + Habit Stacking + Timeline (Lally)
-- [x] **Task Breakdown with Checkpoints** (`references/action_breakdown_template.md`) — WOOP → шаги с ✓-чекпоинтами
-- [x] **Markdown Tables as UI** (`references/markdown_tables.md`) — 4 шаблона, stage-appropriate
-- [x] **Weak Goal Taxonomy (full)** (`references/weak_goal_taxonomy.md`) — 5 паттернов + Sanity-Check Framework
-- [x] **Status Icon System** (`references/status_icons.md`) — ⬜🔄✅❌⏸️⚠️ + accessibility fallback
-- [x] **AGENTS.md overhaul** — актуализация после v0.7.1
-
-**Не входит (отложено в v0.9.0+):**
-- Auto-Review Triggers (требует structured session metadata)
-- Structured Growth Report (требует re-assessment flow)
-- Adaptive Response Length (требует интеграции с Deep Why/Energy Check)
-- Calendar Event Copy Review (scope ambiguity)
-
-**Методики:**
-- Tiny Habits (Fogg, 2019)
-- Habit Stacking (Clear, 2018)
-- Context-Dependent Repetition (Wood & Neal, 2007)
-- Habit Timeline (Lally et al., 2010)
+**Scope:**
+- [x] **Multi-Platform Skill Adaptation** — Claude.ai, Grok (xAI), Kimi OK Computer. `SKILL.master.md` + overlays + `build-platform-skill.py`. 42+ consistency tests.
+- [x] **Kimi Code CLI support** — directory-based skill с `references/` + MCP (v0.10.2)
+- [x] **README rewrite + USER_GUIDEs** — 4 platform guides + cross-platform comparison (v0.10.2)
+- [x] **E2E behavioral testing** — golden dataset + evaluation rubric (v0.10.2)
+- [ ] **CI/CD через GitHub Actions** — автоматический запуск тестов при push/PR
+- [ ] **Ревизия текстов событий календаря** — tone check, нет «надо/должен»
+- [ ] **Единые Release Notes из CHANGELOG** — генерация из CHANGELOG.md
+- [ ] **PDF экспорт дашборда** — кнопка печати/PDF
+- [ ] **Архивация старых планов** — перенос plan_v*.md в references/archive/
 
 ---
 
-## v0.9.0 — Мобильная адаптация + Habit Tracker + краткие сессии
+## v0.10.2 — README Rewrite & Kimi CLI (Released)
 
-**Цель:** Скилл должен работать эффективно на мобильных устройствах, поддерживать отслеживание привычек и давать быстрые инструменты в режиме нехватки времени.
+**Цель:** Исправить катастрофу README.md, добавить Kimi Code CLI как 4-ю платформу, создать полноценную документацию по платформам.
 
-**Scope:** 4 фичи + Dashboard дополнение (streak-логика + mobile responsiveness).
-
-**Приоритеты и порядок работы:**
-
-| Приоритет | Фича | Файл | Зависимости | Описание |
-|-----------|------|------|-------------|----------|
-| **P0** | **Habit Tracker / Dashboard Streaks** | inline в HTML | — | Визуализация цепочек привычек в дашборде. Streak data model inline в HTML. Связь с `habit_loop.md` (Lally timeline). |
-| **P0** | **Mobile Dashboard** | `life-planning-dashboard.html` | Habit Tracker (данные) | Адаптивная вёрстка: 11 сфер Wheel of Life + Habit streaks + mobile responsiveness. BUG-001 (8→11) уже исправлен. |
-| **P1** | **5-Minute Micro-Sessions** | `references/micro_sessions.md` | — | Быстрые чек-ины: эмоция → 1 действие. ≤100 строк, opt-in через «у меня 5 минут». Tiny Habits (<30 сек). |
-| **P1** | **Quick Decision Protocol** | `references/quick_decision.md` | — | 2–3 вопроса для решения «здесь и сейчас». Интеграция с Communication Style quadrant. |
-| **P2** | **Reward Audit** | `references/reward_audit.md` | — | **Killer feature (авторский override).** Weekly reflection на источники cheap dopamine + correlation с completion rate. ≤120 строк, opt-in, framing «Reward Management». Доставляемый артефакт: `references/reward_audit.md` + hook в SKILL.md. См. [`references/research/prd_reward_audit.md`](references/research/prd_reward_audit.md). |
-
-**Порядок реализации (согласовано):**
-1. Habit Tracker / Dashboard Streaks (data model)
-2. Mobile Dashboard (CSS поверх готового data model)
-3. 5-Minute Micro-Sessions + Quick Decision Protocol (параллельно, независимые reference-файлы)
-4. Reward Audit — написание `references/reward_audit.md` (≤120 строк) + hook в SKILL.md (≤3 строки)
-
-**Не входит (отложено в v0.9.1+):**
-- Auto-Review Triggers (требует session metadata persistence)
-- Structured Growth Report (требует re-assessment flow)
-- Adaptive Response Length (требует интеграции Deep Why + Energy Check)
+**Выполнено:**
+- Полный rewrite README.md — value prop + quick-start + platform table
+- Kimi Code CLI: `platforms/kimi-cli/SKILL.md` (323 lines), overlay, MCP support
+- 4 USER_GUIDE: Claude, Grok, Kimi OK Computer, Kimi Code CLI
+- `CROSS_PLATFORM_COMPARISON.md` — feature matrix + decision tree
+- E2E framework: `golden_dataset.json` (20 cases), `evaluation_rubric.md`, `MANUAL_TEST_RUN.md`
+- Исправлены BUG-002..BUG-007 (inline refs, heading demotion, dashboard condense)
+- Удалён `RETRO_v091_v092.md` из публичного репозитория
 
 ---
 
-## Advanced Patterns — Research Debt (из AC v0.6, вынесено в v0.7)
+## Advanced Patterns — Research Debt
 
-Следующие паттерны были удалены из формальных Acceptance Criteria v0.7 как over-engineering для текущей версии, но сохранены как research direction в `references/communication_style.md`:
+Следующие паттерны сохранены как research direction в `references/communication_style.md`:
 
-| Бывший AC | Паттерн | Почему вынесено | Когда вернуть |
-|-----------|---------|-----------------|---------------|
-| AC-13 | Attachment Style Awareness (4 стиля) | Невозможно протестировать без реальных пользователей; требует психометрии | v0.7+ при расширении Emotional Regulation |
-| AC-14 | Dynamic Adaptation Triggers (5+ triggers) | Мета-уровень, покрывается AC-6 (4 квадранта); сложно измерить | v0.8+ при полноценном Habit Loop |
-| AC-15 | Goal Ownership Language Rules | Дублирует AC-6/AC-7; лучше как style guide, не AC | Встроить в AC-6 как подпункт при рефакторинге Communication Style |
+| Паттерн | Почему вынесено | Когда вернуть |
+|---------|-----------------|---------------|
+| Attachment Style Awareness (4 стиля) | Невозможно протестировать без реальных пользователей; требует психометрии | v0.11+ при расширении Emotional Regulation |
+| Dynamic Adaptation Triggers (5+ triggers) | Мета-уровень, покрывается 4 квадранта; сложно измерить | v0.11+ при полноценном Habit Loop |
+| Goal Ownership Language Rules | Дублирует Communication Style; лучше как style guide | Встроить в AC-6 как подпункт |
 
 ---
 
@@ -140,10 +94,11 @@
 
 | Идея | Триггер | Источник |
 |------|---------|----------|
-| Интеграция с Google Tasks MCP | Когда Tasks API станет доступен через MCP | Пользовательский запрос |
+| Интеграция с Google Tasks MCP | Когда Tasks API станет доступен через MCP | Техническое ограничение |
 | Голосовые напоминания | Когда Claude.ai добавит голос | Технологический тренд |
 | Групповые сессии (парный коучинг) | Когда 5+ пользователей запросят | Пользовательский запрос |
 | Интеграция Fitness API (Apple Health, Google Fit) | При расширении сферы «Здоровье» | Расширение Wheel of Life |
+| Мультиязычность (EN/RU toggle) | 10+ запросов от англоязычных пользователей | Потенциал open source |
 
 ---
 
@@ -155,26 +110,6 @@
 
 ---
 
-## v0.10.0 — Polish & Infrastructure
-
-**Цель:** Закрыть техдолг, упростить релизный процесс, отполировать существующие фичи. Нет новых user-facing фич.
-
-**Scope:**
-- [x] **Multi-Platform Skill Adaptation** — адаптация скилла под Claude.ai, Grok 4.3 (xAI), Kimi K2.6 (Moonshot AI). Single Source of Truth: `SKILL.master.md` + platform overlays + генератор `scripts/build-platform-skill.py`. 42 consistency tests.
-- [ ] **CI/CD через GitHub Actions** — автоматический запуск тестов при push/PR (~3ч)
-- [ ] **Ревизия текстов событий календаря** — tone check, нет «надо/должен» (~2ч)
-- [ ] **Единые Release Notes из CHANGELOG** — генерация из CHANGELOG.md, удаление RELEASE_NOTES*.md (~1ч)
-- [ ] **PDF экспорт дашборда** — кнопка печати/PDF (~1ч)
-- [ ] **Архивация старых планов** — перенос plan_v*.md в references/archive/ (~30мин)
-
-**Не входит:** Dashboard redesign (уже сделан).
-
-**Детали планирования:** [`references/plan_v0.10.0.md`](references/plan_v0.10.0.md)
-
----
-
 ## Баг-трекер
 
 Активные баги и известные проблемы — в [BUGS.md](BUGS.md).
-
-
