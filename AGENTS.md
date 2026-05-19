@@ -48,7 +48,7 @@ git describe --tags --abbrev=0
 - **Название:** `life-planning-coach` — evidence-based coaching skill
 - **Платформы:** Claude.ai (primary), Grok 4.3 (xAI), Kimi K2.6 (Moonshot AI)
 - **Язык:** Русский (primary)
-- **Версия:** v0.10.1 (источник правды — git tag)
+- **Версия:** v0.10.2 (источник правды — git tag)
 - **Репозиторий:** https://github.com/azagreev/life-planning-coach
 - **Ветка:** `main`
 
@@ -107,7 +107,7 @@ P2 (4): Energy Check, Wheel of Life 11 доменов, Progressive Disclosure, Z
 bash scripts/release.sh X.Y.Z
 ```
 
-**ЗАПРЕЩЕНО создавать релизы вручную.** Title = только тег (`v0.10.1`). Описание — в release notes.
+**ЗАПРЕЩЕНО создавать релизы вручную.** Title = только тег (`v0.10.2`). Описание — в release notes.
 
 **Защита:** Git hook + GitHub Actions (`release-guard.yml`) + этот документ.
 
@@ -148,4 +148,4 @@ bash scripts/release.sh X.Y.Z
 ---
 
 *Обновлено: 2026-05-18*  
-*AGENTS.md v4.0 (lean) для life-planning-coach v0.10.1+*
+*AGENTS.md v4.0 (lean) для life-planning-coach v0.10.2+*
