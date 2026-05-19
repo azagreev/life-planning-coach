@@ -43,6 +43,7 @@ sed -i "s/\*\*Версия:\*\* [0-9.]*/**Версия:** $NEW_VERSION/" README.
 echo "→ AGENTS.md"
 sed -i "s/life-planning-coach v[0-9.]*/life-planning-coach v$NEW_VERSION/" AGENTS.md
 sed -i "s/Title = только тег (\`v[0-9.]*\`)/Title = только тег (\`v$NEW_VERSION\`)/" AGENTS.md
+sed -i "s/\*\*Версия:\*\* v[0-9.]*/**Версия:** v$NEW_VERSION/" AGENTS.md
 
 # 4. Проверка: нет stale версий в других файлах
 echo "→ Проверка на stale версии..."

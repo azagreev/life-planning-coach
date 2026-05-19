@@ -48,7 +48,7 @@ git describe --tags --abbrev=0
 - **Название:** `life-planning-coach` — evidence-based coaching skill
 - **Платформы:** Claude.ai (primary), Grok 4.3 (xAI), Kimi K2.6 (Moonshot AI)
 - **Язык:** Русский (primary)
-- **Версия:** v0.10.0 (источник правды — git tag)
+- **Версия:** v0.10.1 (источник правды — git tag)
 - **Репозиторий:** https://github.com/azagreev/life-planning-coach
 - **Ветка:** `main`
 

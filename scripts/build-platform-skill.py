@@ -20,8 +20,20 @@ PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 MASTER_PATH = PROJECT_ROOT / "SKILL.master.md"
 OVERLAY_DIR = PROJECT_ROOT / "references" / "platforms"
 OUTPUT_DIR = PROJECT_ROOT / "platforms"
+REFERENCES_DIR = PROJECT_ROOT / "references"
 
 PLATFORMS = ["claude", "grok", "kimi"]
+
+# P0 critical references that must be inlined for single-file platforms
+P0_REFS = [
+    "diagnostic_methods.md",
+    "communication_style.md",
+    "authentic_goal_filter.md",
+    "goal_architecture.md",
+    "weekly_review.md",
+    "habit_loop.md",
+    "emotion_regulation.md",
+]
 
 
 def detect_platform() -> str | None:
@@ -105,6 +117,159 @@ def apply_frontmatter_changes(frontmatter: dict, overlay: dict) -> dict:
     return result
 
 
+def condense_markdown(text: str, aggressive: bool = False) -> str:
+    """Condense a reference markdown file for inline inclusion."""
+    lines = text.split("\n")
+    result = []
+    in_code = False
+
+    for line in lines:
+        stripped = line.strip()
+
+        # Skip empty lines
+        if not stripped:
+            continue
+
+        # Code blocks
+        if stripped.startswith("```"):
+            in_code = not in_code
+            continue
+        if in_code:
+            continue
+
+        # Tables
+        if "|" in stripped and not stripped.startswith("#"):
+            if "---" in stripped or "===" in stripped:
+                continue
+            if aggressive:
+                continue
+            if stripped.count("|") > 2:
+                continue
+
+        # Skip source/effect size/quotes/examples in aggressive mode
+        if aggressive:
+            if any(stripped.lower().startswith(x) for x in [
+                "source:", "effect size:", "**source:**", "**effect size:**",
+                "example:", "**example:**", "url:", "**url:**",
+                "> **", '> "', "пример:", "примеры:",
+                "исследования:", "research:", "научная база:"
+            ]):
+                continue
+            if stripped.startswith(">"):
+                continue
+        else:
+            if stripped.startswith("> **Source:**") or stripped.startswith("> **Effect size:**"):
+                continue
+
+        # Skip version/metainfo lines at top
+        if stripped.startswith("> **Версия:**") or stripped.startswith("> **База:**") or stripped.startswith("> **Цель:**"):
+            continue
+
+        result.append(line)
+
+    return "\n".join(result)
+
+
+def ultra_condense(text: str) -> str:
+    """Keep only H1/H2 headers and bullet points under them."""
+    lines = text.split("\n")
+    result = []
+    in_code = False
+    keep_bullets = False
+
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if stripped.startswith("```"):
+            in_code = not in_code
+            continue
+        if in_code:
+            continue
+        # Keep H1/H2
+        if stripped.startswith("# ") or stripped.startswith("## "):
+            result.append(line)
+            keep_bullets = True
+            continue
+        # Keep bullet points under headers
+        if keep_bullets and (stripped.startswith("- ") or stripped.startswith("* ") or stripped.startswith("1.")):
+            result.append(line)
+            continue
+        # Keep H3 if aggressive
+        if stripped.startswith("### ") and len(result) < 50:
+            result.append(line)
+            continue
+
+    return "\n".join(result)
+
+
+def inline_references(skill_text: str, platform: str) -> str:
+    """Inline P0 critical references into a single-file platform skill."""
+    ref_pattern = r"`references/([^`]+\.md)`"
+    refs = set(re.findall(ref_pattern, skill_text))
+
+    for ref in sorted(refs):
+        ref_path = REFERENCES_DIR / ref
+        if not ref_path.exists():
+            continue
+
+        # Only inline P0 critical refs
+        if ref not in P0_REFS:
+            # Replace "Загрузи" with neutral "См." for non-inlined refs
+            skill_text = re.sub(
+                rf"(?i)(загрузи|прочитай|см\.?)\s*`references/{re.escape(ref)}`",
+                rf"См. `references/{ref}`",
+                skill_text,
+            )
+            continue
+
+        content = ref_path.read_text(encoding="utf-8")
+
+        # Choose condensation level
+        if platform == "kimi":
+            condensed = ultra_condense(content)
+        else:
+            condensed = condense_markdown(content, aggressive=False)
+
+        if not condensed.strip():
+            continue
+
+        # Build inline block
+        if platform == "grok":
+            inline_block = (
+                f"<!-- INLINED REF: {ref} -->\n"
+                f"<details>\n"
+                f"<summary>📄 {ref.replace('.md', '')} (полный протокол)</summary>\n\n"
+                f"{condensed}\n\n"
+                f"</details>\n"
+                f"<!-- END INLINED REF: {ref} -->"
+            )
+        else:
+            inline_block = (
+                f"<!-- INLINED REF: {ref} -->\n"
+                f"## 📄 {ref.replace('.md', '')}\n\n"
+                f"{condensed}\n\n"
+                f"<!-- END INLINED REF: {ref} -->"
+            )
+
+        # Replace the reference load instruction
+        lines = skill_text.split("\n")
+        new_lines = []
+        replaced = False
+        for line in lines:
+            if f"`references/{ref}`" in line and not replaced:
+                if any(kw in line.lower() for kw in ["загрузи", "see", "read", "прочитай"]):
+                    new_lines.append(inline_block)
+                    replaced = True
+                else:
+                    new_lines.append(line)
+            else:
+                new_lines.append(line)
+        skill_text = "\n".join(new_lines)
+
+    return skill_text
+
+
 def build_platform(platform: str) -> Path:
     """Build SKILL.md for a single platform."""
     print(f"Building {platform}...")
@@ -129,6 +294,16 @@ def build_platform(platform: str) -> Path:
     append_text = overlay.get("append_after_privacy", "")
     if append_text:
         body = body.rstrip() + "\n\n" + append_text.strip() + "\n"
+
+    # Inline references for single-file platforms (grok, kimi)
+    if platform in ("grok", "kimi"):
+        full_text = serialize_frontmatter(frontmatter) + "\n" + body
+        full_text = inline_references(full_text, platform)
+        # Remove platform-specific references (Claude, Anthropic) from inlined content
+        full_text = full_text.replace("Claude предлагает", "AI предлагает")
+        full_text = full_text.replace("(для Claude-чата)", "(для чата)")
+        # Re-extract frontmatter and body
+        frontmatter, body = parse_frontmatter(full_text)
 
     # Ensure output dir
     platform_dir = OUTPUT_DIR / platform
