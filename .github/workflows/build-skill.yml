@@ -1,4 +1,4 @@
-name: Build and publish .skill
+name: Build and publish artifacts
 
 on:
   push:
@@ -12,38 +12,30 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
+      - name: Install dependencies
+        run: pip install pytest
 
       - name: Run release tests
-        run: python3 -m unittest discover -s tests/release -v
+        run: python3 -m pytest tests/release -q --tb=short
 
-      - name: Package skill archive
-        run: |
-          STAGE="life-planning-coach"
-          mkdir -p "build/$STAGE"
-          cp SKILL.md README.md LICENSE CONTRIBUTING.md SECURITY.md "build/$STAGE/"
-          cp -r references "build/$STAGE/"
-          cd build
-          zip -r "../life-planning-coach.skill" "$STAGE"
+      - name: Build all artifacts
+        run: bash scripts/build-skill.sh
 
-      - name: Verify skill archive
+      - name: Verify artifacts
         run: |
-          unzip -t life-planning-coach.skill
-          unzip -l life-planning-coach.skill | grep 'life-planning-coach/SKILL.md'
-          unzip -l life-planning-coach.skill | grep 'life-planning-coach/README.md'
-          unzip -l life-planning-coach.skill | grep 'life-planning-coach/LICENSE'
-          unzip -l life-planning-coach.skill | grep 'life-planning-coach/CONTRIBUTING.md'
-          unzip -l life-planning-coach.skill | grep 'life-planning-coach/SECURITY.md'
-
-      - name: Report release asset upload policy
-        run: |
-          echo "Release upload policy: overwrite_files=true."
-          echo "Repeated tag pushes are allowed only for explicit release repair with an unchanged target commit."
+          ls -la dist/
 
       - name: Attach to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: life-planning-coach.skill
+          files: |
+            dist/life-planning-coach-*.zip
+            dist/life-planning-coach-*.skill
+            dist/life-planning-coach-*-grok.md
+            dist/life-planning-coach-*-kimi.md
+            dist/life-planning-coach-*-kimi-cli.zip
           draft: false
           prerelease: false
           overwrite_files: true
