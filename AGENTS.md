@@ -107,7 +107,7 @@ P2 (4): Energy Check, Wheel of Life 11 доменов, Progressive Disclosure, Z
 bash scripts/release.sh X.Y.Z
 ```
 
-**ЗАПРЕЩЕНО создавать релизы вручную.** Title = только тег (`v0.10.0`). Описание — в release notes.
+**ЗАПРЕЩЕНО создавать релизы вручную.** Title = только тег (`v0.10.1`). Описание — в release notes.
 
 **Защита:** Git hook + GitHub Actions (`release-guard.yml`) + этот документ.
 
@@ -148,4 +148,4 @@ bash scripts/release.sh X.Y.Z
 ---
 
 *Обновлено: 2026-05-18*  
-*AGENTS.md v4.0 (lean) для life-planning-coach v0.10.0+*
+*AGENTS.md v4.0 (lean) для life-planning-coach v0.10.1+*
