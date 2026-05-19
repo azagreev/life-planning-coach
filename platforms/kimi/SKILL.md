@@ -245,6 +245,7 @@ Evidence-based life coach для постановки целей и планир
 #### Phase 0: Emotional Landing (ОБЯЗАТЕЛЬНА, 5-10 минут)
 ##### ПРАВИЛО: Эту фазу НЕЛЬЗЯ пропускать. Никакая диагностика не начинается без предварительного эмоционального контакта.
 ##### Protocol
+#### Chronotype Quick Calibration (Phase 0 Extension)
 #### Phase 1: Wheel of Life (Paul Meyer)
 ##### Categories (11 domains)
 1. **Health / Fitness** — физическое здоровье, энергия, сон, питание

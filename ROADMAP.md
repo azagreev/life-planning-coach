@@ -90,19 +90,23 @@
 
 ---
 
-## v0.11.0 — Calendar Intelligence Layer (Audit-Driven)
+## v0.11.0 — Calendar Intelligence + Chronotype Layer (Audit + Research)
 
-> **Источник:** [Audit Report `references/audit/AUDIT_CALENDAR_INTEGRATION.md`](references/audit/AUDIT_CALENDAR_INTEGRATION.md) — 15 gaps найдено, 4 критических.
-> **Цель:** Перевести календарную интеграцию из «документации» в «функциональность».
+> **Источник 1:** [Audit Report `references/audit/AUDIT_CALENDAR_INTEGRATION.md`](references/audit/AUDIT_CALENDAR_INTEGRATION.md) — 15 gaps, 4 критических.
+> **Источник 2:** [Research `references/research/planning_research_2026-05-20.md`](references/research/planning_research_2026-05-20.md) — Идея #1, P0.
+> **Цель:** Перевести календарную интеграцию в функциональность + персонализировать время планирования под хронотип.
 
 ### P0 (Блокирует релиз)
 - [ ] **`references/calendar_intelligence.md`** — Pre-flight protocol: `list_events` → density check → conflict detection → smart proposal → `create_event`
-- [ ] **Обновить 4 `platforms/*/SKILL.md`** — Phase 5 теперь требует проверки календаря перед созданием события
+- [ ] **`references/chronotype_native_planning.md`** — 3 профиля (Яворонок/Промежуточный/Сова), Peak-Trough-Rebound heuristics, bedtime to-do list
+- [ ] **Обновить 4 `platforms/*/SKILL.md`** — Phase 5: проверка календаря перед созданием события; Phase 0/1: хронотип-определение
 - [ ] **Исправить `platforms/kimi/SKILL.md`** — удалить несостоятельный retry protocol, заменить на честный text-only flow
 - [ ] **Исправить dangling references** — `calendar_constants.md` + `calendar_integration.md` в `P0_REFS` для Grok/Kimi или убрать ссылки
 
 ### P1 (Обязательно в релиз)
 - [ ] **Функциональные тесты календаря** — Free Slot Algorithm, event patterns, conflict detection, JSON validation для COLOR_MAP/REMINDER_PRESETS/RRULE_PRESETS
+- [ ] **Обновить `references/energy_scheduling.md`** — хронотип-специфичные peak hours
+- [ ] **Обновить `references/diagnostic_methods.md`** — 2–3 вопроса для определения хронотипа в Phase 0/1
 - [ ] **Обновить `build-skill.yml`** — гонить ВСЕ тесты (`pytest tests/`), не только `tests/release`
 - [ ] **Провести PoC MCP** — Gate 0–2: OAuth + CRUD + `suggest_time` (заполнить `references/research/mcp_poc_log.md`)
 
@@ -111,6 +115,61 @@
 - [ ] **User preference для work hours** — вместо hardcoded 9:00–18:00
 - [ ] **Kimi-CLI в multi-platform tests** — добавить `"kimi-cli"` в `PLATFORMS`
 - [ ] **Timezone intelligence** — определение timezone пользователя, DST handling
+
+---
+
+## v0.12.0 — Behavioral Science Layer
+
+> **Источник:** [Research `references/research/planning_research_2026-05-20.md`](references/research/planning_research_2026-05-20.md) — Идеи #2, #3, #4.
+> **Цель:** Сделать планирование привычкой (Habit Stack Builder) и завершить день осознанно (Shutdown Ritual).
+
+### P0
+- [ ] **`references/habit_stack_builder.md`** — progressive ritual escalation (2→5→10→15 мин), Two-Day Rule, habit anchoring
+- [ ] **`references/shutdown_ritual.md`** — 5 шагов (Capture→Review→Plan→Celebrate→Close), Zeigarnik elimination, psychological detachment
+- [ ] **Обновить `references/habit_loop.md`** — ссылка на habit_stack_builder.md
+
+### P1
+- [ ] **`references/fresh_start_engine.md`** — temporal landmarks (Monday, 1st, New Year, birthday), Fresh Week/Month/Year triggers, dark side protection
+
+---
+
+## v0.13.0 — Smart Scheduling Layer
+
+> **Источник:** [Research `references/research/planning_research_2026-05-20.md`](references/research/planning_research_2026-05-20.md) — Идеи #5, #6, #7.
+> **Цель:** Защитить пользователя от перегрузки и оптимизировать расписание через данные.
+
+### P0
+- [ ] **`references/workload_warning.md`** — суммирование запланированного времени, threshold (default 6ч), warning message
+- [ ] **Обновить `references/energy_scheduling.md`** — self-reported 1–10 scale, pattern learning, smart suggestions
+
+### P1
+- [ ] **`references/calendar_pattern_analyzer.md`** — meeting load %, chronotype alignment, boundary violations, recovery deficit, trends (MCP read-only)
+
+---
+
+## v0.14.0 — Inclusive Coaching Layer
+
+> **Источник:** [Research `references/research/planning_research_2026-05-20.md`](references/research/planning_research_2026-05-20.md) — Идеи #8, #9, #10.
+> **Цель:** Адаптировать коучинг под недообслуживаемые аудитории.
+
+### P0
+- [ ] **`references/adhd_mode.md`** — micro-tasking, body doubling prompts, visual timer, time blindness protection, external scaffolding (opt-in)
+- [ ] **`references/time_structure_unemployed.md`** — daily structure template, purpose exploration, social activities, small wins
+
+### P1
+- [ ] **`references/planning_friction_audit.md`** — smart defaults, template library (Deep Work/Meeting/Recovery day)
+
+---
+
+## R&D — Future Lab
+
+> **Источник:** [Research `references/research/planning_research_2026-05-20.md`](references/research/planning_research_2026-05-20.md) — Идеи #11, #12.
+> **Статус:** Не в ROADMAP до срабатывания триггера.
+
+| Идея | Триггер |
+|------|---------|
+| Body Doubling via AI | Retention проблема становится критичной |
+| Wearable Energy Integration | Wearable MCP servers становятся stable |
 
 ---
 
