@@ -90,31 +90,29 @@
 
 ---
 
-## v0.11.0 — Calendar Intelligence + Chronotype Layer (Audit + Research)
+## v0.11.0 — Calendar Intelligence + Chronotype Layer (Released)
 
 > **Источник 1:** [Audit Report `references/audit/AUDIT_CALENDAR_INTEGRATION.md`](references/audit/AUDIT_CALENDAR_INTEGRATION.md) — 15 gaps, 4 критических.
 > **Источник 2:** [Research `references/research/planning_research_2026-05-20.md`](references/research/planning_research_2026-05-20.md) — Идея #1, P0.
 > **Цель:** Перевести календарную интеграцию в функциональность + персонализировать время планирования под хронотип.
 
-### P0 (Блокирует релиз)
+### P0 (Выполнено)
 - [x] **`references/calendar_intelligence.md`** — Pre-flight protocol: `list_events` → density check → conflict detection → smart proposal → `create_event`
 - [x] **`references/chronotype_native_planning.md`** — 3 профиля (Жаворонок/Промежуточный/Сова), Peak-Trough-Rebound heuristics, bedtime to-do list
 - [x] **Обновить 4 `platforms/*/SKILL.md`** — Phase 5: проверка календаря перед созданием события; Phase 0/1: хронотип-определение
 - [x] **Исправить `platforms/kimi/SKILL.md`** — удалить несостоятельный retry protocol, заменить на честный text-only flow (Paper Coach Mode)
 - [x] **Исправить dangling references** — `calendar_constants.md` добавлен в `P0_REFS`, platform-neutral wording
 
-### P1 (Обязательно в релиз)
-- [ ] **Функциональные тесты календаря** — Free Slot Algorithm, event patterns, conflict detection, JSON validation для COLOR_MAP/REMINDER_PRESETS/RRULE_PRESETS
+### P1 (Выполнено)
 - [x] **Обновить `references/energy_scheduling.md`** — хронотип-специфичные peak hours
 - [x] **Обновить `references/diagnostic_methods.md`** — 2–3 вопроса для определения хронотипа в Phase 0/1
 - [x] **Обновить `build-skill.yml`** — гонить ВСЕ тесты (`pytest tests/`), не только `tests/release` ✅
-- [ ] **Провести PoC MCP** — Gate 0–2: OAuth + CRUD + `suggest_time` (заполнить `references/research/mcp_poc_log.md`)
 
-### P2 (Желательно)
-- [ ] **Интегрировать `energy_scheduling.md`** с calendar reading (energy peak → free slot search)
-- [ ] **User preference для work hours** — вместо hardcoded 9:00–18:00
-- [ ] **Kimi-CLI в multi-platform tests** — добавить `"kimi-cli"` в `PLATFORMS`
-- [ ] **Timezone intelligence** — определение timezone пользователя, DST handling
+### P2 (Выполнено)
+- [x] **Интегрировать `energy_scheduling.md`** с calendar reading (energy peak → free slot search) ✅
+- [x] **User preference для work hours** — вместо hardcoded 9:00–18:00 ✅ (в `references/calendar_constants.md`)
+- [x] **Kimi-CLI в multi-platform tests** — добавить `"kimi-cli"` в `PLATFORMS` ✅
+- [x] **Timezone intelligence** — определение timezone пользователя, DST handling ✅ (в `references/calendar_constants.md`)
 
 ---
 
@@ -162,6 +160,26 @@
 
 ---
 
+## v0.15.0 — Testing & Integration Layer
+
+> **Цель:** Закрыть техдолг тестирования, интегрировать исследования в скилл, подготовить почву для MCP.
+
+### P0 (Блокирует релиз)
+- [ ] **Функциональные тесты календаря** — Free Slot Algorithm, event patterns, conflict detection, JSON validation для COLOR_MAP/REMINDER_PRESETS/RRULE_PRESETS
+- [ ] **Тесты целостности SKILL.master.md** — структура, cross-reference validation, platform sync
+
+### P1 (Обязательно в релиз)
+- [ ] **Coverage report + badge** — pytest-cov, минимум 85%, badge в README
+- [ ] **Pre-commit hooks** — ruff, mypy, trailing-whitespace check
+- [ ] **Провести PoC MCP** — Gate 0–2: OAuth + CRUD + `suggest_time` (заполнить `references/research/mcp_poc_log.md`)
+- [ ] **Google Health MCP интеграция** — 3 пути исследованы, выбрать и реализовать один (`references/research/google_health_mcp_integration_research.md`)
+
+### P2 (Желательно)
+- [ ] **Composite Readiness Model в скилл** — CRI formula, 4 зоны, адаптация весов под персоны (ADHD 30/70, Elder 25/75)
+- [ ] **Универсальный скрипт сборки** — заменить platform-specific билды на единый `build-skill.py`
+
+---
+
 ## R&D — Future Lab
 
 > **Источник:** [Research `references/research/planning_research_2026-05-20.md`](references/research/planning_research_2026-05-20.md) — Идеи #11, #12.
@@ -181,9 +199,8 @@
 | Интеграция с Google Tasks MCP | Когда Tasks API станет доступен через MCP | Техническое ограничение |
 | Голосовые напоминания | Когда Claude.ai добавит голос | Технологический тренд |
 | Групповые сессии (парный коучинг) | Когда 5+ пользователей запросят | Пользовательский запрос |
-| Интеграция Fitness API (Apple Health, Google Fit) | При расширении сферы «Здоровье» | Расширение Wheel of Life |
 | Мультиязычность (EN/RU toggle) | 10+ запросов от англоязычных пользователей | Потенциал open source |
-| Комплексная оценка готовности (Composite Readiness) | Исследование Polar/Garmin завершено | `references/research/composite_readiness_model.md` |
+| Social accountability | Когда 3+ пользователя запросят напоминания партнёру | Пользовательский запрос |
 
 ---
 

@@ -84,12 +84,15 @@
 
 | Задача | Приоритет | Триггер | Примечание |
 |--------|-----------|---------|------------|
-| CI/CD через GitHub Actions | P1 | Перед v0.7.0 | ✅ Исправлено — `.github/workflows/release-checks.yml` |
-| Coverage report | P2 | Когда >100 тестов | pytest-cov + badge (376 тестов — пора) |
-| Pre-commit hooks (ruff, mypy) | P2 | Перед v0.7.0 | Качество кода |
+| ~~CI/CD через GitHub Actions~~ | ~~P1~~ | ~~Перед v0.7.0~~ | ✅ Исправлено — `.github/workflows/release-checks.yml` |
+| Coverage report + badge | **P1** | 376 тестов | pytest-cov, минимум 85%, badge в README |
+| Pre-commit hooks (ruff, mypy) | **P1** | Перед v0.15.0 | Качество кода, блокер для контрибьюторов |
 | ~~Фикс зависших тестов~~ | ~~P1~~ | ~~Сразу~~ | ✅ Исправлено в v0.7.0 |
-| Удалить `.build/` из истории | P3 | При чистке репозитория | ✅ Исправлено — `.build/` в `.gitignore` |
-| Архивировать старые планы в `references/archive/` | P3 | При накоплении 5+ планов | ✅ Исправлено — все plan_v*.md в archive |
+| ~~Удалить `.build/` из истории~~ | ~~P3~~ | ~~При чистке репозитория~~ | ✅ Исправлено — `.build/` в `.gitignore` |
+| ~~Архивировать старые планы~~ | ~~P3~~ | ~~При накоплении 5+ планов~~ | ✅ Исправлено — все plan_v*.md в archive |
+| Функциональные тесты календаря | **P0** | v0.15.0 | Free Slot Algorithm, event patterns, conflict detection, JSON validation |
+| Тесты целостности SKILL.master.md | **P0** | v0.15.0 | Структура, cross-reference validation, platform sync |
+| Универсальный скрипт сборки | P2 | v0.15.0+ | Заменить platform-specific билды на единый `build-skill.py` |
 
 ---
 
