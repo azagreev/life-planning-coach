@@ -111,6 +111,8 @@ bash scripts/release.sh X.Y.Z
 
 **Защита:** Git hook + GitHub Actions (`release-guard.yml`) + этот документ.
 
+**Примечание:** `references/archive/RELEASE_NOTES_*.md` — generated artifacts, создаются автоматически `scripts/release.sh` из CHANGELOG.md. Не редактировать вручную.
+
 ### 4.3 System tests
 `python3 -m pytest tests/ -q` → **190+ passed**.
 

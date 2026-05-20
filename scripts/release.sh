@@ -164,45 +164,37 @@ echo "[7/7] GitHub Release..."
 if gh release view "$TAG" >/dev/null 2>&1; then
     echo "⚠️  Release $TAG уже существует"
 else
-    # Генерация release notes из CHANGELOG.md на лету
-    echo "→ Генерация release notes из CHANGELOG.md..."
-    RELEASE_NOTES=$(python3 scripts/extract-release-notes.py --stdout "$VERSION" 2>/dev/null || true)
-
-    if [ -z "$RELEASE_NOTES" ]; then
-        echo "⚠️  Не удалось извлечь release notes из CHANGELOG.md"
-        echo "   Используем --notes-from-tag (annotation тега)"
-        NOTES_FLAG="--notes-from-tag"
-    else
-        NOTES_FLAG="--notes"
+    RELEASE_NOTES_FILE="references/archive/RELEASE_NOTES_$TAG.md"
+    if [ ! -f "$RELEASE_NOTES_FILE" ]; then
+        echo "→ Генерация release notes из CHANGELOG.md..."
+        python3 scripts/extract-release-notes.py "$VERSION"
     fi
 
-    # Title = tag only (minimalist format, as React/Node.js do)
-    ZIP_FILE="dist/life-planning-coach-v${VERSION}.zip"
-    SKILL_FILE="dist/life-planning-coach-v${VERSION}.skill"
-    GROK_FILE="dist/life-planning-coach-v${VERSION}-grok.md"
-    KIMI_FILE="dist/life-planning-coach-v${VERSION}-kimi.md"
-    KIMI_CLI_FILE="dist/life-planning-coach-v${VERSION}-kimi-cli.zip"
-    if [ ! -f "$ZIP_FILE" ] || [ ! -f "$SKILL_FILE" ]; then
-        echo "❌ Build artifacts not found. Run: bash scripts/build-skill.sh"
+    if [ -f "$RELEASE_NOTES_FILE" ]; then
+        # Title = tag only (minimalist format, as React/Node.js do)
+        # Release notes contain the full description
+        ZIP_FILE="dist/life-planning-coach-v${VERSION}.zip"
+        SKILL_FILE="dist/life-planning-coach-v${VERSION}.skill"
+        GROK_FILE="dist/life-planning-coach-v${VERSION}-grok.md"
+        KIMI_FILE="dist/life-planning-coach-v${VERSION}-kimi.md"
+        KIMI_CLI_FILE="dist/life-planning-coach-v${VERSION}-kimi-cli.zip"
+        if [ ! -f "$ZIP_FILE" ] || [ ! -f "$SKILL_FILE" ]; then
+            echo "❌ Build artifacts not found. Run: bash scripts/build-skill.sh"
+            exit 1
+        fi
+        UPLOAD_ARGS=("$ZIP_FILE" "$SKILL_FILE")
+        [ -f "$GROK_FILE" ] && UPLOAD_ARGS+=("$GROK_FILE")
+        [ -f "$KIMI_FILE" ] && UPLOAD_ARGS+=("$KIMI_FILE")
+        [ -f "$KIMI_CLI_FILE" ] && UPLOAD_ARGS+=("$KIMI_CLI_FILE")
+        gh release create "$TAG" \
+            --title "$TAG" \
+            --notes-file "$RELEASE_NOTES_FILE" \
+            "${UPLOAD_ARGS[@]}"
+        echo "✅ Release $TAG создан из $RELEASE_NOTES_FILE"
+    else
+        echo "❌ Файл $RELEASE_NOTES_FILE не найден и не удалось сгенерировать"
         exit 1
     fi
-    UPLOAD_ARGS=("$ZIP_FILE" "$SKILL_FILE")
-    [ -f "$GROK_FILE" ] && UPLOAD_ARGS+=("$GROK_FILE")
-    [ -f "$KIMI_FILE" ] && UPLOAD_ARGS+=("$KIMI_FILE")
-    [ -f "$KIMI_CLI_FILE" ] && UPLOAD_ARGS+=("$KIMI_CLI_FILE")
-
-    if [ "$NOTES_FLAG" = "--notes-from-tag" ]; then
-        gh release create "$TAG" \
-            --title "$TAG" \
-            --notes-from-tag \
-            "${UPLOAD_ARGS[@]}"
-    else
-        gh release create "$TAG" \
-            --title "$TAG" \
-            --notes "$RELEASE_NOTES" \
-            "${UPLOAD_ARGS[@]}"
-    fi
-    echo "✅ Release $TAG создан"
 fi
 
 echo ""

@@ -119,3 +119,50 @@ class TestGitHubSync:
             f"GitHub README version ({github_version}) ≠ local ({local_version}). "
             f"Push required: git push origin main"
         )
+
+    def test_release_notes_generation(self, tmp_path):
+        """extract-release-notes.py must create RELEASE_NOTES file from CHANGELOG.
+
+        Regression test for: release.sh no longer generating RELEASE_NOTES file
+        after commit 507ad1f, causing pre-push hook to deadlock.
+        """
+        import tempfile
+        import shutil
+
+        # Use current version from git tag to test with real CHANGELOG data
+        result = subprocess.run(
+            ["git", "describe", "--tags", "--abbrev=0"],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        current_tag = result.stdout.strip()
+        current_version = current_tag.lstrip("v")
+
+        expected_file = PROJECT_ROOT / "references/archive" / f"RELEASE_NOTES_{current_tag}.md"
+        file_existed_before = expected_file.exists()
+
+        try:
+            # Run extractor (idempotent if file already exists)
+            result = subprocess.run(
+                ["python3", "scripts/extract-release-notes.py", current_version],
+                cwd=PROJECT_ROOT,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+
+            assert expected_file.exists(), (
+                f"RELEASE_NOTES file not created: {expected_file}\n"
+                f"stdout: {result.stdout}\nstderr: {result.stderr}"
+            )
+
+            content = expected_file.read_text(encoding="utf-8")
+            assert f"## Что нового в {current_tag}" in content, (
+                f"Expected header not found in {expected_file}"
+            )
+        finally:
+            # Cleanup: remove only if we created it
+            if not file_existed_before and expected_file.exists():
+                expected_file.unlink()
