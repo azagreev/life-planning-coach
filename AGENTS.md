@@ -162,6 +162,22 @@ Effort:     AI Sessions (XS/S/M/L/XL/XXL) + Context Pressure
 - Therapy disclaimer обязателен в Privacy section
 - Python 3.12+, type hints где возможно
 
+### 5.1 Language Policy
+
+| Контекст | Язык | Примечание |
+|----------|------|------------|
+| README.md, USER_GUIDE, CHANGELOG, ROADMAP, BACKLOG | Русский | User-facing документы |
+| SKILL.md frontmatter (`name`, `version`, `description`) | Английский | Требование платформ (Claude, Grok) |
+| SKILL.md instructions + `references/` | Русский | Основной контент скилла |
+| Технические термины | Английский или скобки | MCP, OAuth, ZIP, JSON, CLI — не переводить |
+| Platform SKILL.md (`platforms/*/`) | Инструкции — русский, frontmatter — английский | Собираются автоматически из `SKILL.master.md` |
+| Code comments, commit messages | Английский | Git convention |
+
+**Anti-patterns:**
+- Code-switching внутри предложения: "Нажми кнопку Submit" → "Нажми кнопку «Отправить»"
+- Английские термины без пояснения при первом упоминании в user-facing тексте
+- Смешение языков в одном markdown-списке
+
 ---
 
 ## 6. Quick Commands
@@ -185,5 +201,5 @@ bash scripts/release.sh X.Y.Z
 
 ---
 
-*Обновлено: 2026-05-19*  
-*AGENTS.md v4.2 (lean) для life-planning-coach v0.12.1+*
+*Обновлено: 2026-05-20*  
+*AGENTS.md v4.3 для life-planning-coach v0.12.1+*
