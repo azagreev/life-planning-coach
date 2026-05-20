@@ -12,12 +12,18 @@ from pathlib import Path
 
 
 def main() -> int:
-    if len(sys.argv) < 2:
+    args = sys.argv[1:]
+    stdout_mode = "--stdout" in args
+    if stdout_mode:
+        args.remove("--stdout")
+
+    if len(args) < 1:
         print("Ошибка: не указана версия")
         print("Использование: python3 scripts/extract-release-notes.py 0.10.2")
+        print("              python3 scripts/extract-release-notes.py --stdout 0.10.2")
         return 1
 
-    version = sys.argv[1].lstrip("v")
+    version = args[0].lstrip("v")
     tag = f"v{version}"
 
     changelog_path = Path("CHANGELOG.md")
@@ -53,6 +59,10 @@ def main() -> int:
     # Убедимся, что есть пустая строка в конце
     if not section.endswith("\n"):
         section += "\n"
+
+    if stdout_mode:
+        print(section, end="")
+        return 0
 
     output_dir = Path("references/archive")
     output_dir.mkdir(parents=True, exist_ok=True)

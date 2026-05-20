@@ -107,7 +107,7 @@ P2 (4): Energy Check, Wheel of Life 11 доменов, Progressive Disclosure, Z
 bash scripts/release.sh X.Y.Z
 ```
 
-**ЗАПРЕЩЕНО создавать релизы вручную.** Title = только тег (`v0.12.1`). Описание — в release notes.
+**ЗАПРЕЩЕНО создавать релизы вручную.** Title = только тег (`v0.12.1`). Описание генерируется автоматически из CHANGELOG.md.
 
 **Защита:** Git hook + GitHub Actions (`release-guard.yml`) + этот документ.
 
