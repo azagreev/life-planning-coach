@@ -34,6 +34,7 @@ P0_REFS = [
     "habit_loop.md",
     "emotion_regulation.md",
     "dashboard_guide.md",
+    "calendar_constants.md",
 ]
 
 

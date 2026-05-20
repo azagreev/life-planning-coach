@@ -655,7 +655,44 @@ Evidence-based life coach для постановки целей и планир
 2. Явно предупредить: «Без календаря твои цели остаются намерениями без временных якорей. 60% намерений без временного слота забываются через 48 часов. Рекомендую подключить календарь — один клик, и я автоматически создам напоминания для всех целей.»
 3. В следующей сессии — повторить попытку (retry protocol)
 
-См. `references/calendar_constants.md` перед работой с календарём.**
+<!-- INLINED REF: calendar_constants.md -->
+## 📄 calendar_constants
+
+### Calendar Constants для Google Calendar
+#### Calendar Tools Available
+#### COLOR_MAP
+#### REMINDER_PRESETS
+#### RRULE_PRESETS
+#### Event Data Schema
+#### Presets
+##### Weekly Review Reminder
+- `summary`: "Weekly Review"
+- `description`: "Weekly Review — ретроспектива недели:\n1. Что прошло хорошо?\n2. Что можно улучшить?\n3. Какие уроки извлечены?\n4. Приоритеты на следующую неделю"
+- `duration`: 30 мин
+- `colorId`: 5
+- `reminders`: weekly_review preset
+- `recurrence`: weekly_sunday
+##### WOOP Reminder
+- `summary`: "WOOP Сессия"
+- `description`: "WOOP-сессия (Wish, Outcome, Obstacle, Plan)..."
+- `duration`: 15 мин
+- `colorId`: 7
+- `reminders`: woop preset
+- `recurrence`: daily
+##### Milestone Event
+- `summary`: "Milestone: {title}"
+- `colorId`: 11
+- `reminders`: milestone preset
+##### Time Block
+- `colorId`: определяется из COLOR_MAP по типу активности
+- `reminders`: определяется из REMINDER_PRESETS по типу активности
+#### Failure Modes
+#### Free Slots Analysis
+1. Определить рабочее окно (по умолчанию 9-18)
+#### Daily Top-3
+1. Хранить в conversation state
+
+<!-- END INLINED REF: calendar_constants.md -->
 
 ### 5.1 Task Breakdown (разбиение на шаги)
 
