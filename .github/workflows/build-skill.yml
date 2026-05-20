@@ -12,13 +12,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
 
       - name: Install dependencies
         run: pip install pytest
 
-      - name: Run release tests
-        run: python3 -m pytest tests/release -q --tb=short
+      - name: Run all tests
+        run: python3 -m pytest tests/ -q --tb=short
 
       - name: Build all artifacts
         run: bash scripts/build-skill.sh
