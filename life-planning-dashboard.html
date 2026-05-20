@@ -163,7 +163,8 @@
       background: var(--accent-blue);
       border-radius: 0 2px 2px 0;
     }
-    .theme-toggle {
+    .theme-toggle,
+    .print-btn {
       align-self: flex-start;
       padding: 10px 14px;
       border-radius: var(--radius-sm);
@@ -171,7 +172,9 @@
       transition: background var(--transition), transform 0.2s ease;
       min-height: 44px; min-width: 44px;
     }
-    .theme-toggle:hover { background: var(--bg-tertiary); transform: scale(1.05); }
+    .theme-toggle:hover,
+    .print-btn:hover { background: var(--bg-tertiary); transform: scale(1.05); }
+    .print-btn { margin-top: 8px; }
 
     .content {
       flex: 1;
@@ -802,6 +805,45 @@
       white-space: nowrap;
       border-width: 0;
     }
+
+    /* ---- Print Styles ---- */
+    @media print {
+      .no-print { display: none !important; }
+      body {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      .card {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        background: #fff !important;
+      }
+      .liquid-glass {
+        background: #fff !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+      .page-header {
+        border-bottom: 1px solid #ccc !important;
+      }
+      aside, .theme-toggle, .print-btn, nav {
+        display: none !important;
+      }
+      main {
+        margin-left: 0 !important;
+        padding: 0 !important;
+      }
+      .tab {
+        display: block !important;
+        position: static !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+    @page {
+      margin: 1.5cm;
+      size: auto;
+    }
   </style>
 </head>
 <body>
@@ -813,7 +855,8 @@
         <button data-tab="retrospective">Ретроспектива</button>
         <button data-tab="goals">Цели</button>
       </nav>
-      <button class="theme-toggle" aria-label="Переключить тему" title="Переключить тему">🌙</button>
+      <button class="theme-toggle no-print" aria-label="Переключить тему" title="Переключить тему">🌙</button>
+      <button class="print-btn no-print" onclick="window.print()" aria-label="Печать / PDF" title="Печать / PDF">🖨️</button>
     </aside>
 
     <main class="content">
