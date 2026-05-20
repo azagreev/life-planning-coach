@@ -68,23 +68,15 @@
 ### Ревизия текстов событий календаря
 - **Описание:** Полный ревизия всех событий календаря: названия (summary), описания (description), тексты напоминаний. Сделать их более мотивирующими, персонализированными и aligned с коучинговым тоном скилла. Проверить на отсутствие «надо/должен» в текстах событий.
 - **Триггер:** Перед v0.7.0 или при первой жалобе пользователя на «роботизированные» напоминания
-- **Статус:** 📋 В ROADMAP v0.8.0
+- **Статус:** ✅ Реализовано (`tests/system/test_calendar_tone.py`)
 - **Источник:** Пользовательская обратная связь, UX-калибровка
-- **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 8/10). Причина: scope ambiguity (generic warm vs dynamic personalized), требуется v0.8.0 habit integration для holistic design.
 
 ### Аудит наград (Бюджет дофамина)
 - **Описание:** Модуль для логирования источников «дешёвого дофамина» (сахар, скролл соцсетей, Shorts, игры) и корреляции их с completion rate целей. Dopamine Load Score (0–10), weekly insights, интеграция в planning flow. Фрейминг: «Reward Management для достижения целей», не guilt-trip.
 - **Триггер:** Решение автора проекта — killer feature, без pilot/проверки
-- **Статус:** 🎯 **Решение принято: IMPLEMENT** (авторский override после Advocate/Critic дебата)
+- **Статус:** ✅ Реализовано в v0.9.0 (`references/reward_audit.md`, 58 строк)
 - **Источник:** Научный ресёрч (Rada 2005, Avena 2008, Lembke 2021, Kushlev 2025) + конкурентный анализ (Elqi, Opal, BePresent)
-- **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 6/10). **Авторский override:** реализовать без пилота, как killer feature.
-- **Scope для скилла (после анализа PRD v7.0):**
-  - **Главное:** Grayscale Guide — one-time recommendation с инструкцией (iOS/Android) + научный backing (Holte –37.9 min, NYT –40%). Zero tracking.
-  - **Дополнительно:** Conversational check-in (4 категории cheap dopamine) + qualitative insight.
-  - **Не делаем:** Dopamine Load Score, графики, Screen Time API, Libre, MCP, геймификация.
-  - **Артефакт:** `references/reward_audit.md` (≤120 строк) + hook в SKILL.md (≤3 строки).
-- **Полный PRD:** [`references/research/prd_reward_audit.md`](references/research/prd_reward_audit.md)
-- **Анализ PRD:** [`references/research/prd_reward_audit_analysis.md`](references/research/prd_reward_audit_analysis.md) — разбор каждого раздела PRD v7.0: что берём, что откладываем
+- **Артефакт:** `references/reward_audit.md` (≤120 строк) + hook в SKILL.md (≤3 строки)
 
 ---
 
@@ -92,34 +84,16 @@
 
 | Задача | Приоритет | Триггер | Примечание |
 |--------|-----------|---------|------------|
-| CI/CD через GitHub Actions | P1 | Перед v0.7.0 | Автоматический запуск тестов при PR |
-| Coverage report | P2 | Когда >100 тестов | pytest-cov + badge |
+| CI/CD через GitHub Actions | P1 | Перед v0.7.0 | ✅ Исправлено — `.github/workflows/release-checks.yml` |
+| Coverage report | P2 | Когда >100 тестов | pytest-cov + badge (376 тестов — пора) |
 | Pre-commit hooks (ruff, mypy) | P2 | Перед v0.7.0 | Качество кода |
 | ~~Фикс зависших тестов~~ | ~~P1~~ | ~~Сразу~~ | ✅ Исправлено в v0.7.0 |
-| Удалить `.build/` из истории | P3 | При чистке репозитория | Сейчас `.build/` не в `.gitignore` |
-| Архивировать старые планы в `references/archive/` | P3 | При накоплении 5+ планов | Упорядочить references |
+| Удалить `.build/` из истории | P3 | При чистке репозитория | ✅ Исправлено — `.build/` в `.gitignore` |
+| Архивировать старые планы в `references/archive/` | P3 | При накоплении 5+ планов | ✅ Исправлено — все plan_v*.md в archive |
 
 ---
 
 ### Tech Debt: Зависшие тесты после v0.6.1 cleanup
-- **Описание:** После изменений в build-skill.sh (убраны dev-only файлы из ZIP, версия в имени файла) и релизном процессе (tag-only titles) 3 теста устарели или стали неполными.
-- **Проблемы:**
-  1. **`tests/release/test_metadata.py::test_skill_archive_structure`** — УСТАРЕЛ
-     - Ищет `life-planning-coach.zip` в корне (старое имя), а сейчас `dist/life-planning-coach-v0.6.1.zip`
-     - Требует внутри ZIP: README.md, LICENSE, CONTRIBUTING.md, SECURITY.md — мы их удрали из скилла
-     - **Результат:** Всегда `skipTest("not built yet")` — тест никогда не проверяет реальную структуру
-     - **Фикс:** Обновить путь на `dist/life-planning-coach-v*.zip`, убрать dev-файлы из `required`, добавить проверку `references/templates/`
-  2. **`tests/unit/test_dashboard.py`** — НЕПОЛНЫЙ (не ловит BUG-001)
-     - Проверяет размер, CDN, doctype, ключевые слова чартов
-     - **Не проверяет:** количество доменов Wheel of Life (8 vs 11)
-     - Дашборд явно делит сумму на 8: `(reduce(...) / 8).toFixed(1)`
-     - **Фикс:** Добавить `test_wheel_has_11_domains` — проверить что `WHEEL_SPHERES.length === 11` и что присутствуют: Здоровье, Карьера, Финансы, Романтика, Семья, Социальная, Вклад, Смысл, Рост, Развлечения, Среда
-  3. **`tests/system/test_version_consistency.py::test_github_release_exists_for_tag`** — ХРУПКИЙ
-     - Проверяет что для `git describe --tags --abbrev=0` есть GitHub Release
-     - После cleanup: v0.2.0 — только тег, без релиза (мы удалили дубль)
-     - Если checkout на v0.2.0 и запуск тестов → `gh release view v0.2.0` вернёт ошибку
-     - **Фикс:** Добавить whitelist тегов без релиза (`v0.2.0`) или проверять `git tag -l` отдельно от `git describe`
-- **Триггер:** Перед v0.7.0 или при первом же падении тестов на checkout к старому тегу
 - **Статус:** ✅ Исправлено в v0.7.0 (коммит f7ca685)
 - **Источник:** Аудит тестов после build cleanup (v0.6.1+)
 
@@ -153,7 +127,7 @@
 ### Переделка дашборда (Self-Contained)
 - **Описание:** Полный пересмотр life-planning-dashboard.html: визуальный дизайн, информационная архитектура, наполнение. Цель — сделать дашборд полностью самодостаточным standalone HTML-файлом без внешних зависимостей (CDN, внешние скрипты, внешние стили). Все данные — inline или встроенные в файл. Дашборд должен открываться и работать локально в браузере без интернета.
 - **Триггер:** Перед v0.7.0 или при накоплении 3+ жалоб на UX дашборда
-- **Статус:** 🔄 Частично выполнено — ECharts и Font Awesome уже inline, Google Fonts не используются. Осталось: мобильная адаптивность, dark/light mode, PDF экспорт.
+- **Статус:** ✅ Реализовано в v0.9.1 — external dependencies removed (ECharts, Chart.js, Font Awesome), inline SVG/Canvas, dark/light mode, PDF export, offline-ready.
 - **Источник:** Технический долг + UX-улучшение
 - **Детали:**
   - Убрать зависимость от Font Awesome CDN → inline SVG иконки
@@ -178,8 +152,8 @@
   4. **Social accountability** — опциональное напоминание другу/партнёру
   5. **Streak tracking** — визуализация цепочки выполненных сессий в дашборде
 - **Триггер:** v0.9.0 (Mobile Dashboard + Habit Tracker)
-- **Статус:** 📋 В ROADMAP v0.9.0 (через Habit Tracker / Dashboard Streaks)
-- **Источник:** BJ Fogg (Tiny Habits), James Clear (Atomic Habits), Milkman et al. (2021) — planning fallacy + implementation intentions
+- **Статус:** ✅ Реализовано — SUPERSEDED by `references/habit_stack_builder.md` (v0.12.0) + `references/calendar_integration.md` RRULE_PRESETS
+- **Источник:** BJ Fogg (Tiny Habits), James Clear (Atomic Habits), Milkman et al. (2021)
 ### Протокол восстановления после пропуска
 - **Описание:** Пропуск Weekly Review (или любой регулярной сессии) — нормально. Но важно иметь чёткий протокол восстановления, чтобы один пропуск не превратился в полный срыв.
 - **Варианты поведения при пропуске:**
@@ -266,40 +240,8 @@
 - **Источник:** Borrowed from Composio file-organizer skill
 - **Дебат:** Advocate/Critic 3 цикла → **DEFER** (conf 7/10). Пересекается с Phase 0 calibration, Track A/B, Readiness Gate. Решение: `references/session_recalibration.md`, ≤2 строки в SKILL.md.
 
-### Единые Release Notes из CHANGELOG (Вариант Б)
-- **Описание:** Сейчас релиз-ноты дублируются: CHANGELOG.md содержит всю историю, а отдельные файлы `RELEASE_NOTES_vX.Y.Z.md` (в `references/archive/`) используются для GitHub Release. Это приводит к:
-  - Дублированию информации (одно и то же в двух местах)
-  - Риску рассинхронизации (CHANGELOG обновлён, а RELEASE_NOTES — нет)
-  - Загрязнению репозитория (каждый релиз = новый файл)
-- **Цель:** Сделать CHANGELOG.md единым источником правды. Релиз-ноты для GitHub Release генерируются автоматически — извлечением секции `[X.Y.Z]` из CHANGELOG.md.
-- **Текущее состояние (что есть сейчас):**
-  - `CHANGELOG.md` — Keep a Changelog формат, секции `[Unreleased]`, `[0.6.0]`, `[0.5.0]` и т.д.
-  - `references/archive/RELEASE_NOTES_v0.6.1.md` — отдельный файл для GitHub Release
-  - `scripts/release.sh:118` — жёстко ищет `RELEASE_NOTES_$TAG.md` в корне (уже частично fixed — теперь `references/archive/`)
-- **Предлагаемое решение:**
-  1. **Формат CHANGELOG.md** — добавить маркеры для автоматического извлечения:
-     ```markdown
-     ## [0.7.0] — 2026-06-01
-     <!-- release-notes-start -->
-     ### 🎯 Главное
-     - Фича A
-     - Фича B
-     <!-- release-notes-end -->
-     ### Added
-     - ...
-     ```
-  2. **Скрипт `scripts/extract-release-notes.py`** — извлекает секцию между маркерами для указанной версии
-  3. **Обновить `scripts/release.sh`** — вместо `--notes-file RELEASE_NOTES_$TAG.md` использовать `--notes "$(python3 scripts/extract-release-notes.py $TAG)"`
-  4. **Удалить все `RELEASE_NOTES*.md`** из репозитория (они в `references/archive/`)
-  5. **Обновить `AGENTS.md`** — документировать новый процесс
-- **Альтернативный формат (без маркеров):**
-  - Извлекать всю секцию `## [X.Y.Z]` целиком (включая Added/Changed/Fixed)
-  - Плюс: ничего не менять в CHANGELOG.md
-  - Минус: GitHub Release будет содержать raw markdown с заголовками, что менее читаемо
-- **Триггер:** Перед v0.7.0 или при создании следующего релиза
-- **Статус:** 💡 Идея
-- **Источник:** Техдолг — устранение дублирования после фикса root cause (RELEASE_NOTES_v0.6.1.md в корне)
-- **Связанные файлы:** `CHANGELOG.md`, `scripts/release.sh`, `references/archive/RELEASE_NOTES*.md`
+### Единые Release Notes из CHANGELOG
+- **Статус:** ✅ Реализовано — `scripts/extract-release-notes.py` генерирует из CHANGELOG.md, `scripts/release.sh` использует `--notes-file`
 
 ---
 

@@ -55,11 +55,11 @@
 - [x] **Kimi Code CLI support** — directory-based skill с `references/` + MCP (v0.10.2)
 - [x] **README rewrite + USER_GUIDEs** — 4 platform guides + cross-platform comparison (v0.10.2)
 - [x] **E2E behavioral testing** — golden dataset + evaluation rubric (v0.10.2)
-- [ ] **CI/CD через GitHub Actions** — автоматический запуск тестов при push/PR
-- [ ] **Ревизия текстов событий календаря** — tone check, нет «надо/должен»
-- [ ] **Единые Release Notes из CHANGELOG** — генерация из CHANGELOG.md
+- [x] **CI/CD через GitHub Actions** — автоматический запуск тестов при push/PR ✅ (`.github/workflows/release-checks.yml`)
+- [x] **Ревизия текстов событий календаря** — tone check, нет «надо/должен» ✅ (`tests/system/test_calendar_tone.py`)
+- [x] **Единые Release Notes из CHANGELOG** — генерация из CHANGELOG.md ✅ (`scripts/extract-release-notes.py`)
 - [ ] **PDF экспорт дашборда** — кнопка печати/PDF
-- [ ] **Архивация старых планов** — перенос plan_v*.md в references/archive/
+- [x] **Архивация старых планов** — перенос plan_v*.md в references/archive/ ✅
 
 ---
 
@@ -107,7 +107,7 @@
 - [ ] **Функциональные тесты календаря** — Free Slot Algorithm, event patterns, conflict detection, JSON validation для COLOR_MAP/REMINDER_PRESETS/RRULE_PRESETS
 - [x] **Обновить `references/energy_scheduling.md`** — хронотип-специфичные peak hours
 - [x] **Обновить `references/diagnostic_methods.md`** — 2–3 вопроса для определения хронотипа в Phase 0/1
-- [ ] **Обновить `build-skill.yml`** — гонить ВСЕ тесты (`pytest tests/`), не только `tests/release`
+- [x] **Обновить `build-skill.yml`** — гонить ВСЕ тесты (`pytest tests/`), не только `tests/release` ✅
 - [ ] **Провести PoC MCP** — Gate 0–2: OAuth + CRUD + `suggest_time` (заполнить `references/research/mcp_poc_log.md`)
 
 ### P2 (Желательно)
@@ -153,12 +153,12 @@
 > **Цель:** Адаптировать коучинг под недообслуживаемые аудитории.
 
 ### P0
-- [ ] **`references/adhd_mode.md`** — micro-tasking, body doubling prompts, visual timer, time blindness protection, external scaffolding (opt-in)
-- [ ] **`references/time_structure_unemployed.md`** — daily structure template, purpose exploration, social activities, small wins
-- [ ] **`references/elder_homebound_mode.md`** — solo aging, micro-anchors, mattering, legacy through memory, dignity in limitations (see `references/research/persona_charls_elder_homebound_research.md`)
+- [x] **`references/adhd_mode.md`** — micro-tasking, body doubling prompts, visual timer, time blindness protection, external scaffolding (opt-in) ✅
+- [x] **`references/time_structure_unemployed.md`** — daily structure template, purpose exploration, social activities, small wins ✅
+- [x] **`references/elder_homebound_mode.md`** — solo aging, micro-anchors, mattering, legacy through memory, dignity in limitations ✅
 
 ### P1
-- [ ] **`references/planning_friction_audit.md`** — smart defaults, template library (Deep Work/Meeting/Recovery day)
+- [x] **`references/planning_friction_audit.md`** — smart defaults, template library (Deep Work/Meeting/Recovery day) ✅
 
 ---
 
@@ -183,6 +183,7 @@
 | Групповые сессии (парный коучинг) | Когда 5+ пользователей запросят | Пользовательский запрос |
 | Интеграция Fitness API (Apple Health, Google Fit) | При расширении сферы «Здоровье» | Расширение Wheel of Life |
 | Мультиязычность (EN/RU toggle) | 10+ запросов от англоязычных пользователей | Потенциал open source |
+| Комплексная оценка готовности (Composite Readiness) | Исследование Polar/Garmin завершено | `references/research/composite_readiness_model.md` |
 
 ---
 
