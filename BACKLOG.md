@@ -78,6 +78,27 @@
 - **Источник:** Научный ресёрч (Rada 2005, Avena 2008, Lembke 2021, Kushlev 2025) + конкурентный анализ (Elqi, Opal, BePresent)
 - **Артефакт:** `references/reward_audit.md` (≤120 строк) + hook в SKILL.md (≤3 строки)
 
+### Track 0: Micro-Goal (Быстрый онбординг)
+- **Описание:** Быстрый путь от первого сообщения пользователя до одной маленькой SMART-цели на сегодня. 3-вопросное микро-интервью (Best Hopes → Scaling → One Small Step) + формулировка цели в if-then формате. Полная диагностика (Wheel of Life 11 сфер + Values) откладывается до Track 1. Цель — Aha-момент за ≤5 минут, без длинных анкет.
+- **Протокол:**
+  1. **Trigger Acknowledgment** (15 сек): "Давайте за 3 минуты найдём один конкретный шаг на сегодня"
+  2. **Q1 — Best Hopes** (1 мин): "Что для вас было бы самым полезным результатом нашего разговора сегодня?"
+  3. **Q2 — Scaling** (1 мин): "Если 10 = достигнуто, где вы сейчас?"
+  4. **Q3 — One Small Step** (1 мин): "Какой один маленький шаг мог бы подвинуть вас на 1 пункт вверх?"
+  5. **Goal Formulation** (1 мин): "Сегодня я [Q3], чтобы [Q1] было ближе на 1 пункт" + if-then формат
+  6. **Aha-Moment / Peak** (30 сек): Инсайт-фраза
+  7. **Strong End** (30 сек): Подтверждение + обещание follow-up
+- **Критерии цели (чек-лист для AI):** ≤5 мин на выполнение; только одна цель; Starter Step или Scaled-Back Version; if-then формат; Mastery-фрейминг; Confidence ≥7/10; нет списков и диагностики до выполнения
+- **Триггер:** Решение автора после аудита онбординга + deep research (4 агента, 60+ источников)
+- **Статус:** 💡 Идея (исследование завершено, ждёт plan mode approval)
+- **Источник:** SFBT (de Shazer), MI (Miller & Rollnick), SST (Talmon), Fogg Behavior Model, Implementation Intentions (Gollwitzer d=0.65), Progress Principle (Amabile & Kramer)
+- **Артефакты:**
+  - `references/research/track0_micro_goal_research.md` — deep research (267 строк, 60+ источников)
+  - `references/track0_micro_goal.md` — reference-файл с протоколом (предстоит создать)
+  - Тесты: структура протокола, формулировки целей, persona-адаптации (предстоит создать)
+- **Риски:** Поверхностность (только для small goal, не для кризиса); missing safety issues (не заменяет safety assessment); форсирование цели (если sustain talk > change talk — не переходить к планированию)
+- **Дебат:** Advocate/Critic — необходим, scope: заменяет ли Track 0 Phase 0 или дополняет?
+
 ---
 
 ## Техдолг
