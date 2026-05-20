@@ -10,22 +10,22 @@
 
 ## [0.12.2] — 2026-05-20
 
-### Added
+### Добавлено
 - **`references/calendar_intelligence.md`** — Pre-flight Protocol: Density Check → Conflict Detection → Chronotype Alignment → Smart Proposal → Create with Validation
 - **PDF экспорт дашборда** — кнопка «Печать / PDF» в `life-planning-dashboard.html` + `@media print` стили
 
-### Changed
+### Изменено
 - **Paper Coach Mode** — заменён несостоятельный retry protocol (`persistence_retry`) на честный text-only flow в `SKILL.master.md` и всех platform-скиллах
 - **Platform-neutral wording** — `calendar_constants.md` очищен от «Claude»/«MCP» для корректного inline в Grok/Kimi
 - **CI/CD** — `build-skill.yml` теперь гонит полный pytest suite (`tests/`) вместо только `tests/release`
 - **Release Notes** — unified generation из CHANGELOG.md, удалены дублирующие `RELEASE_NOTES_*.md`
 
-### Fixed
+### Исправлено
 - **Dangling references** — `calendar_constants.md` теперь inline'ится в Grok/Kimi через `P0_REFS`
 
 ## [0.12.1] — 2026-05-20
 
-### Fixed
+### Исправлено
 - **README.md** — возвращён на русский язык (случайно был переписан на английский в v0.12.0)
 - **Все platform USER_GUIDEs** (`USER_GUIDE_CLAUDE.md`, `USER_GUIDE_GROK.md`, `USER_GUIDE_KIMI_OKCOMPUTER.md`, `USER_GUIDE_KIMI_CLI.md`) — переведены на русский
 - **`CROSS_PLATFORM_COMPARISON.md`** — переведён на русский
@@ -33,7 +33,7 @@
 
 ## [0.12.0] — 2026-05-20
 
-### Added
+### Добавлено
 - **Chronotype-native planning** (`references/chronotype_native_planning.md`) — 3 профиля (Жаворонок/Промежуточный/Сова), Peak-Trough-Rebound эвристики, bedtime to-do list
 - **Habit Stack Builder** (`references/habit_stack_builder.md`) — progressive ritual escalation (2→5→10→15 мин), Two-Day Rule, habit anchoring (B = MAP)
 - **Shutdown Ritual** (`references/shutdown_ritual.md`) — 5 шагов (Capture→Review→Plan→Celebrate→Close), Zeigarnik elimination, psychological detachment
@@ -46,7 +46,7 @@
 - **Release automation** — `scripts/release.sh` (7-step atomic release) + `scripts/extract-release-notes.py`
 - **Tests** — chronotype integration (16 tests), v0.12 features (26 tests), calendar tone check
 
-### Changed
+### Изменено
 - `references/energy_scheduling.md` — chronotype-adapted peak hours
 - `references/diagnostic_methods.md` — chronotype calibration questions (Phase 0/1)
 - `references/habit_loop.md` — cross-reference to `habit_stack_builder.md`
@@ -57,18 +57,18 @@
 - `scripts/build-skill.sh` + `build-platform-skill.py` — release integration, kimi-cli artifact
 - Calendar event texts — tone check, removed prescriptive «надо/должен»
 
-### Fixed
+### Исправлено
 - Typo: Яворонок → Жаворонок (10 occurrences, 6 files)
 - `references/calendar_integration.md` — removed "Runtime: claude.ai only", added Kimi CLI MCP
 - CI workflows — pytest install, removed stale step, use `build-skill.sh`
 
-### Removed
+### Удалено
 - `RETRO_v091_v092.md` — moved out of public repository
 - `references/platforms/grok_user_guide.md` — replaced by `USER_GUIDE_GROK.md`
 
 ## [0.10.2] — 2026-05-19
 
-### Added
+### Добавлено
 - **Kimi Code CLI support** — новая платформа (terminal-based agent):
   - `platforms/kimi-cli/SKILL.md` (323 lines) — directory-based skill с `references/` через `read_file`
   - `references/platforms/kimi-cli.overlay.yaml` — overlay без inline, без `memory_space`
@@ -86,23 +86,23 @@
   - `evaluation_rubric.md` — 5 критериев LLM-as-a-Judge
   - `MANUAL_TEST_RUN.md` — протокол ручного прогона
 
-### Fixed
+### Исправлено
 - **README integrity** — все system tests проходят (11 доменов, Stage 1.5, communication style, core refs list, version format)
 - **`references/calendar_integration.md`** — убрано "Runtime: claude.ai only", добавлена поддержка Kimi CLI MCP
 - **`AGENTS.md`** — обновлены платформы (добавлен Kimi Code CLI), build-команда
 
-### Removed
+### Удалено
 - `references/platforms/grok_user_guide.md` — заменён на `USER_GUIDE_GROK.md`
 - `RETRO_v091_v092.md` — удалён из публичного репозитория
 
 ## [0.10.1] — 2026-05-19
 
-### Fixed
+### Исправлено
 - **BUG-002**: Grok SKILL.md — инлайн 7 критичных reference-файлов (`diagnostic_methods`, `communication_style`, `authentic_goal_filter`, `goal_architecture`, `weekly_review`, `habit_loop`, `emotion_regulation`) через `<details>` tags. Ранее 21 ссылка "Загрузи `references/...`" не работала в Grok Web Chat (нет ФС).
 - **BUG-003**: Kimi SKILL.md — инлайн тех же 7 reference-файлов в агрессивно сжатом виде (ultra-condensed). Ранее ссылки были неработоспособны в OK Computer single-file режиме.
 - Удалены инструкции "Загрузи" для несжатых P1/P2 reference-файлов — заменены на нейтральные "См. `references/...`".
 
-### Fixed
+### Исправлено
 - **BUG-002**: Grok SKILL.md — инлайн 7 критичных reference-файлов (`diagnostic_methods`, `communication_style`, `authentic_goal_filter`, `goal_architecture`, `weekly_review`, `habit_loop`, `emotion_regulation`) через `<details>` tags. Ранее 21 ссылка "Загрузи `references/...`" не работала в Grok Web Chat (нет ФС).
 - **BUG-003**: Kimi SKILL.md — инлайн тех же 7 reference-файлов в агрессивно сжатом виде (ultra-condensed). Ранее ссылки были неработоспособны в OK Computer single-file режиме.
 - Удалены инструкции "Загрузи" для несжатых P1/P2 reference-файлов — заменены на нейтральные "См. `references/...`".
@@ -111,7 +111,7 @@
 
 ## [0.10.0] — 2026-05-19
 
-### Added
+### Добавлено
 - **Multi-Platform Skill Adaptation** — скилл адаптирован под три платформы:
   - **Claude.ai** (primary) — ZIP-архив `.skill`, MCP-интеграция, Claude Memory
   - **Grok 4.3** (xAI) — plain `SKILL.md`, sandbox file I/O, native persistent memory, native connectors, `render_file` для дашборда
@@ -124,7 +124,7 @@
 - `VERSION_SOURCES.md` — документация источников версии
 - `CHANGELOG.md`, `ROADMAP.md`, `BACKLOG.md` — управление проектом
 
-### Fixed
+### Исправлено
 - **Grok 4.3 документация**: исправлены 4 критические ошибки в `grok_user_guide.md` и `grok.overlay.yaml` после фактчека через xAI Docs MCP:
   - Persistent Memory: Grok имеет native memory (апрель 2025), Grok Projects, Skills, Collections
   - Calendar: Grok имеет native Google Calendar + Outlook connectors
@@ -132,24 +132,24 @@
   - `render_file`: существует как render component (не API tool)
 - **Cross-platform continuity**: добавлена инструкция для чтения существующей `Life Planning Coach Wiki/` из Google Drive при переходе с Claude/Kimi на Grok
 
-### Changed
+### Изменено
 - `scripts/build-skill.sh` теперь собирает артефакты для всех платформ: `.skill` (Claude), `-grok.md`, `-kimi.md`
 - `SKILL.md` вычищен от platform-specific терминов, теперь является generated из `SKILL.master.md` + `claude.overlay.yaml`
 - `references/templates/CLAUDE_Instructions.md` → `AI_Instructions.md` (platform-agnostic)
 - Удалён `pyproject.toml` как дублирующий `setup.py`
 
-### Fixed
+### Исправлено
 - README.md: версия 0.4.0 → 0.6.0, добавлены Stage 1.5 и адаптация стиля
 - GitHub Release v0.6.0: переписан на русский язык
 
-### Removed
+### Удалено
 - Удалена секция `[0.3.0]` — этот релиз никогда не существовал. Все описанные в нём фичи (dashboard, presets, goals, weekly review, WOOP) фактически были выпущены в v0.1.0–v0.2.0. Секция была ошибочно добавлена в CHANGELOG задним числом.
 
 ---
 
 ## [0.9.2] — 2026-05-18
 
-### Fixed
+### Исправлено
 - **Android Chrome compatibility** — 5 mobile-specific fixes, missed in v0.9.1:
   - `-webkit-tap-highlight-color: transparent` — removes blue tap flash overlay on every touch
   - `overscroll-behavior-y: contain` — prevents pull-to-refresh while scrolling dashboard content
@@ -158,7 +158,7 @@
   - `viewport-fit=cover` — enables edge-to-edge display on notched Android devices
   - JS dynamic sync: `theme-color` updates instantly when user toggles dark/light mode
 
-### Added
+### Добавлено
 - **7 new dashboard tests** for mobile platform compatibility:
   - Android Chrome: tap highlight, overscroll behavior, theme-color, viewport-fit, dvh units
   - iOS Safari: `-webkit-backdrop-filter` regression guard
@@ -167,7 +167,7 @@
 
 ## [0.9.1] — 2026-05-18
 
-### Added
+### Добавлено
 - **Apple-style Dashboard Redesign** — полностью переработанный `life-planning-dashboard.html`
   - Activity Rings (SVG) — 3 кольца прогресса: Баланс, Исполнение, Консистентность
   - Liquid Glass карточки — `backdrop-filter: blur(40px)` с graceful degradation
@@ -182,13 +182,13 @@
   - Accessibility: `prefers-reduced-motion`, focus-visible, aria-labels, semantic HTML
   - Mobile-first responsive: breakpoints 375px / 768px / 992px / 1200px+
 
-### Changed
+### Изменено
 - **Удалены внешние зависимости** — ECharts (~1 MB), Chart.js (~200 KB), Font Awesome (~100 KB) заменены на чистый SVG + CSS
 - **Размер файла**: 1,403 KB → ~61 KB (уменьшение в 23×)
 - **Шрифты**: системный стек вместо Google Fonts (Inter) — полная offline-совместимость
 - **System font stack**: `-apple-system`, `BlinkMacSystemFont`, `SF Pro Display`, `Segoe UI`, Roboto
 
-### Fixed
+### Исправлено
 - `test_contains_expected_chart_keywords` обновлён под новую архитектуру (SVG вместо ECharts/Chart.js)
 - `test_doctype_and_html_lang` поддерживает атрибуты в теге `<html>`
 
@@ -196,7 +196,7 @@
 
 ## [0.9.0] — 2026-05-18
 
-### Added
+### Добавлено
 - **Habit Tracker / Dashboard Streaks** — 4 категории серий привычек (active_habits, digital, sugar, focus) в `life-planning-dashboard.html`
 - **Mobile Dashboard (responsive)** — адаптивная вёрстка: шрифты, layout, touch-friendly элементы, отключение горизонтального скролла
 - **5-Minute Micro-Sessions** (`references/micro_sessions.md`, 44 строки) — быстрые чек-ины: эмоция → 1 действие ≤30 сек → якорь
@@ -213,7 +213,7 @@
 
 ## [0.8.0] — 2026-05-18
 
-### Added
+### Добавлено
 - **Habit Loop Framework** (`references/habit_loop.md`, 254 строки) — мост между целями и ежедневными действиями
   - Cue-Routine-Reward (Duhigg, Wood & Neal)
   - Tiny Habits (Fogg): B = MAP, ≤30 секунд, anchor, celebration
@@ -239,7 +239,7 @@
 - Интеграция в `SKILL.md`: 5 новых ссылок + хуки в Phase 1.5, 2, 3, 5
 - 34 системных теста на v0.8.0 контент (`tests/system/test_v080_features.py`)
 
-### Changed
+### Изменено
 - `AGENTS.md` — полная актуализация после v0.7.1 (version, test counts, structure, removed fixed bugs)
 - `ROADMAP.md` — v0.8.0 scope сокращён с 12 до 6 фич (realistic minor release)
 
@@ -250,7 +250,7 @@
 
 ## [0.7.1] — 2026-05-18
 
-### Added
+### Добавлено
 - **Win Alert Protocol** (`references/win_alert.md`) — структурированное празднование побед
   - 5 шагов: WHAT → WHEEL DOMAIN → WHY IT MATTERS → RESOURCES/QUALITIES → NEXT STEP
   - Адаптация под 4 квадранта стиля коммуникации (Nurturing/Challenging/Exploratory/Collaborative)
@@ -268,7 +268,7 @@
 - Интеграция в `SKILL.md`: 3 новые ссылки в References + хуки в Phase 1.5, 3, 5, 9
 - 23 системных теста на v0.7.1 контент (`tests/system/test_v071_features.py`)
 
-### Changed
+### Изменено
 - `ROADMAP.md`: добавлена секция v0.7.1, обновлены v0.8.0/v0.9.0
 - `BACKLOG.md`: результаты конкурентного анализа (12 фич, 3 IMPLEMENT → v0.7.1, 9 DEFER → v0.8.0+)
 
@@ -279,7 +279,7 @@
 
 ## [0.6.0] — 2026-05-16
 
-### Added
+### Добавлено
 - **Stage 1.5: Фильтр аутентичных целей** (`references/authentic_goal_filter.md`)
   - Детектор красных флагов (6+1) с экстернализацией «Чей голос?»
   - Энергетическая проверка (соматический маркер, опционально)
@@ -298,7 +298,7 @@
   - «Смысл» стал обязательным
 - Тесты v0.6.0: 30 тестов на контент (`tests/release/test_v060_content.py`)
 
-### Changed
+### Изменено
 - SKILL.md: 4644 слова, добавлен Stage 1.5 между Stage 1 и Stage 2
 - Языковые правила: «Ты решаешь» вместо «Давайте решим», запрещены «надо», «должен», «провал»
 - Conversation State JSON: добавлены `goal_filter`, `goal_portfolio`
@@ -307,7 +307,7 @@
 
 ## [0.5.0] — 2026-05-16
 
-### Added
+### Добавлено
 - **Two-Track Diagnostic Architecture**
   - Track A — Quick Diagnostic (20–30 мин, 1 сессия)
   - Track B — Deep Diagnostic (65–105 мин, 2–4 сессии)
@@ -317,14 +317,14 @@
 - **Readiness Gate**: проверка комфорта после каждой фазы
 - **Workview/Lifeview**: микро-формат (3 вопроса)
 
-### Changed
+### Изменено
 - Полная реструктуризация Stage 1 (Diagnostic)
 
 ---
 
 ## [0.4.0] — 2026-05-16
 
-### Added
+### Добавлено
 - **Двухуровневая система персистентности**
   - Уровень 1: Claude Memory (работает сразу)
   - Уровень 2: Google Drive + персональная wiki (opt-in)
@@ -336,20 +336,20 @@
 
 ## [0.2.0] — 2026-05-14
 
-### Added
+### Добавлено
 - Интеграция с Google Calendar MCP
 - OAuth 2.0 через claude.ai
 - CRUD Events, Free/Busy Slots
 - Calendar Presets: Weekly Review, WOOP, Milestones, Time Blocks
 
-### Removed
+### Удалено
 - Кастомный Python-пакет `calendar_integration/` (заменён на MCP)
 
 ---
 
 ## [0.1.0] — 2026-05-13
 
-### Added
+### Добавлено
 - Базовый скилл life-planning-coach для Claude.ai
 - Stage 1: Diagnostic (Wheel of Life 8+1, Values Clarification Schwartz)
 - Stage 2: Goal Architecture (BHAG, OKR, WOOP)
