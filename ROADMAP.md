@@ -156,6 +156,7 @@
 ### P0
 - [ ] **`references/adhd_mode.md`** — micro-tasking, body doubling prompts, visual timer, time blindness protection, external scaffolding (opt-in)
 - [ ] **`references/time_structure_unemployed.md`** — daily structure template, purpose exploration, social activities, small wins
+- [ ] **`references/elder_homebound_mode.md`** — solo aging, micro-anchors, mattering, legacy through memory, dignity in limitations (see `references/research/persona_charls_elder_homebound_research.md`)
 
 ### P1
 - [ ] **`references/planning_friction_audit.md`** — smart defaults, template library (Deep Work/Meeting/Recovery day)
