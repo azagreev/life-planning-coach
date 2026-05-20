@@ -41,7 +41,7 @@ A modular, cross-platform coaching skill built on peer-reviewed methods:
 
 ### Claude.ai (ZIP Skill)
 
-1. Download `life-planning-coach-v0.10.2.zip` from [Releases](https://github.com/azagreev/life-planning-coach/releases)
+1. Download `life-planning-coach-v0.12.0.zip` from [Releases](https://github.com/azagreev/life-planning-coach/releases)
 2. Claude → Settings → Capabilities → enable "Code execution and file creation"
 3. Customize → Skills → + → Upload ZIP
 4. Type `/life-planning-coach` in any chat
@@ -50,7 +50,7 @@ A modular, cross-platform coaching skill built on peer-reviewed methods:
 
 ### Grok (xAI) — Single File
 
-1. Download `life-planning-coach-v0.10.2-grok.md`
+1. Download `life-planning-coach-v0.12.0-grok.md`
 2. Copy all content, paste into [grok.com](https://grok.com)
 3. Add: `Ты — Life Planning Coach. Начни сессию.`
 
@@ -59,7 +59,7 @@ A modular, cross-platform coaching skill built on peer-reviewed methods:
 ### Kimi OK Computer (Web Agent)
 
 1. Go to [kimi.com/agent](https://kimi.com/agent)
-2. Create Agent → paste `life-planning-coach-v0.10.2-kimi.md` into system prompt
+2. Create Agent → paste `life-planning-coach-v0.12.0-kimi.md` into system prompt
 3. Save and chat
 
 **→ [Full Kimi OK Computer Guide](references/platforms/USER_GUIDE_KIMI_OKCOMPUTER.md)**
