@@ -41,7 +41,7 @@
 
 ### Claude.ai (ZIP Skill)
 
-1. Скачайте `life-planning-coach-v0.12.1.zip` из [Релизов](https://github.com/azagreev/life-planning-coach/releases)
+1. Скачайте `life-planning-coach-v0.12.2.zip` из [Релизов](https://github.com/azagreev/life-planning-coach/releases)
 2. Claude → Settings → Capabilities → включить "Code execution and file creation"
 3. Customize → Skills → + → Upload ZIP
 4. Наберите `/life-planning-coach` в любом чате
@@ -50,7 +50,7 @@
 
 ### Grok (xAI) — Один файл
 
-1. Скачайте `life-planning-coach-v0.12.1-grok.md`
+1. Скачайте `life-planning-coach-v0.12.2-grok.md`
 2. Скопируйте всё содержимое, вставьте в [grok.com](https://grok.com)
 3. Добавьте: `Ты — Life Planning Coach. Начни сессию.`
 
@@ -59,7 +59,7 @@
 ### Kimi OK Computer (Веб-агент)
 
 1. Перейдите на [kimi.com/agent](https://kimi.com/agent)
-2. Создайте агента → вставьте `life-planning-coach-v0.12.1-kimi.md` в системный промпт
+2. Создайте агента → вставьте `life-planning-coach-v0.12.2-kimi.md` в системный промпт
 3. Сохраните и начните диалог
 
 **→ [Полное руководство по Kimi Web](references/platforms/USER_GUIDE_KIMI_OKCOMPUTER.md)**
