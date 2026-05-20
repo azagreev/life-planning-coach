@@ -1,8 +1,8 @@
 """
 System tests for ROADMAP.md integrity.
 
-Option B: ROADMAP "Текущий статус" contains ONLY future work.
-Released versions must NOT appear in the status table.
+Option B: ROADMAP contains ONLY future work.
+Released versions must NOT appear as active status rows or detailed sections.
 """
 
 import subprocess
@@ -67,4 +67,21 @@ class TestRoadmapIntegrity:
                 f"Released versions: {sorted(released_versions)}\n"
                 f"Fix: remove released versions from status table. "
                 f"Release history belongs in CHANGELOG.md."
+            )
+
+    def test_no_released_version_detail_sections(self, released_versions):
+        """Released versions must not have detailed roadmap sections."""
+        roadmap = PROJECT_ROOT / "ROADMAP.md"
+        content = roadmap.read_text(encoding="utf-8")
+
+        stale = []
+        for version in released_versions:
+            pattern = re.compile(rf"^##\s+v{re.escape(version)}\b", re.MULTILINE)
+            if pattern.search(content):
+                stale.append(version)
+
+        if stale:
+            pytest.fail(
+                f"ROADMAP.md contains detailed sections for released versions: {stale}\n"
+                f"Release details belong in CHANGELOG.md or references/archive/."
             )
