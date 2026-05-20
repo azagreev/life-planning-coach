@@ -98,15 +98,15 @@
 
 ### P0 (Блокирует релиз)
 - [ ] **`references/calendar_intelligence.md`** — Pre-flight protocol: `list_events` → density check → conflict detection → smart proposal → `create_event`
-- [ ] **`references/chronotype_native_planning.md`** — 3 профиля (Жаворонок/Промежуточный/Сова), Peak-Trough-Rebound heuristics, bedtime to-do list
-- [ ] **Обновить 4 `platforms/*/SKILL.md`** — Phase 5: проверка календаря перед созданием события; Phase 0/1: хронотип-определение
+- [x] **`references/chronotype_native_planning.md`** — 3 профиля (Жаворонок/Промежуточный/Сова), Peak-Trough-Rebound heuristics, bedtime to-do list
+- [x] **Обновить 4 `platforms/*/SKILL.md`** — Phase 5: проверка календаря перед созданием события; Phase 0/1: хронотип-определение
 - [ ] **Исправить `platforms/kimi/SKILL.md`** — удалить несостоятельный retry protocol, заменить на честный text-only flow
 - [ ] **Исправить dangling references** — `calendar_constants.md` + `calendar_integration.md` в `P0_REFS` для Grok/Kimi или убрать ссылки
 
 ### P1 (Обязательно в релиз)
 - [ ] **Функциональные тесты календаря** — Free Slot Algorithm, event patterns, conflict detection, JSON validation для COLOR_MAP/REMINDER_PRESETS/RRULE_PRESETS
-- [ ] **Обновить `references/energy_scheduling.md`** — хронотип-специфичные peak hours
-- [ ] **Обновить `references/diagnostic_methods.md`** — 2–3 вопроса для определения хронотипа в Phase 0/1
+- [x] **Обновить `references/energy_scheduling.md`** — хронотип-специфичные peak hours
+- [x] **Обновить `references/diagnostic_methods.md`** — 2–3 вопроса для определения хронотипа в Phase 0/1
 - [ ] **Обновить `build-skill.yml`** — гонить ВСЕ тесты (`pytest tests/`), не только `tests/release`
 - [ ] **Провести PoC MCP** — Gate 0–2: OAuth + CRUD + `suggest_time` (заполнить `references/research/mcp_poc_log.md`)
 
@@ -124,12 +124,12 @@
 > **Цель:** Сделать планирование привычкой (Habit Stack Builder) и завершить день осознанно (Shutdown Ritual).
 
 ### P0
-- [ ] **`references/habit_stack_builder.md`** — progressive ritual escalation (2→5→10→15 мин), Two-Day Rule, habit anchoring
-- [ ] **`references/shutdown_ritual.md`** — 5 шагов (Capture→Review→Plan→Celebrate→Close), Zeigarnik elimination, psychological detachment
-- [ ] **Обновить `references/habit_loop.md`** — ссылка на habit_stack_builder.md
+- [x] **`references/habit_stack_builder.md`** — progressive ritual escalation (2→5→10→15 мин), Two-Day Rule, habit anchoring
+- [x] **`references/shutdown_ritual.md`** — 5 шагов (Capture→Review→Plan→Celebrate→Close), Zeigarnik elimination, psychological detachment
+- [x] **Обновить `references/habit_loop.md`** — ссылка на habit_stack_builder.md
 
 ### P1
-- [ ] **`references/fresh_start_engine.md`** — temporal landmarks (Monday, 1st, New Year, birthday), Fresh Week/Month/Year triggers, dark side protection
+- [x] **`references/fresh_start_engine.md`** — temporal landmarks (Monday, 1st, New Year, birthday), Fresh Week/Month/Year triggers, dark side protection
 
 ---
 
