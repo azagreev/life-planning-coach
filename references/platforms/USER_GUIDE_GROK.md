@@ -1,156 +1,157 @@
-# User Guide — Grok 4.3 (xAI)
+# Руководство пользователя — Grok 4.3 (xAI)
 
-> **Platform:** Grok 4.3 via xAI (x.com / grok.com)  
-> **Format:** Single Markdown file (self-contained, inline references)  
-> **File size:** ~28 KB (1190 lines)  
-> **Refs:** Fully inlined (no external files)  
-> **Connectors:** Native xAI connectors (OAuth, not MCP)
-
----
-
-## 1. System Requirements
-
-- **xAI account** (free tier available)
-- Access to Grok 4.3 (web or mobile app)
-- **Native connectors** feature enabled (see below)
+> **Платформа:** Grok 4.3 через xAI (x.com / grok.com)  
+> **Формат:** Один файл Markdown (самодостаточный, со встроенными справочниками)  
+> **Размер файла:** ~28 КБ (1190 строк)  
+> **Ссылки:** Полностью встроены (без внешних файлов)  
+> **Коннекторы:** Нативные коннекторы xAI (OAuth, не MCP)
 
 ---
 
-## 2. Installation
+## 1. Системные требования
 
-### 2.1 Direct Prompt (Current Method)
-
-Grok does not yet support native "Skills" (forthcoming feature). Use **Direct Prompt** method:
-
-1. Download `life-planning-coach-vX.Y.Z-grok.md` from [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
-2. Open the file, **copy all content** (Ctrl+A, Ctrl+C)
-3. Go to [grok.com](https://grok.com) or x.com Grok
-4. Paste the entire content into the first message
-5. Add: `"Ты — Life Planning Coach. Начни сессию."`
-
-### 2.2 Grok Projects (Recommended for Repeat Use)
-
-1. Create a **Grok Project** (if available in your region)
-2. Paste the SKILL.md content into the Project system prompt
-3. Save — now every conversation in this Project starts with the coach context
-
-### 2.3 Future: Native Skills (Leaked UI)
-
-xAI is testing native Skills/Custom GPTs. When available:
-- Upload `life-planning-coach-vX.Y.Z-grok.md` as a Skill
-- Enable in conversations via `@life-planning-coach`
+- **Аккаунт xAI** (доступен бесплатный тариф)
+- Доступ к Grok 4.3 (веб-версия или мобильное приложение)
+- Включённая функция **Native connectors** (см. ниже)
 
 ---
 
-## 3. Native Connectors (Not MCP)
+## 2. Установка
 
-Grok uses **xAI Native Connectors**, not MCP. These are pre-built integrations:
+### 2.1 Прямой промпт (текущий способ)
 
-### 3.1 Google Calendar Connector
+Grok пока не поддерживает нативные "Skills" (функция в разработке). Используйте метод **Прямой промпт**:
 
-1. Go to [grok.com/connectors](https://grok.com/connectors) (or Settings → Connectors)
-2. Find **Google Calendar** → Click **Connect**
-3. OAuth with your Google account
-4. Grant calendar read/write permissions
+1. Скачайте `life-planning-coach-vX.Y.Z-grok.md` из [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
+2. Откройте файл, **скопируйте всё содержимое** (Ctrl+A, Ctrl+C)
+3. Перейдите на [grok.com](https://grok.com) или в Grok на x.com
+4. Вставьте всё содержимое в первое сообщение
+5. Добавьте: `"Ты — Life Planning Coach. Начни сессию."`
 
-> The Google Calendar connector is managed by xAI, not via MCP.
+### 2.2 Grok Projects (рекомендуется для регулярного использования)
 
-### 3.2 Google Drive Connector
+1. Создайте **Grok Project** (если доступно в вашем регионе)
+2. Вставьте содержимое SKILL.md в системный промпт проекта
+3. Сохраните — теперь каждый разговор в этом проекте начинается с контекста коуча
 
-1. Same [grok.com/connectors](https://grok.com/connectors) page
-2. Find **Google Drive** → Click **Connect**
-3. OAuth + grant Drive permissions
+### 2.3 В будущем: нативные Skills (утёкший интерфейс)
 
-> The Google Drive connector uses native OAuth, not MCP.
-
-### 3.3 Other Connectors
-
-Grok may support additional connectors (Spotify, Notion, etc.). The skill auto-adapts to available connectors.
-
-> **Difference from MCP:** Native connectors are managed by xAI, not via JSON config. One-click OAuth, no manual setup.
+xAI тестирует нативные Skills / Custom GPTs. Когда станут доступны:
+- Загрузите `life-planning-coach-vX.Y.Z-grok.md` как Skill
+- Активируйте в разговорах через `@life-planning-coach`
 
 ---
 
-## 4. Usage
+## 3. Нативные коннекторы (не MCP)
 
-### 4.1 Starting a Session
+Grok использует **нативные коннекторы xAI**, а не MCP. Это готовые интеграции:
 
-With Direct Prompt method:
+### 3.1 Коннектор Google Calendar
+
+1. Перейдите на [grok.com/connectors](https://grok.com/connectors) (или Настройки → Connectors)
+2. Найдите **Google Calendar** → нажмите **Connect**
+3. Пройдите OAuth с вашим Google-аккаунтом
+4. Предоставьте разрешения на чтение/запись календаря
+
+> Коннектор Google Calendar управляется xAI, а не через MCP.
+
+### 3.2 Коннектор Google Drive
+
+1. На той же странице [grok.com/connectors](https://grok.com/connectors)
+2. Найдите **Google Drive** → нажмите **Connect**
+3. OAuth + предоставьте разрешения для Drive
+
+> Коннектор Google Drive использует нативный OAuth, а не MCP.
+
+### 3.3 Другие коннекторы
+
+Grok может поддерживать дополнительные коннекторы (Spotify, Notion и др.). Скилл автоматически адаптируется к доступным коннекторам.
+
+> **Отличие от MCP:** Нативные коннекторы управляются xAI, а не через JSON-конфигурацию. Однокликовый OAuth, без ручной настройки.
+
+---
+
+## 4. Использование
+
+### 4.1 Начало сессии
+
+С методом Прямой промпт:
 ```
 [Вставлено содержимое grok.md]
 
 Начни диагностику. Я чувствую застой в карьере.
 ```
 
-With Grok Projects:
+С Grok Projects:
 ```
 Проведи диагностику Wheel of Life
 ```
 
-### 4.2 Coaching Flow
+### 4.2 Коучинговый поток
 
-Same 4-stage flow as Claude:
-1. **Diagnostic** — inlined references include all methods
-2. **Goal Architecture** — structured planning
-3. **Execution** — weekly reviews, habits
-4. **Deep Work** — triggering, emotions, authentic goals
+Тот же 4-этапный поток, что и в Claude:
+1. **Диагностика** — встроенные справочники включают все методы
+2. **Архитектура целей** — структурированное планирование
+3. **Исполнение** — еженедельные обзоры, привычки
+4. **Глубинная работа** — триггеры, эмоции, аутентичные цели
 
-### 4.3 Key Differences from Claude
+### 4.3 Ключевые отличия от Claude
 
-| Feature | Grok | Claude |
+| Функция | Grok | Claude |
 |---------|------|--------|
-| Ref loading | Inlined (instant) | `read_file` (on-demand) |
-| File size | ~28 KB single file | ~170 KB ZIP |
-| Connectors | Native connector (OAuth) | MCP JSON config |
-| Setup | Copy-paste prompt | ZIP upload |
-| Persistence | Projects (if available) | Conversation only |
+| Загрузка справочников | Встроены (мгновенно) | `read_file` (по требованию) |
+| Размер файла | ~28 КБ, один файл | ~170 КБ, ZIP |
+| Коннекторы | Нативный коннектор (OAuth) | MCP JSON config |
+| Установка | Копировать-вставить промпт | Загрузка ZIP |
+| Персистентность | Projects (если доступно) | Только в рамках разговора |
 
-### 4.4 Cross-Platform Transition
+### 4.4 Переход между платформами
 
-Moving from Claude or Kimi to Grok? Your data stays in Google Drive (if you used Drive MCP/connector). Ask Grok to read your existing `Life Planning Coach Wiki` folder and continue from where you left off.
-
----
-
-## 5. Why Single File?
-
-Grok does **not** support directory-based skills or `read_file` tool. All 7 critical references are **inlined** into SKILL.md:
-
-- `diagnostic_methods.md` → inlined with heading demotion
-- `communication_style.md` → inlined
-- `authentic_goal_filter.md` → inlined
-- `goal_architecture.md` → inlined
-- `weekly_review.md` → inlined
-- `habit_loop.md` → inlined
-- `emotion_regulation.md` → inlined
-- `dashboard_guide.md` → ultra-condensed (~100 lines)
-
-This makes the file larger (~1190 lines) but ensures Grok has immediate access to all coaching methods.
+Переходите с Claude или Kimi на Grok? Ваши данные остаются в Google Drive (если вы использовали Drive MCP/connector). Попросите Grok прочитать вашу существующую папку `Life Planning Coach Wiki` и продолжить с того места, где вы остановились.
 
 ---
 
-## 6. Troubleshooting
+## 5. Почему один файл?
 
-| Problem | Solution |
+Grok **не поддерживает** скиллы на основе директорий или инструмент `read_file`. Все 7 критических справочников **встроены** в SKILL.md:
+
+- `diagnostic_methods.md` → встроен с понижением уровня заголовков
+- `communication_style.md` → встроен
+- `authentic_goal_filter.md` → встроен
+- `goal_architecture.md` → встроен
+- `weekly_review.md` → встроен
+- `habit_loop.md` → встроен
+- `emotion_regulation.md` → встроен
+- `dashboard_guide.md` → ультра-сжатый (~100 строк)
+
+Это делает файл больше (~1190 строк), но гарантирует, что Grok имеет немедленный доступ ко всем коучинговым методам.
+
+---
+
+## 6. Устранение неполадок
+
+| Проблема | Решение |
 |---------|----------|
-| "Message too long" | Grok has large context window (~1M tokens), but if hit — use Direct Prompt in chunks |
-| Connectors not showing | Check if your region has connector access; try web vs mobile |
-| Skill "forgets" context | Use Grok Projects for persistence; otherwise re-paste in new conversation |
-| Calendar events not created | Ensure connector is connected and has write permissions |
+| "Сообщение слишком длинное" | У Grok большое контекстное окно (~1M токенов), но если достигнут лимит — используйте Прямой промпт частями |
+| Коннекторы не отображаются | Проверьте, есть ли в вашем регионе доступ к коннекторам; попробуйте веб-версию вместо мобильной |
+| Скилл "забывает" контекст | Используйте Grok Projects для персистентности; иначе вставляйте заново в новый разговор |
+| События календаря не создаются | Убедитесь, что коннектор подключён и имеет разрешения на запись |
 
 ---
 
-## 7. Limitations
+## 7. Ограничения
 
-- **No native Skills yet** — rely on Direct Prompt or Projects
-- **Connector availability varies by region**
-- **Context window:** ~1M tokens (very large; memory is conversation-scoped — use Grok Projects for cross-session persistence)
-- **Mobile:** Copy-paste is harder on mobile; use desktop for initial setup
+- **Нет нативных Skills** — используйте Прямой промпт или Projects
+- **Доступность коннекторов зависит от региона**
+- **Контекстное окно:** ~1M токенов (очень большое; память ограничена разговором — используйте Grok Projects для персистентности между сессиями)
+- **Мобильные устройства:** Копировать-вставить сложнее на мобильном; используйте десктоп для первоначальной настройки
 
 ---
 
-## 8. Privacy & Data Handling
+## 8. Приватность и обработка данных
 
-- Coaching data stays in xAI/Grok conversation
-- Google Calendar/Drive access via OAuth (you control scopes)
-- xAI may use conversation data per their [Privacy Policy](https://x.ai/privacy)
-- See full privacy notice in `SKILL.md` → `## Privacy & Data Handling`
+- Коучинговые данные остаются в разговоре xAI/Grok
+- Доступ к Google Calendar/Drive через OAuth (вы контролируете scopes)
+- xAI может использовать данные разговоров согласно их [Privacy Policy](https://x.ai/privacy)
+- Полное уведомление о приватности см. в `SKILL.md` → `## Privacy & Data Handling`
+- Данные доступны для кросс-платформенного использования через экспорт

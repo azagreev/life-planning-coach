@@ -1,125 +1,125 @@
-# Cross-Platform Comparison — Life Planning Coach
+# Сравнение платформ — Life Planning Coach
 
-> Quick reference: which platform is right for you?
-
----
-
-## At a Glance
-
-| Feature | Claude.ai | Grok 4.3 | Kimi OK Computer | Kimi Code CLI |
-|---------|-----------|----------|------------------|---------------|
-| **Best for** | Power users, MCP fans | xAI ecosystem, large context | Easy web setup | Developers, terminal users |
-| **Setup difficulty** | Medium (ZIP upload) | Easy (copy-paste) | Very Easy (web UI) | Hard (terminal + JSON) |
-| **Skill format** | ZIP (directory) | Single `.md` | Single `.md` | Directory (`SKILL.md` + `references/`) |
-| **Ref loading** | `read_file` (on-demand) | Inlined (instant) | Inlined (instant) | `read_file` (on-demand) |
-| **File size** | ~170 KB | ~28 KB | ~22 KB | ~90 KB |
-| **Context efficiency** | ⭐⭐⭐ Excellent | ⭐⭐ Good | ⭐⭐ Good | ⭐⭐⭐ Excellent |
-| **Lines in SKILL.md** | 311 | 1,190 | 815 | 323 |
+> Краткий справочник: какая платформа подходит именно вам?
 
 ---
 
-## Integrations
+## Общий обзор
 
-| Integration | Claude.ai | Grok 4.3 | Kimi OK Computer | Kimi Code CLI |
-|-------------|-----------|----------|------------------|---------------|
-| **Google Calendar** | ✅ MCP (1-click) | ✅ Native OAuth | ❌ Text-only | ✅ MCP (manual JSON) |
-| **Google Drive** | ✅ MCP (1-click) | ✅ Native OAuth | ❌ No integration | ✅ MCP (manual JSON) |
-| **Save sessions** | Auto (MCP Drive) | Auto (connector) | Manual copy | File system |
-| **Persistent memory** | ❌ Conversation only | ❌ Conversation only | ✅ `memory_space` | ✅ File system |
+| Характеристика | Claude.ai | Grok 4.3 | Kimi OK Computer | Kimi Code CLI |
+|----------------|-----------|----------|------------------|---------------|
+| **Лучше всего для** | Опытные пользователи, фанаты MCP | Экосистема xAI, большой контекст | Простая веб-настройка | Разработчики, пользователи терминала |
+| **Сложность настройки** | Средняя (загрузка ZIP) | Простая (копировать-вставить) | Очень простая (веб-интерфейс) | Сложная (терминал + JSON) |
+| **Формат skill** | ZIP (директория) | Один `.md` | Один `.md` | Директория (`SKILL.md` + `references/`) |
+| **Загрузка ссылок** | `read_file` (по требованию) | Встроено (мгновенно) | Встроено (мгновенно) | `read_file` (по требованию) |
+| **Размер файла** | ~170 KB | ~28 KB | ~22 KB | ~90 KB |
+| **Эффективность контекста** | ⭐⭐⭐ Отлично | ⭐⭐ Хорошо | ⭐⭐ Хорошо | ⭐⭐⭐ Отлично |
+| **Строк в SKILL.md** | 311 | 1 190 | 815 | 323 |
 
 ---
 
-## Coaching Capabilities
+## Интеграции
 
-All platforms run the **same 4-stage evidence-based flow**:
-
-1. **Diagnostic** — Wheel of Life, Values Clarification
-2. **Goal Architecture** — SMART+ goals, milestones, habits
-3. **Execution Support** — Weekly reviews, energy checks, habit tracking
-4. **Deep Work** — Triggering precision, emotion regulation, authentic goals
-
-| Capability | Claude.ai | Grok 4.3 | Kimi OK Computer | Kimi Code CLI |
+| Интеграция | Claude.ai | Grok 4.3 | Kimi OK Computer | Kimi Code CLI |
 |------------|-----------|----------|------------------|---------------|
-| All 4 stages | ✅ | ✅ | ✅ | ✅ |
-| 11 Wheel of Life domains | ✅ | ✅ | ✅ | ✅ |
+| **Google Calendar** | ✅ MCP (1 клик) | ✅ Нативный OAuth | ❌ Только текст | ✅ MCP (ручной JSON) |
+| **Google Drive** | ✅ MCP (1 клик) | ✅ Нативный OAuth | ❌ Нет интеграции | ✅ MCP (ручной JSON) |
+| **Сохранение сессий** | Авто (MCP Drive) | Авто (коннектор) | Ручное копирование | Файловая система |
+| **Постоянная память** | ❌ Только разговор | ❌ Только разговор | ✅ `memory_space` | ✅ Файловая система |
+
+---
+
+## Возможности коучинга
+
+Все платформы используют **один и тот же 4-этапный evidence-based процесс**:
+
+1. **Диагностика** — Колесо жизни, прояснение ценностей
+2. **Архитектура целей** — SMART+ цели, этапы, привычки
+3. **Поддержка выполнения** — Еженедельные ревью, проверки энергии, трекинг привычек
+4. **Глубокая работа** — Триггерная точность, регуляция эмоций, аутентичные цели
+
+| Возможность | Claude.ai | Grok 4.3 | Kimi OK Computer | Kimi Code CLI |
+|-------------|-----------|----------|------------------|---------------|
+| Все 4 этапа | ✅ | ✅ | ✅ | ✅ |
+| 11 сфер Колеса жизни | ✅ | ✅ | ✅ | ✅ |
 | Authentic Goal Filter | ✅ | ✅ | ✅ | ✅ |
 | Communication Style | ✅ | ✅ | ✅ | ✅ |
-| Dashboard (`life-planning-dashboard.html`) | ✅ | ✅ | ✅ | ✅ |
+| Дашборд (`life-planning-dashboard.html`) | ✅ | ✅ | ✅ | ✅ |
 | Deep Why / 5 Whys | ✅ | ✅ | ✅ | ✅ |
-| TTM / MI techniques | ✅ | ✅ | ✅ | ✅ |
+| TTM / MI техники | ✅ | ✅ | ✅ | ✅ |
 
 ---
 
-## Model & Performance
+## Модель и производительность
 
-| Spec | Claude.ai | Grok 4.3 | Kimi OK Computer | Kimi Code CLI |
-|------|-----------|----------|------------------|---------------|
-| **Model** | Claude 3.5/4 Sonnet | Grok 4.3 | Kimi K2.6 | Kimi K2.6 |
-| **Context window** | ~200K tokens | ~1M tokens | ~200K tokens | ~200K tokens |
-| **Step limit** | High | High | ~10 (Base Chat) | High |
-| **Response speed** | Fast | Very Fast | Fast | Fast |
-| **Reasoning** | Excellent | Excellent | Excellent | Excellent |
+| Характеристика | Claude.ai | Grok 4.3 | Kimi OK Computer | Kimi Code CLI |
+|----------------|-----------|----------|------------------|---------------|
+| **Модель** | Claude 3.5/4 Sonnet | Grok 4.3 | Kimi K2.6 | Kimi K2.6 |
+| **Окно контекста** | ~200K токенов | ~1M токенов | ~200K токенов | ~200K токенов |
+| **Лимит шагов** | Высокий | Высокий | ~10 (Base Chat) | Высокий |
+| **Скорость ответов** | Быстро | Очень быстро | Быстро | Быстро |
+| **Рассуждение** | Отлично | Отлично | Отлично | Отлично |
 
 ---
 
-## Platform-Specific Notes
+## Примечания по платформам
 
-### Claude.ai (Primary)
-- **Pros:** Best MCP ecosystem, clean directory structure, on-demand ref loading
-- **Cons:** Requires Pro/Team plan for Skills; ZIP upload step
-- **Unique:** Most mature integration ecosystem
+### Claude.ai (основная)
+- **Плюсы:** Лучшая экосистема MCP, чистая структура директорий, загрузка ссылок по требованию
+- **Минусы:** Требуется Pro/Team план для Skills; шаг загрузки ZIP
+- **Уникально:** Наиболее зрелая экосистема интеграций
 
 ### Grok 4.3
-- **Pros:** Largest context window (~1M), native connectors (easy OAuth), fast responses
-- **Cons:** No native Skills yet (use Direct Prompt); single large file
-- **Unique:** Best for users already in xAI ecosystem
+- **Плюсы:** Самое большое окно контекста (~1M), нативные коннекторы (простой OAuth), быстрые ответы
+- **Минусы:** Пока нет нативных Skills (используйте Direct Prompt); один большой файл
+- **Уникально:** Лучший выбор для пользователей, уже находящихся в экосистеме xAI
 
 ### Kimi OK Computer
-- **Pros:** Easiest setup (web UI), `memory_space` for persistence, no config files
-- **Cons:** No MCP, ~10 step limit, text-only calendar, all refs inlined
-- **Unique:** Best for beginners who want immediate coaching without technical setup
+- **Плюсы:** Самая простая настройка (веб-интерфейс), `memory_space` для персистентности, нет конфигурационных файлов
+- **Минусы:** Нет MCP, лимит ~10 шагов, календарь только текстом, все ссылки встроены
+- **Уникально:** Лучший выбор для начинающих, которые хотят начать коучинг немедленно без технической настройки
 
 ### Kimi Code CLI
-- **Pros:** Directory-based (efficient), MCP support, file system persistence, high step limit
-- **Cons:** Hardest setup (terminal + manual JSON), no GUI
-- **Unique:** Best for developers who want full control and local data
+- **Плюсы:** На основе директорий (эффективно), поддержка MCP, персистентность через файловую систему, высокий лимит шагов
+- **Минусы:** Самая сложная настройка (терминал + ручной JSON), нет GUI
+- **Уникально:** Лучший выбор для разработчиков, которые хотят полный контроль и локальные данные
 
 ---
 
-## Decision Tree
+## Дерево решений
 
 ```
-Are you comfortable with terminal and JSON config?
-├── YES → Kimi Code CLI (most powerful, local control)
-└── NO → Do you have Claude Pro/Team?
-    ├── YES → Claude.ai (best ecosystem)
-    └── NO → Do you use xAI/Grok regularly?
-        ├── YES → Grok 4.3 (largest context, native connectors)
-        └── NO → Kimi OK Computer (easiest setup, web-only)
+Вы комфортно работаете с терминалом и JSON-конфигурацией?
+├── ДА → Kimi Code CLI (самый мощный, локальный контроль)
+└── НЕТ → У вас есть Claude Pro/Team?
+    ├── ДА → Claude.ai (лучшая экосистема)
+    └── НЕТ → Вы регулярно используете xAI/Grok?
+        ├── ДА → Grok 4.3 (самый большой контекст, нативные коннекторы)
+        └── НЕТ → Kimi OK Computer (самая простая настройка, только веб)
 ```
 
 ---
 
-## Quick Start by Platform
+## Быстрый старт по платформам
 
-| Platform | Time to first session | Steps |
-|----------|----------------------|-------|
-| **Claude.ai** | ~5 min | Download ZIP → Upload to Claude → Start chat |
-| **Grok 4.3** | ~2 min | Copy `.md` → Paste to Grok → Start chat |
-| **Kimi OK Computer** | ~3 min | Go to kimi.com/agent → Create agent → Paste `.md` → Start chat |
-| **Kimi Code CLI** | ~15 min | Install CLI → Create skill dir → Configure MCP JSON → Start session |
+| Платформа | Время до первой сессии | Шаги |
+|-----------|------------------------|------|
+| **Claude.ai** | ~5 мин | Скачать ZIP → Загрузить в Claude → Начать чат |
+| **Grok 4.3** | ~2 мин | Скопировать `.md` → Вставить в Grok → Начать чат |
+| **Kimi OK Computer** | ~3 мин | Перейти на kimi.com/agent → Создать агента → Вставить `.md` → Начать чат |
+| **Kimi Code CLI** | ~15 мин | Установить CLI → Создать директорию skill → Настроить MCP JSON → Начать сессию |
 
 ---
 
-## File Naming in Releases
+## Именование файлов в релизах
 
-| Platform | Release File |
-|----------|--------------|
-| Claude.ai | `life-planning-coach-vX.Y.Z.zip` or `.skill` |
+| Платформа | Файл релиза |
+|-----------|-------------|
+| Claude.ai | `life-planning-coach-vX.Y.Z.zip` или `.skill` |
 | Grok 4.3 | `life-planning-coach-vX.Y.Z-grok.md` |
 | Kimi OK Computer | `life-planning-coach-vX.Y.Z-kimi.md` |
-| Kimi Code CLI | `life-planning-coach-vX.Y.Z-kimi-cli/` (directory) |
+| Kimi Code CLI | `life-planning-coach-vX.Y.Z-kimi-cli/` (директория) |
 
 ---
 
-*Last updated: v0.10.2*
+*Последнее обновление: v0.10.2*

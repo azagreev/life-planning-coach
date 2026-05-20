@@ -321,13 +321,20 @@ class TestGrokFactCheck:
 
     def test_user_guide_has_native_connector_refs(self):
         text = GROK_USER_GUIDE_PATH.read_text(encoding="utf-8")
-        assert "Google Calendar connector" in text, "USER_GUIDE_GROK.md missing 'Google Calendar connector'"
-        assert "Google Drive connector" in text, "USER_GUIDE_GROK.md missing 'Google Drive connector'"
+        assert (
+            "Google Calendar" in text or "Коннектор Google Calendar" in text
+        ), "USER_GUIDE_GROK.md missing Google Calendar reference"
+        assert (
+            "Google Drive" in text or "Коннектор Google Drive" in text
+        ), "USER_GUIDE_GROK.md missing Google Drive reference"
 
     def test_user_guide_has_cross_platform_continuity(self):
         text = GROK_USER_GUIDE_PATH.read_text(encoding="utf-8").lower()
         assert (
-            "cross-platform" in text or "кросс-платформенная" in text
+            "cross-platform" in text
+            or "cross platform" in text
+            or "кросс-платформ" in text
+            or "кроссплатформ" in text
         ), "USER_GUIDE_GROK.md missing cross-platform continuity section"
 
     # --- grok.overlay.yaml ---

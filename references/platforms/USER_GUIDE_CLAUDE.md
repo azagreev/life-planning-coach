@@ -1,51 +1,51 @@
-# User Guide — Claude.ai (Primary Platform)
+# Руководство пользователя — Claude.ai (основная платформа)
 
-> **Platform:** Claude.ai (Anthropic)  
-> **Format:** ZIP skill (MCS — Model Context Protocol Skill)  
-> **File size:** ~170 KB  
-> **Refs:** Loaded via `read_file` tool (directory-based)  
-> **MCP:** Supported (1-click install from Claude desktop app)
-
----
-
-## 1. System Requirements
-
-- **Claude.ai web** or **Claude desktop app** (macOS/Windows)
-- Account with Pro/Team plan (Skills feature required)
-- `references/` directory readable by Claude (auto-loaded from ZIP)
+> **Платформа:** Claude.ai (Anthropic)  
+> **Формат:** ZIP skill (MCS — Model Context Protocol Skill)  
+> **Размер файла:** ~170 КБ  
+> **Ссылки:** Загружаются через инструмент `read_file` (на основе директорий)  
+> **MCP:** Поддерживается (установка в один клик из приложения Claude для ПК)
 
 ---
 
-## 2. Installation
+## 1. Системные требования
 
-### 2.1 From ZIP (Recommended)
+- **Веб-версия Claude.ai** или **приложение Claude для ПК** (macOS/Windows)
+- Аккаунт с тарифом Pro/Team (требуется функция Skills)
+- Директория `references/` доступна для чтения Claude (автоматически загружается из ZIP)
 
-1. Download `life-planning-coach-vX.Y.Z.zip` from [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
-2. Open Claude → **Settings** → **Capabilities**
-3. Enable **"Code execution and file creation"**
-4. Go to **Customize** → **Skills** → **+** → **Upload a skill**
-5. Select the downloaded ZIP file
-6. The skill appears as `/life-planning-coach` in the prompt
+---
 
-### 2.2 From Source (Developers)
+## 2. Установка
+
+### 2.1 Из ZIP (рекомендуется)
+
+1. Скачайте `life-planning-coach-vX.Y.Z.zip` из [GitHub Releases](https://github.com/azagreev/life-planning-coach/releases)
+2. Откройте Claude → **Настройки** → **Возможности**
+3. Включите **"Выполнение кода и создание файлов"**
+4. Перейдите в **Персонализация** → **Skills** → **+** → **Загрузить скилл**
+5. Выберите скачанный ZIP-файл
+6. Скилл появится как `/life-planning-coach` в промпте
+
+### 2.2 Из исходников (для разработчиков)
 
 ```bash
 git clone https://github.com/azagreev/life-planning-coach.git
 cd life-planning-coach
 bash scripts/build-skill.sh
-# Upload generated dist/life-planning-coach-v*.zip to Claude
+# Загрузите сгенерированный dist/life-planning-coach-v*.zip в Claude
 ```
 
 ---
 
-## 3. MCP Integration (Google Calendar + Drive)
+## 3. Интеграция MCP (Google Calendar + Drive)
 
-Claude supports MCP servers for external tool integration.
+Claude поддерживает MCP-серверы для интеграции внешних инструментов.
 
 ### 3.1 Google Calendar
 
-1. Open Claude desktop app → **Settings** → **Developer** → **Edit Config**
-2. Add the [Google Calendar MCP server](https://github.com/modelcontextprotocol/servers/tree/main/src/gcalendar):
+1. Откройте приложение Claude для ПК → **Настройки** → **Разработчик** → **Редактировать конфигурацию**
+2. Добавьте [MCP-сервер Google Calendar](https://github.com/modelcontextprotocol/servers/tree/main/src/gcalendar):
    ```json
    {
      "mcpServers": {
@@ -60,11 +60,11 @@ Claude supports MCP servers for external tool integration.
      }
    }
    ```
-3. Restart Claude → authorize OAuth → Calendar tool appears automatically
+3. Перезапустите Claude → авторизуйте OAuth → инструмент Calendar появится автоматически
 
 ### 3.2 Google Drive
 
-1. Install [Google Drive MCP server](https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive):
+1. Установите [MCP-сервер Google Drive](https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive):
    ```json
    {
      "mcpServers": {
@@ -79,50 +79,50 @@ Claude supports MCP servers for external tool integration.
      }
    }
    ```
-2. Same OAuth flow as Calendar
+2. Тот же процесс OAuth, что и для Calendar
 
-> **Note:** The skill auto-detects Calendar/Drive availability and adjusts coaching flows (e.g., scheduling sessions, saving session notes).
+> **Примечание:** Скилл автоматически определяет доступность Calendar/Drive и корректирует коучинговые сессии (например, планирование встреч, сохранение заметок).
 
 ---
 
-## 4. Usage
+## 4. Использование
 
-### 4.1 Starting a Session
+### 4.1 Начало сессии
 
-Type in any Claude conversation:
+Введите в любом диалоге с Claude:
 ```
 /life-planning-coach
 ```
-Or mention the skill by name:
+Или упомяните скилл по имени:
 ```
 @life-planning-coach я хочу разобраться с карьерой
 ```
 
-### 4.2 What Happens Next
+### 4.2 Что происходит далее
 
-1. **Stage 1 — Diagnostic:** Claude asks about your current situation using evidence-based methods (Wheel of Life, Values Clarification, etc.)
-2. **Stage 2 — Goal Architecture:** Together you build a structured goal with milestones and habits
-3. **Stage 3 — Execution Support:** Weekly reviews, energy checks, habit tracking
-4. **Stage 4 — Deep Work:** Triggering precision, emotion regulation, authentic goal filtering
+1. **Этап 1 — Диагностика:** Claude спрашивает о вашей текущей ситуации с помощью методов на основе доказательной практики (Колесо жизни, Уточнение ценностей и др.)
+2. **Этап 2 — Архитектура целей:** Вместе вы строите структурированную цель с вехами и привычками
+3. **Этап 3 — Поддержка выполнения:** Еженедельные обзоры, проверки энергии, отслеживание привычек
+4. **Этап 4 — Глубокая работа:** Триггерная точность, регуляция эмоций, фильтрация аутентичных целей
 
-### 4.3 Key Commands (Natural Language)
+### 4.3 Основные команды (естественный язык)
 
-| What you say | What happens |
-|-------------|--------------|
-| "Проведи диагностику" | Stage 1 — full diagnostic session |
-| "Построй план на 3 месяца" | Stage 2 — goal architecture |
-| "Как прошла неделя?" | Stage 3 — weekly review |
-| "Почему я прокрастинирую?" | Stage 4 — triggering precision analysis |
-| "Сохрани в Drive" | Saves session summary to Google Drive (if MCP connected) |
-| "Добавь в календарь" | Creates calendar event (if MCP connected) |
+| Что вы говорите | Что происходит |
+|----------------|----------------|
+| "Проведи диагностику" | Этап 1 — полная диагностическая сессия |
+| "Построй план на 3 месяца" | Этап 2 — архитектура целей |
+| "Как прошла неделя?" | Этап 3 — еженедельный обзор |
+| "Почему я прокрастинирую?" | Этап 4 — анализ триггерной точности |
+| "Сохрани в Drive" | Сохраняет сводку сессии в Google Drive (если MCP подключен) |
+| "Добавь в календарь" | Создаёт событие в календаре (если MCP подключен) |
 
 ---
 
-## 5. File Structure (Inside ZIP)
+## 5. Структура файлов (внутри ZIP)
 
 ```
 life-planning-coach/
-├── SKILL.md              # Main instructions (311 lines)
+├── SKILL.md              # Основные инструкции (311 строк)
 ├── references/
 │   ├── diagnostic_methods.md
 │   ├── communication_style.md
@@ -135,33 +135,33 @@ life-planning-coach/
 └── life-planning-dashboard.html
 ```
 
-Claude loads `references/` files on-demand via `read_file` tool.
+Claude загружает файлы из `references/` по требованию через инструмент `read_file`.
 
 ---
 
-## 6. Troubleshooting
+## 6. Устранение неполадок
 
-| Problem | Solution |
-|---------|----------|
-| "Skill not found" | Check that ZIP uploaded successfully; re-upload if needed |
-| "Cannot read references" | Ensure `references/` folder is inside ZIP root, not nested |
-| Calendar not working | Check MCP config JSON syntax; restart Claude app |
-| Skill responds generically | Start with `/life-planning-coach` to activate context |
-| Large file warnings | Normal — dashboard.html is 62 KB, refs are loaded on demand |
-
----
-
-## 7. Limitations
-
-- **Context window:** ~200K tokens (Claude 3.5 Sonnet) — references loaded on demand
-- **No persistent memory** between conversations (use Google Drive MCP to save sessions)
-- **Web-only** for now (no mobile app skill support)
+| Проблема | Решение |
+|----------|---------|
+| "Скилл не найден" | Проверьте, что ZIP успешно загружен; при необходимости загрузите повторно |
+| "Не удаётся прочитать справочники" | Убедитесь, что папка `references/` находится в корне ZIP, а не вложена |
+| Календарь не работает | Проверьте синтаксис JSON в конфигурации MCP; перезапустите приложение Claude |
+| Скилл отвечает обобщённо | Начните с `/life-planning-coach`, чтобы активировать контекст |
+| Предупреждения о большом файле | Нормально — dashboard.html занимает 62 КБ, справочники загружаются по требованию |
 
 ---
 
-## 8. Privacy & Data Handling
+## 7. Ограничения
 
-- All coaching data stays in your Claude conversation
-- Google Calendar/Drive access is OAuth-scoped (you control permissions)
-- No data is sent to third parties except via your own MCP connections
-- See full privacy notice in `SKILL.md` → `## Privacy & Data Handling`
+- **Окно контекста:** ~200K токенов (Claude 3.5 Sonnet) — справочники загружаются по требованию
+- **Нет постоянной памяти** между диалогами (используйте MCP Google Drive для сохранения сессий)
+- **Пока только веб-версия** (поддержка скиллов в мобильном приложении отсутствует)
+
+---
+
+## 8. Конфиденциальность и обработка данных
+
+- Все данные коучинга остаются в вашем диалоге с Claude
+- Доступ к Google Calendar/Drive ограничен OAuth scope (вы контролируете разрешения)
+- Данные не передаются третьим лицам, за исключением ваших собственных MCP-подключений
+- Полное уведомление о конфиденциальности см. в `SKILL.md` → `## Privacy & Data Handling`

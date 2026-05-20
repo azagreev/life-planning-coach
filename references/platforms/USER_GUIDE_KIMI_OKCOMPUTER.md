@@ -1,56 +1,56 @@
-# User Guide — Kimi OK Computer (Web Agent)
+# Руководство пользователя — Kimi OK Computer (Web Agent)
 
-> **Platform:** Kimi OK Computer (kimi.com/agent)  
-> **Format:** Single Markdown file (self-contained, inline references)  
-> **File size:** ~22 KB (815 lines)  
-> **Refs:** Fully inlined (no external files)  
-> **Memory:** `memory_space` (long-term memory within agent)  
-> **MCP:** Not supported (web platform limitation)
-
----
-
-## 1. System Requirements
-
-- **Moonshot AI account** (kimi.com)
-- Access to **OK Computer** agent feature
-- Web browser (Chrome/Firefox/Safari)
+> **Платформа:** Kimi OK Computer (kimi.com/agent)  
+> **Формат:** Один Markdown-файл (self-contained, встроенные ссылки)  
+> **Размер файла:** ~22 KB (815 строк)  
+> **Ссылки:** Полностью встроены (inlined, без внешних файлов)  
+> **Память:** `memory_space` (долгосрочная память внутри агента)  
+> **MCP:** Не поддерживается (ограничение web-платформы)
 
 ---
 
-## 2. Installation
+## 1. Системные требования
 
-### 2.1 Create Agent
+- **Аккаунт Moonshot AI** (kimi.com)
+- Доступ к функции **OK Computer** (агент)
+- Веб-браузер (Chrome/Firefox/Safari)
 
-1. Go to [kimi.com/agent](https://kimi.com/agent)
-2. Click **"Create Agent"** (创建智能体)
-3. Fill in:
+---
+
+## 2. Установка
+
+### 2.1 Создание агента
+
+1. Перейдите на [kimi.com/agent](https://kimi.com/agent)
+2. Нажмите **"Create Agent"** (创建智能体)
+3. Заполните поля:
    - **Name:** `Life Planning Coach`
    - **Description:** `Evidence-based life coaching with Wheel of Life, goal architecture, and habit tracking`
-4. In the **System Prompt** field, paste the entire content of `life-planning-coach-vX.Y.Z-kimi.md`
-5. Upload `life-planning-dashboard.html` as a **knowledge file** (if supported)
-6. Save and publish
+4. В поле **System Prompt** вставьте полное содержимое файла `life-planning-coach-vX.Y.Z-kimi.md`
+5. Загрузите `life-planning-dashboard.html` как **knowledge file** (если поддерживается)
+6. Сохраните и опубликуйте
 
-### 2.2 Use Memory Space
+### 2.2 Использование memory_space
 
-Kimi OK Computer supports `memory_space` for long-term memory:
+Kimi OK Computer поддерживает `memory_space` для долгосрочной памяти:
 
-1. In agent settings, enable **Memory** (记忆)
-2. The skill uses `KIMI_REF` protocol to store:
-   - User's Wheel of Life scores
-   - Active goals and milestones
-   - Habit tracking data
-   - Communication style preferences
-3. Memory persists across conversations within the same agent
+1. В настройках агента включите **Memory** (记忆)
+2. Скилл использует протокол `KIMI_REF` для хранения:
+   - Оценок Wheel of Life пользователя
+   - Активных целей и майлстоунов (milestones)
+   - Данных по отслеживанию привычек
+   - Предпочтений в стиле коммуникации
+3. Память сохраняется между диалогами в рамках одного агента
 
 ---
 
-## 3. No MCP — Text-Only Calendar
+## 3. Без MCP — только текстовый календарь
 
-Kimi OK Computer (web) **does not support MCP**. Calendar integration is text-only:
+Kimi OK Computer (web) **не поддерживает MCP**. Интеграция с календарём работает только в текстовом виде:
 
-### 3.1 Manual Calendar Export
+### 3.1 Ручной экспорт календаря
 
-When the coach suggests a calendar event, you receive:
+Когда коуч предлагает событие в календаре, вы получаете:
 ```markdown
 **📅 Calendar Event**
 - Title: Coaching Session — Career Review
@@ -59,84 +59,84 @@ When the coach suggests a calendar event, you receive:
 - Description: Review progress on career transition plan
 ```
 
-Copy this text and manually create the event in your Google/Apple calendar.
+Скопируйте этот текст и вручную создайте событие в вашем Google/Apple-календаре.
 
-### 3.2 No Google Drive Integration
+### 3.2 Нет интеграции с Google Drive
 
-- Session notes must be copied manually
-- Use the **Export** button in Kimi chat to save conversations
+- Заметки сессий нужно копировать вручную
+- Используйте кнопку **Export** в чате Kimi для сохранения диалогов
 
 ---
 
-## 4. Usage
+## 4. Использование
 
-### 4.1 Starting a Session
+### 4.1 Начало сессии
 
-1. Open your **Life Planning Coach** agent at kimi.com/agent
-2. Type naturally:
+1. Откройте вашего агента **Life Planning Coach** на kimi.com/agent
+2. Напишите естественно:
    ```
    Привет! Давай проведём диагностику.
    ```
-3. The agent uses inlined references to guide the session
+3. Агент использует встроенные (inlined) ссылки для управления сессией
 
-### 4.2 Coaching Flow
+### 4.2 Поток коучинга
 
-Same 4-stage evidence-based flow:
-1. **Diagnostic** — Wheel of Life, Values Clarification (inlined)
-2. **Goal Architecture** — SMART+ goals with milestones (inlined)
-3. **Execution** — Weekly reviews, habit loops (inlined)
-4. **Deep Work** — Triggering, emotion regulation (inlined)
+Тот же 4-этапный evidence-based поток:
+1. **Диагностика** — Wheel of Life, Values Clarification (встроено)
+2. **Архитектура целей** — SMART+ цели с майлстоунами (milestones) (встроено)
+3. **Исполнение** — еженедельные ревью, привычечные петли (habit loops) (встроено)
+4. **Deep Work** — триггеринг (Triggering), регуляция эмоций (встроено)
 
-### 4.3 Key Limitations vs Kimi Code CLI
+### 4.3 Ключевые ограничения по сравнению с Kimi Code CLI
 
-| Feature | OK Computer | Code CLI |
+| Функция | OK Computer | Code CLI |
 |---------|-------------|----------|
-| Refs | Inlined (~815 lines) | Directory `references/` |
-| Memory | `memory_space` (agent-level) | File system + MCP |
-| MCP | ❌ Not supported | ✅ Supported |
-| Calendar | Text-only export | Google Calendar MCP |
-| Drive | ❌ No integration | Google Drive MCP |
-| Step limit | ~10 steps (Base Chat) | High limit (terminal) |
-| Setup | Web UI (easy) | Terminal + JSON config |
+| Ссылки | Встроены (~815 строк) | Директория `references/` |
+| Память | `memory_space` (уровень агента) | Файловая система + MCP |
+| MCP | ❌ Не поддерживается | ✅ Поддерживается |
+| Календарь | Только текстовый экспорт | Google Calendar MCP |
+| Drive | ❌ Нет интеграции | Google Drive MCP |
+| Лимит шагов | ~10 шагов (Base Chat) | Высокий лимит (терминал) |
+| Установка | Web UI (просто) | Терминал + JSON-конфиг |
 
 ---
 
-## 5. Why Inlined References?
+## 5. Почему встроенные (inlined) ссылки?
 
-Kimi OK Computer does **not** support `read_file` or directory-based skills. All references are inlined:
+Kimi OK Computer **не поддерживает** `read_file` или directory-based скиллы. Все ссылки встроены:
 
-- Critical P0 refs: fully inlined with heading demotion
-- `dashboard_guide.md`: ultra-condensed to ~100 lines
-- `life-planning-dashboard.html`: uploaded as knowledge file (if UI supports)
-
----
-
-## 6. Troubleshooting
-
-| Problem | Solution |
-|---------|----------|
-| "Agent not responding" | Check Kimi service status; try refreshing |
-| Memory not saving | Ensure Memory is enabled in agent settings |
-| "Message too long" | Kimi K2.6 has ~200K context; large inlined refs fit |
-| Dashboard not rendering | Upload `life-planning-dashboard.html` as knowledge file |
-| Cannot save to Drive | Copy session text manually; use Export button |
+- Критические P0-ссылки: полностью встроены с понижением уровня заголовков
+- `dashboard_guide.md`: ультра-сжат до ~100 строк
+- `life-planning-dashboard.html`: загружен как knowledge file (если UI поддерживает)
 
 ---
 
-## 7. Limitations
+## 6. Устранение неполадок
 
-- **~10 step limit** in Base Chat mode (use Deep Research for longer sessions)
-- **No MCP** — no native Calendar/Drive integration
-- **No `read_file`** — all refs must be inlined (larger prompt)
-- **Context window:** ~200K tokens (K2.6)
-- **Mobile:** Works via mobile browser
+| Проблема | Решение |
+|----------|---------|
+| "Agent not responding" | Проверьте статус сервиса Kimi; попробуйте обновить страницу |
+| Память не сохраняется | Убедитесь, что Memory включена в настройках агента |
+| "Message too long" | Kimi K2.6 имеет ~200K контекста; большие встроенные ссылки помещаются |
+| Dashboard не отображается | Загрузите `life-planning-dashboard.html` как knowledge file |
+| Невозможно сохранить в Drive | Копируйте текст сессии вручную; используйте кнопку Export |
 
 ---
 
-## 8. Privacy & Data Handling
+## 7. Ограничения
 
-- Coaching data stored in Moonshot AI cloud
-- `memory_space` data tied to your Kimi account
-- No third-party integrations (no OAuth to Google)
-- See Moonshot AI [Privacy Policy](https://www.moonshot.cn/privacy)
-- Full privacy notice in `SKILL.md` → `## Privacy & Data Handling`
+- **~10 шагов** в режиме Base Chat (для длинных сессий используйте Deep Research)
+- **Без MCP** — нет нативной интеграции с Calendar/Drive
+- **Без `read_file`** — все ссылки должны быть встроены (больший prompt)
+- **Окно контекста:** ~200K токенов (K2.6)
+- **Мобильные устройства:** Работает через мобильный браузер
+
+---
+
+## 8. Конфиденциальность и обработка данных
+
+- Данные коучинга хранятся в облаке Moonshot AI
+- Данные `memory_space` привязаны к вашему аккаунту Kimi
+- Нет сторонних интеграций (нет OAuth с Google)
+- См. [Privacy Policy](https://www.moonshot.cn/privacy) от Moonshot AI
+- Полное уведомление о конфиденциальности в `SKILL.md` → `## Privacy & Data Handling`

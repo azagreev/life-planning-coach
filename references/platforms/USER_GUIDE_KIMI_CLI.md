@@ -1,57 +1,57 @@
-# User Guide — Kimi Code CLI (Terminal Agent)
+# Руководство пользователя — Kimi Code CLI (Terminal Agent)
 
-> **Platform:** Kimi Code CLI (terminal-based AI agent)  
-> **Format:** Directory-based skill (`SKILL.md` + `references/`)  
-> **File size:** ~90 KB (SKILL.md 28 KB + refs 62 KB)  
-> **Refs:** Loaded via `read_file` tool (directory-based)  
-> **MCP:** Supported (manual JSON configuration)  
-> **No `memory_space`** — uses file system for persistence
+> **Платформа:** Kimi Code CLI (терминальный AI-агент)
+> **Формат:** Directory-based skill (`SKILL.md` + `references/`)
+> **Размер файла:** ~90 KB (SKILL.md 28 KB + refs 62 KB)
+> **Refs:** Загружаются через инструмент `read_file` (directory-based)
+> **MCP:** Поддерживается (ручная конфигурация JSON)
+> **Нет `memory_space`** — для персистентности используется файловая система
 
 ---
 
-## 1. System Requirements
+## 1. Системные требования
 
-- **Kimi Code CLI** installed (`pip install kimi-cli` or via package manager)
-- Terminal with Unicode support
+- Установленный **Kimi Code CLI** (`pip install kimi-cli` или через package manager)
+- Терминал с поддержкой Unicode
 - Python 3.10+
-- Node.js (for MCP servers via npx)
+- Node.js (для MCP-серверов через npx)
 
-### 1.1 Install Kimi Code CLI
+### 1.1 Установка Kimi Code CLI
 
 ```bash
 pip install kimi-cli
-# Or via uv:
+# Или через uv:
 uv tool install kimi-cli
 ```
 
-Verify installation:
+Проверка установки:
 ```bash
 kimi --version
 ```
 
 ---
 
-## 2. Installation
+## 2. Установка
 
-### 2.1 Create Skill Directory
+### 2.1 Создание директории скилла
 
 ```bash
 mkdir -p ~/.kimi/skills/life-planning-coach
 cd ~/.kimi/skills/life-planning-coach
 ```
 
-### 2.2 Download Files
+### 2.2 Загрузка файлов
 
-From GitHub Releases:
+Из GitHub Releases:
 ```bash
-# Download and extract the kimi-cli directory
+# Загрузите и распакуйте директорию kimi-cli
 wget https://github.com/azagreev/life-planning-coach/releases/download/vX.Y.Z/life-planning-coach-vX.Y.Z-kimi-cli.zip
 unzip life-planning-coach-vX.Y.Z-kimi-cli.zip
-# Or copy from local build:
+# Или скопируйте из локальной сборки:
 cp -r /path/to/platforms/kimi-cli/* ~/.kimi/skills/life-planning-coach/
 ```
 
-Expected structure:
+Ожидаемая структура:
 ```
 ~/.kimi/skills/life-planning-coach/
 ├── SKILL.md
@@ -67,28 +67,28 @@ Expected structure:
 └── life-planning-dashboard.html
 ```
 
-### 2.3 Verify Setup
+### 2.3 Проверка установки
 
 ```bash
 kimi skill list
-# Should show: life-planning-coach
+# Должен отображаться: life-planning-coach
 ```
 
 ---
 
-## 3. MCP Configuration (Manual JSON)
+## 3. Конфигурация MCP (ручной JSON)
 
-> ⚠️ **Warning:** Kimi Code CLI MCP setup is "super non-friendly" — requires manual JSON editing. Unlike Claude's 1-click install, you must edit config files directly.
+> ⚠️ **Предупреждение:** Настройка MCP в Kimi Code CLI — процесс "очень недружелюбный": требуется ручное редактирование JSON-файлов. В отличие от однокликовой установки в Claude, здесь необходимо напрямую редактировать конфигурационные файлы.
 
-### 3.1 Locate Config Directory
+### 3.1 Определение директории конфигурации
 
 ```bash
-ls ~/.config/kimi/mcp/  # or ~/.kimi/mcp/
+ls ~/.config/kimi/mcp/  # или ~/.kimi/mcp/
 ```
 
 ### 3.2 Google Calendar MCP
 
-Create `~/.config/kimi/mcp/google-calendar.json`:
+Создайте файл `~/.config/kimi/mcp/google-calendar.json`:
 
 ```json
 {
@@ -107,7 +107,7 @@ Create `~/.config/kimi/mcp/google-calendar.json`:
 
 ### 3.3 Google Drive MCP
 
-Create `~/.config/kimi/mcp/google-drive.json`:
+Создайте файл `~/.config/kimi/mcp/google-drive.json`:
 
 ```json
 {
@@ -124,60 +124,60 @@ Create `~/.config/kimi/mcp/google-drive.json`:
 }
 ```
 
-### 3.4 Restart Kimi CLI
+### 3.4 Перезапуск Kimi CLI
 
 ```bash
 kimi mcp reload
-# Or restart the kimi CLI session
+# Или перезапустите сессию kimi CLI
 ```
 
-### 3.5 Verify MCP Tools
+### 3.5 Проверка MCP-инструментов
 
 ```bash
 kimi mcp list
-# Should show: google-calendar, google-drive
+# Должны отображаться: google-calendar, google-drive
 ```
 
-### 3.6 Getting Google OAuth Credentials
+### 3.6 Получение Google OAuth Credentials
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a project → Enable **Google Calendar API** and **Google Drive API**
-3. Go to **Credentials** → **Create OAuth 2.0 Client ID** (Desktop app)
-4. Copy `Client ID` and `Client Secret` to the JSON configs above
-5. On first use, Kimi CLI will prompt for OAuth authorization
+1. Перейдите в [Google Cloud Console](https://console.cloud.google.com/)
+2. Создайте проект → Включите **Google Calendar API** и **Google Drive API**
+3. Перейдите в **Credentials** → **Create OAuth 2.0 Client ID** (Desktop app)
+4. Скопируйте `Client ID` и `Client Secret` в JSON-конфиги выше
+5. При первом использовании Kimi CLI запросит OAuth-авторизацию
 
 ---
 
-## 4. Usage
+## 4. Использование
 
-### 4.1 Starting a Session
+### 4.1 Запуск сессии
 
 ```bash
 kimi skill use life-planning-coach
 ```
 
-Or in an existing Kimi CLI session:
+Или в существующей сессии Kimi CLI:
 ```
 @life-planning-coach проведи диагностику
 ```
 
-### 4.2 Natural Language Commands
+### 4.2 Команды на естественном языке
 
-| What you type | What happens |
-|--------------|--------------|
-| `Проведи диагностику` | Stage 1 — full diagnostic |
-| `Построй цель на 6 месяцев` | Stage 2 — goal architecture |
-| `Как прошла неделя?` | Stage 3 — weekly review |
-| `Сохрани в Drive` | Saves to Google Drive (if MCP configured) |
-| `Добавь в календарь` | Creates calendar event (if MCP configured) |
-| `Покажи дашборд` | Opens `life-planning-dashboard.html` |
+| Что вы вводите | Что происходит |
+|---------------|----------------|
+| `Проведи диагностику` | Stage 1 — полная диагностика |
+| `Построй цель на 6 месяцев` | Stage 2 — архитектура целей |
+| `Как прошла неделя?` | Stage 3 — еженедельное ревью |
+| `Сохрани в Drive` | Сохраняет в Google Drive (если MCP настроен) |
+| `Добавь в календарь` | Создаёт событие в календаре (если MCP настроен) |
+| `Покажи дашборд` | Открывает `life-planning-dashboard.html` |
 
-### 4.3 File System Persistence
+### 4.3 Персистентность через файловую систему
 
-Unlike Kimi OK Computer's `memory_space`, Kimi CLI uses the file system:
+В отличие от `memory_space` в Kimi OK Computer, Kimi CLI использует файловую систему:
 
 ```bash
-# The coach can create local files:
+# Коуч может создавать локальные файлы:
 ~/.kimi/skills/life-planning-coach/sessions/
 ├── session-2024-01-15.md
 ├── wheel-of-life-latest.json
@@ -186,48 +186,48 @@ Unlike Kimi OK Computer's `memory_space`, Kimi CLI uses the file system:
 
 ---
 
-## 5. Key Differences from Kimi OK Computer
+## 5. Ключевые отличия от Kimi OK Computer
 
-| Feature | Code CLI | OK Computer |
-|---------|----------|-------------|
-| Refs | `read_file` (directory) | Inlined (single file) |
-| MCP | ✅ Supported (manual config) | ❌ Not supported |
-| Memory | File system | `memory_space` |
-| Calendar | Google Calendar MCP | Text-only export |
-| Drive | Google Drive MCP | ❌ No integration |
-| Step limit | High (terminal) | ~10 steps (Base Chat) |
-| Setup | Terminal + JSON | Web UI (easy) |
-| Environment | Local file system | Cloud-only |
-
----
-
-## 6. Troubleshooting
-
-| Problem | Solution |
-|---------|----------|
-| "Skill not found" | Check `~/.kimi/skills/` path; run `kimi skill list` |
-| `read_file` fails | Ensure `references/` directory exists alongside `SKILL.md` |
-| MCP not loading | Check JSON syntax; verify `npx` is installed; check env vars |
-| OAuth errors | Regenerate credentials in Google Cloud Console |
-| "Command not found" | Ensure `kimi` is in PATH: `which kimi` |
-| Large output cut off | Kimi CLI has high token limits; use `kimi --max-tokens` if needed |
+| Фича | Code CLI | OK Computer |
+|------|----------|-------------|
+| Refs | `read_file` (директория) | Inlined (один файл) |
+| MCP | ✅ Поддерживается (ручная конфигурация) | ❌ Не поддерживается |
+| Память | Файловая система | `memory_space` |
+| Календарь | Google Calendar MCP | Только текстовый экспорт |
+| Drive | Google Drive MCP | ❌ Нет интеграции |
+| Лимит шагов | Высокий (терминал) | ~10 шагов (Base Chat) |
+| Установка | Терминал + JSON | Web UI (просто) |
+| Окружение | Локальная файловая система | Только облако |
 
 ---
 
-## 7. Limitations
+## 6. Устранение неполадок (Troubleshooting)
 
-- **Manual MCP setup** — no GUI for configuration
-- **No `memory_space`** — persistence via file system only
-- **Requires local setup** — not cloud-based like OK Computer
-- **Context window:** Depends on model (K2.6 ~200K tokens)
-- **Terminal UI** — no rich HTML rendering (dashboard opens in browser)
+| Проблема | Решение |
+|----------|---------|
+| "Skill not found" | Проверьте путь `~/.kimi/skills/`; выполните `kimi skill list` |
+| `read_file` fails | Убедитесь, что директория `references/` существует рядом с `SKILL.md` |
+| MCP не загружается | Проверьте синтаксис JSON; убедитесь, что `npx` установлен; проверьте env vars |
+| Ошибки OAuth | Пересоздайте credentials в Google Cloud Console |
+| "Command not found" | Убедитесь, что `kimi` есть в PATH: `which kimi` |
+| Вывод обрезается | У Kimi CLI высокие лимиты токенов; используйте `kimi --max-tokens` при необходимости |
 
 ---
 
-## 8. Privacy & Data Handling
+## 7. Ограничения
 
-- Coaching data stored locally on your machine
-- Google Calendar/Drive access via your own OAuth credentials
-- No data sent to Moonshot AI beyond conversation content
-- Full control over MCP servers and their permissions
-- See full privacy notice in `SKILL.md` → `## Privacy & Data Handling`
+- **Ручная настройка MCP** — нет GUI для конфигурации
+- **Нет `memory_space`** — персистентность только через файловую систему
+- **Требуется локальная установка** — не облачное решение, как OK Computer
+- **Context window:** Зависит от модели (K2.6 ~200K tokens)
+- **Terminal UI** — нет rich HTML rendering (дашборд открывается в браузере)
+
+---
+
+## 8. Приватность и обработка данных
+
+- Коучинговые данные хранятся локально на вашей машине
+- Доступ к Google Calendar/Drive осуществляется через ваши собственные OAuth credentials
+- Никакие данные не отправляются в Moonshot AI, кроме содержимого разговора
+- Полный контроль над MCP-серверами и их разрешениями
+- Полное уведомление о приватности см. в `SKILL.md` → `## Privacy & Data Handling`
