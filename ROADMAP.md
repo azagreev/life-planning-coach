@@ -11,7 +11,6 @@
 
 | Версия | Статус | Ожидаемая дата | Ключевая фича |
 |--------|--------|----------------|---------------|
-| v0.14.0 | Released | 2026-05-20 | Inclusive Coaching (ADHD Mode, Time Structure for Unemployed, Elder Homebound Mode, Planning Friction Audit) |
 
 ---
 
