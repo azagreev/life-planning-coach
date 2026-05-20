@@ -153,6 +153,31 @@
   - Тесты: timezone edge cases, invalid input rejection, prompt injection resistance
 - **Риски:** Over-engineering для text-only skill; platform safety layers могут быть достаточны для prompt injection; timezone — low impact без persistent storage
 
+### UX Hardening — Tone of Voice, Cognitive Load, Empty States
+- **Описание:** Аудит UX скилла по 3 направлениям: тональность общения, когнитивная нагрузка, empty states. Цель — сделать скилл более человечным, менее утомительным и с понятными entry points.
+- **4 проблемы (приоритет):**
+
+| # | Проблема | Уровень | Состояние |
+|---|----------|---------|-----------|
+| 1 | **Нет Tone of Voice Guide** — нет consistency checklist для системных сообщений; скилл может звучать как "строгий ментор" в одном месте и "эмоциональный друг" в другом | 🟡 Medium | `communication_style.md` есть, но нет explicit tone guide с примерами фраз и запрещённых слов |
+| 2 | **Нет "только название" пути** — SMART+ требует Specific + Measurable + Achievable + Relevant + Time-bound + habits + checkpoints сразу | 🟡 Medium | Нет progressive disclosure в форме цели; нет "quick add" режима |
+| 3 | **Нет Empty State Design** — 0 целей, 0 привычек, 0 записей в дневнике | 🟡 Medium | Нет красивых шаблонов entry points ("С чего начнём? [Карьера] [Здоровье] [Хобби]") |
+| 4 | **Нет tone monitoring** — тесты на tone consistency во всех platform-файлах | 🟢 Low | Есть тесты на calendar tone, но нет системного tone check |
+
+- **Детали по направлениям:**
+  - **Tone of Voice:** Есть `references/communication_style.md` (365 строк, Big Five × TTM × MI), но нет единого tone guide с: (а) примерами фраз для каждого tone, (б) списком запрещённых слов ("надо", "должен", "просто"), (в) tone consistency checklist, (г) empty state messages с тёплым тоном.
+  - **Cognitive Load:** Phase 0 + Track A требуют Emotional Landing (4 шага) + Wheel of Life (11 оценок) + Values (Top-5 → Top-3). Это 13+ полей ввода. Нет "лёгкого" пути: "Назовите одну цель — остальное добавим позже".
+  - **Empty States:** Нет explicit handling для: (а) первого входа (кроме Phase 0), (б) 0 целей после диагностики, (в) 0 привычек, (г) 0 записей в дневнике, (д) 0 прогресса. Нет "красивых шаблонов" вроде: "С чего начнём? Выберите сферу или расскажите, что важно прямо сейчас."
+- **Триггер:** Внешнее UX-ревью
+- **Статус:** 💡 Идея (аудит завершён, ждёт plan mode approval)
+- **Источник:** UX-аудит, конкурентный анализ onboarding
+- **Артефакты:**
+  - `references/tone_of_voice_guide.md` — tone guide с примерами фраз и запрещёнными словами
+  - `references/empty_states.md` — empty state messages для всех сценариев
+  - `SKILL.master.md` — добавить "quick add" режим для целей (только название)
+  - Тесты: tone consistency check, forbidden words detection
+- **Риски:** Избыточная мягкость может снизить credibility; empty states могут показаться навязчивыми; tone guide может быть слишком rigid для adaptive style
+
 ---
 
 ## Техдолг
