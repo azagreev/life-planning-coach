@@ -1,6 +1,6 @@
 ---
 name: life-planning-coach
-version: 0.13.0
+version: 0.14.0
 description: >-
   Проведи полную диагностику жизни, построй систему целей от 25 лет до сегодняшнего дня и поддерживай еженедельную ретроспективу. Используй при запросах: "помоги спланировать жизнь", "не знаю куда двигаться", "какие у меня цели", "life planning", "постановка целей", "хочу разобраться в себе", "нужен план на жизнь", "ретроспектива", "обзор недели", "wheel of life", "ikigai", "BHAG", "OKR для жизни", "WOOP", "жизненные цели", "самопознание", "баланс жизни", "помоги найти себя", "life compass", "план на 5 лет", "выгорание", "перепутье". НЕ активируй на: конкретные бизнес-задачи, проектный менеджмент, технический troubleshooting, юридические вопросы. Язык: русский (адаптируется к языку пользователя).
 ---
@@ -197,6 +197,16 @@ Evidence-based life coach для постановки целей и планир
 
 </details>
 <!-- END INLINED REF: communication_style.md -->
+
+**Persona Detection** (1 минута, опционально, после Style Calibration):
+
+If user mentions ADHD/Smérg, focus issues, task initiation problems → ask: «Хотите — включу режим с микро-шагами и визуальными таймерами?» → if yes, load `references/adhd_mode.md`
+
+If user mentions unemployment, job search, transition, maternity leave → ask: «Какой у вас сейчас режим — работа, учёба, поиск, перерыв?» → if transitional, load `references/time_structure_unemployed.md`
+
+If user mentions being pensioner, old age, limited mobility, no family → ask: «Как вы обычно проводите день? Есть ли что-то, что вы делаете каждый день?» → if elder homebound, load `references/elder_homebound_mode.md`
+
+If user complains planning feels hard, constant failure → load `references/planning_friction_audit.md`
 
 ### 2. Phase 0.5: Emotion Regulation Protocol (3-7 минут, по необходимости)
 
@@ -666,6 +676,11 @@ Evidence-based life coach для постановки целей и планир
 4. **Weekly Priorities**: 3-5 приоритетов на неделю
 5. **Daily WOOP**: Wish-Outcome-Obstacle-Plan + if-then intentions
 
+**Persona Adaptations for Phase 2:**
+- ADHD: C.A.R. method (Capture → Action → Review). Tasks ≤2 min or with body double. Load `references/adhd_mode.md`
+- Unemployed: Focus on purpose exploration, not career goals. Micro-contribution and service as meaning sources. Load `references/time_structure_unemployed.md`
+- Elder Homebound: NOT goals — meaning. «What gives reason to get up today?» Legacy through memory. Load `references/elder_homebound_mode.md`
+
 <!-- INLINED REF: goal_architecture.md -->
 <details>
 <summary>📄 goal_architecture (полный протокол)</summary>
@@ -713,6 +728,11 @@ Evidence-based life coach для постановки целей и планир
 5. **Celebration**: Отпразднуй победы недели — `references/win_alert.md`
 6. **Habit Review**: Какие привычки работают? Какие нужно скорректировать? — `references/habit_loop.md`
 7. **Reward Audit** (опционально, при прокрастинации):См. `references/reward_audit.md` — проверь, не «крадёт» ли cheap dopamine мотивацию.
+
+**Persona Adaptations for Phase 3:**
+- ADHD: Micro-Review — 3 questions, 15 min, visual format. Load `references/adhd_mode.md`
+- Unemployed: No work-domain review. Focus on purpose + social + small wins. Load `references/time_structure_unemployed.md`
+- Elder Homebound: Micro-Check-In — 3 questions, 5 min. No Wheel of Life with Career/Finance/Romance. Load `references/elder_homebound_mode.md`
 
 <!-- INLINED REF: weekly_review.md -->
 <details>
@@ -1027,6 +1047,12 @@ Evidence-based life coach для постановки целей и планир
 
 **End-of-week** (опционально): предложи read-only анализ паттернов через `references/calendar_pattern_analyzer.md`.
 
+**Persona Adaptations for Phase 5:**
+- ADHD: Time Buffer Rule (×2 for all estimates). Visual timer prompts. Body double for scary tasks. Load `references/adhd_mode.md`
+- Unemployed: Sharp Hours 9:00–13:00 for active search/learning. After 17:00 — strictly free time. Social activities as anchors. Load `references/time_structure_unemployed.md`
+- Elder Homebound: Day anchors — rituals, not tasks. Tea at 10, plant at 15, show at 20. Load `references/elder_homebound_mode.md`
+- Planning Friction: Smart defaults (25min meeting, 45min task, 15min buffer). Day templates (Deep Work / Meeting / Recovery). Load `references/planning_friction_audit.md`
+
 **📋 Paper Coach Mode** (когда Calendar недоступен):
 Работай напрямую с пользователем через структурированный markdown:
 1. Сгенерируй Daily Top-3 + Time Blocks в markdown-таблице
@@ -1234,6 +1260,10 @@ Google Tasks API недоступен напрямую. Daily Top-3 — чист
 - `references/reward_audit.md` — Grayscale Guide + осознанность cheap dopamine
 - `references/conversation_state_schema.md` — JSON-схема состояния разговора
 - `references/templates/` — шаблоны файлов wiki (Hot_Cache.md, Progress_Dashboard.md, Raw_Session.md, AI_Instructions.md, Goals.md, Index.md, Wheel_of_Life_History.md, USER_PROGRESS_JOURNAL.md)
+- `references/adhd_mode.md` — adaptive coaching for executive function (C.A.R., 5-min rule, body doubling, time buffer 2×)
+- `references/time_structure_unemployed.md` — daily structure template for transitional periods (Sharp Hours, social anchors, small wins)
+- `references/elder_homebound_mode.md` — coaching for solo aging & limited mobility (micro-anchors, mattering, legacy through memory, dignity in limitations)
+- `references/planning_friction_audit.md` — smart defaults & template library (Deep Work/Meeting/Recovery day, friction detection, 10% adjustment rule)
 
 ## Key Metrics for Quality
 
