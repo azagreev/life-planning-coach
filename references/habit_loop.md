@@ -2,7 +2,7 @@
 
 > **When to use:** Пользователь переходит от целей к ежедневным действиям, просит помочь с дисциплиной, хочет выработать привычку, бросить вредную привычку, или проходит Weekly Review и нуждается в execution layer.
 > **Duration:** 10–15 минут на первую привычку, +5 мин на каждую следующую
-> **Integration:** Stage 2 (Goal Architecture) → Stage 5 (Execution). Связь с WOOP (if-then), Calendar (time blocks), Energy Scheduling (когда энергия высокая — новые привычки), Recovery Protocol (пропуски — данные, не провал), Habit Stack Builder (прогрессивное построение ритуала планирования).
+> **Integration:** Stage 2 (Goal Architecture) → Stage 5 (Execution). Связь с WOOP (if-then), Calendar (time blocks), Energy Scheduling (когда энергия высокая — новые привычки), Recovery Protocol (пропуски — данные, не провал), [`references/habit_stack_builder.md`](habit_stack_builder.md) (прогрессивное построение ритуала планирования).
 
 ---
 
@@ -204,7 +204,7 @@ Goal (BHAG/OKR) → Weekly Priority → WOOP Action → Habit Loop → Daily Exe
 | **Calendar** | time blocks = protected context for habits |
 | **Energy Scheduling** | high energy → new habits; low energy → maintain existing |
 | **Recovery Protocol** | missed habit = data, not failure; check MAP |
-| **Habit Stack Builder** | прогрессивное построение ритуала планирования |
+| **Habit Stack Builder** | [`references/habit_stack_builder.md`](habit_stack_builder.md) — прогрессивное построение ритуала планирования |
 | **Win Alert** | celebrate tiny habits, not just big wins |
 
 ### 6.3. When to Use Habit Loop vs WOOP
@@ -253,4 +253,4 @@ Goal (BHAG/OKR) → Weekly Priority → WOOP Action → Habit Loop → Daily Exe
 | Identity-Based Habits | Clear (2018) | Identity claims outperform outcome goals for persistence |
 | Friction Reduction | Wood (2019) | High self-control = low-friction environments, not willpower |
 | Keystone Habits | Duhigg (2012) | Certain habits trigger cascading positive changes |
-| Habit Stack Builder | Habit Stack Builder module | Progressive ritual building for planning as a habit (2→15 min escalation)
+| Habit Stack Builder | [`references/habit_stack_builder.md`](habit_stack_builder.md) | Progressive ritual building for planning as a habit (2→15 min escalation)

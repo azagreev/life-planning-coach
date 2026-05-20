@@ -904,7 +904,7 @@ Evidence-based life coach для постановки целей и планир
 ### Habit Loop Framework
 > **When to use:** Пользователь переходит от целей к ежедневным действиям, просит помочь с дисциплиной, хочет выработать привычку, бросить вредную привычку, или проходит Weekly Review и нуждается в execution layer.
 > **Duration:** 10–15 минут на первую привычку, +5 мин на каждую следующую
-> **Integration:** Stage 2 (Goal Architecture) → Stage 5 (Execution). Связь с WOOP (if-then), Calendar (time blocks), Energy Scheduling (когда энергия высокая — новые привычки), Recovery Protocol (пропуски — данные, не провал), Habit Stack Builder (прогрессивное построение ритуала планирования).
+> **Integration:** Stage 2 (Goal Architecture) → Stage 5 (Execution). Связь с WOOP (if-then), Calendar (time blocks), Energy Scheduling (когда энергия высокая — новые привычки), Recovery Protocol (пропуски — данные, не провал), [`references/habit_stack_builder.md`](habit_stack_builder.md) (прогрессивное построение ритуала планирования).
 ---
 #### Core Principle
 Привычки — это не про силу воли. Это про контекст, повторение и эмоциональное закрепление.
