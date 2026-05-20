@@ -76,7 +76,7 @@ class TestEnergySchedulingUpdated:
 
     def test_size_still_reasonable(self, content):
         lines = content.splitlines()
-        assert len(lines) <= 100, f"energy_scheduling.md grew too much: {len(lines)} lines"
+        assert len(lines) <= 120, f"energy_scheduling.md grew too much: {len(lines)} lines"
 
 
 class TestDiagnosticMethodsUpdated:

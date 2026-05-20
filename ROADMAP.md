@@ -11,6 +11,7 @@
 
 | Версия | Статус | Ожидаемая дата | Ключевая фича |
 |--------|--------|----------------|---------------|
+| v0.14.0 | Planned | TBD | Inclusive Coaching (ADHD Mode, Time Structure for Unemployed) |
 
 ---
 
@@ -139,11 +140,11 @@
 > **Цель:** Защитить пользователя от перегрузки и оптимизировать расписание через данные.
 
 ### P0
-- [ ] **`references/workload_warning.md`** — суммирование запланированного времени, threshold (default 6ч), warning message
-- [ ] **Обновить `references/energy_scheduling.md`** — self-reported 1–10 scale, pattern learning, smart suggestions
+- [x] **`references/workload_warning.md`** — суммирование запланированного времени, threshold (default 6ч), warning message
+- [x] **Обновить `references/energy_scheduling.md`** — self-reported 1–10 scale, pattern learning, smart suggestions
 
 ### P1
-- [ ] **`references/calendar_pattern_analyzer.md`** — meeting load %, chronotype alignment, boundary violations, recovery deficit, trends (MCP read-only)
+- [x] **`references/calendar_pattern_analyzer.md`** — meeting load %, chronotype alignment, boundary violations, recovery deficit, trends (MCP read-only)
 
 ---
 

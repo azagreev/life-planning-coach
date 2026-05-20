@@ -568,6 +568,8 @@ Evidence-based life coach для постановки целей и планир
 **Prerequisites**: Zero setup. **Kimi has no native calendar integration.** Use text-only planning with explicit time anchors. Recommend user copy events to their own calendar app (Google Calendar, Apple Calendar, Outlook). Format: "Понедельник 19:00 — Weekly Review" — user copies manually.
 
 
+**Pre-flight**: проверь загрузку через `references/workload_warning.md` (Green/Yellow/Red) перед созданием событий.
+
 **Что автоматически попадает в календарь** (execution layer):
 - BHAG → Годовая веха-напоминание
 - Life Themes → Квартальная review
@@ -648,13 +650,16 @@ Evidence-based life coach для постановки целей и планир
 
 **End-of-day:** предложи `references/shutdown_ritual.md` — 5-шаговый ритуал завершения дня (10–15 мин, permission-based).
 
-**Учитывай энергию** при планировании —См. `references/energy_scheduling.md`.
+**Учитывай энергию** — запроси самооценку 1–10 иСм. `references/energy_scheduling.md`.
+
+**End-of-week** (опционально): предложи read-only анализ паттернов через `references/calendar_pattern_analyzer.md`.
 
 **📋 Paper Coach Mode** (когда Calendar недоступен):
 Работай напрямую с пользователем через структурированный markdown:
 1. Сгенерируй Daily Top-3 + Time Blocks в markdown-таблице
-2. Предложи скопировать в заметки или распечатать
-3. Не обещай persistence между сессиями — каждый чат начинается с чистого листа
+2. Проверь загрузку: суммируй оценки времени → сверь с порогом из `references/workload_warning.md`
+3. Предложи скопировать в заметки или распечатать
+4. Не обещай persistence между сессиями — каждый чат начинается с чистого листа
 
 **Фраза для пользователя:**
 «В этом режиме я не создаю события автоматически — вот ваш план в текстовом виде. Скопируйте в свой календарь или заметки. Research показывает: люди, которые записывают планы от руки, запоминают их на 42% лучше.»
@@ -820,7 +825,9 @@ Evidence-based life coach для постановки целей и планир
 - `references/science_backing.md` — научная валидация (эффект sizes, meta-analyses)
 - `references/dashboard_guide.md` — руководство по интерактивному дашборду
 - `references/calendar_constants.md` — константы календаря (COLOR_MAP, presets, failure modes)
-- `references/energy_scheduling.md` — планирование с учётом энергии (3 уровня, colorId mapping)
+- `references/energy_scheduling.md` — планирование с учётом энергии (3 уровня, colorId mapping, самооценка 1–10)
+- `references/workload_warning.md` — предполётная проверка загрузки (Green/Yellow/Red)
+- `references/calendar_pattern_analyzer.md` — read-only анализ паттернов календаря (недельные тренды)
 - `references/chronotype_native_planning.md` — хронотип-нативное планирование (3 профиля, Peak-Trough-Rebound)
 - `references/habit_stack_builder.md` — прогрессивное построение ритуала планирования (Two-Day Rule, habit anchoring)
 - `references/shutdown_ritual.md` — 5-шаговый ритуал завершения дня (psychological detachment)
