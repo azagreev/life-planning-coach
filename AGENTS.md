@@ -121,11 +121,16 @@ bash scripts/release.sh X.Y.Z
 ```
 RICE = (Reach × Impact × Confidence) / Effort
 
-Reach:      % целевой аудитории (0-100)
+Reach:      % целевой аудитории (0-100) [GUESS]
 Impact:     0.25 minimal → 3.0 massive
 Confidence: 0-100% на основе evidence
-Effort:     person-days (фичи), hours (баги)
+Effort:     AI Sessions (XS/S/M/L/XL/XXL) + Context Pressure
 ```
+
+**Effort v1.1 (AI Sessions):** Разработчик — AI-агент. Person-days — фикция.
+Единица измерения: Estimated AI Sessions (EAS) + Context Pressure (Low/Med/High/Crit).
+Шкала: XS=0.5, S=1, M=2, L=3, XL=5, XXL=8.
+Подробнее: `references/research/rice_methodology.md` §4.
 
 **Интерпретация:**
 
