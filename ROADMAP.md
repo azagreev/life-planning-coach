@@ -97,11 +97,11 @@
 > **Цель:** Перевести календарную интеграцию в функциональность + персонализировать время планирования под хронотип.
 
 ### P0 (Блокирует релиз)
-- [ ] **`references/calendar_intelligence.md`** — Pre-flight protocol: `list_events` → density check → conflict detection → smart proposal → `create_event`
+- [x] **`references/calendar_intelligence.md`** — Pre-flight protocol: `list_events` → density check → conflict detection → smart proposal → `create_event`
 - [x] **`references/chronotype_native_planning.md`** — 3 профиля (Жаворонок/Промежуточный/Сова), Peak-Trough-Rebound heuristics, bedtime to-do list
 - [x] **Обновить 4 `platforms/*/SKILL.md`** — Phase 5: проверка календаря перед созданием события; Phase 0/1: хронотип-определение
-- [ ] **Исправить `platforms/kimi/SKILL.md`** — удалить несостоятельный retry protocol, заменить на честный text-only flow
-- [ ] **Исправить dangling references** — `calendar_constants.md` + `calendar_integration.md` в `P0_REFS` для Grok/Kimi или убрать ссылки
+- [x] **Исправить `platforms/kimi/SKILL.md`** — удалить несостоятельный retry protocol, заменить на честный text-only flow (Paper Coach Mode)
+- [x] **Исправить dangling references** — `calendar_constants.md` добавлен в `P0_REFS`, platform-neutral wording
 
 ### P1 (Обязательно в релиз)
 - [ ] **Функциональные тесты календаря** — Free Slot Algorithm, event patterns, conflict detection, JSON validation для COLOR_MAP/REMINDER_PRESETS/RRULE_PRESETS
