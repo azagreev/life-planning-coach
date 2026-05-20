@@ -300,3 +300,77 @@
 - **Статус:** 💡 Идея
 - **Источник:** Техдолг — устранение дублирования после фикса root cause (RELEASE_NOTES_v0.6.1.md в корне)
 - **Связанные файлы:** `CHANGELOG.md`, `scripts/release.sh`, `references/archive/RELEASE_NOTES*.md`
+
+---
+
+## R&D: Token Optimization Audit
+
+> **RICE:** Reach 100% × Impact 1.5 × Confidence 40% / Effort 10 дней = **6.0** (Medium Priority)
+> **Статус:** 🔬 Research (запланировано, не начато)
+> **Триггер:** Перед v0.13.0 или когда пользователь жалуется на скорость/стоимость
+
+### Проблема
+
+- Русский язык ~1.5-2x токенов на символ vs английский
+- Reference-файлы большие (habit_stack_builder.md = 115 lines)
+- Каждая сессия загружает весь контекст skill + references
+- Пользователь платит за токены (или ждёт дольше)
+
+### Гипотезы для исследования
+
+| # | Гипотеза | Как проверить |
+|---|----------|---------------|
+| 1 | Английские термины в русском тексте увеличивают token count из-за непоследовательной токенизации | Сравнить token count "Peak-Trough-Rebound" vs "Пик-Спад-Возврат" |
+| 2 | Progressive disclosure через `references/` работает неэффективно — модель загружает всё | Замерить: сколько токенов уходит на "прочитать reference" vs "ответ из памяти" |
+| 3 | Few-shot examples в SKILL.md можно сжать без потери качества | A/B: полные examples vs compressed summaries |
+| 4 | Структурированные списки vs проза — разница в токенах | Замерить таблицы vs параграфы |
+| 5 | Дублирование контента между SKILL.md и references/ | Найти overlap, сжать |
+| 6 | YAML frontmatter на английском + instructions на русском = лишние токены на code-switching | Сравнить monolingual vs bilingual prompt token count |
+
+### Методология
+
+```
+1. Baseline: Замерить токены на типичную сессию (prompt + completion)
+2. Variation: Изменить один параметр (язык, структура, compression)
+3. Measure: Токены + качество ответа (human evaluation 1-5)
+4. Iterate: Лучший вариант → новый baseline
+```
+
+### Quick Wins (ожидаемые)
+
+- [ ] Найти и удалить дублирование между SKILL.md и references/
+- [ ] Сжать длинные таблицы в компактные списки
+- [ ] Заменить английские термины на русские где возможно без потери clarity
+- [ ] Оценить эффект от YAML frontmatter compression
+
+### Deliverables
+
+- `references/research/token_audit_report.md` — findings + recommendations
+- PR с оптимизациями (если найдены значимые savings)
+- Обновление AGENTS.md — guidelines для token-efficient writing
+
+---
+
+## Localization: Cross-Lingual Consistency
+
+> **RICE:** Reach 100% × Impact 1.0 × Confidence 70% / Effort 2 дня = **35.0** (Quick Win)
+> **Статус:** 🔍 Идентифицирована проблема, решение в процессе
+> **Триггер:** Обнаружена пользователем 2026-05-20
+
+### Проблема
+
+- `README.md` + структура — английский
+- `SKILL.md` frontmatter (`name`, `version`, `description`) — английский
+- `SKILL.md` instructions + `references/` — русский
+- Mixed context может вызывать cross-lingual галлюцинации у Kimi и других моделей
+
+### Уже сделано
+
+- [x] Исправлено: "Яворонок" → "Жаворонок" (10 вхождений, 6 файлов)
+
+### TODO
+
+- [ ] Зафиксировать языковую политику в `AGENTS.md`
+- [ ] Протестировать cross-lingual retrieval accuracy (5 тестов)
+- [ ] Оценить, нужно ли перевести README.md на русский или наоборот — унифицировать
+- [ ] Проверить platform-файлы (Grok/Kimi) на code-switching артефакты

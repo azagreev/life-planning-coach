@@ -98,7 +98,7 @@
 
 ### P0 (Блокирует релиз)
 - [ ] **`references/calendar_intelligence.md`** — Pre-flight protocol: `list_events` → density check → conflict detection → smart proposal → `create_event`
-- [ ] **`references/chronotype_native_planning.md`** — 3 профиля (Яворонок/Промежуточный/Сова), Peak-Trough-Rebound heuristics, bedtime to-do list
+- [ ] **`references/chronotype_native_planning.md`** — 3 профиля (Жаворонок/Промежуточный/Сова), Peak-Trough-Rebound heuristics, bedtime to-do list
 - [ ] **Обновить 4 `platforms/*/SKILL.md`** — Phase 5: проверка календаря перед созданием события; Phase 0/1: хронотип-определение
 - [ ] **Исправить `platforms/kimi/SKILL.md`** — удалить несостоятельный retry protocol, заменить на честный text-only flow
 - [ ] **Исправить dangling references** — `calendar_constants.md` + `calendar_integration.md` в `P0_REFS` для Grok/Kimi или убрать ссылки

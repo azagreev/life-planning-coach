@@ -23,7 +23,7 @@ class TestChronotypeNativePlanning:
         assert len(lines) <= 120, f"File too long: {len(lines)} lines (max 120)"
 
     def test_three_profiles_present(self, content):
-        profiles = ["Яворонок", "Промежуточный", "Сова"]
+        profiles = ["Жаворонок", "Промежуточный", "Сова"]
         for profile in profiles:
             assert profile in content, f"Profile '{profile}' missing"
 
@@ -65,7 +65,7 @@ class TestEnergySchedulingUpdated:
         assert "chronotype_native_planning.md" in content
 
     def test_three_profiles_in_table(self, content):
-        assert "Яворонок" in content
+        assert "Жаворонок" in content
         assert "Промежуточный" in content
         assert "Сова" in content
 

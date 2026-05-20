@@ -114,6 +114,39 @@ bash scripts/release.sh X.Y.Z
 ### 4.3 System tests
 `python3 -m pytest tests/ -q` → **190+ passed**.
 
+### 4.4 Prioritization (RICE)
+
+Все фичи, баги и research-задачи приоритизируются через **RICE**:
+
+```
+RICE = (Reach × Impact × Confidence) / Effort
+
+Reach:      % целевой аудитории (0-100)
+Impact:     0.25 minimal → 3.0 massive
+Confidence: 0-100% на основе evidence
+Effort:     person-days (фичи), hours (баги)
+```
+
+**Интерпретация:**
+
+| RICE | Категория | Действие |
+|------|----------|----------|
+| > 30 | Quick Win | Немедленно |
+| 10-30 | High Priority | Следующий спринт |
+| 3-10 | Medium Priority | Backlog |
+| < 3 | Moonshot | Исследовать позже |
+
+**Баги — Severity mapping:**
+
+| Severity | Impact | SLA |
+|----------|--------|-----|
+| Critical (crashes, data loss) | 3.0 | Fix same day |
+| High (feature broken) | 2.0 | Fix 48h |
+| Medium (workaround exists) | 1.0 | Fix 1 week |
+| Low (cosmetic) | 0.25 | Best effort |
+
+**Commit:** При добавлении задачи в BACKLOG.md указывать RICE score.
+
 ---
 
 ## 5. Style Guidelines
@@ -148,4 +181,4 @@ bash scripts/release.sh X.Y.Z
 ---
 
 *Обновлено: 2026-05-19*  
-*AGENTS.md v4.1 (lean) для life-planning-coach v0.10.2+*
+*AGENTS.md v4.2 (lean) для life-planning-coach v0.10.2+*
