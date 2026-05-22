@@ -5,10 +5,7 @@ Run after building the ZIP artifact.
 """
 
 import re
-import zipfile
 from pathlib import Path
-
-import pytest
 
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent.resolve()
@@ -221,7 +218,11 @@ class TestWheelOfLifeUpdate:
         )
         # Should NOT be marked as optional
         lines = text.splitlines()
-        meaning_lines = [l for l in lines if ("Meaning" in l or "Смысл" in l) and "опционально" in l.lower()]
+        meaning_lines = [
+            line
+            for line in lines
+            if ("Meaning" in line or "Смысл" in line) and "опционально" in line.lower()
+        ]
         assert len(meaning_lines) == 0, (
             "Meaning must NOT be marked as optional"
         )

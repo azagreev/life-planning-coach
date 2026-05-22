@@ -4,8 +4,8 @@ Covers: adhd_mode.md, time_structure_unemployed.md, elder_homebound_mode.md,
 planning_friction_audit.md, persona hooks in SKILL.master.md, platform integration.
 """
 
-import subprocess
 from pathlib import Path
+
 import pytest
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -98,7 +98,11 @@ class TestTimeStructureUnemployed:
         assert "принцип" in content or "principle" in content
         # At least 10 numbered principles (table format: | 1 | ... |)
         lines = content.splitlines()
-        numbered = [l for l in lines if any(f"| {n} |" in l or l.strip().startswith(f"{n}.") for n in range(1, 11))]
+        numbered = [
+            line
+            for line in lines
+            if any(f"| {n} |" in line or line.strip().startswith(f"{n}.") for n in range(1, 11))
+        ]
         assert len(numbered) >= 10
 
     def test_no_shame_guilt(self):

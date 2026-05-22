@@ -1,6 +1,5 @@
 """Release tests for life-planning-coach metadata consistency."""
 
-import json
 import unittest
 import zipfile
 from pathlib import Path

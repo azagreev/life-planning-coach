@@ -126,9 +126,6 @@ class TestGitHubSync:
         Regression test for: release.sh no longer generating RELEASE_NOTES file
         after commit 507ad1f, causing pre-push hook to deadlock.
         """
-        import tempfile
-        import shutil
-
         # Use current version from git tag to test with real CHANGELOG data
         result = subprocess.run(
             ["git", "describe", "--tags", "--abbrev=0"],

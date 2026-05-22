@@ -7,8 +7,6 @@ System tests for v0.7.1 reference files:
 
 from pathlib import Path
 
-import pytest
-
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 SKILL_MD = PROJECT_ROOT / "SKILL.md"
 REFERENCES_DIR = PROJECT_ROOT / "references"

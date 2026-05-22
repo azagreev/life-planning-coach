@@ -1,6 +1,5 @@
 """Tests for Chronotype-Native Planning integration (v0.11.0 research-driven)."""
 
-import re
 from pathlib import Path
 
 import pytest
