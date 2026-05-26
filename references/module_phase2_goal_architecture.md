@@ -52,17 +52,19 @@ WOOP — единственный научно валидированный фо
 
 ---
 
-## SMART+ check (для KR и приоритетов)
+## KR Quality Check (measurability + alignment)
 
-Каждый KR должен пройти SMART+:
-- **S** Specific
-- **M** Measurable
-- **A** Achievable (но stretch ~70%)
-- **R** Relevant — связан с одной из топ-3 ценностей
-- **T** Time-bound
-- **+ Authentic** — прошёл Phase 1.5 фильтр
+Каждый KR проходит 6 critérios:
+- **Specific** — конкретное наблюдаемое поведение
+- **Measurable** — number/binary/threshold
+- **Achievable stretch** ~70% confidence
+- **Relevant** — связан с топ-3 ценностей
+- **Time-bound** — deadline/cadence
+- **Authentic** — прошёл Phase 1.5 фильтр (не "должен")
 
-Если KR не SMART+ → загрузи `references/weak_goal_taxonomy.md` и переформулируй.
+> Overlap с SMART, но focus — **execution probability + values alignment**, не клерийность. WOOP (Phase 5) добавляет obstacle/plan.
+
+Если KR не проходит → `references/weak_goal_taxonomy.md`.
 
 ---
 

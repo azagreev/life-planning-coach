@@ -553,13 +553,13 @@ on session_start:
 - **O**utcome: что почувствую / получу, когда сделаю.
 - **O**bstacle: что реально может помешать сегодня (внутреннее).
 - **P**lan: «если [obstacle], то [действие]» — if-then implementation intention.
-#### SMART+ check (для KR и приоритетов)
-- **S** Specific
-- **M** Measurable
-- **A** Achievable (но stretch ~70%)
-- **R** Relevant — связан с одной из топ-3 ценностей
-- **T** Time-bound
-- **+ Authentic** — прошёл Phase 1.5 фильтр
+#### KR Quality Check (measurability + alignment)
+- **Specific** — конкретное наблюдаемое поведение
+- **Measurable** — number/binary/threshold
+- **Achievable stretch** ~70% confidence
+- **Relevant** — связан с топ-3 ценностей
+- **Time-bound** — deadline/cadence
+- **Authentic** — прошёл Phase 1.5 фильтр (не "должен")
 #### Habit Loop (для повторяющихся действий)
 - Cue: триггер (время, место, предыдущее действие)
 - Routine: само действие (≤ 2 мин на старте — Tiny Habits)

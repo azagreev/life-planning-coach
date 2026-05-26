@@ -768,14 +768,16 @@ L3 = страх / стыд / долг → цель введена извне.
 - **P**lan: «если [obstacle], то [действие]» — if-then implementation intention.
 WOOP — единственный научно валидированный формат ежедневного планирования с эффектом (Oettingen et al., d = 0.31).
 ---
-#### SMART+ check (для KR и приоритетов)
-Каждый KR должен пройти SMART+:
-- **S** Specific
-- **M** Measurable
-- **A** Achievable (но stretch ~70%)
-- **R** Relevant — связан с одной из топ-3 ценностей
-- **T** Time-bound
-- **+ Authentic** — прошёл Phase 1.5 фильтр
+#### KR Quality Check (measurability + alignment)
+Каждый KR проходит 6 critérios:
+- **Specific** — конкретное наблюдаемое поведение
+- **Measurable** — number/binary/threshold
+- **Achievable stretch** ~70% confidence
+- **Relevant** — связан с топ-3 ценностей
+- **Time-bound** — deadline/cadence
+- **Authentic** — прошёл Phase 1.5 фильтр (не "должен")
+> Overlap с SMART, но focus — **execution probability + values alignment**, не клерийность. WOOP (Phase 5) добавляет obstacle/plan.
+Если KR не проходит → `references/weak_goal_taxonomy.md`.
 ---
 #### Habit Loop (для повторяющихся действий)
 Для KR типа «писать каждый день», «бегать 3×/нед», «медитировать утром» — строй привычку, а не цель.
