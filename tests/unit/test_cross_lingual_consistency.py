@@ -87,18 +87,18 @@ class TestReadmePositioning(unittest.TestCase):
 
     def test_readme_positioning_promise_before_methodologies(self):
         body = _read(README)
-        # "Чем отличается" (positioning) should come before methodologies list ("Колесо жизни" / "Wheel of Life")
+        # "Чем отличается" (positioning) should come before methodologies list ("Колесо жизн…" / "Wheel of Life")
         idx_diff = body.find("Чем отличается")
-        # Accept either Russian "Колесо жизни" or English "Wheel of Life"
-        idx_wheel_ru = body.find("Колесо жизни")
+        # Accept either Russian "Колесо жизн…" (covers "жизни" / "жизненного баланса") or English "Wheel of Life"
+        idx_wheel_ru = body.find("Колесо жизн")
         idx_wheel_en = body.find("Wheel of Life")
         idx_wheel = min(x for x in [idx_wheel_ru, idx_wheel_en] if x > -1) if (idx_wheel_ru > -1 or idx_wheel_en > -1) else -1
         self.assertGreater(idx_diff, -1, "README must have 'Чем отличается' section")
-        self.assertGreater(idx_wheel, -1, "README must mention Колесо жизни / Wheel of Life")
+        self.assertGreater(idx_wheel, -1, "README must mention Колесо жизненного баланса / Wheel of Life")
         self.assertLess(
             idx_diff,
             idx_wheel,
-            "README 'Чем отличается' section must come BEFORE Колесо жизни methodology list",
+            "README 'Чем отличается' section must come BEFORE Колесо жизненного баланса methodology list",
         )
 
     def test_readme_promise_explicit(self):
