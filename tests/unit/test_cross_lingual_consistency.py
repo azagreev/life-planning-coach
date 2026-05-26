@@ -75,28 +75,30 @@ class TestReadmePositioning(unittest.TestCase):
 
     def test_readme_has_comparison_table(self):
         body = _read(README)
-        # Comparison table should mention Notion or Todoist + Generic AI-coach
+        # Comparison table should mention Notion or Todoist + AI-coach (Russian or English form)
         self.assertTrue(
             "Notion" in body or "Todoist" in body,
             "README must have comparison table mentioning Notion/Todoist",
         )
-        self.assertIn(
-            "AI-coach",
-            body,
+        self.assertTrue(
+            "AI-coach" in body or "AI-коуч" in body,
             "README must have comparison table mentioning generic AI-coaches",
         )
 
     def test_readme_positioning_promise_before_methodologies(self):
         body = _read(README)
-        # "Чем отличается" (positioning) should come before "Что внутри" or "Wheel of Life"
+        # "Чем отличается" (positioning) should come before methodologies list ("Колесо жизни" / "Wheel of Life")
         idx_diff = body.find("Чем отличается")
-        idx_wheel = body.find("Wheel of Life")
+        # Accept either Russian "Колесо жизни" or English "Wheel of Life"
+        idx_wheel_ru = body.find("Колесо жизни")
+        idx_wheel_en = body.find("Wheel of Life")
+        idx_wheel = min(x for x in [idx_wheel_ru, idx_wheel_en] if x > -1) if (idx_wheel_ru > -1 or idx_wheel_en > -1) else -1
         self.assertGreater(idx_diff, -1, "README must have 'Чем отличается' section")
-        self.assertGreater(idx_wheel, -1, "README must have Wheel of Life mention")
+        self.assertGreater(idx_wheel, -1, "README must mention Колесо жизни / Wheel of Life")
         self.assertLess(
             idx_diff,
             idx_wheel,
-            "README 'Чем отличается' section must come BEFORE 'Wheel of Life' methodology list",
+            "README 'Чем отличается' section must come BEFORE Колесо жизни methodology list",
         )
 
     def test_readme_promise_explicit(self):

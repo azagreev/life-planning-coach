@@ -12,44 +12,44 @@
 
 ## Чем отличается
 
-|  | Notion / Todoist | Generic AI-coach | **Life Planning Coach** |
+|  | Notion / Todoist | Обычный AI-коуч | **Life Planning Coach** |
 |---|---|---|---|
-| **Метод** | Hand-made системы | Generic советы | 28+ научных публикаций (ACT, CBT, OKR, WOOP, Habit Loop, TGD) |
-| **Фокус** | Tasks & lists | Tone & encouragement | Жизненный план + retrospective ритм |
-| **Persistence** | Files | Conversation memory | Drive Wiki + Calendar + AI Memory (opt-in) |
-| **Persona** | One-size | Generic | 4 режима: ADHD, transitional, elder, planning friction |
+| **Метод** | Самодельные системы | Общие советы | 28+ научных публикаций (ACT, CBT, OKR, WOOP, привычки, TGD) |
+| **Фокус** | Задачи и списки | Поддержка и тон | Жизненный план + ритм ретроспектив |
+| **Хранение** | Файлы | Память внутри чата | Wiki в Диске + Календарь + AI-память (по желанию) |
+| **Подстройка** | Один шаблон для всех | Общий | 4 режима: СДВГ, переходный период, пожилые, трудности с планированием |
 
 ---
 
 ## Что внутри
 
-Модульный кросс-платформенный коучинг-скилл, основанный на методах с научной валидацией:
+Модульный коучинг-навык, работающий на разных AI-платформах. Основан на методах с научной валидацией:
 
-- **Wheel of Life** (11 сфер жизни, включая духовность и ценности)
-- **Фильтр аутентичных целей** — проверка целей на внутреннюю мотивацию (Stage 1\.5)
-- **Core Values Discovery** — bottom-up выявление ценностей + Compass Mode для daily decisions
-- **Архитектура целей** — BHAG → OKR → WOOP с привычками (Cue-Routine-Reward)
-- **Weekly Review** — 7-step GTD + Scrum Retro + Wins + Habit Review
-- **Регуляция эмоций** — DBT-informed (Cognitive Reappraisal, Grounding, Self-Compassion, Conflict Reappraisal)
-- **Health & Metabolism Track** (opt-in) — сон, стресс, белок, клетчатка как evidence-based рычаги аппетита
-- **Goal Concordance** — диадическая координация целей с партнёром (Transactive Goal Dynamics)
-- **Адаптивный стиль коммуникации** — Big Five × TTM × MI
+- **Колесо жизни** (11 сфер, включая духовность и ценности)
+- **Фильтр аутентичных целей** — проверка целей на внутреннюю мотивацию (Этап 1\.5)
+- **Поиск ключевых ценностей** — выявление ценностей снизу-вверх + Режим компаса для ежедневных решений
+- **Архитектура целей** — BHAG → OKR → WOOP с привычками (триггер–действие–награда)
+- **Еженедельный обзор** — 7 шагов GTD + Scrum-ретро + список побед + проверка привычек
+- **Регуляция эмоций** — на основе DBT (когнитивная переоценка, заземление, самосочувствие, переоценка конфликтов)
+- **Отслеживание здоровья и метаболизма** (по желанию) — сон, стресс, белок, клетчатка как научно подтверждённые рычаги аппетита
+- **Согласование целей** — координация целей с партнёром (Transactive Goal Dynamics)
+- **Адаптивный стиль общения** — Большая Пятёрка × модель изменений TTM × мотивационное интервью
 
-**4-этапный коучинговый поток:**
+**4 этапа коучинга:**
 1. **Диагностика** → 2. **Архитектура целей** → 3. **Исполнение** → 4. **Глубокая работа**
 
 ---
 
-## Быстрый выбор платформы
+## Выбор платформы
 
 | Платформа | Для кого | Установка | Календарь | Диск | Файл |
 |-----------|----------|-----------|-----------|------|------|
-| **Claude.ai** | Продвинутые пользователи, MCP | ZIP upload | ✅ MCP¹ | ✅ MCP¹ | `.zip` / `.skill` |
-| **Grok** (xAI) | Пользователи xAI, большой контекст | Копировать-вставить | ✅ Native OAuth | ✅ Native OAuth | `-grok.md` |
-| **Kimi OK Computer** | Простая веб-настройка | Веб-агент | ❌ Текстовый | ❌ Нет | `-kimi.md` |
-| **Kimi Code CLI** | Разработчики, терминал | Директория + JSON | ✅ MCP (ручной) | ✅ MCP (ручной) | `-kimi-cli/` |
+| **Claude.ai** | Опытные пользователи, нужны MCP-коннекторы | Загрузка ZIP | ✅ MCP¹ | ✅ MCP¹ | `.zip` / `.skill` |
+| **Grok** (xAI) | Пользователи xAI, большой контекст | Скопировать-вставить | ✅ встроенный OAuth | ✅ встроенный OAuth | `-grok.md` |
+| **Kimi OK Computer** | Простая настройка через сайт | Веб-агент | ❌ только текст | ❌ нет | `-kimi.md` |
+| **Kimi Code CLI** | Разработчики, терминал | Папка + JSON | ✅ MCP (вручную) | ✅ MCP (вручную) | `-kimi-cli/` |
 
-¹ MCP коннекторы (Google Calendar + Drive) подтверждены на **Claude Max plan** (PoC verified 2026-05-26 — см. [docs/research/mcp_poc_log.md](docs/research/mcp_poc_log.md)). Pro/Team plans не тестировались. На Free plan MCP скорее всего недоступен — fallback в **Paper Coach Mode** (текстовый план).
+¹ MCP-коннекторы (Google Календарь + Диск) подтверждены на **тарифе Claude Max** (проверка проведена 2026-05-26 — см. [docs/research/mcp_poc_log.md](docs/research/mcp_poc_log.md)). Тарифы Pro/Team не проверялись. На Free, скорее всего, MCP недоступен — запасной вариант — **текстовый режим коуча** (план без интеграций).
 
 **→ [Подробное сравнение платформ](references/platforms/CROSS_PLATFORM_COMPARISON.md)**  
 **→ [Дерево решений](references/platforms/CROSS_PLATFORM_COMPARISON.md#decision-tree)**
@@ -58,32 +58,32 @@
 
 ## Быстрый старт
 
-### Claude.ai (ZIP Skill)
+### Claude.ai (ZIP-скилл)
 
-1. Скачайте `life-planning-coach-v1.0.0.zip` из [Релизов](https://github.com/azagreev/life-planning-coach/releases)
-2. Claude → Settings → Capabilities → включить "Code execution and file creation"
-3. Customize → Skills → + → Upload ZIP
-4. Наберите `/life-planning-coach` в любом чате
+1. Скачайте `life-planning-coach-v1.1.0.zip` из раздела [Релизы](https://github.com/azagreev/life-planning-coach/releases)
+2. Claude → Настройки → Возможности → включите «Code execution and file creation»
+3. Настроить → Скиллы → + → загрузите ZIP
+4. В любом чате наберите `/life-planning-coach`
 
-**→ [Полное руководство по Claude](references/platforms/USER_GUIDE_CLAUDE.md)**
+**→ [Полное руководство для Claude](references/platforms/USER_GUIDE_CLAUDE.md)**
 
-### Grok (xAI) — Один файл
+### Grok (xAI) — один файл
 
-1. Скачайте `life-planning-coach-v1.0.0-grok.md`
-2. Скопируйте всё содержимое, вставьте в [grok.com](https://grok.com)
-3. Добавьте: `Ты — Life Planning Coach. Начни сессию.`
+1. Скачайте `life-planning-coach-v1.1.0-grok.md`
+2. Скопируйте всё содержимое, вставьте на [grok.com](https://grok.com)
+3. Добавьте сообщение: `Ты — Life Planning Coach. Начни сессию.`
 
-**→ [Полное руководство по Grok](references/platforms/USER_GUIDE_GROK.md)**
+**→ [Полное руководство для Grok](references/platforms/USER_GUIDE_GROK.md)**
 
-### Kimi OK Computer (Веб-агент)
+### Kimi OK Computer (веб-агент)
 
-1. Перейдите на [kimi.com/agent](https://kimi.com/agent)
-2. Создайте агента → вставьте `life-planning-coach-v1.0.0-kimi.md` в системный промпт
+1. Зайдите на [kimi.com/agent](https://kimi.com/agent)
+2. Создайте агента → вставьте содержимое `life-planning-coach-v1.1.0-kimi.md` в системный промпт
 3. Сохраните и начните диалог
 
-**→ [Полное руководство по Kimi Web](references/platforms/USER_GUIDE_KIMI_OKCOMPUTER.md)**
+**→ [Полное руководство для Kimi Web](references/platforms/USER_GUIDE_KIMI_OKCOMPUTER.md)**
 
-### Kimi Code CLI (Терминал)
+### Kimi Code CLI (терминал)
 
 ```bash
 mkdir -p ~/.kimi/skills/life-planning-coach
@@ -91,7 +91,7 @@ cp -r platforms/kimi-cli/* ~/.kimi/skills/life-planning-coach/
 kimi skill use life-planning-coach
 ```
 
-**→ [Полное руководство по Kimi CLI](references/platforms/USER_GUIDE_KIMI_CLI.md)**
+**→ [Полное руководство для Kimi CLI](references/platforms/USER_GUIDE_KIMI_CLI.md)**
 
 ---
 
@@ -99,11 +99,11 @@ kimi skill use life-planning-coach
 
 ```
 life-planning-coach/
-├── platforms/              # Платформенные сборки
-│   ├── claude/SKILL.md     # 311 строк, директория + read_file
-│   ├── grok/SKILL.md       # 1 190 строк, полностью инлайн
-│   ├── kimi/SKILL.md       # 815 строк, полностью инлайн
-│   └── kimi-cli/SKILL.md   # 323 строки, директория + read_file
+├── platforms/              # Сборки под платформы
+│   ├── claude/SKILL.md     # Папка + чтение файлов по запросу
+│   ├── grok/SKILL.md       # Один файл, всё инлайн
+│   ├── kimi/SKILL.md       # Один файл, всё инлайн
+│   └── kimi-cli/SKILL.md   # Папка + чтение файлов по запросу
 ├── references/             # Методики и руководства
 │   ├── diagnostic_methods.md
 │   ├── communication_style.md
@@ -121,11 +121,11 @@ life-planning-coach/
 │       ├── USER_GUIDE_KIMI_OKCOMPUTER.md
 │       ├── USER_GUIDE_KIMI_CLI.md
 │       └── CROSS_PLATFORM_COMPARISON.md
-├── tests/                  # 300+ тестов (unit + system + e2e)
+├── tests/                  # 510+ тестов (unit + system + e2e)
 ├── scripts/
 │   ├── build-skill.sh      # Сборка всех артефактов
-│   └── build-platform-skill.py  # Генерация платформенных SKILL
-├── dist/                   # Релизные артефакты
+│   └── build-platform-skill.py  # Генерация файлов под платформы
+├── dist/                   # Готовые файлы релизов
 ├── SKILL.master.md         # Платформонезависимый исходник
 ├── CHANGELOG.md
 ├── ROADMAP.md
@@ -137,13 +137,13 @@ life-planning-coach/
 ## Сборка из исходников
 
 ```bash
-# Генерация всех платформенных файлов
+# Создать все файлы под платформы
 python3 scripts/build-platform-skill.py all
 
-# Сборка релизных артефактов (ZIP, .skill, .md файлы)
+# Собрать готовые файлы релизов (ZIP, .skill, .md)
 bash scripts/build-skill.sh
 
-# Запуск тестов
+# Запустить тесты
 python3 -m pytest tests/ -q
 ```
 
@@ -151,9 +151,9 @@ python3 -m pytest tests/ -q
 
 ## Тестирование
 
-- **300+ тестов** — покрытие структуры, контента и платформенной совместимости
-- **Golden dataset** (`tests/e2e/`) — 20 поведенческих тест-кейсов
-- **Evaluation rubric** — LLM-as-a-Judge для оценки качества коучинга
+- **510+ тестов** — покрытие структуры, контента и совместимости с платформами
+- **Эталонный набор** (`tests/e2e/`) — 20 поведенческих сценариев
+- **Шкала оценки** — LLM в роли судьи для проверки качества коучинга
 - **Протокол ручного тестирования** — `tests/e2e/MANUAL_TEST_RUN.md`
 
 ```bash
@@ -162,12 +162,12 @@ python3 -m pytest tests/ -q
 
 ---
 
-## Приватность и дисклеймер
+## Приватность и оговорка
 
 - **Это не терапия.** Это коучинг, а не клиническое лечение. При проблемах с ментальным здоровьем обратитесь к лицензированному специалисту.
-- **Ваши данные:** Контент коучинга остаётся внутри разговора на вашей AI-платформе. Доступ через MCP/коннекторы ограничен OAuth и контролируется вами.
-- **Никакой телеметрии.** Проект не собирает данные об использовании.
-- Полное privacy-уведомление — в `SKILL.md` каждой платформы.
+- **Ваши данные:** содержимое коучинга остаётся внутри разговора на вашей AI-платформе. Доступ через MCP-коннекторы ограничен OAuth-разрешениями и контролируется вами.
+- **Никакого сбора данных.** Проект не собирает статистику использования.
+- Полное уведомление о приватности — в `SKILL.md` каждой платформы.
 
 ---
 
@@ -177,13 +177,13 @@ python3 -m pytest tests/ -q
 
 - Новый код → новые тесты
 - Релиз только через `bash scripts/release.sh X.Y.Z`
-- Формат коммитов: `<type>: <description>` (`feat`, `fix`, `docs`, `chore`, `test`, `refactor`)
+- Формат коммитов: `<type>: <описание>` (`feat`, `fix`, `docs`, `chore`, `test`, `refactor`)
 
 ---
 
 ## Дорожная карта
 
-См. [ROADMAP.md](ROADMAP.md) — предстоящие фичи, и [BACKLOG.md](BACKLOG.md) — идеи.
+См. [ROADMAP.md](ROADMAP.md) — предстоящие функции, и [BACKLOG.md](BACKLOG.md) — идеи на будущее.
 
 ---
 
