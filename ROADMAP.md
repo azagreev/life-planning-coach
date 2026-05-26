@@ -15,12 +15,54 @@
 
 ---
 
-## v1.1.0 (planned) — Deprecation cleanup
+## v1.1.0 (planned) — Methodology Foundation + Deprecation
+
+**Тема:** Поднять buried evidence-based methods + cleanup legacy. Низкий риск, additive.
+**Базис:** [PRD v0.15 Methodology Upgrade](docs/research/prd_v0.15_methodology_upgrade.md), обсуждён 2026-05-26.
+
+### Methodology (PRD v0.15 surface & cleanup)
+
+- [ ] **Implementation Intentions promote** (RICE 180) — извлечь в standalone ref или поднять в Phase 5 как primary planning protocol. If-Then format в Calendar prompts и WOOP Plan step.
+- [ ] **Tiny Habits primary framing** (RICE 112) — переписать `habit_loop.md`: Tiny Habits (B=MAP) §1, classical Cue-Routine-Reward §2 (diagnostic для existing habits).
+- [ ] **Cut SMART references** (RICE 90) — grep + remove vestigial SMART mentions; вместо них — BHAG/OKR/WOOP architecture.
+- [ ] **Evidence citations** (RICE 35) — в каждом методе add evidence box с источником + effect size (Gollwitzer d=0.65, Michie COM-B citation, WOOP meta-analyses).
+
+### Deprecation cleanup (existing planned)
 
 - [ ] Удалить `scripts/build-skill.sh` (replaced by `build-skill.py build`)
 - [ ] Удалить `scripts/sync-version.sh` (replaced by `build-skill.py version`)
 - [ ] Удалить `references/conversation_state_schema.md` (v1 schema, replaced by v2)
 - [ ] Coverage target → 70-85% (extend build-skill.py unit tests)
+
+### Drive Wiki follow-ups (from Drive PoC 2026-05-26)
+
+- [ ] Skill module refactor под Path A append-only protocol (RICE 56)
+- [ ] Verify Zapier MCP availability на claude.ai web (Path F, RICE 45)
+- [ ] File Anthropic GitHub issue evidence (Path E lobbying, RICE 60)
+
+**Estimated effort:** ~5 EAS. Estimated release: ближайший спринт.
+
+---
+
+## v1.2.0 (planned) — New Evidence-Based Methods
+
+**Тема:** Заполнить genuine gaps в evidence-strong methods. Additive — старые paths не ломаем.
+
+- [ ] **COM-B Model diagnostic** (RICE 60) — новый `references/com_b_diagnostic.md`; Phase 0 integration; routing к right intervention (Capability gap → skill building, Opportunity gap → environment design, Motivation gap → WOOP/Compass).
+- [ ] **AAR principles integration** (RICE 31.5) — merge "gap analysis" в existing 7-step Weekly Review (steps 8-11: planned vs actual, why gap, what to change).
+- [ ] **Premortem trigger** (RICE 42) — Phase 2 для важных OKR; "представь через 3 мес. цель провалена — 5 причин" → mitigation Implementation Intentions.
+
+**Estimated effort:** ~5 EAS.
+
+---
+
+## v1.3.0 (planned) — Architectural Refactor
+
+**Тема:** Address PRD's WoL concern. Требует state schema bump (additive).
+
+- [ ] **Wheel of Life frequency gate** (RICE 35) — add `diagnosis.wheel_of_life.last_assessed_at` поле; Phase 1 gating: skip WoL если assessed < 30 days ago; offer re-assess после 30 days.
+
+**Estimated effort:** ~3 EAS.
 
 ---
 
@@ -30,7 +72,7 @@
 
 ### Возможный scope
 
-- [ ] **PoC MCP** — Gate 0-2: OAuth, CRUD, `suggest_time`; результаты в `docs/research/mcp_poc_log.md`. Deferred из v0.16.0.
+- [x] **PoC MCP** — ✅ Completed 2026-05-26. Decision: MCP-first. См. `docs/research/mcp_poc_log.md`.
 - [ ] **Google Health MCP интеграция** — выбрать один путь из `docs/research/google_health_mcp_integration_research.md`, определить security boundary и тестовый контур.
 - [ ] **Composite Readiness Model** — CRI formula, 4 зоны, адаптация весов под персоны (ADHD 30/70, Elder 25/75).
 - [ ] **Timezone edge-case hardening** — сценарии путешествий, DST, смена рабочей зоны, человекочитаемые fallback-сообщения.
@@ -52,6 +94,8 @@
 | Google Tasks MCP | Tasks API становится доступен через MCP | `BACKLOG.md` |
 | Групповые сессии | 5+ пользователей запросят парный/групповой формат | `BACKLOG.md` |
 | Мультиязычность | 10+ запросов от англоязычных пользователей | `BACKLOG.md` |
+| Parts Work (IFS) | User demand для resistance-work, или RCT base улучшится | `BACKLOG.md` (PRD v0.15, RICE 5) |
+| Skill structure simplification | Identified specific pain (currently no concrete signal) | `BACKLOG.md` (PRD v0.15, RICE 15, defer) |
 
 ---
 
