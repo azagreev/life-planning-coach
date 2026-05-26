@@ -1,7 +1,7 @@
 ---
-schema_version: "2.0"
-template_version: "2.0"
-last_updated: "2026-05-26"
+schema_version: "2.0.1"
+template_version: "2.0.1"
+last_updated: "2026-05-27"
 purpose: "Инструкции для Claude по работе с Drive Wiki"
 ---
 
@@ -17,15 +17,20 @@ purpose: "Инструкции для Claude по работе с Drive Wiki"
 ## Gating: когда писать в Wiki
 
 ```
-if drive_connected && calendar_connected:
-    mode = "full_persistence"  → пиши ВСЁ
-elif drive_connected:
-    mode = "wiki_no_execution" → пиши state, но calendar events в pending
-elif calendar_connected:
-    mode = "execution_no_wiki" → НЕ пиши в Wiki, lean state в conversation
-else:
-    mode = "lean_conversation" → минимум в conversation memory, ничего в Drive
+on session_start:
+  detect (drive_connected, calendar_connected)
+  if drive && calendar:
+      mode = "full_persistence"   → пиши ВСЁ
+  elif drive:
+      mode = "wiki_no_execution"  → пиши state, calendar events в pending
+  elif calendar:
+      mode = "execution_no_wiki"  → НЕ пиши в Wiki, lean state в conversation
+  else:
+      mode = "lean_conversation"  → минимум в conversation memory, ничего в Drive
+  write session.gating_mode = mode   // state v2.0.1+ observability
 ```
+
+При смене коннекторов в середине сессии — пересчитай mode и обнови `session.gating_mode`.
 
 ## Bootstrap (первый коннект Drive)
 
@@ -85,20 +90,24 @@ if no:
 
 ## Write rules per state v2 field
 
+Source-of-write — соответствующий `module_phase*.md` (см. State Writes секции там).
+
 | State поле | Куда писать |
 |---|---|
-| `session.*` | `Hot_Cache.md` |
+| `session.*` (incl. `gating_mode`) | `Hot_Cache.md` |
 | `persona.active_mode` | `Hot_Cache.md` + `USER_PROGRESS_JOURNAL.md` при смене |
 | `diagnosis.wheel_of_life` | `Wheel_of_Life_History.md` |
-| `diagnosis.core_values` | `Core_Values_Compass.md` + `Hot_Cache.md` |
+| `diagnosis.core_values` (+ `compass_question`) | `Core_Values_Compass.md` + `Hot_Cache.md` |
 | `goals.*` | `Goals.md` + `dashboard_data.json` |
-| `goal_filter.*` | `Goals.md` (radar блок) |
-| `habits[]` | `Goals.md` (секция Habits) |
-| `weekly_reviews[]` | `USER_PROGRESS_JOURNAL.md` запись типа «Сессия» |
-| `emotion_regulation_log[]` | `USER_PROGRESS_JOURNAL.md` запись `Emotion_Regulation_Breakthrough` (если outcome_readiness прыгнул на ≥3) |
-| `wins_log[]` | `Goals.md` секция «Победы» + `Hot_Cache.md` топ-5 |
-| `reward_audit_results[]` | `USER_PROGRESS_JOURNAL.md` категория `Reward_Audit` |
+| `goal_filter.*` (incl. `core_values_alignment`) | `Goals.md` (radar блок) |
+| `habits[]` (cue/routine/reward/anchor/tiny_version) | `Goals.md` (секция Habits) |
+| `weekly_reviews[]` | `USER_PROGRESS_JOURNAL.md` «Сессия» |
+| `emotion_regulation_log[]` | `USER_PROGRESS_JOURNAL.md` `Emotion_Regulation_Breakthrough` (Δ≥3) |
+| `wins_log[]` | `Goals.md` «Победы» + `Hot_Cache.md` топ-5 |
+| `reward_audit_results[]` | `USER_PROGRESS_JOURNAL.md` `Reward_Audit` |
 | `calendar_events_log[]` | `00_Raw/{session_date}.md` + ссылка в `Hot_Cache.md` |
+| `recovery_sessions_log[]` | `USER_PROGRESS_JOURNAL.md` `Recovery` |
+| `persistence_retry.*` (incl. `wiki_bootstrapped`, `backfill_offered`) | `Hot_Cache.md` |
 
 ## Токен-бюджеты
 

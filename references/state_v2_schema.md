@@ -1,7 +1,7 @@
 # State v2 Schema — Single Source of Truth
 
-> **Версия схемы:** `2.0`
-> **Дата:** 2026-05-26
+> **Версия схемы:** `2.0.1`
+> **Дата:** 2026-05-27
 > **Заменяет:** `references/conversation_state_schema.md` (v1)
 > **Используется:** HTML dashboard, 8 wiki templates, dashboard_guide.md, SKILL.master.md gating logic
 
@@ -35,10 +35,10 @@ State v2 — единый источник правды о пользовате�
 
 ```jsonc
 {
-  "schema_version": "2.0",
+  "schema_version": "2.0.1",
   "user_id": "uuid-v4",
   "created_at": "2026-05-26T10:00:00Z",
-  "updated_at": "2026-05-26T10:00:00Z",
+  "updated_at": "2026-05-27T10:00:00Z",
 
   // ============================================================
   // SESSION — текущая фаза, прогресс по вопросам, readiness gates
@@ -57,7 +57,8 @@ State v2 — единый источник правды о пользовате�
     ],
     "session_count": 1,
     "last_session_at": null,
-    "gap_days_since_last_session": 0
+    "gap_days_since_last_session": 0,
+    "gating_mode": "lean_conversation" // "full_persistence"|"wiki_no_execution"|"execution_no_wiki"|"lean_conversation" (v2.0.1+)
   },
 
   // ============================================================
@@ -433,6 +434,7 @@ State v2 — единый источник правды о пользовате�
 | `completed_phases` | array | Завершённые phase IDs |
 | `readiness_gates` | array | Каждая запись = `{phase, score: 1-10, timestamp}` |
 | `gap_days_since_last_session` | int | Триггерит recovery_protocol при > 7 |
+| `gating_mode` | enum | **(v2.0.1+)** Detected mode по комбинации Drive × Calendar: `"full_persistence"`, `"wiki_no_execution"`, `"execution_no_wiki"`, `"lean_conversation"`. Пишется skill'ом на старте сессии (SKILL.master.md §3). |
 
 ### 3.3 persona
 
@@ -472,9 +474,10 @@ State v2 — единый источник правды о пользовате�
 
 ## 4. Schema versioning policy
 
-### 4.1 Additive bumps (минор)
+### 4.1 Additive bumps (минор и patch)
 
-- `2.0 → 2.1`: добавление Health & Metabolism Track (`health_metabolism` блок). Старые клиенты v2.0 игнорируют unknown field.
+- `2.0 → 2.0.1`: добавление `session.gating_mode` tracker для observability persistence mode. Старые клиенты v2.0 игнорируют unknown field. Не требует миграции.
+- `2.0.1 → 2.1`: добавление Health & Metabolism Track (`health_metabolism` блок). Старые клиенты игнорируют unknown field.
 - `2.1 → 2.2`: добавление Goal Concordance (`goals.goal_filter.active_goals[].partner_coordination`). Старые клиенты игнорируют unknown property.
 
 ### 4.2 Breaking bumps (мажор)
@@ -625,23 +628,25 @@ Life Planning Coach Wiki/
 | Поле | Источник захвата | Реализовано? |
 |---|---|---|
 | `session.*` | Каждая фаза при входе/выходе | ✅ существующая логика |
-| `persona.active_mode` | Phase 0 persona detection | ⚠️ обнаруживается, но не персистится — нужно добавить write |
+| `session.gating_mode` | SKILL.master.md §3 (на старте сессии) | ✅ **(v0.18.0)** master detect + write |
+| `persona.active_mode` | Phase 0 persona detection | ✅ **(v0.18.0)** `module_phase1_diagnostic.md` State Writes |
 | `diagnosis.wheel_of_life` | Phase 1 Wheel of Life | ✅ существующая логика |
 | `diagnosis.values_schwartz` | Phase 1 Values PVQ | ✅ существующая логика |
-| `diagnosis.core_values` | Phase 1.5 Core Values Discovery (PRD) | 🆕 требует PRD реализации |
+| `diagnosis.core_values` | Phase 1.5 Core Values Discovery | ✅ `module_phase1_5_goal_filter.md` |
 | `diagnosis.ikigai_pillars` | Phase 1 deep diagnostic (Track B) | ✅ существующая логика |
 | `goals.*` | Phase 2 Goal Architecture | ✅ существующая логика |
 | `goal_filter.*` | Phase 1.5 Authentic Goal Filter | ✅ существующая логика |
-| `goal_filter.active_goals[].core_values_alignment` | Phase 1.5 + Core Values PRD | 🆕 link при добавлении цели |
-| `habits[]` (full cue/routine/reward) | Phase 3 Habit Review | ⚠️ partial — нужно расширить write правила |
+| `goal_filter.active_goals[].core_values_alignment` | Phase 1.5 (link при добавлении цели) | ✅ **(v0.18.0)** `module_phase1_5_goal_filter.md` |
+| `habits[]` (full cue/routine/reward/anchor/tiny_version) | Phase 2 Habit creation + Phase 3 review | ✅ **(v0.18.0)** `module_phase2_goal_architecture.md` State Writes |
 | `weekly_reviews[]` | Phase 3 Weekly Review | ✅ существующая логика |
-| `emotion_regulation_log` | Phase 0.5 ER Protocol | ⚠️ используется, но не пишется — нужно добавить write |
-| `wins_log` | win_alert.md + weekly_review | ⚠️ нужно вынести в first-class write |
-| `reward_audit_results` | reward_audit.md | ⚠️ используется, нужно добавить write |
-| `calendar_events_log` | Phase 5 MCP create events | ⚠️ создаётся через MCP, нужно логировать в state |
-| `recovery_sessions_log` | recovery_protocol.md | ⚠️ нужно добавить write |
+| `emotion_regulation_log` | Phase 0.5 ER Protocol | ✅ **(v0.18.0)** `module_phase1_diagnostic.md` State Writes |
+| `wins_log` | Phase 3 Celebration + win_alert.md | ✅ **(v0.18.0)** `module_phase3_weekly_review.md` State Writes |
+| `reward_audit_results` | Phase 3 Step 7 (optional) + reward_audit.md | ✅ **(v0.18.0)** `module_phase3_weekly_review.md` State Writes |
+| `calendar_events_log` | Phase 5 MCP create events | ✅ **(v0.18.0)** `module_phase5_execution.md` State Writes |
+| `recovery_sessions_log` | Phase 5 + recovery_protocol.md | ✅ **(v0.18.0)** `module_phase5_execution.md` State Writes |
+| `persistence_retry.*` | SKILL.master.md (bootstrap, backfill) | ✅ **(v0.18.0)** master + `templates/AI_Instructions.md` |
 
-**Гэп write-логики** (отмечено ⚠️) — добавляется в SKILL.master.md в B5 (gating + write rules).
+**Все write-rules** теперь явно прописаны в соответствующих модулях. Tests (`tests/unit/test_v018_gating_state_writes.py`) гарантируют, что каждое поле имеет write-trigger.
 
 ---
 
@@ -661,11 +666,19 @@ Life Planning Coach Wiki/
 ## 11. Связанные документы
 
 - [plan_v1.0_templates_rebuild.md](../docs/research/plan_v1.0_templates_rebuild.md) — план rebuild всех шаблонов
-- [prd_core_values_discovery.md](../docs/research/prd_core_values_discovery.md) — источник `core_values` блока
+- [prd_core_values_discovery.md](../docs/research/prd_core_values_discovery.md) — источник `core_values` блока + Compass Mode (FR-04)
 - [prd_health_metabolism.md](../docs/research/prd_health_metabolism.md) — schema bump 2.1
 - [prd_goal_concordance.md](../docs/research/prd_goal_concordance.md) — schema bump 2.2
 - `conversation_state_schema.md` (deprecated) — v1, оставлен для backward reference
+- `tests/unit/test_v018_gating_state_writes.py` — гарантирует write-rules для всех полей §9
+- `tests/unit/test_tier_token_budgets.py` — Tier 1/2 budgets check
+- `references/templates/AI_Instructions.md` — bootstrap + backfill + gating protocols (operational layer)
 
 ---
 
 **Статус:** ✅ Canonical. Любые изменения требуют schema_version bump + миграционных заметок.
+
+## 12. Changelog схемы
+
+- **2.0.1** (2026-05-27) — Add `session.gating_mode` tracker. Close 7 write-rule gaps в §9 (persona.active_mode, emotion_regulation_log, wins_log, reward_audit_results, calendar_events_log, recovery_sessions_log, core_values_alignment). Additive, без миграции.
+- **2.0** (2026-05-26) — Initial v2 release. Canonical 11 spheres, persona block, core_values, full habits cue/routine/reward, wins_log first-class, persistence_retry tracking.

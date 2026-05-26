@@ -93,15 +93,26 @@
 
 ## State writes (если включена персистентность)
 
-В конце Phase 1 запиши в state v2:
+В конце Phase 1 запиши в state v2 (`references/state_v2_schema.md`):
 
-- `wheel_of_life`: { sphere_id: score (1–10) } × 11
-- `values_topN`: ['family', 'autonomy', ...] (если PVQ выполнен)
-- `phase1_completed_at`: ISO timestamp
-- `track_chosen`: "quick" | "deep"
-- `readiness_gate_history`: [{ phase, score, timestamp }]
+**Phase 0 / Style Calibration / Persona Detection** (Tier 1 master отвечает за detection, write делает Phase 1 при entry):
+- `persona.active_mode`: `"none"|"adhd"|"unemployed"|"elder"|"planning_friction"` — обновить если detected в Phase 0
+- `persona.detected_at`: ISO timestamp
+- `persona.user_confirmed`: bool (после подтверждения пользователем)
+- `persona.history[]`: append `{from_mode, to_mode, ts}` при смене
 
-См. `references/state_v2_schema.md`. Запись через `references/templates/Wheel_of_Life_History.md`.
+**Phase 0.5 ER Protocol** (если был запущен):
+- `emotion_regulation_log[]`: append `{event_id, date, protocol: "reappraisal"|"grounding"|"self_compassion", trigger, outcome_readiness (1–10), duration_minutes}` за каждый запуск
+
+**Phase 1 Diagnostic core:**
+- `diagnosis.wheel_of_life.current`: { sphere_id: score (1–10) } × 11 (canonical)
+- `diagnosis.values_schwartz`: { value: 0.0–1.0 } (если PVQ выполнен)
+- `diagnosis.ikigai_pillars`: { love, good_at, world_needs, paid_for } (если Track B)
+- `session.completed_phases`: append `"1"` (или `"0.5"` для ER)
+- `session.current_track`: `"quick"|"deep"`
+- `session.readiness_gates[]`: append `{phase, score, timestamp}`
+
+Запись через `references/templates/Wheel_of_Life_History.md`, `references/templates/Hot_Cache.md`, `references/templates/USER_PROGRESS_JOURNAL.md` (для persona switch и ER breakthrough записей — см. `templates/AI_Instructions.md §Write rules`).
 
 ---
 

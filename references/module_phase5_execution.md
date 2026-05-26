@@ -46,69 +46,33 @@
 
 ---
 
-## What goes into calendar (execution layer)
+## What goes into calendar
 
-| Goal layer | Что попадает в календарь |
-|------------|-------------------------|
-| BHAG | Годовая веха-напоминание (1 раз/год) |
-| Life Themes | Квартальная review (4 раза/год) |
-| 12-Week OKR | Milestone-события (по 2–3 на KR) |
-| Weekly Priorities | Weekly Review (воскресенье вечер, recurring) |
+| Goal layer | Календарь |
+|------------|-----------|
+| BHAG | Годовая веха (1×/год) |
+| Life Themes | Квартальный review (4×/год) |
+| 12-Week OKR | Milestone-события (2–3 на KR) |
+| Weekly Priorities | Weekly Review (воскресенье, recurring) |
 | Daily WOOP | Утреннее напоминание (recurring, ≤ 5 мин) |
-| Time Blocks | Блоки глубокой работы (цвета из COLOR_MAP) |
-| Habit Loop | Ежедневные микро-привычки (`references/habit_loop.md`) |
+| Time Blocks | Deep work (цвета из COLOR_MAP) |
+| Habit Loop | Микро-привычки (`references/habit_loop.md`) |
 
-**Цвета через COLOR_MAP** (см. `references/calendar_constants.md`): не выдумывай новые, используй каноничные — иначе пользователь теряет визуальный язык.
-
----
-
-## Energy-aware scheduling
-
-Не все часы одинаковы. Загрузи `references/energy_scheduling.md`:
-- Спроси самооценку 1–10 по уровню энергии в разное время дня.
-- Маппинг: Deep Work → пик; Меетинги → средний; Recovery → провал.
-- Учитывай хронотип через `references/chronotype_native_planning.md` (3 профиля: Lark / Bear / Wolf, Peak-Trough-Rebound).
+**Цвета через COLOR_MAP** (`references/calendar_constants.md`) — не выдумывай новые.
 
 ---
 
-## Daily Top-3 protocol
+## Energy + Daily Top-3 + Shutdown
 
-Каждый рабочий день — 3 ключевые задачи, привязанные к KR:
+**Energy-aware:** загрузи `references/energy_scheduling.md` + `chronotype_native_planning.md` (Lark/Bear/Wolf). Deep Work → пик, Meetings → средний, Recovery → провал.
 
-1. **Top-1** — самая важная. Делается в пик энергии (1–3 часа времени), обычно утром.
-2. **Top-2** — следующая по приоритету. Делается во второй пик или после обеда.
-3. **Top-3** — третья. Может быть «легче», но всё ещё привязана к KR.
+**Daily Top-3** — 3 задачи, привязанные к KR. Top-1 в пик энергии (1–3ч, утро); Top-2 после обеда; Top-3 легче. Не задачи — **обязательства**. Невыполнение → сигнал для Phase 3 retro.
 
-Не задачи из списка, а **обязательства**. Если Top-3 не выполнены — это сигнал для retro (Phase 3), а не «ну ладно».
+**Shutdown Ritual** (`references/shutdown_ritual.md`) — 5 шагов, 10–15 мин, permission-based. Психологический detachment.
 
----
+**End-of-week analysis** (опц.) — `references/calendar_pattern_analyzer.md`: Deep Work vs Meetings, где «протекают» Time Blocks, recovery. Данные без оценки.
 
-## End-of-day ritual
-
-В конце рабочего дня — предложи Shutdown Ritual (`references/shutdown_ritual.md`):
-- 5 шагов, 10–15 минут, permission-based.
-- Психологический detachment — без него вечер «остаётся в работе».
-- Permission-based: не навязываем, предлагаем «можем сделать ритуал завершения?»
-
----
-
-## End-of-week analysis (опционально)
-
-Если пользователь готов — предложи read-only анализ паттернов через `references/calendar_pattern_analyzer.md`:
-- Сколько часов на Deep Work vs Meetings?
-- Где «протекают» Time Blocks?
-- Recovery достаточно?
-
-Анализ без оценки — просто данные. Выводы делает пользователь.
-
----
-
-## Task Breakdown (для сложных WOOP)
-
-Если Daily WOOP сегодня — сложная задача (Career / Finances / Health / Home / Learning):
-- Загрузи `references/action_breakdown_template.md`.
-- Каждый шаг ≤ 30 минут ИЛИ бинарный критерий.
-- Opt-in: пользователь может пропустить разбивку.
+**Task Breakdown** для сложных WOOP — `references/action_breakdown_template.md`, шаги ≤ 30 мин или бинарный критерий.
 
 ---
 
@@ -123,13 +87,33 @@
 
 ## State writes
 
-В конце Phase 5 запиши в state v2:
-- `calendar_events_log`: [{ event_id, title, start, end, kr_link, created_via: 'connector'|'paper', color_id }]
-- `daily_top3_log`: [{ date, top1, top2, top3, completed: [bool, bool, bool] }]
-- `energy_self_reports`: [{ ts, level (1–10), context }]
-- `shutdown_ritual_log`: [{ ts, completed_steps: 1–5 }]
+В конце Phase 5 запиши в state v2 (`references/state_v2_schema.md`):
 
-См. `references/state_v2_schema.md`. При записи в Drive — через `references/templates/Raw_Session.md` и обновление `Hot_Cache.md` (active calendar context).
+**Calendar events (Mode A — connector):**
+- `calendar_events_log[]`: append `{event_id (Google Calendar ID), created_at, event_type: "weekly_review"|"woop_morning"|"habit"|"milestone"|"shutdown"|"time_block", title, scheduled_for, recurrence (RRULE или null), color_id (из COLOR_MAP), status: "created"|"updated"|"deleted"}` — каждое реально созданное событие
+- В Mode B (Paper Coach) — `calendar_events_log[].created_via: "paper"` без `event_id` (markdown-таблица)
+
+**Daily Top-3 protocol:**
+- `daily_top3_log[]`: append `{date, top1: {title, kr_link}, top2: {...}, top3: {...}, completed: [bool, bool, bool], energy_level (1–10 self-report)}`
+
+**Energy self-reports (через день):**
+- `energy_self_reports[]`: append `{ts, level (1–10), context: "morning"|"midday"|"evening"|"adhoc"}`
+
+**Shutdown Ritual:**
+- `shutdown_ritual_log[]`: append `{ts, completed_steps (1–5), skipped: bool}`
+
+**Recovery sessions (если был запущен `recovery_protocol.md` из-за пропуска > 7 дней или серии трудных недель):**
+- `recovery_sessions_log[]`: append `{recovery_id, date, gap_days, strategy_used (из recovery_protocol.md), outcome: "resumed"|"reduced_scope"|"paused"}`
+- Также обновить `session.gap_days_since_last_session: 0` (счётчик сбросился)
+
+**Persistence retry (если calendar временно недоступен):**
+- `persistence_retry.calendar.pending_events[]`: append событий для retry в следующей сессии
+
+**Session:**
+- `session.completed_phases`: append `"5"`
+- `session.last_session_at`: ISO timestamp
+
+При записи в Drive — через `references/templates/Raw_Session.md` (calendar_events_log + daily_top3 для сессии) и обновление `references/templates/Hot_Cache.md` (active calendar context + last Daily Top-3).
 
 ---
 

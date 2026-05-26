@@ -1,6 +1,6 @@
 ---
 name: life-planning-coach
-version: 0.17.0
+version: 0.18.0
 description: >-
   Проведи полную диагностику жизни, построй систему целей от 25 лет до сегодняшнего дня и поддерживай еженедельную ретроспективу. Используй при запросах: "помоги спланировать жизнь", "не знаю куда двигаться", "какие у меня цели", "life planning", "постановка целей", "хочу разобраться в себе", "нужен план на жизнь", "ретроспектива", "обзор недели", "wheel of life", "ikigai", "BHAG", "OKR для жизни", "WOOP", "жизненные цели", "самопознание", "баланс жизни", "помоги найти себя", "life compass", "план на 5 лет", "выгорание", "перепутье". НЕ активируй на: конкретные бизнес-задачи, проектный менеджмент, технический troubleshooting, юридические вопросы. Язык: русский (адаптируется к языку пользователя).
 ---
@@ -74,11 +74,17 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 - **Elder homebound** (`references/elder_homebound_mode.md`): пропусти Career / Romance / Finances; фокус на Meaning, Contribution, Family, Health, Physical Environment. Используй язык «что даёт смысл сегодня?» вместо «цели».
 - **Planning Friction** (`references/planning_friction_audit.md`): сократи до 5 ключевых сфер, дай готовые формулировки на выбор.
 #### State writes (если включена персистентность)
-- `wheel_of_life`: { sphere_id: score (1–10) } × 11
-- `values_topN`: ['family', 'autonomy', ...] (если PVQ выполнен)
-- `phase1_completed_at`: ISO timestamp
-- `track_chosen`: "quick" | "deep"
-- `readiness_gate_history`: [{ phase, score, timestamp }]
+- `persona.active_mode`: `"none"|"adhd"|"unemployed"|"elder"|"planning_friction"` — обновить если detected в Phase 0
+- `persona.detected_at`: ISO timestamp
+- `persona.user_confirmed`: bool (после подтверждения пользователем)
+- `persona.history[]`: append `{from_mode, to_mode, ts}` при смене
+- `emotion_regulation_log[]`: append `{event_id, date, protocol: "reappraisal"|"grounding"|"self_compassion", trigger, outcome_readiness (1–10), duration_minutes}` за каждый запуск
+- `diagnosis.wheel_of_life.current`: { sphere_id: score (1–10) } × 11 (canonical)
+- `diagnosis.values_schwartz`: { value: 0.0–1.0 } (если PVQ выполнен)
+- `diagnosis.ikigai_pillars`: { love, good_at, world_needs, paid_for } (если Track B)
+- `session.completed_phases`: append `"1"` (или `"0.5"` для ER)
+- `session.current_track`: `"quick"|"deep"`
+- `session.readiness_gates[]`: append `{phase, score, timestamp}`
 #### Common exit transitions
 - **Phase 1.5 (Goal Filter)** — стандартный переход после диагностики → загрузи `references/module_phase1_5_goal_filter.md`
 <!-- INLINED REF: module_phase4_dashboard.md -->
@@ -154,7 +160,14 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 
 ### 3. Persistence Mode (gating, opt-in)
 
-Четыре режима по комбинации connector'ов:
+**Trigger algorithm** (на старте сессии):
+```
+on session_start:
+  detect (drive_connected, calendar_connected)
+  mode = match: (T,T)→full_persistence | (T,F)→wiki_no_execution
+                | (F,T)→execution_no_wiki | (F,F)→lean_conversation
+  write session.gating_mode = mode  // v2.0.1+
+```
 
 | Drive | Calendar | Mode | Что доступно |
 |-------|----------|------|--------------|
@@ -163,7 +176,9 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 | ❌ | ✅ | `execution_no_wiki` | Календарь + memory_space only |
 | ❌ | ❌ | `lean_conversation` | Всё в текущей сессии |
 
-**Backfill при mid-session подключении Drive**: предложи «У тебя накопилось данных за сессию — синхронизировать в Drive?» → bootstrap wiki + dump state v2.См. `references/state_v2_schema.md` и шаблоны wiki (`references/templates/AI_Instructions.md`, `references/templates/Hot_Cache.md`, `references/templates/Goals.md`, `references/templates/Wheel_of_Life_History.md`, `references/templates/Raw_Session.md`).
+**Bootstrap trigger**: при первом коннекте Drive в сессии (`drive_connected && !persistence_retry.drive.wiki_bootstrapped`) → выполни bootstrap protocol (структура папок + шаблоны + `wiki_bootstrapped=true`). Детали и folder structure — `references/templates/AI_Instructions.md` §Bootstrap.
+
+**Backfill trigger** (mid-session): при коннекте Drive если `previous_mode in [lean_conversation, execution_no_wiki] && !persistence_retry.backfill_offered` → предложи синхронизировать данные сессии **один раз** (set `backfill_offered=true` сразу после prompt). При accept → bootstrap + one-shot dump state v2. Детали — `references/templates/AI_Instructions.md` §Backfill. Шаблоны: `Hot_Cache.md`, `Goals.md`, `Wheel_of_Life_History.md`, `Core_Values_Compass.md`, `Raw_Session.md` в `references/templates/`.
 
 ### 4. Safety & Ethics
 
@@ -190,20 +205,16 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 
 ### Example 1: Emotional Landing → Routing
 
-**User**: «Я чувствую, что жизнь проходит мимо, помоги разобраться.»
-**Kimi** говорит...«Это знакомо многим — чувство, что время уходит, а ты не туда движешься. *(VALIDATE)* Часто это сигнал, что внутренний компас и внешние ожидания разошлись. *(REFLECT)* Одна сфера, которая болит сильнее остальных — что приходит первым? *(ONE THING)* А потом могу провести через Wheel of Life и отделить твоё от взятого извне. *(BRIDGE)*»
+**User**: «Я чувствую, что жизнь проходит мимо.»
+**Kimi** говорит...«Это знакомо многим. *(VALIDATE)* Часто это сигнал, что внутренний компас и внешние ожидания разошлись. *(REFLECT)* Одна сфера, которая болит сильнее — что приходит первым? *(ONE THING)* А потом могу провести через Wheel of Life. *(BRIDGE)*»
 
 ### Example 2: Routing на модуль
 
-**User**: «Давай сделаем Wheel of Life.»
-**Kimi** говорит...«Окей. На шкале 1–10 — комфортно продолжать?» *(Readiness Gate)*
-*(≥ 6 → загружает `references/module_phase1_diagnostic.md` и идёт по Track A/B.)*
+**User**: «Сделаем Wheel of Life.» → **Kimi** говорит...«На 1–10, комфортно продолжать?» *(Readiness Gate)* → ≥ 6 → `references/module_phase1_diagnostic.md`.
 
 ### Example 3: Weekly Review entry
 
-**User**: «Сделаем обзор недели.»
-**Kimi** говорит...«Окей. Сначала чек-ин — какая неделя была: лёгкая, тяжёлая, ровная?» *(Pre-flight)*
-*(после ответа → `references/module_phase3_weekly_review.md`, 7-step.)*
+**User**: «Обзор недели.» → **Kimi** говорит...«Чек-ин: какая неделя — лёгкая, тяжёлая, ровная?» *(Pre-flight)* → `references/module_phase3_weekly_review.md` (7-step).
 
 ## Gotchas
 
@@ -252,30 +263,29 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 - `references/module_phase4_dashboard.md` — HTML / Text Dashboard + JSON contract
 - `references/module_phase5_execution.md` — Calendar + Daily Top-3 + Shutdown Ritual
 
-### Tier 3 — Deep refs (загружаются phase-модулями по необходимости)
+### Tier 3 — Deep refs (грузятся phase-модулями)
 
-- **State / schema**: `state_v2_schema.md`, `conversation_state_schema.md`, `templates/`
+- **State / schema**: `state_v2_schema.md`, `templates/`
 - **Diagnostic**: `diagnostic_methods.md`, `authentic_goal_filter.md`, `weak_goal_taxonomy.md`
-- **Goal architecture**: `goal_architecture.md`, `habit_loop.md`, `habit_stack_builder.md`, `action_breakdown_template.md`
+- **Goal arch**: `goal_architecture.md`, `habit_loop.md`, `habit_stack_builder.md`, `action_breakdown_template.md`
 - **Weekly review**: `weekly_review.md`, `win_alert.md`, `recovery_protocol.md`, `reward_audit.md`
 - **Dashboard**: `dashboard_guide.md`
-- **Calendar / execution**: `calendar_constants.md`, `calendar_integration.md`, `energy_scheduling.md`, `workload_warning.md`, `calendar_pattern_analyzer.md`, `chronotype_native_planning.md`, `fresh_start_engine.md`, `shutdown_ritual.md`
-- **Style / persona**: `communication_style.md`, `adhd_mode.md`, `time_structure_unemployed.md`, `elder_homebound_mode.md`, `planning_friction_audit.md`
-- **ER / micro**: `emotion_regulation.md`, `micro_sessions.md`, `quick_decision.md`
-- **UI / utility**: `markdown_tables.md`, `status_icons.md`, `science_backing.md`
+- **Calendar**: `calendar_constants.md`, `calendar_integration.md`, `energy_scheduling.md`, `workload_warning.md`, `calendar_pattern_analyzer.md`, `chronotype_native_planning.md`, `fresh_start_engine.md`, `shutdown_ritual.md`
+- **Persona / style**: `communication_style.md`, `adhd_mode.md`, `time_structure_unemployed.md`, `elder_homebound_mode.md`, `planning_friction_audit.md`
+- **ER / micro / UI**: `emotion_regulation.md`, `micro_sessions.md`, `quick_decision.md`, `markdown_tables.md`, `status_icons.md`, `science_backing.md`
 
-(Все пути относительно `references/`.)
+(Пути относительно `references/`.)
 
-## Key Metrics for Quality
+## Key Metrics
 
-- **Cold-load budget**: этот файл ≤ 4K tokens; каждый `module_phase*.md` ≤ 2.5K.
-- **Diagnostic coverage**: все 11 канонических сфер + 10 ценностей PVQ.
-- **Tracks**: Quick ≤ 30 мин / Deep 2–4 сессии с сохранением прогресса.
-- **Goal layers**: минимум BHAG + один OKR + Weekly + Daily (только 🟢 Active).
-- **Weekly review cadence**: 10–14 дней нормально, еженедельно идеал.
-- **Dashboard**: 3 таба, data-driven через `window.lpData`, schema v2.
-- **Calendar**: connector + 4 presets + free slots + Paper Coach fallback.
-- **Persistence**: zero-setup default; 4 gating modes; Hot_Cache < 1000 tokens; batch writes ≤ 5.
+- Cold-load: master ≤ 4K, каждый `module_phase*.md` ≤ 2.5K
+- 11 канонических сфер + 10 ценностей PVQ
+- Quick ≤ 30 мин / Deep 2–4 сессии
+- Goal layers: BHAG + 1 OKR + Weekly + Daily (только 🟢 Active)
+- Weekly review: 10–14 дней нормально
+- Dashboard: 3 таба, schema v2.0.1, `window.lpData`
+- Calendar: connector + 4 presets + Paper Coach fallback
+- Persistence: zero-setup default; 4 gating modes; Hot_Cache < 1000 tokens; batch ≤ 5
 
 ## Kimi-Specific Notes
 
@@ -461,38 +471,38 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 ##### Шаг 2: Meaningful Experiences (5–7 минут)
 ##### Шаг 3: Energizing Activities (5–7 минут)
 ##### Synthesis
+- `value_id`: `CV1`, `CV2`, ... (стабильный, не переиспользовать)
+- `name` (1–3 слова), `description` (2–3 предложения)
+- `derived_from[]`: `[{type: "domain"|"experience"|"energizing_activity", ref}]` — обязательно ≥ 1 запись на ценность
+- `priority_rank` (1–7), `discovered_at`, `last_reviewed`
+- `compass_question` — формулируется в **Compass Mode** ниже
+#### Compass Mode (FR-04 Practical Application)
+##### Compass Questions (по 1 на ценность)
+- «Расширяет ли этот выбор моё [name], или сужает?»
+- «Действую ли я сейчас из [name], или против?»
+##### Daily Decision Protocol (3 шага, ≤ 60 сек)
+1. **Pause** — назови выбор вслух или письменно.
+##### Alignment Audit (в Phase 3 Weekly Review, 3–5 мин)
+##### Link с Authentic Goal Filter
 #### Authentic Goal Filter (для каждой цели)
 ##### 1. Red Flag Detector (6+1)
-1. «Все вокруг…»  → social comparison
+1. «Все вокруг…» (social comparison)
 ##### 2. Values Alignment (1–10)
 ##### 3. Energy Check (соматический, опционально)
 ##### 4. Deep Why (3 уровня)
-- Уровень 1: внешняя ценность («хочу зарабатывать больше»)
-- Уровень 2: функциональная («чтобы чувствовать стабильность»)
-- Уровень 3: бытийная («чтобы не бояться»)
+- L1: внешняя («больше зарабатывать»)
+- L2: функциональная («стабильность»)
+- L3: бытийная («не бояться»)
 ##### 5. Societal Pressure Test (4 вопроса)
-1. «Если бы никто никогда не узнал, ты бы её всё равно делал?»
+1. Если бы никто не узнал — ты бы её делал?
 ##### 6. True Goal Score — Радар (НЕ формула!)
-- **Ценности** — насколько служит топ-3
-- **Энергия** — даёт или забирает
-- **Влияние** — на ключевые сферы Wheel of Life
-- **Реалистичность** — ресурсы, сроки, навыки
-- **Аутентичность** — изнутри или снаружи
-#### Goal Portfolio (результат фильтра)
-- 🟢 **Active** — фильтр пройден, идёт в Phase 2 Goal Architecture
-- 🟡 **On Pause** — не сейчас, но не выкинуть. Перепроверь через 3 мес.
-- 🔍 **Pattern Analysis** — повторяющийся паттерн «брать чужие цели». Обсуди отдельно.
-#### Weak goal patterns (когда применять `weak_goal_taxonomy.md`)
-- «Стать лучше», «больше», «больше зарабатывать» (vague)
-- «Не делать», «перестать» (negation only)
-- «Когда-нибудь», «однажды» (no time)
-- «Все говорят, что это важно» (external)
-- «Заработать миллион / похудеть на 30 кг за месяц» (unrealistic)
+#### Goal Portfolio + Weak Patterns
 #### State writes
-- `core_values`: ['autonomy', 'contribution', ...] (если выполнен bottom-up Discovery)
-- `core_values_source`: "pvq_topdown" | "bottomup_discovery" | "mixed"
-- `goal_portfolio`: [{ id, name, status, agf_radar: { values, energy, impact, feasibility, authenticity }, red_flags, deep_why_level3 }]
-- `phase1_5_completed_at`: ISO timestamp
+- `diagnosis.core_values[]`: `[{value_id (CV1+), name, description, derived_from: [{type: "domain"|"experience"|"energizing_activity", ref}], compass_question, priority_rank (1–7), discovered_at, last_reviewed}]`
+- `diagnosis.core_values_source`: `"pvq_topdown"|"bottomup_discovery"|"mixed"`
+- `goal_filter.active_goals[]`: `{goal_id, title, radar{values,energy,impact,feasibility,authenticity}, core_values_alignment: ["CV1","CV3"] (≥ 1 обязательно), deep_why_chain, red_flags_screened, societal_pressure_score (1–10), added_at}`
+- `goal_filter.paused_goals[]`: `{goal_id, title, red_flags, insight, paused_at}` для 🟡 On Pause
+- `goal_filter.patterns[]`: `{pattern_id, red_flag, count, insight}` для 🔍 — инкрементируй counter
 #### Common exit transitions
 - **Phase 2 (Goal Architecture)** — стандартный переход для 🟢 Active целей → `references/module_phase2_goal_architecture.md`
 - **Phase 0.5 (ER Protocol)** — если фильтр спровоцировал сильную эмоцию (например, осознание «я 10 лет жил не свою жизнь»)
@@ -562,9 +572,14 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 - **Elder homebound** (`references/elder_homebound_mode.md`): НЕ цели в смысле SMART. Якоря дня и meaning. «Что даёт reason to get up today?» Legacy through memory — а не achievement.
 - **Planning Friction** (`references/planning_friction_audit.md`): Smart defaults — 25 мин на митинг, 45 мин на задачу, 15 мин буфер. Готовые шаблоны дня (Deep Work / Meeting / Recovery).
 #### State writes
-- `goals`: [{ id, layer (bhag|theme|quarter|weekly|daily_woop), title, parent_id, smart_plus_passed, kr: [...], deadline, owner_value: 'autonomy' }]
-- `habits`: [{ id, cue, routine, reward, anchor, started_at, identity_statement }]
-- `phase2_completed_at`: ISO timestamp
+- `goals.bhag`: `{statement, horizon_years (10–25), created_at}` (если создан / обновлён)
+- `goals.life_themes[]`: `[{theme_id, objective, key_results[], horizon: "1y"|"3y"}]`
+- `goals.twelve_week_okr`: `{quarter_start, quarter_end, objectives[{objective_id, title, sphere_id, key_results[{kr_id, title, target_value, unit, progress_pct, status}], confidence_score (1–10)}]}`
+- `goals.weekly_priorities[]`: `[{priority_id, title, sphere_id, completed, week_number}]` (max 3–5)
+- `goals.daily_woop[]`: append `{woop_id, date, wish, outcome, obstacle, plan (if-then), sphere_id, active: true}`
+- `habits[]`: append `{habit_id, name, cue (триггер), routine (само действие), reward (немедленная), anchor (existing ritual), sphere_id (canonical), tiny_version (≤2 мин старт), current_streak: 0, best_streak: 0, status: "on_track", started_at, last_completed: null}`
+- Все 5 полей Habit Loop (cue+routine+reward+anchor+tiny_version) — **обязательны**. Без anchor/tiny_version привычка остаётся декларацией.
+- `session.completed_phases`: append `"2"`
 #### Common exit transitions
 - **Phase 5 (Execution)** — стандартный переход: цели → календарь → ежедневное исполнение → `references/module_phase5_execution.md`
 - **Phase 3 (Weekly Review)** — если идём в первый Weekly Review, чтобы установить ритм → `references/module_phase3_weekly_review.md`
@@ -624,10 +639,15 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 - **Elder homebound** (`references/elder_homebound_mode.md`): **Micro-Check-In** — 3 вопроса, 5 минут. Никакого Wheel of Life с Career/Finance/Romance. Якори дня и память важнее KR.
 - **Planning Friction** (`references/planning_friction_audit.md`): templated Sunday Review — фиксированный набор 4 вопросов, без open-ended reflection.
 #### State writes
-- `weekly_review_log`: [{ week_iso, retro: {worked, didnt, change}, kr_progress: { kr_id: {lag, lead} }, wins: [...], habits_status: { habit_id: 'green'|'yellow'|'broken' } }]
-- `wins_log` (append): новые wins из Celebration
-- `next_week_plan`: [{ priority_id, parent_kr, first_action_monday }]
-- `phase3_last_completed_at`: ISO timestamp
+- `weekly_reviews[]`: append `{review_id, date, format: "gtd_scrum", gtd: {get_clear[], get_current[], get_creative[]}, scrum_retro: {worked[], didnt_work[], changes[]}, lead_measures: {sphere_id: value}, lag_measures: {sphere_id: value}, execution_score (0–10), adjustments[]}`
+- `wins_log[]`: append `{win_id, date, description, goal_id (если связан), sphere_id, category: "milestone"|"first"|"streak"|"breakthrough", celebrated_via: "win_alert"|"weekly_review"}` — за каждую отмеченную победу
+- `habits[habit_id].status`: `"on_track"|"at_risk"|"off_track"` (после Habit Review шаг 6)
+- `habits[habit_id].current_streak` / `best_streak`: обновить
+- `habits[habit_id].last_completed`: ISO timestamp
+- `reward_audit_results[]`: append `{audit_id, date, cheap_dopamine_sources: [{source, frequency_per_day, awareness_level}], high_friction_sources[], grayscale_commitment: null|"tried"|"adopted", next_check_date}` — только если шаг 7 выполнен
+- `goals.weekly_priorities[]`: replace (новая неделя) `[{priority_id, title, sphere_id, completed: false, week_number}]` (max 3–5)
+- `session.completed_phases`: append `"3"`
+- `session.last_session_at`: ISO timestamp
 #### Common exit transitions
 - **Phase 5 (Execution)** — занеси Next Week Plan в календарь → `references/module_phase5_execution.md`
 - **Phase 4 (Dashboard)** — пользователь хочет визуальный обзор прогресса → `references/module_phase4_dashboard.md`
@@ -667,35 +687,24 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 - 🟢 **Green** (< 60% забронированного времени): создаём всё.
 - 🟡 **Yellow** (60–80%): подсветим, что добавляем НА фоне уже плотной недели. Спросим подтверждение.
 - 🔴 **Red** (> 80%): СТОП. Сначала разгружаем, потом добавляем. Иначе создаём систему, которая сломается через 3 дня.
-#### What goes into calendar (execution layer)
-#### Energy-aware scheduling
-- Спроси самооценку 1–10 по уровню энергии в разное время дня.
-- Маппинг: Deep Work → пик; Меетинги → средний; Recovery → провал.
-- Учитывай хронотип через `references/chronotype_native_planning.md` (3 профиля: Lark / Bear / Wolf, Peak-Trough-Rebound).
-#### Daily Top-3 protocol
-1. **Top-1** — самая важная. Делается в пик энергии (1–3 часа времени), обычно утром.
-#### End-of-day ritual
-- 5 шагов, 10–15 минут, permission-based.
-- Психологический detachment — без него вечер «остаётся в работе».
-- Permission-based: не навязываем, предлагаем «можем сделать ритуал завершения?»
-#### End-of-week analysis (опционально)
-- Сколько часов на Deep Work vs Meetings?
-- Где «протекают» Time Blocks?
-- Recovery достаточно?
-#### Task Breakdown (для сложных WOOP)
-- Загрузи `references/action_breakdown_template.md`.
-- Каждый шаг ≤ 30 минут ИЛИ бинарный критерий.
-- Opt-in: пользователь может пропустить разбивку.
+#### What goes into calendar
+#### Energy + Daily Top-3 + Shutdown
 #### Persona adaptations
 - **ADHD** (`references/adhd_mode.md`): **Time Buffer Rule × 2** на все оценки. Visual timer prompts. Body double для страшных задач. Никаких «расписать день поминутно» — даём блоки по 90 мин с большими буферами.
 - **Unemployed / transitional** (`references/time_structure_unemployed.md`): **Sharp Hours 9:00–13:00** — активный поиск / обучение. После 17:00 — строго свободное время. Social activities как якоря дня.
 - **Elder homebound** (`references/elder_homebound_mode.md`): **Day anchors** — ритуалы, не задачи. «Чай в 10, растения в 15, передача в 20». Никаких KR-милстоунов.
 - **Planning Friction** (`references/planning_friction_audit.md`): **Smart defaults** — 25 мин митинг, 45 мин задача, 15 мин буфер. Day templates: Deep Work / Meeting / Recovery. 10%-rule на корректировки.
 #### State writes
-- `calendar_events_log`: [{ event_id, title, start, end, kr_link, created_via: 'connector'|'paper', color_id }]
-- `daily_top3_log`: [{ date, top1, top2, top3, completed: [bool, bool, bool] }]
-- `energy_self_reports`: [{ ts, level (1–10), context }]
-- `shutdown_ritual_log`: [{ ts, completed_steps: 1–5 }]
+- `calendar_events_log[]`: append `{event_id (Google Calendar ID), created_at, event_type: "weekly_review"|"woop_morning"|"habit"|"milestone"|"shutdown"|"time_block", title, scheduled_for, recurrence (RRULE или null), color_id (из COLOR_MAP), status: "created"|"updated"|"deleted"}` — каждое реально созданное событие
+- В Mode B (Paper Coach) — `calendar_events_log[].created_via: "paper"` без `event_id` (markdown-таблица)
+- `daily_top3_log[]`: append `{date, top1: {title, kr_link}, top2: {...}, top3: {...}, completed: [bool, bool, bool], energy_level (1–10 self-report)}`
+- `energy_self_reports[]`: append `{ts, level (1–10), context: "morning"|"midday"|"evening"|"adhoc"}`
+- `shutdown_ritual_log[]`: append `{ts, completed_steps (1–5), skipped: bool}`
+- `recovery_sessions_log[]`: append `{recovery_id, date, gap_days, strategy_used (из recovery_protocol.md), outcome: "resumed"|"reduced_scope"|"paused"}`
+- Также обновить `session.gap_days_since_last_session: 0` (счётчик сбросился)
+- `persistence_retry.calendar.pending_events[]`: append событий для retry в следующей сессии
+- `session.completed_phases`: append `"5"`
+- `session.last_session_at`: ISO timestamp
 #### Common exit transitions
 - **Phase 3 (Weekly Review)** — конец недели → `references/module_phase3_weekly_review.md`
 - **Phase 0.5 (ER Protocol)** — пользователь застрял на «не могу начать» → см. `module_phase1_diagnostic.md`

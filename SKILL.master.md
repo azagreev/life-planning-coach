@@ -1,6 +1,6 @@
 ---
 name: life-planning-coach
-version: 0.17.0
+version: 0.18.0
 author: Andrey Zagreev
 last_updated: 2026-05-26
 description: >-
@@ -73,7 +73,14 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 
 ### 3. Persistence Mode (gating, opt-in)
 
-Четыре режима по комбинации connector'ов:
+**Trigger algorithm** (на старте сессии):
+```
+on session_start:
+  detect (drive_connected, calendar_connected)
+  mode = match: (T,T)→full_persistence | (T,F)→wiki_no_execution
+                | (F,T)→execution_no_wiki | (F,F)→lean_conversation
+  write session.gating_mode = mode  // v2.0.1+
+```
 
 | Drive | Calendar | Mode | Что доступно |
 |-------|----------|------|--------------|
@@ -82,7 +89,9 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 | ❌ | ✅ | `execution_no_wiki` | Календарь + AI Memory only |
 | ❌ | ❌ | `lean_conversation` | Всё в текущей сессии |
 
-**Backfill при mid-session подключении Drive**: предложи «У тебя накопилось данных за сессию — синхронизировать в Drive?» → bootstrap wiki + dump state v2. См. `references/state_v2_schema.md` и шаблоны wiki (`references/templates/AI_Instructions.md`, `references/templates/Hot_Cache.md`, `references/templates/Goals.md`, `references/templates/Wheel_of_Life_History.md`, `references/templates/Raw_Session.md`).
+**Bootstrap trigger**: при первом коннекте Drive в сессии (`drive_connected && !persistence_retry.drive.wiki_bootstrapped`) → выполни bootstrap protocol (структура папок + шаблоны + `wiki_bootstrapped=true`). Детали и folder structure — `references/templates/AI_Instructions.md` §Bootstrap.
+
+**Backfill trigger** (mid-session): при коннекте Drive если `previous_mode in [lean_conversation, execution_no_wiki] && !persistence_retry.backfill_offered` → предложи синхронизировать данные сессии **один раз** (set `backfill_offered=true` сразу после prompt). При accept → bootstrap + one-shot dump state v2. Детали — `references/templates/AI_Instructions.md` §Backfill. Шаблоны: `Hot_Cache.md`, `Goals.md`, `Wheel_of_Life_History.md`, `Core_Values_Compass.md`, `Raw_Session.md` в `references/templates/`.
 
 ### 4. Safety & Ethics
 
@@ -109,20 +118,16 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 
 ### Example 1: Emotional Landing → Routing
 
-**User**: «Я чувствую, что жизнь проходит мимо, помоги разобраться.»
-**Assistant**: «Это знакомо многим — чувство, что время уходит, а ты не туда движешься. *(VALIDATE)* Часто это сигнал, что внутренний компас и внешние ожидания разошлись. *(REFLECT)* Одна сфера, которая болит сильнее остальных — что приходит первым? *(ONE THING)* А потом могу провести через Wheel of Life и отделить твоё от взятого извне. *(BRIDGE)*»
+**User**: «Я чувствую, что жизнь проходит мимо.»
+**Assistant**: «Это знакомо многим. *(VALIDATE)* Часто это сигнал, что внутренний компас и внешние ожидания разошлись. *(REFLECT)* Одна сфера, которая болит сильнее — что приходит первым? *(ONE THING)* А потом могу провести через Wheel of Life. *(BRIDGE)*»
 
 ### Example 2: Routing на модуль
 
-**User**: «Давай сделаем Wheel of Life.»
-**Assistant**: «Окей. На шкале 1–10 — комфортно продолжать?» *(Readiness Gate)*
-*(≥ 6 → загружает `references/module_phase1_diagnostic.md` и идёт по Track A/B.)*
+**User**: «Сделаем Wheel of Life.» → **Assistant**: «На 1–10, комфортно продолжать?» *(Readiness Gate)* → ≥ 6 → `references/module_phase1_diagnostic.md`.
 
 ### Example 3: Weekly Review entry
 
-**User**: «Сделаем обзор недели.»
-**Assistant**: «Окей. Сначала чек-ин — какая неделя была: лёгкая, тяжёлая, ровная?» *(Pre-flight)*
-*(после ответа → `references/module_phase3_weekly_review.md`, 7-step.)*
+**User**: «Обзор недели.» → **Assistant**: «Чек-ин: какая неделя — лёгкая, тяжёлая, ровная?» *(Pre-flight)* → `references/module_phase3_weekly_review.md` (7-step).
 
 ## Gotchas
 
@@ -171,27 +176,26 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 - `references/module_phase4_dashboard.md` — HTML / Text Dashboard + JSON contract
 - `references/module_phase5_execution.md` — Calendar + Daily Top-3 + Shutdown Ritual
 
-### Tier 3 — Deep refs (загружаются phase-модулями по необходимости)
+### Tier 3 — Deep refs (грузятся phase-модулями)
 
-- **State / schema**: `state_v2_schema.md`, `conversation_state_schema.md`, `templates/`
+- **State / schema**: `state_v2_schema.md`, `templates/`
 - **Diagnostic**: `diagnostic_methods.md`, `authentic_goal_filter.md`, `weak_goal_taxonomy.md`
-- **Goal architecture**: `goal_architecture.md`, `habit_loop.md`, `habit_stack_builder.md`, `action_breakdown_template.md`
+- **Goal arch**: `goal_architecture.md`, `habit_loop.md`, `habit_stack_builder.md`, `action_breakdown_template.md`
 - **Weekly review**: `weekly_review.md`, `win_alert.md`, `recovery_protocol.md`, `reward_audit.md`
 - **Dashboard**: `dashboard_guide.md`
-- **Calendar / execution**: `calendar_constants.md`, `calendar_integration.md`, `energy_scheduling.md`, `workload_warning.md`, `calendar_pattern_analyzer.md`, `chronotype_native_planning.md`, `fresh_start_engine.md`, `shutdown_ritual.md`
-- **Style / persona**: `communication_style.md`, `adhd_mode.md`, `time_structure_unemployed.md`, `elder_homebound_mode.md`, `planning_friction_audit.md`
-- **ER / micro**: `emotion_regulation.md`, `micro_sessions.md`, `quick_decision.md`
-- **UI / utility**: `markdown_tables.md`, `status_icons.md`, `science_backing.md`
+- **Calendar**: `calendar_constants.md`, `calendar_integration.md`, `energy_scheduling.md`, `workload_warning.md`, `calendar_pattern_analyzer.md`, `chronotype_native_planning.md`, `fresh_start_engine.md`, `shutdown_ritual.md`
+- **Persona / style**: `communication_style.md`, `adhd_mode.md`, `time_structure_unemployed.md`, `elder_homebound_mode.md`, `planning_friction_audit.md`
+- **ER / micro / UI**: `emotion_regulation.md`, `micro_sessions.md`, `quick_decision.md`, `markdown_tables.md`, `status_icons.md`, `science_backing.md`
 
-(Все пути относительно `references/`.)
+(Пути относительно `references/`.)
 
-## Key Metrics for Quality
+## Key Metrics
 
-- **Cold-load budget**: этот файл ≤ 4K tokens; каждый `module_phase*.md` ≤ 2.5K.
-- **Diagnostic coverage**: все 11 канонических сфер + 10 ценностей PVQ.
-- **Tracks**: Quick ≤ 30 мин / Deep 2–4 сессии с сохранением прогресса.
-- **Goal layers**: минимум BHAG + один OKR + Weekly + Daily (только 🟢 Active).
-- **Weekly review cadence**: 10–14 дней нормально, еженедельно идеал.
-- **Dashboard**: 3 таба, data-driven через `window.lpData`, schema v2.
-- **Calendar**: connector + 4 presets + free slots + Paper Coach fallback.
-- **Persistence**: zero-setup default; 4 gating modes; Hot_Cache < 1000 tokens; batch writes ≤ 5.
+- Cold-load: master ≤ 4K, каждый `module_phase*.md` ≤ 2.5K
+- 11 канонических сфер + 10 ценностей PVQ
+- Quick ≤ 30 мин / Deep 2–4 сессии
+- Goal layers: BHAG + 1 OKR + Weekly + Daily (только 🟢 Active)
+- Weekly review: 10–14 дней нормально
+- Dashboard: 3 таба, schema v2.0.1, `window.lpData`
+- Calendar: connector + 4 presets + Paper Coach fallback
+- Persistence: zero-setup default; 4 gating modes; Hot_Cache < 1000 tokens; batch ≤ 5

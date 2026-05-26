@@ -123,8 +123,14 @@ class TestStateV2SchemaCompleteness(unittest.TestCase):
             self.assertIn(key, content, f"state_v2 schema missing key: {key}")
 
     def test_schema_version_is_2_0(self):
+        """Schema must declare semver 2.x — accepts 2.0, 2.0.1, 2.1, etc."""
+        import re
         content = (REFERENCES / "state_v2_schema.md").read_text(encoding="utf-8")
-        self.assertIn('"schema_version": "2.0"', content)
+        match = re.search(r'"schema_version":\s*"(2\.\d+(?:\.\d+)?)"', content)
+        self.assertIsNotNone(
+            match,
+            "state_v2_schema.md must declare schema_version as semver 2.x in JSON",
+        )
 
     def test_core_values_block_present(self):
         content = (REFERENCES / "state_v2_schema.md").read_text(encoding="utf-8")
@@ -193,12 +199,15 @@ class TestWikiTemplatesV2(unittest.TestCase):
             )
 
     def test_all_templates_have_schema_version(self):
+        """Each template must carry schema_version 2.x in frontmatter."""
+        import re
+        pattern = re.compile(r'schema_version:\s*"(2\.\d+(?:\.\d+)?)"')
         for fname in self.EXPECTED_TEMPLATES:
             content = (TEMPLATES / fname).read_text(encoding="utf-8")
-            self.assertIn(
-                'schema_version: "2.0"',
+            self.assertRegex(
                 content,
-                f"{fname} must declare schema_version: 2.0 in frontmatter",
+                pattern,
+                f"{fname} must declare schema_version: 2.x in frontmatter",
             )
 
     def test_index_refs_resolve(self):

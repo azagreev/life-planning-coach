@@ -6,7 +6,7 @@
 ![version](https://img.shields.io/badge/version-0.17.0-blue)
 
 > **Интерактивный evidence-based life coach** для Claude.ai, Grok (xAI) и Kimi (OK Computer + Code CLI).  
-> **Версия:** 0.17.0 | [Релизы](https://github.com/azagreev/life-planning-coach/releases) | [CHANGELOG](CHANGELOG.md)
+> **Версия:** 0.18.0 | [Релизы](https://github.com/azagreev/life-planning-coach/releases) | [CHANGELOG](CHANGELOG.md)
 
 ---
 

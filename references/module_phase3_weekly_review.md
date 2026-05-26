@@ -92,13 +92,30 @@
 
 ## State writes
 
-В конце Phase 3 запиши в state v2:
-- `weekly_review_log`: [{ week_iso, retro: {worked, didnt, change}, kr_progress: { kr_id: {lag, lead} }, wins: [...], habits_status: { habit_id: 'green'|'yellow'|'broken' } }]
-- `wins_log` (append): новые wins из Celebration
-- `next_week_plan`: [{ priority_id, parent_kr, first_action_monday }]
-- `phase3_last_completed_at`: ISO timestamp
+В конце Phase 3 запиши в state v2 (`references/state_v2_schema.md`):
 
-См. `references/state_v2_schema.md`. Запись через `references/templates/Wheel_of_Life_History.md` (если включён tracker) и `references/templates/Hot_Cache.md` (обновление активного контекста).
+**Weekly review record:**
+- `weekly_reviews[]`: append `{review_id, date, format: "gtd_scrum", gtd: {get_clear[], get_current[], get_creative[]}, scrum_retro: {worked[], didnt_work[], changes[]}, lead_measures: {sphere_id: value}, lag_measures: {sphere_id: value}, execution_score (0–10), adjustments[]}`
+
+**Wins (first-class, шаг 5 Celebration — обязательно min 1 запись):**
+- `wins_log[]`: append `{win_id, date, description, goal_id (если связан), sphere_id, category: "milestone"|"first"|"streak"|"breakthrough", celebrated_via: "win_alert"|"weekly_review"}` — за каждую отмеченную победу
+
+**Habits status update:**
+- `habits[habit_id].status`: `"on_track"|"at_risk"|"off_track"` (после Habit Review шаг 6)
+- `habits[habit_id].current_streak` / `best_streak`: обновить
+- `habits[habit_id].last_completed`: ISO timestamp
+
+**Reward Audit (шаг 7, опционально при прокрастинации):**
+- `reward_audit_results[]`: append `{audit_id, date, cheap_dopamine_sources: [{source, frequency_per_day, awareness_level}], high_friction_sources[], grayscale_commitment: null|"tried"|"adopted", next_check_date}` — только если шаг 7 выполнен
+
+**Next Week Plan:**
+- `goals.weekly_priorities[]`: replace (новая неделя) `[{priority_id, title, sphere_id, completed: false, week_number}]` (max 3–5)
+
+**Session:**
+- `session.completed_phases`: append `"3"`
+- `session.last_session_at`: ISO timestamp
+
+Запись через `references/templates/USER_PROGRESS_JOURNAL.md` (review record + reward_audit category) и `references/templates/Goals.md` (секция «Победы» — топ-5 в Hot_Cache.md).
 
 ---
 

@@ -8,22 +8,10 @@
 
 ## Текущий статус
 
-- **Текущая версия:** `v0.17.0`
+- **Текущая версия:** `v0.18.0`
 - **Источник правды по версии:** `git describe --tags --abbrev=0`
 - **История релизов:** [CHANGELOG.md](CHANGELOG.md)
 - **Архив старого roadmap:** [docs/archive/ROADMAP_before_cleanup_2026-05-21.md](docs/archive/ROADMAP_before_cleanup_2026-05-21.md)
-
----
-
-## v0.18.0 — Gating + State Writes
-
-**Цель:** SKILL.master.md учится писать в state v2 при подключении Drive + Calendar.
-
-- [ ] **Gating logic** — 4 mode (drive × calendar) комбинаций реализованы в SKILL
-- [ ] **State write rules** — emotion_regulation_log, persona, wins, reward_audit, calendar_events, recovery_sessions
-- [ ] **Bootstrap Drive Wiki** при первом коннекте
-- [ ] **Backfill prompt** при mid-session connection
-- [ ] **Core Values Discovery flow** — промпты Phase 1.5 (из `docs/research/prd_core_values_discovery.md`)
 
 ---
 

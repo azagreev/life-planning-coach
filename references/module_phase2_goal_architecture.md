@@ -104,12 +104,23 @@ WOOP — единственный научно валидированный фо
 
 ## State writes
 
-В конце Phase 2 запиши в state v2:
-- `goals`: [{ id, layer (bhag|theme|quarter|weekly|daily_woop), title, parent_id, smart_plus_passed, kr: [...], deadline, owner_value: 'autonomy' }]
-- `habits`: [{ id, cue, routine, reward, anchor, started_at, identity_statement }]
-- `phase2_completed_at`: ISO timestamp
+В конце Phase 2 запиши в state v2 (`references/state_v2_schema.md`):
 
-См. `references/state_v2_schema.md`. Запись через `references/templates/Goals.md`.
+**Goals layer stack:**
+- `goals.bhag`: `{statement, horizon_years (10–25), created_at}` (если создан / обновлён)
+- `goals.life_themes[]`: `[{theme_id, objective, key_results[], horizon: "1y"|"3y"}]`
+- `goals.twelve_week_okr`: `{quarter_start, quarter_end, objectives[{objective_id, title, sphere_id, key_results[{kr_id, title, target_value, unit, progress_pct, status}], confidence_score (1–10)}]}`
+- `goals.weekly_priorities[]`: `[{priority_id, title, sphere_id, completed, week_number}]` (max 3–5)
+- `goals.daily_woop[]`: append `{woop_id, date, wish, outcome, obstacle, plan (if-then), sphere_id, active: true}`
+
+**Habits — полный Habit Loop (cue/routine/reward/anchor/tiny_version, обязательно):**
+- `habits[]`: append `{habit_id, name, cue (триггер), routine (само действие), reward (немедленная), anchor (existing ritual), sphere_id (canonical), tiny_version (≤2 мин старт), current_streak: 0, best_streak: 0, status: "on_track", started_at, last_completed: null}`
+- Все 5 полей Habit Loop (cue+routine+reward+anchor+tiny_version) — **обязательны**. Без anchor/tiny_version привычка остаётся декларацией.
+
+**Session:**
+- `session.completed_phases`: append `"2"`
+
+Запись через `references/templates/Goals.md` (секции Goals + Habits) и `references/templates/Hot_Cache.md` (активные приоритеты + Daily WOOP).
 
 ---
 
