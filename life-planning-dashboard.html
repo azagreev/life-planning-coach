@@ -9,8 +9,12 @@
   <title>Life Planning Coach — Dashboard</title>
   <style>
     /* ============================================
-       LIFE PLANNING COACH DASHBOARD v0.9.1
+       LIFE PLANNING COACH DASHBOARD v1.0.0
        Apple-style design | Offline | Responsive
+       Data-driven: reads window.lpData (state_v2 schema)
+       Canonical 11 spheres: health, finances, career, family, romance,
+         social, personal_growth, meaning, fun_recreation, contribution,
+         physical_environment
        ============================================ */
 
     /* ---- CSS Variables: Light & Dark Themes ---- */
@@ -919,6 +923,27 @@
             </div>
           </div>
 
+          <!-- Core Values Compass (state_v2.diagnosis.core_values) -->
+          <div class="card card-full liquid-glass" id="core-values-card">
+            <h2>🧭 Core Values Compass</h2>
+            <div id="core-values-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:8px"></div>
+            <div id="core-values-empty" style="display:none;padding:20px;text-align:center;color:var(--text-tertiary);font-size:13px">
+              Core values ещё не выявлены. Пройди <strong>Phase 1.5 Core Values Discovery</strong> — секция заполнится.
+            </div>
+          </div>
+
+          <!-- Health Track placeholder (schema bump 2.1 — collapsed by default) -->
+          <div class="card card-full liquid-glass" id="health-track-card" style="display:none">
+            <h2>🏥 Health &amp; Metabolism Track</h2>
+            <div id="health-track-body"></div>
+          </div>
+
+          <!-- Goal Concordance placeholder (schema bump 2.2 — collapsed by default) -->
+          <div class="card card-full liquid-glass" id="concordance-card" style="display:none">
+            <h2>🤝 Goal Concordance</h2>
+            <div id="concordance-body"></div>
+          </div>
+
           <!-- Weekly Priorities -->
           <div class="card liquid-glass">
             <h2>Приоритеты недели</h2>
@@ -1140,99 +1165,191 @@
 
   <script>
     // ============================================
-    // DATA STRUCTURES — preserved from v0.9.0
+    // DATA LAYER — data-driven from window.lpData (state_v2 schema)
     // ============================================
-    const WHEEL_SPHERES = [
-      { id: 'health', name: 'Здоровье и физическая форма', short: 'Здоровье', current: 7, prev: 6, target: 9, color: '#7a9e7e', icon: '💚',
-        goals: [
-          { title: 'Бегать 3x в неделю', progress: 100, status: 'done' },
-          { title: 'Спать 7+ часов', progress: 65, status: 'risk' },
-          { title: 'Пить 2.5л воды', progress: 80, status: 'ok' },
-        ]},
-      { id: 'finances', name: 'Финансы и материальное благополучие', short: 'Финансы', current: 5, prev: 5, target: 7, color: '#c4a55a', icon: '💰',
-        goals: [
-          { title: 'Откладывать 20% дохода', progress: 91, status: 'ok' },
-          { title: 'Инвестиционный портфель', progress: 30, status: 'risk' },
-        ]},
-      { id: 'career', name: 'Карьера и работа', short: 'Карьера', current: 6, prev: 5, target: 8, color: '#6b8cae', icon: '💼',
-        goals: [
-          { title: 'Закончить курс повышения', progress: 45, status: 'risk' },
-          { title: 'Записать коучинг-программу', progress: 55, status: 'ok' },
-        ]},
-      { id: 'family', name: 'Семья и близкие', short: 'Семья', current: 7, prev: 7, target: 8, color: '#8a9ec4', icon: '👨‍👩‍👧',
-        goals: [
-          { title: 'Звонок родителям', progress: 85, status: 'ok' },
-          { title: 'Семейный ужин 2x/нед', progress: 70, status: 'ok' },
-        ]},
-      { id: 'romance', name: 'Романтика и партнёрство', short: 'Романтика', current: 8, prev: 7, target: 9, color: '#c4858a', icon: '💕',
-        goals: [
-          { title: 'Еженедельное свидание', progress: 90, status: 'ok' },
-          { title: 'Ежедневная благодарность', progress: 75, status: 'ok' },
-        ]},
-      { id: 'social', name: 'Дружба и социальные связи', short: 'Дружба', current: 6, prev: 5, target: 8, color: '#6a8ac4', icon: '🤝',
-        goals: [
-          { title: 'Встреча с друзьями', progress: 60, status: 'ok' },
-          { title: 'Нетворкинг 1x/мес', progress: 40, status: 'risk' },
-        ]},
-      { id: 'growth', name: 'Личностный рост и обучение', short: 'Рост', current: 6, prev: 5, target: 8, color: '#8a6bc4', icon: '📚',
-        goals: [
-          { title: 'Читать 2 книги/мес', progress: 50, status: 'ok' },
-          { title: 'Медитация ежедневно', progress: 40, status: 'risk' },
-        ]},
-      { id: 'spirituality', name: 'Духовность, смысл и ценности', short: 'Смысл', current: 5, prev: 4, target: 8, color: '#9e7ac4', icon: '🧘',
-        goals: [
-          { title: 'Ежедневная рефлексия', progress: 55, status: 'ok' },
-          { title: 'Волонтёрство 1x/мес', progress: 30, status: 'risk' },
-        ]},
-      { id: 'fun', name: 'Отдых, хобби и радость', short: 'Отдых', current: 4, prev: 3, target: 7, color: '#6bc4a2', icon: '🎉',
-        goals: [
-          { title: 'Хобби в выходные', progress: 30, status: 'risk' },
-          { title: 'Путешествие в квартал', progress: 0, status: 'todo' },
-        ]},
-      { id: 'contribution', name: 'Вклад в общество и наследие', short: 'Вклад', current: 5, prev: 4, target: 7, color: '#c4a26a', icon: '🌍',
-        goals: [
-          { title: 'Менторство junior', progress: 45, status: 'ok' },
-          { title: 'Open source контрибуции', progress: 20, status: 'risk' },
-        ]},
-      { id: 'environment', name: 'Дом и окружение', short: 'Дом', current: 7, prev: 6, target: 8, color: '#7a9e9e', icon: '🏠',
-        goals: [
-          { title: 'Уборка по зонам', progress: 75, status: 'ok' },
-          { title: 'Ремонт рабочего места', progress: 60, status: 'ok' },
-        ]}
-    ];
+    // SCHEMA_VERSION compatibility check: dashboard supports 2.x via additive bumps
+    const SUPPORTED_SCHEMA_MAJOR = 2;
 
-    const EXECUTION_SCORES = [
-      { week: 1, planned: 10, done: 8, score: 8.0 },
-      { week: 2, planned: 10, done: 9, score: 9.0 },
-      { week: 3, planned: 12, done: 7, score: 5.8 },
-      { week: 4, planned: 10, done: 10, score: 10.0 },
-      { week: 5, planned: 11, done: 8, score: 7.3 },
-      { week: 6, planned: 10, done: 9, score: 9.0 },
-      { week: 7, planned: 10, done: 6, score: 6.0 },
-      { week: 8, planned: 10, done: 9, score: 9.0, current: true },
-      { week: 9, planned: 10, done: 0, score: 0, future: true },
-      { week: 10, planned: 10, done: 0, score: 0, future: true },
-      { week: 11, planned: 10, done: 0, score: 0, future: true },
-      { week: 12, planned: 10, done: 0, score: 0, future: true },
-    ];
+    // Canonical 11 spheres metadata (display, icon, color).
+    // IDs MUST match state_v2_schema.md §1 — single source of truth.
+    const SPHERE_META = {
+      health:                { short: 'Здоровье',  name: 'Здоровье',                icon: '💚', color: '#7a9e7e' },
+      finances:              { short: 'Финансы',   name: 'Финансы',                 icon: '💰', color: '#c4a55a' },
+      career:                { short: 'Карьера',   name: 'Карьера',                 icon: '💼', color: '#6b8cae' },
+      family:                { short: 'Семья',     name: 'Семья',                   icon: '👨‍👩‍👧', color: '#8a9ec4' },
+      romance:               { short: 'Романтика', name: 'Отношения с партнёром',   icon: '💕', color: '#c4858a' },
+      social:                { short: 'Дружба',    name: 'Дружба',                  icon: '🤝', color: '#6a8ac4' },
+      personal_growth:       { short: 'Рост',      name: 'Личностный рост',         icon: '📚', color: '#8a6bc4' },
+      meaning:               { short: 'Смысл',     name: 'Смысл и духовность',      icon: '🧘', color: '#9e7ac4' },
+      fun_recreation:        { short: 'Отдых',     name: 'Отдых и хобби',           icon: '🎉', color: '#6bc4a2' },
+      contribution:          { short: 'Вклад',     name: 'Вклад',                   icon: '🌍', color: '#c4a26a' },
+      physical_environment:  { short: 'Дом',       name: 'Дом и среда',             icon: '🏠', color: '#7a9e9e' }
+    };
+    const CANONICAL_SPHERE_IDS = Object.keys(SPHERE_META);
 
-    const VELOCITY_DATA = [
-      { week: 'W1', planned: 10, completed: 8 },
-      { week: 'W2', planned: 10, completed: 9 },
-      { week: 'W3', planned: 12, completed: 7 },
-      { week: 'W4', planned: 10, completed: 10 },
-      { week: 'W5', planned: 11, completed: 8 },
-      { week: 'W6', planned: 10, completed: 9 },
-      { week: 'W7', planned: 10, completed: 6 },
-      { week: 'W8', planned: 10, completed: 9 },
-    ];
+    // Sample fallback for standalone preview (no skill integration).
+    // Skill injects window.lpData before this script runs in production.
+    const SAMPLE_FALLBACK = {
+      schema_version: '2.0',
+      meta: { weekNumber: 8, weekLabel: 'Неделя 8 из 12' },
+      wheel_of_life: {
+        current: {
+          health: 7, finances: 5, career: 6, family: 7, romance: 8, social: 6,
+          personal_growth: 6, meaning: 5, fun_recreation: 4, contribution: 5, physical_environment: 7
+        },
+        previous: {
+          health: 6, finances: 5, career: 5, family: 7, romance: 7, social: 5,
+          personal_growth: 5, meaning: 4, fun_recreation: 3, contribution: 4, physical_environment: 6
+        },
+        targets: {
+          health: 9, finances: 7, career: 8, family: 8, romance: 9, social: 8,
+          personal_growth: 8, meaning: 8, fun_recreation: 7, contribution: 7, physical_environment: 8
+        },
+        sphere_goals: {
+          health: [{ title: 'Бегать 3x в неделю', progress: 100, status: 'done' }, { title: 'Спать 7+ часов', progress: 65, status: 'risk' }],
+          finances: [{ title: 'Откладывать 20% дохода', progress: 91, status: 'ok' }],
+          career: [{ title: 'Закончить курс повышения', progress: 45, status: 'risk' }],
+          family: [{ title: 'Семейный ужин 2x/нед', progress: 70, status: 'ok' }],
+          romance: [{ title: 'Еженедельное свидание', progress: 90, status: 'ok' }],
+          social: [{ title: 'Встреча с друзьями', progress: 60, status: 'ok' }],
+          personal_growth: [{ title: 'Читать 2 книги/мес', progress: 50, status: 'ok' }],
+          meaning: [{ title: 'Ежедневная рефлексия', progress: 55, status: 'ok' }],
+          fun_recreation: [{ title: 'Хобби в выходные', progress: 30, status: 'risk' }],
+          contribution: [{ title: 'Менторство junior', progress: 45, status: 'ok' }],
+          physical_environment: [{ title: 'Уборка по зонам', progress: 75, status: 'ok' }]
+        }
+      },
+      core_values: [
+        { value_id: 'CV1', name: 'Autonomy', compass_question: 'Расширяет ли этот выбор мою автономию?', priority_rank: 1 },
+        { value_id: 'CV2', name: 'Growth',   compass_question: 'Учусь ли я здесь чему-то новому?',       priority_rank: 2 },
+        { value_id: 'CV3', name: 'Connection', compass_question: 'Укрепляет ли это значимые связи?',    priority_rank: 3 }
+      ],
+      execution_scores: [
+        { week: 1, planned: 10, done: 8, score: 8.0 },  { week: 2, planned: 10, done: 9, score: 9.0 },
+        { week: 3, planned: 12, done: 7, score: 5.8 },  { week: 4, planned: 10, done: 10, score: 10.0 },
+        { week: 5, planned: 11, done: 8, score: 7.3 },  { week: 6, planned: 10, done: 9, score: 9.0 },
+        { week: 7, planned: 10, done: 6, score: 6.0 },  { week: 8, planned: 10, done: 9, score: 9.0, current: true },
+        { week: 9, planned: 10, done: 0, score: 0, future: true },  { week: 10, planned: 10, done: 0, score: 0, future: true },
+        { week: 11, planned: 10, done: 0, score: 0, future: true }, { week: 12, planned: 10, done: 0, score: 0, future: true }
+      ],
+      velocity: [
+        { week: 'W1', planned: 10, completed: 8 }, { week: 'W2', planned: 10, completed: 9 },
+        { week: 'W3', planned: 12, completed: 7 }, { week: 'W4', planned: 10, completed: 10 },
+        { week: 'W5', planned: 11, completed: 8 }, { week: 'W6', planned: 10, completed: 9 },
+        { week: 'W7', planned: 10, completed: 6 }, { week: 'W8', planned: 10, completed: 9 }
+      ],
+      streaks: [
+        { category: 'active_habits', label: 'Привычки', current: 5, best: 12, status: 'on_track', icon: '✅' },
+        { category: 'digital', label: 'Экраны', current: 2, best: 7, status: 'at_risk', icon: '📱' },
+        { category: 'sugar', label: 'Сахар', current: 0, best: 3, status: 'off_track', icon: '🍬' },
+        { category: 'focus', label: 'Фокус', current: 4, best: 10, status: 'on_track', icon: '🎯' }
+      ]
+    };
 
-    const STREAK_DATA = [
-      { category: 'active_habits', label: 'Привычки', current: 5, best: 12, status: 'on_track', icon: '✅' },
-      { category: 'digital', label: 'Экраны', current: 2, best: 7, status: 'at_risk', icon: '📱' },
-      { category: 'sugar', label: 'Сахар', current: 0, best: 3, status: 'off_track', icon: '🍬' },
-      { category: 'focus', label: 'Фокус', current: 4, best: 10, status: 'on_track', icon: '🎯' }
-    ];
+    // Resolve data source: window.lpData (skill-injected) → fallback.
+    function resolveData() {
+      const data = (typeof window !== 'undefined' && window.lpData) ? window.lpData : SAMPLE_FALLBACK;
+      const ver = data.schema_version || '2.0';
+      const major = parseInt(ver.split('.')[0], 10);
+      if (major !== SUPPORTED_SCHEMA_MAJOR) {
+        console.warn(`Dashboard supports schema v${SUPPORTED_SCHEMA_MAJOR}.x, got v${ver}. Rendering with fallback.`);
+        return SAMPLE_FALLBACK;
+      }
+      return data;
+    }
+
+    const LP_DATA = resolveData();
+
+    // Build WHEEL_SPHERES from canonical SPHERE_META + LP_DATA.wheel_of_life.
+    // Missing sphere data → score 0, allows partial state rendering.
+    const WHEEL_SPHERES = CANONICAL_SPHERE_IDS.map(id => {
+      const meta = SPHERE_META[id];
+      const wol = LP_DATA.wheel_of_life || {};
+      return {
+        id: id,
+        name: meta.name,
+        short: meta.short,
+        icon: meta.icon,
+        color: meta.color,
+        current: (wol.current && wol.current[id] != null) ? wol.current[id] : 0,
+        prev:    (wol.previous && wol.previous[id] != null) ? wol.previous[id] : 0,
+        target:  (wol.targets && wol.targets[id] != null) ? wol.targets[id] : 8,
+        goals:   (wol.sphere_goals && wol.sphere_goals[id]) ? wol.sphere_goals[id] : []
+      };
+    });
+
+    const EXECUTION_SCORES = LP_DATA.execution_scores || [];
+    const VELOCITY_DATA = LP_DATA.velocity || [];
+    const STREAK_DATA = LP_DATA.streaks || [];
+    const CORE_VALUES = LP_DATA.core_values || [];
+
+    // ============================================
+    // RENDER: Core Values Compass (Overview tab)
+    // ============================================
+    function renderCoreValues() {
+      const container = document.getElementById('core-values-list');
+      const empty = document.getElementById('core-values-empty');
+      if (!container) return;
+      if (!CORE_VALUES.length) {
+        container.style.display = 'none';
+        if (empty) empty.style.display = 'block';
+        return;
+      }
+      if (empty) empty.style.display = 'none';
+      container.style.display = 'grid';
+      const sorted = [...CORE_VALUES].sort((a, b) => (a.priority_rank || 99) - (b.priority_rank || 99)).slice(0, 7);
+      container.innerHTML = sorted.map(v => `
+        <div style="background:var(--surface-solid);border-radius:var(--radius-sm);padding:16px;border:1px solid var(--border)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span style="font-size:12px;color:var(--text-tertiary);font-weight:600">${v.value_id || ''}</span>
+            <strong style="font-size:15px;color:var(--text-primary)">${v.name || '—'}</strong>
+            ${v.priority_rank ? `<span style="margin-left:auto;font-size:11px;color:var(--text-tertiary)">#${v.priority_rank}</span>` : ''}
+          </div>
+          ${v.compass_question ? `<div style="font-size:13px;color:var(--text-secondary);font-style:italic;line-height:1.4">«${v.compass_question}»</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    // ============================================
+    // RENDER: Health Track (schema 2.1) — hidden until field present
+    // ============================================
+    function renderHealthTrack() {
+      const card = document.getElementById('health-track-card');
+      if (!card || !LP_DATA.health_metabolism) return;
+      card.style.display = 'block';
+      const h = LP_DATA.health_metabolism;
+      document.getElementById('health-track-body').innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:8px">
+          ${h.sleep_avg_hours != null ? `<div><strong>😴 Сон:</strong> ${h.sleep_avg_hours}ч</div>` : ''}
+          ${h.stress_level != null ? `<div><strong>🌀 Стресс:</strong> ${h.stress_level}/10</div>` : ''}
+          ${h.protein_target_g != null ? `<div><strong>🥩 Белок:</strong> ${h.protein_target_g}г</div>` : ''}
+          ${h.fiber_target_g != null ? `<div><strong>🌾 Клетчатка:</strong> ${h.fiber_target_g}г</div>` : ''}
+          ${h.caffeine_cutoff_time ? `<div><strong>☕ Кофеин до:</strong> ${h.caffeine_cutoff_time}</div>` : ''}
+        </div>
+      `;
+    }
+
+    // ============================================
+    // RENDER: Goal Concordance (schema 2.2) — hidden until field present
+    // ============================================
+    function renderConcordance() {
+      const card = document.getElementById('concordance-card');
+      if (!card) return;
+      const goalsWithCoord = (LP_DATA.goal_filter && LP_DATA.goal_filter.active_goals || [])
+        .filter(g => g.partner_coordination);
+      if (!goalsWithCoord.length) return;
+      card.style.display = 'block';
+      document.getElementById('concordance-body').innerHTML = goalsWithCoord.map(g => `
+        <div style="background:var(--surface-solid);border-radius:var(--radius-sm);padding:12px;margin-top:8px">
+          <strong>${g.goal_id}: ${g.title}</strong>
+          <div style="display:flex;gap:16px;margin-top:6px;font-size:13px;color:var(--text-secondary)">
+            <span>💬 Коммуникация: ${g.partner_coordination.communication || '—'}/10</span>
+            <span>🤝 Сотрудничество: ${g.partner_coordination.cooperation || '—'}/10</span>
+            <span>⚖️ Совместимость: ${g.partner_coordination.compatibility || '—'}/10</span>
+          </div>
+        </div>
+      `).join('');
+    }
 
     // ============================================
     // RENDERING FUNCTIONS
@@ -1560,6 +1677,9 @@
       renderTracker();
       renderHeatmap();
       renderSparklines();
+      renderCoreValues();
+      renderHealthTrack();
+      renderConcordance();
 
       // Animate after paint
       requestAnimationFrame(() => {

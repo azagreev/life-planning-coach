@@ -135,7 +135,7 @@ class TestDashboardStreaks:
         user_js = scripts[-1].group(1)
         # Wrap in a function to allow top-level const/let in node check
         js_to_check = "(() => {\n" + user_js + "\n})();"
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".js", delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".js", delete=False, encoding="utf-8") as f:
             f.write(js_to_check)
             tmp = f.name
         try:

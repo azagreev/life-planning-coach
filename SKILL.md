@@ -1,6 +1,6 @@
 ---
 name: life-planning-coach
-version: 0.14.0
+version: 0.15.0
 author: Andrey Zagreev
 last_updated: 2026-05-20
 description: >-

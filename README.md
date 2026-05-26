@@ -1,7 +1,7 @@
 # 🧭 Life Planning Coach
 
 > **Интерактивный evidence-based life coach** для Claude.ai, Grok (xAI) и Kimi (OK Computer + Code CLI).  
-> **Версия:** 0.14.0 | [Релизы](https://github.com/azagreev/life-planning-coach/releases) | [CHANGELOG](CHANGELOG.md)
+> **Версия:** 0.15.0 | [Релизы](https://github.com/azagreev/life-planning-coach/releases) | [CHANGELOG](CHANGELOG.md)
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: life-planning-coach
-version: 0.14.0
+version: 0.15.0
 description: >-
   Проведи полную диагностику жизни, построй систему целей от 25 лет до сегодняшнего дня и поддерживай еженедельную ретроспективу. Используй при запросах: "помоги спланировать жизнь", "не знаю куда двигаться", "какие у меня цели", "life planning", "постановка целей", "хочу разобраться в себе", "нужен план на жизнь", "ретроспектива", "обзор недели", "wheel of life", "ikigai", "BHAG", "OKR для жизни", "WOOP", "жизненные цели", "самопознание", "баланс жизни", "помоги найти себя", "life compass", "план на 5 лет", "выгорание", "перепутье". НЕ активируй на: конкретные бизнес-задачи, проектный менеджмент, технический troubleshooting, юридические вопросы. Язык: русский (адаптируется к языку пользователя).
 ---
@@ -480,106 +480,7 @@ If user complains planning feels hard, constant failure → load `references/pla
 При запросе "покажи дашборд" или "визуализируй прогресс": 1. Прочитай текущее состояние из `memory_space` или `conversation_state.json` 2. Сгенерируй HTML-файл с embedded данными через `write_file` 3. Добавь `KIMI_REF` tag в конце ответа: `<KIMI_REF type="file" path="/mnt/okcomputer/output/dashboard.html" />` 4. Предложи открыть файл — он доступен для скачивания
 
 
-<!-- INLINED REF: dashboard_guide.md -->
-## 📄 dashboard_guide
-
-#### 3. JSON Data Contract
-
-{
-  "meta": {
-    "version": "1.0",
-    "generatedAt": "2025-01-15T09:00:00Z",
-    "weekNumber": 8,
-    "weekLabel": "Week 8 of 12",
-    "periodStart": "2024-12-30",
-    "periodEnd": "2025-03-24",
-    "timezone": "Europe/Moscow"
-  },
-  "wheelOfLife": {
-    "spheres": [
-      { "id": "health", "name": "Health & Fitness", "label": "Health", "currentScore": 7, "previousScore": 6, "targetScore": 9, "color": "#7A8B6F", "icon": "heart", "goals": [{ "id": "g1", "title": "Run 3x/week", "progress": 75, "status": "onTrack" }] },
-      { "id": "career", "name": "Career & Business", "label": "Career", "currentScore": 6, "previousScore": 5, "targetScore": 8, "color": "#5B7B8C", "icon": "briefcase", "goals": [{ "id": "g2", "title": "Complete certification", "progress": 45, "status": "atRisk" }] },
-      { "id": "finances", "name": "Finances & Money", "label": "Finances", "currentScore": 5, "previousScore": 5, "targetScore": 7, "color": "#B8A16E", "icon": "dollar-sign", "goals": [{ "id": "g3", "title": "Save 20% income", "progress": 60, "status": "onTrack" }] },
-      { "id": "relationships", "name": "Relationships & Family", "label": "Relations", "currentScore": 8, "previousScore": 7, "targetScore": 9, "color": "#A67B8A", "icon": "users", "goals": [{ "id": "g4", "title": "Weekly date night", "progress": 90, "status": "onTrack" }] },
-      { "id": "growth", "name": "Personal Growth", "label": "Growth", "currentScore": 6, "previousScore": 5, "targetScore": 8, "color": "#7B6BA0", "icon": "book", "goals": [{ "id": "g5", "title": "Read 2 books/month", "progress": 50, "status": "onTrack" }] },
-      { "id": "fun", "name": "Fun & Recreation", "label": "Fun", "currentScore": 4, "previousScore": 3, "targetScore": 7, "color": "#C4845C", "icon": "gamepad-2", "goals": [{ "id": "g6", "title": "Weekend hobby", "progress": 30, "status": "offTrack" }] },
-      { "id": "environment", "name": "Physical Environment", "label": "Home", "currentScore": 7, "previousScore": 6, "targetScore": 8, "color": "#6B8A7A", "icon": "home", "goals": [{ "id": "g7", "title": "Declutter workspace", "progress": 80, "status": "onTrack" }] },
-      { "id": "spirituality", "name": "Spirituality & Purpose", "label": "Purpose", "currentScore": 5, "previousScore": 4, "targetScore": 8, "color": "#8B7D6B", "icon": "sun", "goals": [{ "id": "g8", "title": "Daily meditation", "progress": 40, "status": "atRisk" }] }
-    ],
-    "history": []
-  },
-  "okr": {
-    "objectives": [
-      {
-        "id": "o1",
-        "title": "Improve Physical Health",
-        "progress": 72,
-        "status": "onTrack",
-        "sphereId": "health",
-        "confidenceScore": 8,
-        "keyResults": [
-          { "id": "kr1", "title": "Run 3x per week", "currentValue": 3, "targetValue": 3, "unit": "times", "progress": 100, "status": "onTrack" },
-          { "id": "kr2", "title": "Sleep 7+ hours", "currentValue": 6.5, "targetValue": 7, "unit": "hours", "progress": 65, "status": "atRisk" }
-        ]
-      }
-    ],
-    "overallProgress": 72
-  },
-  "goals12WY": {
-    "tactics": [
-      { "id": "t1", "title": "Deep work 4h daily", "priority": 1, "sphereId": "career", "completed": true, "weekNumber": 8 },
-      { "id": "t2", "title": "Morning run 5km", "priority": 1, "sphereId": "health", "completed": true, "weekNumber": 8 },
-      { "id": "t3", "title": "Read 30 pages", "priority": 2, "sphereId": "growth", "completed": false, "weekNumber": 8 }
-    ],
-    "executionScores": [
-      { "weekNumber": 1, "planned": 10, "completed": 8, "score": 8 },
-      { "weekNumber": 2, "planned": 10, "completed": 9, "score": 9 },
-      { "weekNumber": 3, "planned": 12, "completed": 7, "score": 6 },
-      { "weekNumber": 4, "planned": 10, "completed": 10, "score": 10 },
-      { "weekNumber": 5, "planned": 11, "completed": 8, "score": 7 },
-      { "weekNumber": 6, "planned": 10, "completed": 9, "score": 9 },
-      { "weekNumber": 7, "planned": 10, "completed": 6, "score": 6 },
-      { "weekNumber": 8, "planned": 10, "completed": 9, "score": 9 }
-    ]
-  },
-  "weeks": [
-    { "number": 1, "label": "W1", "startDate": "2024-12-30", "endDate": "2025-01-05", "isCurrent": false, "planned": 10, "completed": 8, "confidence": 7, "energy": 8, "mood": 7, "satisfaction": 7 },
-    { "number": 2, "label": "W2", "startDate": "2025-01-06", "endDate": "2025-01-12", "isCurrent": false, "planned": 10, "completed": 9, "confidence": 7, "energy": 7, "mood": 8, "satisfaction": 8 },
-    { "number": 3, "label": "W3", "startDate": "2025-01-13", "endDate": "2025-01-19", "isCurrent": false, "planned": 12, "completed": 7, "confidence": 5, "energy": 5, "mood": 6, "satisfaction": 6 },
-    { "number": 4, "label": "W4", "startDate": "2025-01-20", "endDate": "2025-01-26", "isCurrent": false, "planned": 10, "completed": 10, "confidence": 8, "energy": 8, "mood": 9, "satisfaction": 9 },
-    { "number": 5, "label": "W5", "startDate": "2025-01-27", "endDate": "2025-02-02", "isCurrent": false, "planned": 11, "completed": 8, "confidence": 6, "energy": 6, "mood": 6, "satisfaction": 7 },
-    { "number": 6, "label": "W6", "startDate": "2025-02-03", "endDate": "2025-02-09", "isCurrent": false, "planned": 10, "completed": 9, "confidence": 7, "energy": 7, "mood": 7, "satisfaction": 8 },
-    { "number": 7, "label": "W7", "startDate": "2025-02-10", "endDate": "2025-02-16", "isCurrent": false, "planned": 10, "completed": 6, "confidence": 5, "energy": 5, "mood": 5, "satisfaction": 5 },
-    { "number": 8, "label": "W8", "startDate": "2025-02-17", "endDate": "2025-02-23", "isCurrent": true, "planned": 10, "completed": 9, "confidence": 8, "energy": 7, "mood": 8, "satisfaction": 8 }
-  ],
-  "dailyScores": [
-    { "date": "2025-01-15", "totalScore": 3, "executionPct": 75, "habitsCompleted": 4, "habitsTotal": 5, "mood": 8, "energy": 7, "habits": [{ "name": "Morning run", "completed": true }, { "name": "Deep work", "completed": true }, { "name": "Reading", "completed": false }, { "name": "Meditation", "completed": true }, { "name": "Gratitude", "completed": true }] },
-    { "date": "2025-01-16", "totalScore": 4, "executionPct": 100, "habitsCompleted": 5, "habitsTotal": 5, "mood": 9, "energy": 8, "habits": [{ "name": "Morning run", "completed": true }, { "name": "Deep work", "completed": true }, { "name": "Reading", "completed": true }, { "name": "Meditation", "completed": true }, { "name": "Gratitude", "completed": true }] },
-    { "date": "2025-01-17", "totalScore": 2, "executionPct": 50, "habitsCompleted": 2, "habitsTotal": 5, "mood": 5, "energy": 4, "habits": [{ "name": "Morning run", "completed": false }, { "name": "Deep work", "completed": true }, { "name": "Reading", "completed": false }, { "name": "Meditation", "completed": false }, { "name": "Gratitude", "completed": true }] }
-  ],
-  "bhagRoadmap": {
-    "levels": [
-      { "level": 4, "label": "BHAG (10-Year)", "items": [{ "id": "bhag1", "title": "Build a life of freedom and impact", "startDate": "2025-01-01", "endDate": "2035-01-01", "progress": 15, "status": "inProgress", "sphereId": "purpose", "milestones": [] }] },
-      { "level": 3, "label": "3-Year Vision", "items": [{ "id": "3y1", "title": "Location-independent business", "startDate": "2025-01-01", "endDate": "2028-01-01", "progress": 25, "status": "inProgress", "sphereId": "career", "parentId": "bhag1", "milestones": [{ "date": "2026-01-01", "label": "First $10k MRR", "completed": false }] }] },
-      { "level": 2, "label": "Annual Goal", "items": [{ "id": "1y1", "title": "Launch coaching program", "startDate": "2025-01-01", "endDate": "2025-12-31", "progress": 40, "status": "inProgress", "sphereId": "career", "parentId": "3y1", "milestones": [] }] },
-      { "level": 1, "label": "12-Week Objective", "items": [{ "id": "12w1", "title": "Complete course curriculum", "startDate": "2024-12-30", "endDate": "2025-03-24", "progress": 60, "status": "inProgress", "sphereId": "career", "parentId": "1y1", "milestones": [] }] },
-      { "level": 0, "label": "Weekly Tactic", "items": [{ "id": "wt1", "title": "Record 3 video modules", "startDate": "2025-02-17", "endDate": "2025-02-23", "progress": 66, "status": "inProgress", "sphereId": "career", "parentId": "12w1", "milestones": [] }] }
-    ]
-  },
-  "woopCards": [
-    { "id": "woop1", "wish": "Run a half marathon", "outcome": "Feel proud, healthy, and accomplished crossing the finish line", "obstacle": "Morning fatigue and hitting snooze", "plan": "If I feel tired when the alarm rings, then I will put my running shoes by the bed and take 10 deep breaths", "sphereId": "health", "active": true },
-    { "id": "woop2", "wish": "Read 24 books this year", "outcome": "Expand my thinking and have better conversations", "obstacle": "Evening TV and social media scrolling", "plan": "If I reach for the remote after dinner, then I will pick up my book and read one page first", "sphereId": "growth", "active": true }
-  ],
-  "leadLagMeasures": [
-    { "id": "ll1", "name": "Weekly Workouts", "type": "lead", "currentValue": 4, "targetValue": 4, "unit": "sessions", "weekOverWeekChange": 0, "sphereId": "health" },
-    { "id": "ll2", "name": "Body Weight", "type": "lag", "currentValue": 82, "targetValue": 78, "unit": "kg", "weekOverWeekChange": -0.5, "sphereId": "health" },
-    { "id": "ll3", "name": "Deep Work Hours", "type": "lead", "currentValue": 18, "targetValue": 20, "unit": "hours", "weekOverWeekChange": 2, "sphereId": "career" },
-    { "id": "ll4", "name": "Monthly Revenue", "type": "lag", "currentValue": 4200, "targetValue": 5000, "unit": "USD", "weekOverWeekChange": 5, "sphereId": "career" }
-  ]
-}
-
-
-<!-- END INLINED REF: dashboard_guide.md -->
+**Загрузи `references/dashboard_guide.md` перед генерацией дашборда.**
 
 ### 8. Phase 5: Execution Backbone — Calendar Integration (Text-Only)
 

@@ -38,6 +38,10 @@
 | 15 | **Мультиязычность (EN/RU toggle)** | 30 | 2.0 | 40% | 8 | **3.0** | 📋 Medium |
 | 16 | **Интеграция с Google Tasks MCP** | 40 | 1.0 | 30% | 4 | **3.0** | 📋 Medium |
 | 17 | **Универсальный скрипт сборки** | 10 | 0.5 | 80% | 3 | **1.33** | 💤 Low |
+| 18 | **Core Values Discovery Exercise** | 70 | 2.0 | 70% | 3 | **32.67** | 🔥 Critical |
+| 19 | **Health & Metabolism Track** | 45 | 2.0 | 65% | 5 | **11.7** | ⚡ High |
+| 20 | **Goal Concordance / Romantic Relationships** | 25 | 1.5 | 60% | 3 | **7.5** | 📋 Medium |
+| 21 | **Templates Rebuild v1.0 (Wiki + HTML + Guide)** | 100 | 2.0 | 75% | 5 | **30.0** | 🔥 Critical |
 
 ---
 
@@ -51,6 +55,8 @@
 | 2 | Track 0: Micro-Goal | **80.0** | Исследование done, research готов — нужна только реализация |
 | 3 | Тесты целостности SKILL.master.md | **60.0** | Блокер для всех платформ; без тестов — regressions |
 | 4 | UX Hardening | **53.3** | Tone + empty states влияют на retention всех пользователей |
+| 18 | Core Values Discovery Exercise | **32.67** | PRD готов, evidence-based синтез (ACT/VC/Life Design), напрямую усиливает Authentic Goal Filter |
+| 21 | Templates Rebuild v1.0 | **30.0** | Подготовительный блок v1.0 — единый state v2 устраняет drift между 4 артефактами и разблокирует Core Values + будущие PRD |
 
 ### ⚡ High (RICE 10–40)
 
@@ -62,6 +68,7 @@
 | 8 | Composite Readiness Model | **14.0** | Research done, но интеграция в скилл — не ясна |
 | 9 | MCP PoC | **12.0** | Открывает дверь для всех интеграций, но MCP landscape нестабилен |
 | 10 | Token Optimization Audit | **12.0** | High reach, но low confidence (не ясен scope savings) |
+| 19 | Health & Metabolism Track | **11.7** | Новый трек, evidence base сильна по top-4 рычагам, но XL effort и нишевая аудитория |
 
 ### 📋 Medium (RICE 3–10)
 
@@ -69,6 +76,7 @@
 |---|------|------|---------------|
 | 11 | Coverage report + badge | **11.875** | Dev-only, но effort = 1 (quick win) |
 | 12 | Pre-commit hooks | **11.875** | Dev-only, effort = 1 (quick win) |
+| 20 | Goal Concordance / Romantic Relationships | **7.5** | PRD готов, но reach ограничен Портретами 2/3; требует мягкой подачи |
 | 13 | Google Health MCP | **6.0** | Research done, но reach ограничен, выбор пути не сделан |
 | 14 | Social accountability | **3.33** | Нишевый запрос, low confidence |
 | 15 | Мультиязычность | **3.0** | High effort (8), low confidence (scope перевода) |

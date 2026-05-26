@@ -15,9 +15,11 @@
 
 ---
 
-## v0.15.0 — Testing & Integration Hardening
+## v0.16.0 — Testing & Integration Hardening (was committed v0.15.0)
 
 **Цель:** Закрыть техдолг тестирования и release-quality инфраструктуры перед новыми продуктовыми интеграциями.
+
+> **Note:** Этот scope был committed как v0.15.0 (см. историю ROADMAP). Перенесён в v0.16.0 после того, как v0.15.0 поглотила Templates Rebuild + State v2 Foundation как foundational шаг к v1.0 архитектурному рефакторингу.
 
 ### P0 (блокирует релиз)
 
@@ -35,7 +37,7 @@
 - [ ] **Универсальный скрипт сборки** — заменить platform-specific билды на единый `build-skill.py`.
 - [ ] **Planning docs guardrails** — простой тест, который проверяет, что `ROADMAP.md` не содержит подробных секций выпущенных версий.
 
-### Не входит в v0.15.0
+### Не входит в v0.16.0
 
 - Google Health MCP implementation.
 - Composite Readiness Model.
@@ -44,7 +46,7 @@
 
 ---
 
-## v0.16.0 Candidate — Data & Health Integrations
+## v0.17.0 Candidate — Data & Health Integrations
 
 **Статус:** Candidate, требует отдельного research decision перед фиксацией версии.
 
@@ -53,6 +55,8 @@
 - [ ] **Google Health MCP интеграция** — выбрать один путь из `references/research/google_health_mcp_integration_research.md`, определить security boundary и тестовый контур.
 - [ ] **Composite Readiness Model** — CRI formula, 4 зоны, адаптация весов под персоны (ADHD 30/70, Elder 25/75).
 - [ ] **Timezone edge-case hardening** — сценарии путешествий, DST, смена рабочей зоны, человекочитаемые fallback-сообщения.
+- [ ] **Health & Metabolism Track** — schema v2.1, см. `references/research/prd_health_metabolism.md`.
+- [ ] **Goal Concordance** — schema v2.2, см. `references/research/prd_goal_concordance.md`.
 
 ### Gate перед переносом в committed roadmap
 

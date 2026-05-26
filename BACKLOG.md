@@ -65,6 +65,42 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Артефакты:** `references/tone_of_voice_guide.md`, `references/empty_states.md`, tests for forbidden words/tone consistency.
 - **Риск:** Слишком жёсткий tone guide может конфликтовать с adaptive communication style.
 
+### Templates Rebuild v1.0 (Wiki + HTML Dashboard + Guide)
+
+- **Описание:** Пересборка 8 wiki templates + life-planning-dashboard.html + dashboard_guide.md в связке через единый state v2 schema. Устраняет drift (sphere count 8 vs 11, naming, broken refs), интегрирует Core Values, вводит gating (Drive+Calendar → full persistence) и backfill при mid-session connection.
+- **Триггер:** Подготовительный блок v1.0 архитектурного рефакторинга.
+- **Статус:** 📋 Plan ready (2026-05-26), 5 тасков созданы (B1-B5).
+- **RICE:** Reach 100 × Impact 2.0 × Confidence 75% / Effort M=5 EAS, Context Pressure Medium = **30.0** (Quick Win).
+- **Артефакты:** `references/research/plan_v1.0_templates_rebuild.md`; предстоит `references/state_v2_schema.md`, обновлённые `references/templates/*`, новый `references/templates/Core_Values_Compass.md`, rebuild `life-planning-dashboard.html`, split `references/dashboard_guide.md` → `references/module_phase4_dashboard.md` + `docs/research/dashboard_architecture_v1.md`.
+- **Риск:** Legacy wiki пользователи (8 spheres) требуют deprecation map + migration prompt; HTML breaking changes → bump v1.0.0.
+
+### Core Values Discovery Exercise
+
+- **Описание:** Bottom-up upgrade выявления ценностей: Life Domains → Meaningful Experiences → Energizing Activities → 5–7 core values + Compass Mode. Заменяет/дополняет упрощённый Schwartz Top-5 → Top-3.
+- **Триггер:** Жалобы на абстрактность ценностей в Authentic Goal Filter или плановое улучшение Track B.
+- **Статус:** 📋 PRD готов (v1.0, 2026-05-25), ждёт plan mode.
+- **RICE:** Reach 70 [GUESS] × Impact 2.0 × Confidence 70% / Effort L=3 EAS, Context Pressure Medium = **32.7** (Quick Win).
+- **Артефакты:** `references/research/prd_core_values_discovery.md`; предстоит обновить `references/diagnostic_methods.md`, `references/authentic_goal_filter.md`, `SKILL.master.md`.
+- **Риск:** Перегрузка пользователя при глубокой версии; качество извлечения сильно зависит от промптинга.
+
+### Health & Metabolism Track
+
+- **Описание:** Новый трек по метаболическому здоровью: сон, стресс, белок, клетчатка, жевание, кофеин. Расширение диагностики + рефрейминг самокритики + микро-эксперименты.
+- **Триггер:** Запрос на body/health-aware coaching или после стабилизации Google Health MCP research.
+- **Статус:** 📋 PRD готов (v2.1, 2026-05-24), ждёт plan mode.
+- **RICE:** Reach 45 [GUESS] × Impact 2.0 × Confidence 65% / Effort XL=5 EAS, Context Pressure High = **11.7** (High Priority).
+- **Артефакты:** `references/research/prd_health_metabolism.md`; предстоит создать `references/health-metabolism.md` и обновить `SKILL.master.md` (диагностика, ретроспектива, рефрейминг).
+- **Риск:** Не подменять терапию РПП; часть рычагов (жевание, хлорогеновая кислота) имеет умеренную/низкую доказательную базу.
+
+### Goal Concordance / Romantic Relationships
+
+- **Описание:** Диадический уровень согласованности целей с партнёром в Goal Architecture + secure attachment / repair / conflict reappraisal в emotion regulation и Wheel of Life.
+- **Триггер:** Спрос от Портретов 2 и 3 (long-term relationships, interdependent planning) или плановое расширение personal-life evidence base.
+- **Статус:** 📋 PRD готов (v2.0, 2026-05-25), ждёт plan mode.
+- **RICE:** Reach 25 [GUESS] × Impact 1.5 × Confidence 60% / Effort L=3 EAS, Context Pressure Medium = **7.5** (Medium Priority).
+- **Артефакты:** `references/research/prd_goal_concordance.md`; предстоит обновить `references/goal_architecture.md`, `references/emotion_regulation.md`, `references/communication_style.md`.
+- **Риск:** Coaching, а не therapy — нужны явные disclaimers и мягкая подача у тревожных/избегающих пользователей.
+
 ### Интеграция с Google Tasks MCP
 
 - **Описание:** Синхронизация Daily Top-3 с Google Tasks через MCP.

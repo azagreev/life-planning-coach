@@ -49,21 +49,24 @@ class TestDashboardHtml(unittest.TestCase):
                               f"Dashboard must contain keyword: {kw}")
 
     def test_wheel_has_11_domains(self):
-        """BUG-001: Dashboard must show 11 Wheel of Life domains."""
+        """v1.0: Dashboard derives 11 canonical Wheel of Life IDs from SPHERE_META."""
         import re
-        match = re.search(r'const WHEEL_SPHERES = \[(.*?)\];', self.content, re.DOTALL)
-        self.assertIsNotNone(match, "WHEEL_SPHERES array not found")
-        array_text = match.group(1)
-        ids = re.findall(r"id: '([^']+)'", array_text)
-        self.assertEqual(len(ids), 11, f"Expected 11 domains, found {len(ids)}: {ids}")
+        # v1.0 shifted from hardcoded WHEEL_SPHERES literal to data-driven build
+        # from SPHERE_META. Verify SPHERE_META declares 11 canonical IDs.
+        meta_match = re.search(r'const SPHERE_META = \{(.*?)\};', self.content, re.DOTALL)
+        self.assertIsNotNone(meta_match, "SPHERE_META object not found")
+        meta_text = meta_match.group(1)
+        ids = re.findall(r"^\s*(\w+):\s*\{", meta_text, re.MULTILINE)
+        self.assertEqual(len(ids), 11, f"Expected 11 canonical spheres, found {len(ids)}: {ids}")
 
-        expected_ids = [
+        expected_canonical = [
             'health', 'finances', 'career', 'family', 'romance',
-            'social', 'growth', 'spirituality', 'fun', 'contribution', 'environment'
+            'social', 'personal_growth', 'meaning', 'fun_recreation',
+            'contribution', 'physical_environment'
         ]
-        for eid in expected_ids:
+        for eid in expected_canonical:
             with self.subTest(domain_id=eid):
-                self.assertIn(eid, ids, f"Missing domain: {eid}")
+                self.assertIn(eid, ids, f"Missing canonical sphere: {eid}")
 
     def test_wheel_avg_divides_by_11(self):
         """Average score must divide by 11, not 8."""

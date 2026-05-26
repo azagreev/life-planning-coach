@@ -1,6 +1,12 @@
-# Conversation State JSON Schema
+# Conversation State JSON Schema (v1 — DEPRECATED)
 
-> **Для Claude:** Используй эту схему для отслеживания состояния пользователя между сессиями. Состояние хранится в памяти разговора (conversation state) или в Claude Memory.
+> ⚠️ **DEPRECATED как v1.** Заменено на [`state_v2_schema.md`](state_v2_schema.md).
+> Этот файл сохранён для обратной совместимости с wiki пользователей в legacy формате.
+> Миграция: [`docs/migration_v1_to_v2.md`](../docs/migration_v1_to_v2.md).
+>
+> **Для новых имплементаций используй `state_v2_schema.md`** — single source of truth для HTML dashboard, wiki templates и dashboard_guide.
+
+> **Для Claude (legacy mode):** Эта схема всё ещё применима для пользователей с frontmatter `schema_version < 2.0` в wiki. Skill читает schema_version и переключается в legacy mode без записи v2 формата.
 
 ## Полная схема
 
