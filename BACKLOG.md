@@ -199,20 +199,20 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 
 Ключевые статусы, зафиксированные при чистке:
 
-| Item | Статус |
-|------|--------|
-| Habit Loop | Реализовано в v0.8.0 |
-| PDF export dashboard | Реализовано: `window.print()` + print CSS в `life-planning-dashboard.html` |
-| Timezone intelligence | Базовая schema/preset support есть; edge-case hardening вынесен в tech debt |
-| README rewrite + platform guides | Реализовано в v0.10.2 |
-| Inclusive coaching references | Реализовано в v0.14.0 |
-| **Templates Rebuild v1.0** (Wiki + HTML Dashboard + Guide) | ✅ Выполнено в v1.0.0. State v2 schema + 8 wiki templates + data-driven dashboard + Compass Mode template. |
-| **Core Values Discovery + Compass Mode** | ✅ Выполнено в v0.18.0 (Compass Mode inline в Phase 1.5). Bottom-up values discovery + Daily Decision Protocol. |
-| **Health & Metabolism Track** | ✅ Выполнено в v0.19.0. Opt-in track с 7 evidence-based рычагами (сон, стресс, белок, клетчатка, жевание, кофеин, хлорогеновая кислота). |
-| **Goal Concordance / Partner Coordination** | ✅ Выполнено в v0.19.0. Diadic Transactive Goal Dynamics в Phase 1.5/2/ER. |
-| **README rewrite (positioning)** | ✅ Выполнено в v0.19.0. Promise + comparison table + quick-start первые 30 строк. |
-| **Token Optimization Audit** | ✅ Addressed в v0.17.0. Tiered IA refactor (cold-load 50K → 4K = ~92% reduction). См. CHANGELOG. |
-| **PoC MCP (Google Calendar + Drive)** | ✅ Выполнено 2026-05-26. Decision: **MCP-first**. Calendar 14/14 ops, Drive 13 ops, 31 cumulative schema quirks. См. [`docs/research/mcp_poc_log.md`](docs/research/mcp_poc_log.md). `calendar_integration.md`, `drive_integration.md`, `templates/lpc_wiki_cleanup.gs` (Apps Script для Wiki cleanup). |
+| Item | Версия | Details |
+|------|--------|---------|
+| Habit Loop | v0.8.0 | — |
+| PDF export dashboard | — | `window.print()` + print CSS |
+| Timezone intelligence | — | Базовый schema/preset support; edge cases → tech debt |
+| README rewrite + platform guides | v0.10.2 | — |
+| Inclusive coaching references | v0.14.0 | — |
+| Token Optimization Audit | v0.17.0 | Tiered IA (cold-load 50K → 4K) |
+| Templates Rebuild v1.0 | v1.0.0 | State v2 + 8 wiki + data-driven dashboard |
+| Core Values + Compass Mode | v0.18.0 | Phase 1.5 inline |
+| Health & Metabolism Track | v0.19.0 | 7 evidence-based рычагов |
+| Goal Concordance | v0.19.0 | Transactive Goal Dynamics |
+| README rewrite (positioning) | v0.19.0 | Promise + comparison + quickstart |
+| PoC MCP (Calendar + Drive) | 2026-05-26 | MCP-first decision; см. `docs/research/mcp_poc_log.md` |
 
 ---
 
