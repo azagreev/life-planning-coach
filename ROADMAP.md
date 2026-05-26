@@ -15,48 +15,76 @@
 
 ---
 
-## v0.16.0 — Testing & Integration Hardening (was committed v0.15.0)
+## v0.17.0 — IA Decomposition (R2 + R3)
 
-**Цель:** Закрыть техдолг тестирования и release-quality инфраструктуры перед новыми продуктовыми интеграциями.
+**Цель:** Снизить cold-load SKILL.md с 10.6K до ≤ 4K через Tier 1-5 разбиение и lazy-load phase modules.
 
-> **Note:** Этот scope был committed как v0.15.0 (см. историю ROADMAP). Перенесён в v0.16.0 после того, как v0.15.0 поглотила Templates Rebuild + State v2 Foundation как foundational шаг к v1.0 архитектурному рефакторингу.
+### P0
 
-### P0 (блокирует релиз)
+- [ ] **Tier 1 Skill Core** (`SKILL.master.md` ≤ 4K tokens) — Phase 0 Emotional Landing полный + Routing Map + Safety + Language Rules + Reference Index.
+- [ ] **6 Phase Modules** (lazy-load по факту входа в фазу):
+  - `module_phase1_diagnostic.md`
+  - `module_phase1_5_goal_filter.md` (с Core Values Discovery)
+  - `module_phase2_goal_architecture.md`
+  - `module_phase3_weekly_review.md`
+  - `module_phase4_dashboard.md` ✅ (готов в v0.15.0)
+  - `module_phase5_execution.md`
+- [ ] **Token budget tests per tier** — autoenforcement of cold-load ≤ 4K и per-phase budgets.
 
-- [ ] **Функциональные тесты календаря** — Free Slot Algorithm, event patterns, conflict detection, JSON validation для `COLOR_MAP`, `REMINDER_PRESETS`, `RRULE_PRESETS`.
-- [ ] **Тесты целостности `SKILL.master.md`** — структура, cross-reference validation, platform sync.
+### P1
 
-### P1 (обязательно в релиз)
-
-- [ ] **Coverage report + badge** — `pytest-cov`, минимальный порог 85%, badge в `README.md`.
-- [ ] **Pre-commit hooks** — `ruff`, `mypy`, trailing-whitespace check.
-- [ ] **PoC MCP** — Gate 0-2: OAuth, CRUD, `suggest_time`; результаты в `docs/research/mcp_poc_log.md`.
-
-### P2 (желательно)
-
-- [ ] **Универсальный скрипт сборки** — заменить platform-specific билды на единый `build-skill.py`.
-- [ ] **Planning docs guardrails** — простой тест, который проверяет, что `ROADMAP.md` не содержит подробных секций выпущенных версий.
-
-### Не входит в v0.16.0
-
-- Google Health MCP implementation.
-- Composite Readiness Model.
-- Новые coaching protocols.
-- Релиз вручную вне `scripts/release.sh`.
+- [ ] **Legacy compatibility mode** — старые SKILL.md потребители продолжают работать через временный bundle.
+- [ ] **Platform rebuild** — все 4 платформы (Claude / Grok / Kimi / Kimi-CLI) пересобраны с новой архитектурой.
 
 ---
 
-## v0.17.0 Candidate — Data & Health Integrations
+## v0.18.0 — Gating + State Writes
+
+**Цель:** SKILL.master.md учится писать в state v2 при подключении Drive + Calendar.
+
+- [ ] **Gating logic** — 4 mode (drive × calendar) комбинаций реализованы в SKILL
+- [ ] **State write rules** — emotion_regulation_log, persona, wins, reward_audit, calendar_events, recovery_sessions
+- [ ] **Bootstrap Drive Wiki** при первом коннекте
+- [ ] **Backfill prompt** при mid-session connection
+- [ ] **Core Values Discovery flow** — промпты Phase 1.5 (из `docs/research/prd_core_values_discovery.md`)
+
+---
+
+## v0.19.0 — Health Track + Goal Concordance
+
+**Цель:** Реализация 3 PRD после стабилизации архитектуры.
+
+- [ ] **Health & Metabolism Track** — schema bump 2.1, новый `track_health_metabolism.md`, см. `docs/research/prd_health_metabolism.md`.
+- [ ] **Goal Concordance** — schema bump 2.2, расширение Goal Architecture и Emotion Regulation, см. `docs/research/prd_goal_concordance.md`.
+- [ ] **Persona modules consolidation** — переименование (`adhd_mode.md` → `mode_adhd.md` и т.д.), unified touch-points.
+
+---
+
+## v1.0.0 — Build Pipeline + Platform Optimization
+
+**Цель:** Polish + major-version signal зрелости проекта.
+
+- [ ] **Build pipeline rework** — единый `build-skill.py`, замена legacy platform-specific сборок.
+- [ ] **Platform lazy-loading** — для платформ умеющих dynamic refs (Claude.ai) — не инлайнить P0 в SKILL.md (−7K токенов в каждом платформенном файле).
+- [ ] **Platform parity test** — automated, все 4 платформы рендерятся идентично.
+- [ ] **Acceptance criteria для v1.0:**
+  - cold-load ≤ 4K
+  - typical session ≤ 18K
+  - тесты ≥ 85% coverage
+  - все 4 gating mode комбинации работают
+
+---
+
+## v0.17.x Candidate — Data & Health Integrations
 
 **Статус:** Candidate, требует отдельного research decision перед фиксацией версии.
 
 ### Возможный scope
 
+- [ ] **PoC MCP** — Gate 0-2: OAuth, CRUD, `suggest_time`; результаты в `docs/research/mcp_poc_log.md`. Deferred из v0.16.0.
 - [ ] **Google Health MCP интеграция** — выбрать один путь из `docs/research/google_health_mcp_integration_research.md`, определить security boundary и тестовый контур.
 - [ ] **Composite Readiness Model** — CRI formula, 4 зоны, адаптация весов под персоны (ADHD 30/70, Elder 25/75).
 - [ ] **Timezone edge-case hardening** — сценарии путешествий, DST, смена рабочей зоны, человекочитаемые fallback-сообщения.
-- [ ] **Health & Metabolism Track** — schema v2.1, см. `docs/research/prd_health_metabolism.md`.
-- [ ] **Goal Concordance** — schema v2.2, см. `docs/research/prd_goal_concordance.md`.
 
 ### Gate перед переносом в committed roadmap
 
