@@ -11,6 +11,8 @@
 ### Added
 
 - **PoC MCP (Google Calendar) completed** — `docs/research/mcp_poc_log.md` заполнен real measurements на Claude Max plan. Decision: **MCP-first**. 14/14 ops functional через Gates 1+2. `suggest_time` подтверждён доступным (singular form). Tool inventory: 8 confirmed (4 read + 4 write). PoC выполнен AI-assisted hybrid через Claude_in_Chrome (Chrome Claude драйвил browser + claude.ai chat, current session orchestrated).
+- **PoC MCP (Google Drive) completed** — same-day extension. 13 ops executed direct via MCP from current session (sub-second per op). Tool inventory: 8 confirmed (6 read + 2 write). **Critical gap**: NO `update_file`, NO `delete_file` exposed by Anthropic connector. Decision: **MCP-first for bootstrap + reads; Wiki updates require append-only redesign**. 10 schema quirks documented. Backfill protocol in `templates/AI_Instructions.md` revised with append-only pattern note.
+- **`references/drive_integration.md`** (NEW, ~190 lines) — analog of `calendar_integration.md` for Drive: 8 tools, 10 quirks, troubleshooting, prompt patterns (bootstrap + append-only save + read-latest).
 
 ### Changed
 
@@ -18,7 +20,8 @@
 - **`references/calendar_constants.md`** — Tools table обновлён с PoC schema notes. Event Data Schema разделён на request vs response (asymmetric field naming). Failure Modes расширены 7 новыми сценариями (UNPARSABLE_NUMBER, "Already deleted" double-fire, session-scope auto-permission, coarse suggest_time, UTC response, lazy tool load).
 - **`references/module_phase5_execution.md`** — Mode A (Calendar Connected) маркирован как primary path. Recurring fallback гatcha обновлён ("работает через MCP, не fallback на отдельные события").
 - **`README.md`** — добавлен footnote¹ о Max plan для MCP коннекторов с link на PoC log.
-- **`BACKLOG.md`** — PoC MCP item перенесён из Tech Debt в Archived/Done. Google Tasks MCP отмечен с PoC confirmation что отсутствует в directory.
+- **`BACKLOG.md`** — PoC MCP item перенесён из Tech Debt в Archived/Done. Google Tasks MCP отмечен с PoC confirmation что отсутствует в directory. Добавлен Active Candidate: «Drive Wiki update workaround (append-only redesign)».
+- **`references/templates/AI_Instructions.md`** — добавлено ⚠️ MCP Drive limitations note (no update/delete tools); write rules table обновлена под append-only pattern с timestamp suffix.
 
 ## [1.0.0] — 2026-05-28
 

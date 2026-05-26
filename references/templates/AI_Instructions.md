@@ -7,6 +7,8 @@ purpose: "Инструкции для Claude по работе с Drive Wiki"
 
 # Инструкции для Claude: Управление Wiki
 
+> ⚠️ MCP Drive: no update/delete. Overwrite = append-only с timestamp suffix; latest по `modifiedTime`. См. `drive_integration.md`.
+
 ## Schema reference
 
 Все данные wiki соответствуют `references/state_v2_schema.md`. **Canonical 11 spheres** (см. §1 schema) — единственно допустимый набор имён сфер:
@@ -81,12 +83,12 @@ if no:
 
 | Файл | Режим | Когда |
 |---|---|---|
-| `00_Raw/{session_date}.md` | append-only | Конец каждой сессии (новый файл) |
-| `01_Wiki/Hot_Cache.md` | overwrite полностью | Конец сессии, < 1000 токенов |
-| `01_Wiki/User_Progress/*.md` | section update | После релевантной фазы |
-| `03_Dashboard/dashboard_data.json` | overwrite | После каждого значимого изменения state |
-| `03_Dashboard/Progress_Dashboard.md` | overwrite | Конец сессии (text fallback дашборда) |
-| `CHANGELOG.md` | append | Каждое значимое изменение |
+| `00_Raw/{session_date}.md` | new file | Конец каждой сессии |
+| `01_Wiki/Hot_Cache_{TS}.md` | new file (latest by `modifiedTime`) | Конец сессии, < 1000 токенов |
+| `01_Wiki/User_Progress/{Goals,Wheel}_{TS}.md` | new file | После релевантной фазы |
+| `03_Dashboard/dashboard_data_{TS}.json` | new file | После значимого изменения state |
+| `03_Dashboard/Progress_Dashboard_{TS}.md` | new file | Конец сессии |
+| `CHANGELOG_{YYYY-MM}.md` | new file/мес | Каждое значимое изменение |
 
 ## Write rules per state v2 field
 

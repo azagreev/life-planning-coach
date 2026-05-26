@@ -494,6 +494,235 @@ All 4 test events deleted via `delete_event` через Chrome Claude. Final `li
 
 ---
 
-**Total cumulative quirks documented: 21.**
+**Calendar PoC cumulative quirks: 21.**
 
-**PoC officially closed: 2026-05-26.** All gates ✅, cleanup ✅, refs updated, ready to commit.
+**Calendar PoC closed: 2026-05-26.** All gates ✅, cleanup ✅, refs updated.
+
+---
+
+# Drive PoC (2026-05-26, same day)
+
+> **Trigger:** User question post-Calendar commit: "а что у нас с комплексом тестов с Google Disk?"
+> **Method shift:** After confirming direct MCP access works for me, **switched architecture from Chrome Claude → direct MCP execution** (with user approval). ~10 min vs ~1.5h estimated via Chrome Claude.
+> **Test folder:** `LPC_TEST_WIKI` (id `1boPwjXA761LmIGqkTQm2pT8ivS6T6eIP`, owner a.zagreev@gmail.com).
+> **Latency:** All ops sub-second wall-clock (direct API call without LLM round-trip overhead).
+
+---
+
+## Gate D-0: Drive tool inventory — ✅ PASSED
+
+| # | Tool | Group | Notes |
+|---|------|-------|-------|
+| 1 | `get_file_metadata` | Read | Returns metadata only (no content). Optional `excludeContentSnippets`. |
+| 2 | `read_file_content` | Read | "Natural language representation" — strips markdown markup. **text/markdown NOT in supported MIME list → silent empty `{}` response.** Supported: Google native, Office, PDF, images. |
+| 3 | `download_file_content` | Read | Base64-encoded raw bytes. **Faithful round-trip.** Use for text/markdown. |
+| 4 | `search_files` | Read | Structured query (`title`, `fullText`, `mimeType`, `parentId`, `owner`, dates). Strong syntax. |
+| 5 | `list_recent_files` | Read | Sort by recency / lastModified / lastModifiedByMe. |
+| 6 | `get_file_permissions` | Read | List sharing/ACL. No counterpart `set_file_permissions` (aligned with safety rules). |
+| 7 | `create_file` | Write | Creates files AND folders (mimeType=`application/vnd.google-apps.folder`). |
+| 8 | `copy_file` | Write | Duplicates existing file. **Ignores "same folder as original" promise — defaults to root.** |
+
+### Critical gaps (vs Calendar's 8 tools)
+
+- ❌ **NO `update_file` / `append_file` / `create_revision`** — file content modification IMPOSSIBLE via MCP.
+- ❌ **NO `delete_file` / `move_to_trash`** — file removal IMPOSSIBLE via MCP. Despite UI calling the group "Write/delete", only create + copy expose write capability.
+- ❌ **NO explicit folder tools** (`create_folder`, `list_folder_contents`, `move_to_folder`) — folders are MIME-typed files; rely on `create_file` + `search_files` patterns.
+
+**Implication for Wiki use case:** Bootstrap = OK; Backfill (update existing files) = **fundamentally broken** without workaround.
+
+---
+
+## Gate D-1: File CRUD basics — ⚠️ PASSED with major caveats
+
+### Ops executed (direct MCP, all sub-second)
+
+| # | Tool | Input summary | Result |
+|---|------|---------------|--------|
+| 1 | `get_file_metadata` | LPC_TEST_WIKI folder | OK — `mimeType: application/vnd.google-apps.folder`, `parentId: 0ACj1kcWnO2dLUk9PVA` (My Drive root) |
+| 2 | `create_file` | text/markdown + `disableConversionToGoogleType: true` | OK — file `18l4q27vM7J8UYtwDsKOzdNn4DfvVe_rN`, MIME preserved as text/markdown |
+| 3 | `read_file_content` | Markdown file | OK BUT markup stripped: `#` → `\#`, `-` → `\-`, double-space line endings |
+| 4 | `download_file_content` | Same file | OK — base64 raw bytes, faithful round-trip (markup + Cyrillic preserved) |
+| 5 | `search_files` | `parentId = 'X'` | OK — folder listing works |
+| 6 | `get_file_permissions` | Test file | OK — owner-only |
+| 7 | `copy_file` | Test file, new title, NO parentId | ⚠️ Created in **root**, NOT in source folder (description claimed same-folder default) |
+
+### Sample responses
+
+**`create_file` response (minimal):**
+```json
+{
+  "id": "18l4q27vM7J8UYtwDsKOzdNn4DfvVe_rN",
+  "mimeType": "text/markdown",
+  "title": "PoC_Smoke_Test.md"
+}
+```
+
+**`download_file_content` (decoded base64 sample):**
+```
+# PoC Smoke Test
+
+Created by direct MCP from claude.ai web session.
+Test markdown with Cyrillic: Привет, мир.
+
+- Bullet 1
+- Bullet 2
+```
+
+**`read_file_content` (same file, parsed):**
+```
+\# PoC Smoke Test  
+  
+Created by direct MCP from claude.ai web session.  
+Test markdown with Cyrillic: Привет, мир.  
+  
+\- Bullet 1  
+\- Bullet 2  
+```
+
+---
+
+## Gate D-2: Bootstrap flow — ⚠️ PARTIAL (folder works, structure scales but versioning broken)
+
+**Folder creation via `create_file` with `mimeType: application/vnd.google-apps.folder`:**
+
+```json
+Request: { "parentId": "1boP...", "title": "LPC_Wiki_Subfolder", "contentMimeType": "application/vnd.google-apps.folder" }
+Response: { "id": "1GqQJbdCydRWepd8E6KwDf6zY4ZG3K3v7", "mimeType": "application/vnd.google-apps.folder", "canAddChildren": true, "parentId": "1boP..." }
+```
+
+✅ Folder created with `canAddChildren: true`. (Interesting: LPC_TEST_WIKI itself showed `canAddChildren: false` in metadata BUT accepts children creation — this field is **misleading**.)
+
+**Bootstrap pattern viable:**
+1. `create_file` (folder mimeType) → LPC_Wiki/
+2. Loop: `create_file` (text/markdown, parentId=LPC_Wiki) → each of 8 templates
+3. Skill records IDs in conversation state for later retrieval
+
+**Backfill pattern BROKEN:**
+- No way to update existing file content.
+- "Save Hot_Cache.md" → creates DUPLICATE (verified with 2 files of identical title in same folder coexisting).
+- After N sessions: N copies of Hot_Cache.md in folder.
+
+---
+
+## Gate D-3: Multilingual filenames + Cyrillic content — ✅ PASSED (faithful round-trip)
+
+**Created:** `Сегодня.md` (id `1Gr-GVp87-HhJsNe6CIRqZbaRmef9G8WO`) with Cyrillic + emoji content.
+
+**`download_file_content` decoded:**
+```
+# Сегодня — 26 мая 2026
+
+## Daily Top-3
+☐ Завершить Drive PoC
+☐ Проверить multilingual roundtrip
+☐ Commit и push результатов
+```
+
+✅ Cyrillic filename indexed correctly by `search_files` with `title = 'Сегодня.md'`.
+✅ Cyrillic content + ☐ symbol preserved byte-for-byte via download.
+⚠️ `read_file_content` on this file → **empty response `{}`** (silent failure for text/markdown MIME).
+
+---
+
+## Gate D-4: Backfill / overwrite / versioning semantics — ❌ FAILED (no path forward)
+
+**Test: same-title create →** TWO files coexist in folder with identical title (different IDs).
+
+```
+Search "title = 'PoC_Smoke_Test.md' and parentId = 'X'" → 2 results:
+  - id `18l4q27vM7J8UYtwDsKOzdNn4DfvVe_rN` (created 18:26:51, content V1)
+  - id `1YCf3e7CDSLVVa6G5TxhtI5906DgjwMrB` (created 18:35:40, content V2)
+```
+
+**Workarounds explored:**
+
+| Approach | Verdict |
+|----------|---------|
+| `create_file` overwrites by title | ❌ No — creates duplicate |
+| `update_file` tool | ❌ Doesn't exist |
+| Delete old + create new | ❌ No delete tool |
+| Use Google Doc native + Drive UI versioning | ⚠️ Possible but bypasses MCP for updates |
+| Skill writes ONCE per session, archives prior to `LPC_Wiki/archive/` via UI | ⚠️ Still no delete; UI manual cleanup required |
+| Use only `modifiedTime` of newest match as "current" | ⚠️ Works for reads; storage accumulates stale duplicates indefinitely |
+
+**Recommendation:** Skill should design Wiki around **append-only** model OR delegate Wiki updates to user's manual Drive UI. **Backfill protocol in `templates/AI_Instructions.md` must be revised.**
+
+---
+
+## Drive quirks discovered (cumulative #22-31)
+
+**#22 — `read_file_content` silent empty `{}` for unsupported MIME** — text/markdown is NOT in supported MIME list. Returns `{}` (no error). For markdown ALWAYS use `download_file_content`.
+
+**#23 — `download_file_content` returns base64 even for plain text** — Decode with `atob` / base64 lib. No raw-text option.
+
+**#24 — `text/plain` and `text/csv` auto-converted to Google formats** by default. Set `disableConversionToGoogleType: true` to keep raw MIME.
+
+**#25 — Files NOT identified by title; only by ID** — same title can have many duplicate files. Title is just metadata.
+
+**#26 — `canAddChildren: false` in folder metadata is MISLEADING** — LPC_TEST_WIKI showed `false` but accepted child creation without error. Field unreliable as permission gate.
+
+**#27 — `copy_file` ignores "same folder as original" promise** — Defaults to root despite description. **ALWAYS pass explicit `parentId`.**
+
+**#28 — `fullText contains` searches ENTIRE Drive** — no auto-scope to current folder. Combine with `parentId =` if folder-scoped search needed.
+
+**#29 — `nextPageToken` appears even when results < pageSize** — phantom pagination. Following the token may return empty OR additional results (untested).
+
+**#30 — `fileSize` returned as string** — not number. Parse if needed.
+
+**#31 — `search_files` returns `contentSnippet` field** with truncated body text — useful for previews; can be excluded via `excludeContentSnippets: true` for speed/privacy.
+
+---
+
+## Gate D-5: Cleanup — ⚠️ BLOCKED (no delete tool)
+
+Test artifacts created during Drive PoC (all in LPC_TEST_WIKI unless noted):
+
+| ID | Title | Location | Type |
+|----|-------|----------|------|
+| `18l4q27vM7J8UYtwDsKOzdNn4DfvVe_rN` | PoC_Smoke_Test.md (V1) | LPC_TEST_WIKI | text/markdown |
+| `1YCf3e7CDSLVVa6G5TxhtI5906DgjwMrB` | PoC_Smoke_Test.md (V2, dup) | LPC_TEST_WIKI | text/markdown |
+| `18dCKLAt7FtCeWgrBhHobusuw7GkF8xKr` | PoC_Smoke_Test_COPY.md | **Root** (copy quirk) | text/markdown |
+| `1Gr-GVp87-HhJsNe6CIRqZbaRmef9G8WO` | Сегодня.md | LPC_TEST_WIKI | text/markdown |
+| `1GqQJbdCydRWepd8E6KwDf6zY4ZG3K3v7` | LPC_Wiki_Subfolder | LPC_TEST_WIKI | folder |
+
+**Cleanup options:**
+- Manual via Drive UI (right-click → trash; multi-select supported)
+- OR via Chrome Claude side-panel (Drive UI automation, not MCP)
+- OR leave (zero-cost in own Drive; folder is named LPC_TEST_WIKI for easy identification)
+
+**Decision logged:** Leave intact unless user requests cleanup. Documentation note added.
+
+---
+
+## Drive PoC Decision
+
+**Status:** ✅ MCP-first for reads + bootstrap. ⚠️ **Wiki updates require redesign** (skill protocol cannot rely on file-update semantics that don't exist).
+
+### Decision per use case
+
+| Use case | Verdict |
+|----------|---------|
+| Drive-as-Wiki (Bootstrap initial structure) | ✅ Works — `create_file` for 1 folder + 8 templates in single sequence |
+| Drive-as-Wiki (Backfill updates) | ❌ **REDESIGN REQUIRED** — no update path. Options: append-only model, manual user updates via Drive UI, or move Wiki to local skill memory only |
+| Drive-as-context-search (read existing user files) | ✅ Works well — `search_files` + `download_file_content` |
+| Drive cleanup / file management | ❌ Manual only — no delete via MCP |
+
+### Required updates (P-D5 scope)
+
+| File | Change |
+|------|--------|
+| `references/templates/AI_Instructions.md` §Bootstrap | OK as-is — bootstrap pattern works |
+| `references/templates/AI_Instructions.md` §Backfill | **Major revision** — acknowledge no update path; recommend append-only / manual workflow |
+| New `references/drive_integration.md` | Document 8 tools + 10 schema quirks (analog to calendar_integration.md) |
+| `references/state_v2_schema.md` | (none — Drive IDs already tracked) |
+| `BACKLOG.md` | Add follow-up: "Drive update workaround design" |
+
+**Drive PoC cumulative quirks: 10 (#22-31). Cross-PoC total: 31.**
+
+**Drive PoC closed: 2026-05-26.** All 4 testable gates ✅ (D-0, D-1, D-3 functional; D-2 partial; D-4 confirmed broken). Architectural decision: MCP for reads + initial bootstrap; **Wiki backfill needs redesign**.
+
+---
+
+**Total cumulative quirks (Calendar + Drive): 31.**
+
+**Overall PoC officially closed: 2026-05-26.** Ready to update refs and commit.

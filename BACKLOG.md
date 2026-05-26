@@ -101,6 +101,15 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Артефакты:** `docs/research/prd_goal_concordance.md`; предстоит обновить `references/goal_architecture.md`, `references/emotion_regulation.md`, `references/communication_style.md`.
 - **Риск:** Coaching, а не therapy — нужны явные disclaimers и мягкая подача у тревожных/избегающих пользователей.
 
+### Drive Wiki update workaround (append-only redesign)
+
+- **Описание:** PoC 2026-05-26 показал что Drive MCP connector НЕ имеет `update_file` / `delete_file` tools. Текущий `templates/AI_Instructions.md` §Backfill предполагает overwrite/section update — это physically impossible через MCP. Нужен redesigned protocol: append-only с timestamp suffix (`Hot_Cache_{YYYY-MM-DD-HHMM}.md`) + read latest by `modifiedTime` + manual periodic cleanup.
+- **Триггер:** PoC discovery 2026-05-26 (Gate D-4).
+- **Статус:** 📋 Документировано в `references/drive_integration.md` + `templates/AI_Instructions.md`. Workaround pattern предложен но не имплементирован в active session protocols.
+- **RICE:** Reach 70 × Impact 2.0 × Confidence 70% / Effort M=2 EAS, Context Pressure Medium = **49.0** (Quick Win).
+- **Артефакты:** Refactor `Hot_Cache`/`Goals`/`Dashboard` write protocols к append-only; добавить cleanup recommendation в README; update tests.
+- **Риск:** Storage accumulation если user не делает periodic cleanup; deduplication logic при read.
+
 ### Интеграция с Google Tasks MCP
 
 - **Описание:** Синхронизация Daily Top-3 с Google Tasks через MCP.
