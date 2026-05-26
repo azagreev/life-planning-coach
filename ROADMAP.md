@@ -8,33 +8,10 @@
 
 ## Текущий статус
 
-- **Текущая версия:** `v0.14.0`
+- **Текущая версия:** `v0.17.0`
 - **Источник правды по версии:** `git describe --tags --abbrev=0`
 - **История релизов:** [CHANGELOG.md](CHANGELOG.md)
 - **Архив старого roadmap:** [docs/archive/ROADMAP_before_cleanup_2026-05-21.md](docs/archive/ROADMAP_before_cleanup_2026-05-21.md)
-
----
-
-## v0.17.0 — IA Decomposition (R2 + R3)
-
-**Цель:** Снизить cold-load SKILL.md с 10.6K до ≤ 4K через Tier 1-5 разбиение и lazy-load phase modules.
-
-### P0
-
-- [ ] **Tier 1 Skill Core** (`SKILL.master.md` ≤ 4K tokens) — Phase 0 Emotional Landing полный + Routing Map + Safety + Language Rules + Reference Index.
-- [ ] **6 Phase Modules** (lazy-load по факту входа в фазу):
-  - `module_phase1_diagnostic.md`
-  - `module_phase1_5_goal_filter.md` (с Core Values Discovery)
-  - `module_phase2_goal_architecture.md`
-  - `module_phase3_weekly_review.md`
-  - `module_phase4_dashboard.md` ✅ (готов в v0.15.0)
-  - `module_phase5_execution.md`
-- [ ] **Token budget tests per tier** — autoenforcement of cold-load ≤ 4K и per-phase budgets.
-
-### P1
-
-- [ ] **Legacy compatibility mode** — старые SKILL.md потребители продолжают работать через временный bundle.
-- [ ] **Platform rebuild** — все 4 платформы (Claude / Grok / Kimi / Kimi-CLI) пересобраны с новой архитектурой.
 
 ---
 

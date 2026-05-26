@@ -14,17 +14,57 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 @pytest.fixture(scope="module")
 def platforms():
-    """Load all platform skill files."""
-    platform_files = {
-        "claude": PROJECT_ROOT / "platforms" / "claude" / "SKILL.md",
-        "grok": PROJECT_ROOT / "platforms" / "grok" / "SKILL.md",
-        "kimi": PROJECT_ROOT / "platforms" / "kimi" / "SKILL.md",
-        "kimi_cli": PROJECT_ROOT / "platforms" / "kimi" / "SKILL_CLI.md",
-    }
+    """Load each platform's reachable skill corpus.
+
+    After the v0.17.0 Tier 1 decomposition, lazy-load platforms (claude,
+    kimi-cli) keep persona detail in `references/module_*.md` and other
+    refs rather than inlining everything in SKILL.md. The acceptance
+    semantic is "the user will reach this content when the skill is
+    active", so the fixture concatenates SKILL.md with every file the
+    platform can lazy-load (phase modules + persona refs + emotion ref).
+    Single-file platforms (grok, kimi) already carry inlined modules, so
+    their SKILL.md is enough on its own.
+    """
+    references_dir = PROJECT_ROOT / "references"
+    lazy_load_extras = [
+        "module_phase1_diagnostic.md",
+        "module_phase1_5_goal_filter.md",
+        "module_phase2_goal_architecture.md",
+        "module_phase3_weekly_review.md",
+        "module_phase4_dashboard.md",
+        "module_phase5_execution.md",
+        "adhd_mode.md",
+        "time_structure_unemployed.md",
+        "elder_homebound_mode.md",
+        "planning_friction_audit.md",
+        "emotion_regulation.md",
+        "diagnostic_methods.md",
+    ]
+
+    def _read(path: Path) -> str:
+        return path.read_text(encoding="utf-8") if path.exists() else ""
+
+    def _lazy_corpus(skill_path: Path) -> str:
+        body = _read(skill_path)
+        if not body:
+            return ""
+        extras = [_read(references_dir / ref) for ref in lazy_load_extras]
+        return body + "\n\n" + "\n\n".join(e for e in extras if e)
+
     contents = {}
-    for name, path in platform_files.items():
+    claude_skill = PROJECT_ROOT / "platforms" / "claude" / "SKILL.md"
+    if claude_skill.exists():
+        contents["claude"] = _lazy_corpus(claude_skill)
+
+    kimi_cli_skill = PROJECT_ROOT / "platforms" / "kimi-cli" / "SKILL.md"
+    if kimi_cli_skill.exists():
+        contents["kimi_cli"] = _lazy_corpus(kimi_cli_skill)
+
+    for single_file in ("grok", "kimi"):
+        path = PROJECT_ROOT / "platforms" / single_file / "SKILL.md"
         if path.exists():
-            contents[name] = path.read_text(encoding="utf-8")
+            contents[single_file] = _read(path)
+
     return contents
 
 

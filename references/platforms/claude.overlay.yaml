@@ -1,5 +1,9 @@
 # Claude Platform Overlay for life-planning-coach
 # Merged with SKILL.master.md by build-platform-skill.py
+#
+# After the v0.17.0 Tier 1 decomposition the master is platform-neutral.
+# This overlay only translates the neutral terminology into Claude-specific
+# names (Memory, Drive, MCP) and adds Claude-only frontmatter fields.
 
 frontmatter_remove:
   - requires_connector
@@ -11,35 +15,17 @@ frontmatter_add:
   requires_mcp: "google-calendar (optional), google-drive (optional for wiki persistence)"
 
 replacements:
-  - old: "### 8. Phase 5: Execution Backbone — Calendar Integration"
-    new: "### 8. Phase 5: Execution Backbone — Google Calendar Integration (via MCP)"
+  # NOTE: replacements act on master body BEFORE references are inlined,
+  # so they can only retag terms present in SKILL.master.md itself.
+  # Master is platform-neutral by contract.
+  - old: "AI Memory"
+    new: "Claude Memory"
 
-  - old: "Пользователь подключает Calendar в Settings → Connectors → Authorize (1 клик)."
-    new: "Пользователь подключает Google Calendar в Settings → MCP → Authorize (1 клик)."
+  - old: "Cloud Storage"
+    new: "Google Drive"
 
-  - old: "- **Уровень 1 (default)**: AI Memory — записывай ключевые факты автоматически\n- **Уровень 2 (opt-in)**: Cloud Storage + LLM Wiki — создаёт структуру `Life Planning Coach Wiki/`"
-    new: "- **Уровень 1 (default)**: Claude Memory — записывай ключевые факты автоматически\n- **Уровень 2 (opt-in)**: Google Drive + LLM Wiki — создаёт структуру `Life Planning Coach Wiki/`"
+  - old: "Drive"
+    new: "Google Drive"
 
-  - old: "**Assistant**: "
-    new: "**Claude** говорит..."
-
-  - old: "- **НЕ создавай** рекуррентные события в Calendar если connector не поддерживает"
-    new: "- **НЕ создавай** рекуррентные события в Calendar если MCP не поддерживает"
-
-  - old: "- **НЕ записывай** в Cloud Storage во время сессии"
-    new: "- **НЕ записывай** в Google Drive во время сессии"
-
-  - old: "| Cloud Storage недоступен (гео-блокировка, отозван доступ) | Graceful fallback: \"Сейчас не могу подключиться к хранилищу. Работаем в обычном режиме, данные сохраняются в памяти.\" Переключись на AI Memory. |"
-    new: "| Google Drive недоступен (гео-блокировка, отозван доступ) | Graceful fallback: \"Сейчас не могу подключиться к Drive. Работаем в обычном режиме, данные сохраняются в памяти.\" Переключись на Claude Memory. |"
-
-  - old: "| Calendar connector не работает | Предложи text-only планирование. Все планы остаются в разговоре. |"
-    new: "| Calendar MCP не работает | Предложи text-only планирование. Все планы остаются в разговоре. |"
-
-  - old: "| Memory переполнена / контекст сжался | Предложи подключить Cloud Storage для wiki persistence. Hot_Cache экономит ~60-75% токенов. |"
-    new: "| Memory переполнена / контекст сжался | Предложи подключить Google Drive для wiki persistence. Hot_Cache экономит ~60-75% токенов. |"
-
-  - old: "- **AI Memory**: Ключевые факты записываются автоматически в формате \"Запомни: пользователь [имя] работает над [цель]...\"\n- **Cloud Storage**: Данные хранятся в папке пользователя (`Life Planning Coach Wiki/`). Скилл только обновляет файлы, не имеет прямого доступа к токенам."
-    new: "- **Claude Memory**: Ключевые факты записываются автоматически в формате \"Запомни: пользователь [имя] работает над [цель]...\"\n- **Google Drive**: Данные хранятся в папке пользователя (`Life Planning Coach Wiki/`). Скилл только обновляет файлы, не имеет прямого доступа к токенам."
-
-  - old: "- Calendar: connector integration + 4 presets + free slots + text daily top-3"
-    new: "- Calendar: MCP integration + 4 presets + free slots + text daily top-3"
+  - old: "calendar (optional), cloud-storage (optional for wiki persistence)"
+    new: "google-calendar (optional), google-drive (optional for wiki persistence)"

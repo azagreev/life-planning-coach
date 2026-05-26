@@ -29,8 +29,23 @@ REFERENCES_DIR = PROJECT_ROOT / "references"
 
 PLATFORMS = ["claude", "grok", "kimi", "kimi-cli"]
 
-# P0 critical references that must be inlined for single-file platforms
+# P0 critical references that must be inlined for single-file platforms.
+#
+# Tier 2 (phase modules) — always inline for single-file platforms because they
+# carry the operational flow that the slim Tier 1 master delegates to. Without
+# them the master is a routing table without destinations.
+#
+# Tier 3 (deep refs) — kept inline because grok/kimi can't lazy-load, and these
+# protocols contain content that phase modules summarise but don't replace.
 P0_REFS = [
+    # Tier 2 — phase modules
+    "module_phase1_diagnostic.md",
+    "module_phase1_5_goal_filter.md",
+    "module_phase2_goal_architecture.md",
+    "module_phase3_weekly_review.md",
+    "module_phase4_dashboard.md",
+    "module_phase5_execution.md",
+    # Tier 3 — deep refs (selected)
     "diagnostic_methods.md",
     "communication_style.md",
     "authentic_goal_filter.md",
@@ -295,20 +310,57 @@ def ultra_condense(text: str) -> str:
     return "\n".join(result)
 
 
+def _build_inline_block(ref: str, condensed: str, platform: str) -> str:
+    """Wrap condensed ref content in platform-appropriate inline markers."""
+    if platform == "grok":
+        return (
+            f"<!-- INLINED REF: {ref} -->\n"
+            f"<details>\n"
+            f"<summary>📄 {ref.replace('.md', '')} (полный протокол)</summary>\n\n"
+            f"{condensed}\n\n"
+            f"</details>\n"
+            f"<!-- END INLINED REF: {ref} -->"
+        )
+    return (
+        f"<!-- INLINED REF: {ref} -->\n"
+        f"## 📄 {ref.replace('.md', '')}\n\n"
+        f"{condensed}\n\n"
+        f"<!-- END INLINED REF: {ref} -->"
+    )
+
+
+def _condense_for_platform(ref: str, content: str, platform: str) -> str:
+    """Pick the right condenser for this ref/platform pair."""
+    if ref == "dashboard_guide.md":
+        return condense_dashboard(content)
+    if platform == "kimi":
+        return ultra_condense(content)
+    return condense_markdown(content, aggressive=False)
+
+
 def inline_references(skill_text: str, platform: str) -> str:
-    """Inline P0 critical references into a single-file platform skill."""
+    """Inline P0 critical references into a single-file platform skill.
+
+    Strategy:
+    1. For each P0 ref discovered in skill_text, try to inline-replace the
+       first load instruction line (`Загрузи / Прочитай / См.` + path).
+    2. If no such load line exists for the ref, append the condensed block at
+       the end of the file under a synthesised section. This keeps the
+       Tier 1/2 IA decomposition working on grok/kimi (single-file platforms
+       have no lazy-load — they need the full content present).
+    3. Non-P0 refs get their load verb downgraded to neutral `См.`.
+    """
     ref_pattern = r"`references/([^`]+\.md)`"
     refs = set(re.findall(ref_pattern, skill_text))
+
+    pending_appends: list[str] = []
 
     for ref in sorted(refs):
         ref_path = REFERENCES_DIR / ref
         if not ref_path.exists():
             continue
 
-        # Only inline P0 critical refs
         if ref not in P0_REFS:
-            # Replace "Загрузи" with neutral "См." for non-inlined refs
-            # Handle markdown decoration around the keyword: **Загрузи** or _загрузи_
             skill_text = re.sub(
                 rf"(?i)[*_]*\s*(загрузи|прочитай|см\.?)\s*[_*]*\s*`references/{re.escape(ref)}`",
                 rf"См. `references/{ref}`",
@@ -317,41 +369,13 @@ def inline_references(skill_text: str, platform: str) -> str:
             continue
 
         content = ref_path.read_text(encoding="utf-8")
-
-        # Choose condensation level
-        if ref == "dashboard_guide.md":
-            # Custom condensation for dashboard: keep only coaching display rules + JSON contract
-            condensed = condense_dashboard(content)
-        elif platform == "kimi":
-            condensed = ultra_condense(content)
-        else:
-            condensed = condense_markdown(content, aggressive=False)
-
+        condensed = _condense_for_platform(ref, content, platform)
         if not condensed.strip():
             continue
-
-        # Demote headings to preserve hierarchy (H1 -> H3, H2 -> H4)
         condensed = demote_headings(condensed, levels=2)
+        inline_block = _build_inline_block(ref, condensed, platform)
 
-        # Build inline block
-        if platform == "grok":
-            inline_block = (
-                f"<!-- INLINED REF: {ref} -->\n"
-                f"<details>\n"
-                f"<summary>📄 {ref.replace('.md', '')} (полный протокол)</summary>\n\n"
-                f"{condensed}\n\n"
-                f"</details>\n"
-                f"<!-- END INLINED REF: {ref} -->"
-            )
-        else:
-            inline_block = (
-                f"<!-- INLINED REF: {ref} -->\n"
-                f"## 📄 {ref.replace('.md', '')}\n\n"
-                f"{condensed}\n\n"
-                f"<!-- END INLINED REF: {ref} -->"
-            )
-
-        # Replace the reference load instruction
+        # Try inline replacement on a load-instruction line.
         lines = skill_text.split("\n")
         new_lines = []
         replaced = False
@@ -365,6 +389,23 @@ def inline_references(skill_text: str, platform: str) -> str:
             else:
                 new_lines.append(line)
         skill_text = "\n".join(new_lines)
+
+        # Fallback: ref is referenced (e.g. via Routing Map table) but no
+        # explicit load instruction — append at the end so single-file
+        # platforms still carry the full protocol.
+        if not replaced:
+            pending_appends.append(inline_block)
+
+    if pending_appends:
+        appendix = (
+            "\n\n---\n\n"
+            "## Appendix: Inlined modules (for single-file platforms)\n\n"
+            "Эти блоки соответствуют `references/module_*.md` и `references/*.md` "
+            "из Routing Map / References. Сохранены здесь, потому что текущая "
+            "платформа не поддерживает lazy-load.\n\n"
+            + "\n\n".join(pending_appends)
+        )
+        skill_text = skill_text.rstrip() + appendix + "\n"
 
     return skill_text
 

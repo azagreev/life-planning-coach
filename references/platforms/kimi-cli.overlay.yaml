@@ -1,13 +1,12 @@
 # Kimi Code CLI Platform Overlay for life-planning-coach
 # Merged with SKILL.master.md by build-platform-skill.py
 #
-# Kimi Code CLI is a terminal coding agent with:
-# - Full filesystem access (read_file, write_file)
-# - references/ directory support via read_file
-# - MCP support (Google Calendar, Google Drive)
-# - No 10-step limit
-# - No KIMI_REF tags (those are for OK Computer web UI)
-# - No memory_space tool (use filesystem instead)
+# Kimi Code CLI = terminal coding agent: full filesystem, references/ via
+# read_file, MCP (Google Calendar, Google Drive), no 10-step limit, no
+# KIMI_REF tags, no memory_space tool.
+#
+# After v0.17.0 the master is platform-neutral. This overlay only translates
+# neutral terms into Kimi CLI specifics and adds CLI-only notes.
 
 frontmatter_remove:
   - requires_connector
@@ -23,63 +22,18 @@ replacements:
   - old: "**Assistant**: "
     new: "**Kimi** говорит..."
 
-  - old: "### 8. Phase 5: Execution Backbone — Calendar Integration"
-    new: "### 8. Phase 5: Execution Backbone — Google Calendar Integration (via MCP)"
+  - old: "AI Memory"
+    new: "Контекстный memory + write_file"
 
-  - old: "Пользователь подключает Calendar в Settings → Connectors → Authorize (1 клик)."
-    new: |
-      Пользователь настраивает MCP для Google Calendar через конфигурацию Kimi CLI
-      (см. `references/platforms/USER_GUIDE_MCP_KIMI_CLI.md` для подробной инструкции).
-      **Graceful Fallback**: Если MCP не настроен — используй text-only планирование с явными датами.
-
-  - old: "- **Уровень 1 (default)**: AI Memory — записывай ключевые факты автоматически\n- **Уровень 2 (opt-in)**: Cloud Storage + LLM Wiki — создаёт структуру `Life Planning Coach Wiki/`"
-    new: |
-      - **Уровень 1 (default)**: Контекстный memory — ключевые факты накапливаются в разговоре
-      - **Уровень 2 (opt-in)**: Google Drive MCP + LLM Wiki — создаёт структуру `Life Planning Coach Wiki/`
-      - **Уровень 3 (opt-in)**: Локальная файловая система — `write_file` в рабочую директорию
-
-  - old: "- **Graceful Degradation**: Если Drive недоступен — переключайся на Memory без потери данных"
-    new: "- **Graceful Degradation**: Если Drive MCP недоступен — переключайся на локальные файлы через `write_file`"
-
-  - old: "- В начале каждой сессии проверяй доступность Drive и Calendar"
-    new: "- В начале каждой сессии проверяй доступность MCP tools (Calendar, Drive). Если MCP не настроен — работай с локальными файлами."
-
-  - old: "- **НЕ создавай** рекуррентные события в Calendar если connector не поддерживает — fallback на отдельные события"
-    new: "- **НЕ создавай** рекуррентные события если MCP Calendar не настроен — fallback на отдельные события с явными датами"
-
-  - old: "- **НЕ записывай** в Cloud Storage во время сессии — накапливай в памяти, batch-запись в конце (≤5 approval'ов)"
-    new: "- **НЕ записывай** в файлы чаще чем 1 раз за 5 сообщений — минимизируй IO операции. Накапливай изменения, batch-запись в конце."
-
-  - old: "| Cloud Storage недоступен (гео-блокировка, отозван доступ) | Graceful fallback: \"Сейчас не могу подключиться к хранилищу. Работаем в обычном режиме, данные сохраняются в памяти.\" Переключись на AI Memory. |"
-    new: "| Google Drive MCP недоступен | Graceful fallback: \"Сейчас не могу подключиться к Drive. Работаем в обычном режиме, данные сохраняются в локальных файлах.\" Используй `write_file` для wiki persistence. |"
-
-  - old: "| Calendar connector не работает | Предложи text-only планирование. Все планы остаются в разговоре. |"
-    new: "| Calendar MCP не настроен | Предложи text-only планирование с явными датами. Все планы остаются в разговоре, рекомендуй скопировать вручную в свой календарь. |"
-
-  - old: "| Memory переполнена / контекст сжался | Предложи подключить Cloud Storage для wiki persistence. Hot_Cache экономит ~60-75% токенов. |"
-    new: "| Context limit approaching | Сделай краткий summary в локальный файл через `write_file` и предложи новую сессию. Или настрой Google Drive MCP для wiki persistence — Hot_Cache экономит ~60-75% токенов. |"
-
-  - old: "- **AI Memory**: Ключевые факты записываются автоматически в формате \"Запомни: пользователь [имя] работает над [цель]...\"\n- **Cloud Storage**: Данные хранятся в папке пользователя (`Life Planning Coach Wiki/`). Скилл только обновляет файлы, не имеет прямого доступа к токенам."
-    new: "- **Контекстный memory**: Ключевые факты накапливаются в разговоре (контекстное окно)\n- **Google Drive MCP**: Данные хранятся в папке пользователя (`Life Planning Coach Wiki/`). Требует ручной настройки MCP (см. USER_GUIDE_MCP_KIMI_CLI.md)\n- **Локальные файлы**: Для wiki persistence используй `write_file` → файлы сохраняются в рабочей директории"
-
-  - old: "- Calendar: connector integration + 4 presets + free slots + text daily top-3"
-    new: "- Calendar: MCP integration (если настроен) + 4 presets + free slots + text daily top-3"
-
-  - old: "### 7. Phase 4: Interactive Dashboard\n\nПри запросе \"покажи дашборд\" или \"визуализируй прогресс\":\n1. Прочитай текущее состояние (JSON data)\n2. Сгенерируй HTML-файл с embedded данными\n3. Предложи открыть в браузере (работает offline)"
-    new: |
-      ### 7. Phase 4: Interactive Dashboard
-
-      При запросе "покажи дашборд" или "визуализируй прогресс":
-      1. Прочитай текущее состояние из локальных файлов или Drive MCP
-      2. Сгенерируй HTML-файл с embedded данными через `write_file`
-      3. Предложи открыть файл в браузере — файл доступен в рабочей директории
+  - old: "Cloud Storage"
+    new: "Google Drive MCP / локальные файлы"
 
 append_after_privacy: |
 
   ## Kimi CLI-Specific Notes
 
-  - **Filesystem access**: Полный доступ к `read_file`, `write_file`, `edit_file`. `references/` доступны через `read_file`.
-  - **MCP support**: Google Calendar и Google Drive доступны через MCP (требуют ручной настройки, см. USER_GUIDE_MCP_KIMI_CLI.md).
-  - **No step limit**: В отличие от OK Computer (10 steps), CLI не имеет ограничений.
-  - **No KIMI_REF**: Не используй `KIMI_REF` tags — это фича OK Computer web UI.
-  - **No memory_space**: Для persistence используй файловую систему (`write_file`) или Google Drive MCP.
+  - **Filesystem access**: полный доступ к `read_file`, `write_file`, `edit_file`. `references/` грузятся через `read_file`.
+  - **MCP support**: Google Calendar и Google Drive через MCP (ручная настройка, см. `USER_GUIDE_MCP_KIMI_CLI.md`).
+  - **No step limit**: в отличие от OK Computer (10 steps), CLI без ограничений — phase modules грузятся lazy.
+  - **No KIMI_REF**: не используй `KIMI_REF` tags — это фича OK Computer web UI.
+  - **No memory_space**: для persistence используй файловую систему (`write_file`) или Google Drive MCP.
