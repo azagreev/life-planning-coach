@@ -173,11 +173,15 @@ class TestCalendarEventPatterns:
         [
             (
                 "Weekly Review",
-                ["summary", "description", "start", "end", "colorId", "reminders", "recurrence"],
+                # Field names reflect connector-actual schema (PoC 2026-05-26):
+                #  - startTime/endTime flat (not start.dateTime/end.dateTime)
+                #  - overrideReminders flat (not reminders.overrides)
+                #  - recurrenceData input (not recurrence — that's the response shape)
+                ["summary", "description", "startTime", "endTime", "colorId", "overrideReminders", "recurrenceData"],
             ),
             (
                 "WOOP Session",
-                ["summary", "description", "start", "end", "colorId", "reminders", "recurrence"],
+                ["summary", "description", "startTime", "endTime", "colorId", "overrideReminders", "recurrenceData"],
             ),
         ],
     )

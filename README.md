@@ -44,10 +44,12 @@
 
 | Платформа | Для кого | Установка | Календарь | Диск | Файл |
 |-----------|----------|-----------|-----------|------|------|
-| **Claude.ai** | Продвинутые пользователи, MCP | ZIP upload | ✅ MCP | ✅ MCP | `.zip` / `.skill` |
+| **Claude.ai** | Продвинутые пользователи, MCP | ZIP upload | ✅ MCP¹ | ✅ MCP¹ | `.zip` / `.skill` |
 | **Grok** (xAI) | Пользователи xAI, большой контекст | Копировать-вставить | ✅ Native OAuth | ✅ Native OAuth | `-grok.md` |
 | **Kimi OK Computer** | Простая веб-настройка | Веб-агент | ❌ Текстовый | ❌ Нет | `-kimi.md` |
 | **Kimi Code CLI** | Разработчики, терминал | Директория + JSON | ✅ MCP (ручной) | ✅ MCP (ручной) | `-kimi-cli/` |
+
+¹ MCP коннекторы (Google Calendar + Drive) подтверждены на **Claude Max plan** (PoC verified 2026-05-26 — см. [docs/research/mcp_poc_log.md](docs/research/mcp_poc_log.md)). Pro/Team plans не тестировались. На Free plan MCP скорее всего недоступен — fallback в **Paper Coach Mode** (текстовый план).
 
 **→ [Подробное сравнение платформ](references/platforms/CROSS_PLATFORM_COMPARISON.md)**  
 **→ [Дерево решений](references/platforms/CROSS_PLATFORM_COMPARISON.md#decision-tree)**
@@ -58,7 +60,7 @@
 
 ### Claude.ai (ZIP Skill)
 
-1. Скачайте `life-planning-coach-v0.19.0.zip` из [Релизов](https://github.com/azagreev/life-planning-coach/releases)
+1. Скачайте `life-planning-coach-v1.0.0.zip` из [Релизов](https://github.com/azagreev/life-planning-coach/releases)
 2. Claude → Settings → Capabilities → включить "Code execution and file creation"
 3. Customize → Skills → + → Upload ZIP
 4. Наберите `/life-planning-coach` в любом чате
@@ -67,7 +69,7 @@
 
 ### Grok (xAI) — Один файл
 
-1. Скачайте `life-planning-coach-v0.19.0-grok.md`
+1. Скачайте `life-planning-coach-v1.0.0-grok.md`
 2. Скопируйте всё содержимое, вставьте в [grok.com](https://grok.com)
 3. Добавьте: `Ты — Life Planning Coach. Начни сессию.`
 
@@ -76,7 +78,7 @@
 ### Kimi OK Computer (Веб-агент)
 
 1. Перейдите на [kimi.com/agent](https://kimi.com/agent)
-2. Создайте агента → вставьте `life-planning-coach-v0.19.0-kimi.md` в системный промпт
+2. Создайте агента → вставьте `life-planning-coach-v1.0.0-kimi.md` в системный промпт
 3. Сохраните и начните диалог
 
 **→ [Полное руководство по Kimi Web](references/platforms/USER_GUIDE_KIMI_OKCOMPUTER.md)**

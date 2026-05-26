@@ -8,6 +8,18 @@
 
 ## [Unreleased]
 
+### Added
+
+- **PoC MCP (Google Calendar) completed** — `docs/research/mcp_poc_log.md` заполнен real measurements на Claude Max plan. Decision: **MCP-first**. 14/14 ops functional через Gates 1+2. `suggest_time` подтверждён доступным (singular form). Tool inventory: 8 confirmed (4 read + 4 write). PoC выполнен AI-assisted hybrid через Claude_in_Chrome (Chrome Claude драйвил browser + claude.ai chat, current session orchestrated).
+
+### Changed
+
+- **`references/calendar_integration.md`** — bumped v0.2.1 → v0.3.0. Добавлен раздел "Schema Quirks" с 10 connector-specific deviations (recurrenceData vs recurrence, UNTIL must be UTC-Z, attendeeEmails for suggest_time, overrideReminders flat, scope via id type). Prompt patterns обновлены под actual connector schema. Latency table. Free Slot Algorithm с двумя путями (suggest_time + list_events).
+- **`references/calendar_constants.md`** — Tools table обновлён с PoC schema notes. Event Data Schema разделён на request vs response (asymmetric field naming). Failure Modes расширены 7 новыми сценариями (UNPARSABLE_NUMBER, "Already deleted" double-fire, session-scope auto-permission, coarse suggest_time, UTC response, lazy tool load).
+- **`references/module_phase5_execution.md`** — Mode A (Calendar Connected) маркирован как primary path. Recurring fallback гatcha обновлён ("работает через MCP, не fallback на отдельные события").
+- **`README.md`** — добавлен footnote¹ о Max plan для MCP коннекторов с link на PoC log.
+- **`BACKLOG.md`** — PoC MCP item перенесён из Tech Debt в Archived/Done. Google Tasks MCP отмечен с PoC confirmation что отсутствует в directory.
+
 ## [1.0.0] — 2026-05-28
 
 **Production-ready release** — major-version signal стабильности после v0.17→v0.19 content milestones. v1.0 закрывает 6 production-readiness gaps + замораживает API contract: schema 2.x, persona naming, build CLI, Routing Map.

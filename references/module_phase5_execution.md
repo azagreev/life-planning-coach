@@ -25,13 +25,13 @@
 
 ## Two execution modes
 
-### Mode A: Calendar Connected (default if available)
-- Пользователь подключил Calendar connector (Google / iCloud / Outlook — конкретный механизм авторизации зависит от платформы, см. overlay).
-- Skill создаёт реальные события через connector с подтверждением.
+### Mode A: Calendar Connected (default — primary path)
+- Пользователь подключил Calendar connector (Google / iCloud / Outlook — механизм зависит от платформы).
+- Skill создаёт реальные события через connector с подтверждением (схема и quirks — `calendar_integration.md`).
 - Использует `references/calendar_constants.md`: COLOR_MAP, presets, failure modes.
 
 ### Mode B: Paper Coach Mode (fallback)
-- Calendar недоступен или пользователь не хочет подключать.
+- Calendar недоступен (нет Max plan, не подключён connector) или пользователь не хочет подключать.
 - Работаем через markdown — Daily Top-3 + Time Blocks таблицей (`references/markdown_tables.md`).
 - Фраза для пользователя: «В этом режиме я не создаю события автоматически — вот ваш план в текстовом виде. Скопируйте в свой календарь или заметки. Research показывает: люди, которые записывают планы от руки, запоминают их на 42% лучше.»
 
@@ -129,7 +129,7 @@
 ## Gotchas
 
 - **НЕ создавай** события без Pre-flight Workload Check. Это правило #1.
-- **НЕ создавай** рекуррентные события если connector не поддерживает — fallback на отдельные события.
+- **Recurring events работают** через connector. Fallback на отдельные события только в Mode B.
 - **НЕ предлагай** Calendar setup в Phase 0. Это блокирует zero-setup default. Phase 5 — единственное место, где предлагаем connector.
 - **НЕ записывай** в Drive во время сессии события одно за одним. Накапливай в памяти, batch-запись в конце (≤ 5 approval'ов).
 - **НЕ обещай** автоматическую sync если работаем в Paper Coach Mode. Будь честен про границы.

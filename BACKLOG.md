@@ -105,7 +105,7 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 
 - **Описание:** Синхронизация Daily Top-3 с Google Tasks через MCP.
 - **Триггер:** Tasks API становится доступен через MCP в целевой платформе.
-- **Статус:** ⏳ Ожидание внешнего события.
+- **Статус:** ⏳ Ожидание внешнего события. **PoC 2026-05-26 confirmed:** Google Tasks отсутствует в Anthropic MCP directory (на Max plan). Тем временем — conversational Daily Top-3 (см. `calendar_integration.md` §Daily Top-3 Text-Only).
 - **RICE:** Reach 45 [GUESS] × Impact 1.5 × Confidence 40% / Effort L=3 EAS, Context Pressure High = **9.0** (Medium Priority).
 - **Риск:** Зависимость от внешней платформы и OAuth scope.
 
@@ -186,7 +186,6 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 | Тесты целостности `SKILL.master.md` | P0 | v0.15.0 | 100 × 2.0 × 80% / M=2, CP Med = **80.0** | Structure, cross-reference validation, platform sync |
 | Coverage report + badge | P1 | v0.15.0 | 80 × 1.0 × 75% / S=1, CP Low = **60.0** | `pytest-cov`, минимум 85%, badge в README |
 | Pre-commit hooks | P1 | v0.15.0 | 80 × 1.0 × 70% / S=1, CP Med = **56.0** | `ruff`, `mypy`, whitespace |
-| PoC MCP | P1 | v0.15.0 | 70 × 1.5 × 60% / M=2, CP High = **31.5** | OAuth + CRUD + `suggest_time` |
 | Универсальный скрипт сборки | P2 | v0.15.0+ | 60 × 1.0 × 70% / M=2, CP Med = **21.0** | Единый `build-skill.py` |
 | Planning docs guardrails | P2 | v0.15.0+ | 80 × 0.5 × 80% / XS=0.5, CP Low = **64.0** | Проверка, что roadmap не превращается в changelog |
 | Timezone edge-case hardening | P2 | v0.16 candidate | 60 × 1.0 × 60% / M=2, CP Med = **18.0** | Travel, DST, смена рабочей зоны |
@@ -210,6 +209,7 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 | Timezone intelligence | Базовая schema/preset support есть; edge-case hardening вынесен в tech debt |
 | README rewrite + platform guides | Реализовано в v0.10.2 |
 | Inclusive coaching references | Реализовано в v0.14.0 |
+| PoC MCP (Google Calendar) | ✅ Выполнено 2026-05-26. Decision: **MCP-first**. 14/14 ops functional, 13 schema deviations documented. См. [`docs/research/mcp_poc_log.md`](docs/research/mcp_poc_log.md). `calendar_integration.md` + `calendar_constants.md` обновлены. |
 
 ---
 
