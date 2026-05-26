@@ -101,14 +101,33 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Артефакты:** `docs/research/prd_goal_concordance.md`; предстоит обновить `references/goal_architecture.md`, `references/emotion_regulation.md`, `references/communication_style.md`.
 - **Риск:** Coaching, а не therapy — нужны явные disclaimers и мягкая подача у тревожных/избегающих пользователей.
 
-### Drive Wiki update workaround (append-only redesign)
+### Drive Wiki Path A — full skill protocol refactor
 
-- **Описание:** PoC 2026-05-26 показал что Drive MCP connector НЕ имеет `update_file` / `delete_file` tools. Текущий `templates/AI_Instructions.md` §Backfill предполагает overwrite/section update — это physically impossible через MCP. Нужен redesigned protocol: append-only с timestamp suffix (`Hot_Cache_{YYYY-MM-DD-HHMM}.md`) + read latest by `modifiedTime` + manual periodic cleanup.
-- **Триггер:** PoC discovery 2026-05-26 (Gate D-4).
-- **Статус:** 📋 Документировано в `references/drive_integration.md` + `templates/AI_Instructions.md`. Workaround pattern предложен но не имплементирован в active session protocols.
-- **RICE:** Reach 70 × Impact 2.0 × Confidence 70% / Effort M=2 EAS, Context Pressure Medium = **49.0** (Quick Win).
-- **Артефакты:** Refactor `Hot_Cache`/`Goals`/`Dashboard` write protocols к append-only; добавить cleanup recommendation в README; update tests.
-- **Риск:** Storage accumulation если user не делает periodic cleanup; deduplication logic при read.
+- **Описание:** Architecture committed (`references/drive_integration.md` §Path A): append-only с timestamp suffix + Apps Script auto-cleanup (`templates/lpc_wiki_cleanup.gs`). Осталось: refactor active session write protocols в `module_phase*.md` чтобы actually использовать pattern (currently legacy "overwrite"/"section update" wording in some modules).
+- **Триггер:** Path A commit 2026-05-26 (после Drive PoC + Grok research).
+- **Статус:** 📋 Architecture documented + Apps Script ready. Skill modules ещё не refactored под Path A protocol.
+- **RICE:** Reach 70 × Impact 2.0 × Confidence 80% / Effort M=2 EAS, Context Pressure Medium = **56.0** (Quick Win).
+- **Артефакты:** Update each `module_phase*.md` State Writes section с filename pattern `{Template}_{ISO}.md`; add `save_state(template, content)` abstraction helper для forward-compat; tests на read-latest semantics.
+- **Риск:** Skill prompts длиннее (более explicit filename gen logic); legacy users могут нуждаться migration helper.
+
+### Verify Zapier MCP availability на claude.ai web (Path F investigation)
+
+- **Описание:** Grok research упомянул aimaker.substack and Reddit precedents где люди использовали Zapier MCP для writes на claude.ai web (Path F hybrid: native Drive reads + Zapier для updates). Не verified что Zapier MCP available в Anthropic Directory как connector. Если ДА — power users получают full CRUD на web без Desktop switch.
+- **Триггер:** Path A architecture committed 2026-05-26; Path F deferred до verification.
+- **Статус:** ⏳ Research task.
+- **RICE:** Reach 30 × Impact 1.5 × Confidence 50% / Effort XS=0.5 EAS, Context Pressure Low = **45.0** (Quick Win).
+- **Артефакты:** Verify Zapier connector в Anthropic Directory; если есть — добавить Path F section в `drive_integration.md`; иначе close as "not viable for web".
+
+### File Anthropic GitHub issue evidence (Path E lobbying)
+
+- **Описание:** Add detailed comment на [#51040](https://github.com/anthropics/claude-code/issues/51040) с ссылкой на наш `mcp_poc_log.md` §Drive PoC как concrete evidence pro приоритизации `update_file`/`delete_file` в Drive connector. Aim: усилить signal к Anthropic team.
+- **Триггер:** Issue open с 0 ответов; наш PoC = unique quantified evidence.
+- **Статус:** 📋 Ready to file.
+- **RICE:** Reach 100 [GUESS] × Impact 0.5 × Confidence 30% / Effort XS=0.25 EAS, Context Pressure Low = **60.0** (Quick Win).
+- **Артефакты:** Self-contained GitHub comment с PoC findings highlights; link к public mcp_poc_log.md в нашем repo.
+- **Риск:** No guarantee on Anthropic response; low cost regardless.
+
+### Интеграция с Google Tasks MCP
 
 ### Интеграция с Google Tasks MCP
 

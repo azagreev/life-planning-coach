@@ -46,28 +46,108 @@ PoC 2026-05-26 discovered:
 
 ---
 
-## Backfill / Wiki Update Problem
+## Wiki Persistence Architecture — Path A (committed 2026-05-26)
 
-**No `update_file` tool means:** every "save Hot_Cache.md" via `create_file` creates a NEW file with the same title. Duplicates accumulate.
+After research synthesis (PoC findings + community precedents — Karpathy LLM Wiki, Justin Norris Apps Script mirroring, Zapier hybrid pattern), the skill commits to **Path A: append-only with timestamp suffix + Apps Script auto-cleanup**.
 
-### Append-only pattern (recommended workaround)
+### Write protocol (skill side)
 
 ```
-Write:  create_file(title="Hot_Cache_2026-05-26T18:45.md", parentId=wiki_id, textContent=...)
-Read:   search_files(query="title contains 'Hot_Cache_' and parentId = '...'", orderBy="modifiedTime desc", pageSize=1)
-        → take first result as "current Hot_Cache"
-Stale:  manual cleanup via Drive UI periodically (no MCP delete)
+create_file(
+  parentId=<wiki_subfolder_id>,
+  title="<Category>_<ISO8601_compact>.md",   // e.g. "Hot_Cache_2026-05-26T18-45.md"
+  textContent=<rendered_snapshot>,
+  contentMimeType="text/markdown",
+  disableConversionToGoogleType=true
+)
 ```
 
-### Trade-offs
+ISO format: `YYYY-MM-DDTHH-MM` (colons replaced with `-` для совместимости с filename conventions).
 
-| Approach | Pros | Cons |
-|----------|------|------|
-| Append-only with timestamp suffix | Works with MCP-only; full history retained | Storage accumulates; manual cleanup |
-| Google Doc native + Drive UI revisions | Native versioning | Updates bypass MCP entirely; mixing patterns |
-| Local-only state (skip Drive Wiki) | Simple; no Drive limitations | No cross-session persistence beyond conversation memory |
+### Read protocol (skill side)
 
-**Skill recommendation:** Append-only model with `*_{YYYY-MM-DD-HHMM}.md` suffix; latest by `modifiedTime` is canonical. Document expectation that Drive Wiki accumulates per-session snapshots.
+```
+search_files(
+  query="title contains '<Category>_' and parentId = '<wiki_subfolder_id>'",
+  orderBy="modifiedTime desc",
+  pageSize=1
+)
+→ first result = "current" state
+→ download_file_content(fileId) → base64-decode → parse markdown
+```
+
+⚠️ **NEVER use `read_file_content` для `.md`** — returns `{}` silently. ALWAYS `download_file_content`.
+
+### Cleanup protocol (user side, one-time setup)
+
+Pre-built Apps Script: [`references/templates/lpc_wiki_cleanup.gs`](templates/lpc_wiki_cleanup.gs).
+
+User setup (~3 min, paste-once):
+1. <https://script.google.com> → New project
+2. Paste contents of `lpc_wiki_cleanup.gs` в Code.gs
+3. `dryRun()` once для preview
+4. `installTrigger()` once → daily 03:00 trigger
+5. Forget about it
+
+Поведение: keeps last 5 most recent per category + всё < 30 дней. Surplus → Drive trash (recoverable 30 days). Configurable via constants in script.
+
+### Why this architecture
+
+| Concern | Path A address |
+|---------|----------------|
+| MCP no `update_file` | Each write = new file with timestamp; "current" = latest by modifiedTime |
+| MCP no `delete_file` | User-side Apps Script (independent of MCP) автоматически handles cleanup |
+| File accumulation | Apps Script keeps 5+recent + 30-day window; bounded growth |
+| Cross-session persistence | Drive holds state server-side; survives device/context loss |
+| Audit trail | 5+ snapshots per category = built-in undo / inspection |
+| Works on all platforms | Pure MCP read/create only; no Desktop dependency |
+| Forward compat | When Anthropic ships `update_file`, swap `create_file` call site — no architecture change |
+
+### Trade-offs accepted
+
+- Storage: ~365×N×size/year если user never cleanups; bounded если daily trigger running
+- 3-min one-time Apps Script setup (skippable → degrades к manual cleanup)
+- Reads have extra `search_files` call vs known-ID direct read (sub-second через direct MCP)
+- 5-snapshot retention may not be enough для users wanting full history — increase `MIN_RETAIN_PER_PREFIX` в script
+
+---
+
+## Alternative architectures (НЕ chosen — documented для context)
+
+| Path | Brief | Why not |
+|------|-------|---------|
+| **B: Tiered Desktop community MCP** | [piotr-agier/google-drive-mcp](https://github.com/piotr-agier/google-drive-mcp) full CRUD на Desktop | Power-user only; ~30 min OAuth+GCloud setup. **§Advanced below.** |
+| **C: State в conversation memory only** | Drive read-only; state в memory + JSON on demand | Loses cross-session persistence |
+| **D: Migrate в Obsidian+Git** | Per Karpathy LLM Wiki pattern | Requires Desktop + local file MCP; defeats portable cloud Wiki |
+| **F: Zapier MCP hybrid** | Native Drive reads + Zapier MCP для writes | Не verified Zapier MCP available на web; **BACKLOG investigation** |
+
+---
+
+## Advanced: Path B (Desktop power-user setup с full CRUD)
+
+Для users на **Claude Desktop** / **Claude Code CLI** (NOT claude.ai web) кто хочет native `update_file`/`delete_file`:
+
+### Community MCP servers с full CRUD
+
+- **[piotr-agier/google-drive-mcp](https://github.com/piotr-agier/google-drive-mcp)** — Drive/Docs/Sheets/Slides/Calendar в одном. Tools: `updateTextFile`, `deleteItem`, `renameItem`, `moveItem`.
+- **[a-bonus/google-docs-mcp](https://github.com/a-bonus/google-docs-mcp)** — "Ultimate" Google Suite MCP.
+- **[StackOne](https://www.stackone.com/connectors/googledrive/mcp/)** — Managed, 53 actions, commercial.
+
+### Setup outline (piotr-agier example, ~30 min)
+
+1. Google Cloud Project, enable Drive/Docs/Sheets/Slides/Calendar APIs
+2. OAuth credentials — Desktop app type (NOT Web)
+3. Place в `~/.config/google-drive-mcp/gcp-oauth.keys.json`
+4. Install MCP server (npm/clone)
+5. Add to `claude_desktop_config.json` или Claude Code config
+6. First run triggers browser OAuth
+7. Skill detects `update_file` tool availability → switches от Path A appended к direct overwrite
+
+⚠️ **Не для claude.ai web** — custom MCP servers not supported (только Anthropic-curated). Web users stay на Path A.
+
+### Future: when Anthropic ships `update_file` natively
+
+Skill abstraction (`save_state(template, content)` wrapper) позволяет swap Path A → direct overwrite в одном месте. No protocol re-write needed.
 
 ---
 

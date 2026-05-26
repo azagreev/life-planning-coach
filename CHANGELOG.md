@@ -23,6 +23,16 @@
 - **`BACKLOG.md`** — PoC MCP item перенесён из Tech Debt в Archived/Done. Google Tasks MCP отмечен с PoC confirmation что отсутствует в directory. Добавлен Active Candidate: «Drive Wiki update workaround (append-only redesign)».
 - **`references/templates/AI_Instructions.md`** — добавлено ⚠️ MCP Drive limitations note (no update/delete tools); write rules table обновлена под append-only pattern с timestamp suffix.
 
+### Architecture (Drive Wiki persistence)
+
+После Grok research synthesis (community precedents: Karpathy LLM Wiki, Justin Norris Apps Script mirroring, append-only event-sourcing patterns) **committed Path A** as Wiki persistence architecture:
+
+- **Append-only с timestamp suffix** (`Hot_Cache_2026-05-26T18-45.md`) — каждый "save" creates new file, "current" = latest by `modifiedTime`
+- **User-side Apps Script** ([`references/templates/lpc_wiki_cleanup.gs`](references/templates/lpc_wiki_cleanup.gs), NEW) — daily auto-cleanup keeps last 5 per category + anything < 30 days. ~3 min one-time setup
+- **Forward-compat** — when Anthropic ships `update_file`, swap is one-line change в abstraction `save_state(template, content)`
+
+Documented в [`references/drive_integration.md`](references/drive_integration.md) §Path A. Alternative paths (B Desktop CRUD, C conversation-only, D Obsidian, F Zapier hybrid) documented для context but not chosen. BACKLOG follow-ups: skill module refactor, Zapier MCP verification, Anthropic issue lobbying.
+
 ## [1.0.0] — 2026-05-28
 
 **Production-ready release** — major-version signal стабильности после v0.17→v0.19 content milestones. v1.0 закрывает 6 production-readiness gaps + замораживает API contract: schema 2.x, persona naming, build CLI, Routing Map.
