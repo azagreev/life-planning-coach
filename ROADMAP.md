@@ -8,20 +8,10 @@
 
 ## Текущий статус
 
-- **Текущая версия:** `v0.18.0`
+- **Текущая версия:** `v0.19.0`
 - **Источник правды по версии:** `git describe --tags --abbrev=0`
 - **История релизов:** [CHANGELOG.md](CHANGELOG.md)
 - **Архив старого roadmap:** [docs/archive/ROADMAP_before_cleanup_2026-05-21.md](docs/archive/ROADMAP_before_cleanup_2026-05-21.md)
-
----
-
-## v0.19.0 — Health Track + Goal Concordance
-
-**Цель:** Реализация 3 PRD после стабилизации архитектуры.
-
-- [ ] **Health & Metabolism Track** — schema bump 2.1, новый `track_health_metabolism.md`, см. `docs/research/prd_health_metabolism.md`.
-- [ ] **Goal Concordance** — schema bump 2.2, расширение Goal Architecture и Emotion Regulation, см. `docs/research/prd_goal_concordance.md`.
-- [ ] **Persona modules consolidation** — переименование (`adhd_mode.md` → `mode_adhd.md` и т.д.), unified touch-points.
 
 ---
 

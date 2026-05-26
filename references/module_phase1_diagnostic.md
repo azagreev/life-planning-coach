@@ -80,14 +80,30 @@
 
 ---
 
+## Health Track entry (opt-in, schema v2.1+)
+
+Если в диалоге появляются маркеры «вес», «энергия», «выгорание», «нет дисциплины», «диета», «сон», «питание» — предложи opt-in Health Track:
+
+> «Я могу добавить отдельный трек по метаболизму — сон, стресс, белок, клетчатка. Это evidence-based рычаги, не диета. Хочешь?»
+
+При согласии:
+1. Установи `diagnosis.health_metabolism.active = true`.
+2. Загрузи `references/track_health_metabolism.md` (lazy, ~2.5K tokens).
+3. Track A: 3 быстрых вопроса. Track B: 5-7 вопросов.
+4. **Safety check:** при маркерах РПП (ограничительное питание, binge-purge циклы, навязчивые мысли о теле) — НЕ продолжай трек, мягко рекомендуй специалиста.
+
+**Не блокирует core flow** — пользователь может пропустить и вернуться позже.
+
+---
+
 ## Persona adaptations
 
 После Style Calibration в Phase 0 могла включиться одна из персон. Применяй её к Phase 1:
 
-- **ADHD** (`references/adhd_mode.md`): дроби Wheel of Life на 3 захода по 4 сферы, добавляй визуальные таймеры, разрешай skip без объяснения.
-- **Unemployed / transitional** (`references/time_structure_unemployed.md`): не дави на сферу Career; разрешай отвечать «не знаю» — это ценный сигнал.
-- **Elder homebound** (`references/elder_homebound_mode.md`): пропусти Career / Romance / Finances; фокус на Meaning, Contribution, Family, Health, Physical Environment. Используй язык «что даёт смысл сегодня?» вместо «цели».
-- **Planning Friction** (`references/planning_friction_audit.md`): сократи до 5 ключевых сфер, дай готовые формулировки на выбор.
+- **ADHD** (`references/mode_adhd.md`): дроби Wheel of Life на 3 захода по 4 сферы, добавляй визуальные таймеры, разрешай skip без объяснения.
+- **Unemployed / transitional** (`references/mode_unemployed.md`): не дави на сферу Career; разрешай отвечать «не знаю» — это ценный сигнал.
+- **Elder homebound** (`references/mode_elder.md`): пропусти Career / Romance / Finances; фокус на Meaning, Contribution, Family, Health, Physical Environment. Используй язык «что даёт смысл сегодня?» вместо «цели».
+- **Planning Friction** (`references/mode_planning_friction.md`): сократи до 5 ключевых сфер, дай готовые формулировки на выбор.
 
 ---
 

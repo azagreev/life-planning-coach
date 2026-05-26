@@ -1,27 +1,39 @@
 # 🧭 Life Planning Coach
 
-![tests](https://img.shields.io/badge/tests-430%2B%20passed-brightgreen)
+![tests](https://img.shields.io/badge/tests-510%2B%20passed-brightgreen)
 ![coverage](https://img.shields.io/badge/coverage-80%25-brightgreen)
-![schema](https://img.shields.io/badge/state%20schema-v2.0-blue)
-![version](https://img.shields.io/badge/version-0.17.0-blue)
+![schema](https://img.shields.io/badge/state%20schema-v2.2-blue)
+![version](https://img.shields.io/badge/version-0.19.0-blue)
 
-> **Интерактивный evidence-based life coach** для Claude.ai, Grok (xAI) и Kimi (OK Computer + Code CLI).  
-> **Версия:** 0.18.0 | [Релизы](https://github.com/azagreev/life-planning-coach/releases) | [CHANGELOG](CHANGELOG.md)
+> **Превращает диалог с AI в evidence-based личный план:** цели, привычки, ретроспективный ритм. Без приложений, подписок, лишних аккаунтов.
+> **Версия:** 0.19.0 | [Релизы](https://github.com/azagreev/life-planning-coach/releases) | [CHANGELOG](CHANGELOG.md)
 
 ---
 
-## Что это?
+## Чем отличается
+
+|  | Notion / Todoist | Generic AI-coach | **Life Planning Coach** |
+|---|---|---|---|
+| **Метод** | Hand-made системы | Generic советы | 28+ научных публикаций (ACT, CBT, OKR, WOOP, Habit Loop, TGD) |
+| **Фокус** | Tasks & lists | Tone & encouragement | Жизненный план + retrospective ритм |
+| **Persistence** | Files | Conversation memory | Drive Wiki + Calendar + AI Memory (opt-in) |
+| **Persona** | One-size | Generic | 4 режима: ADHD, transitional, elder, planning friction |
+
+---
+
+## Что внутри
 
 Модульный кросс-платформенный коучинг-скилл, основанный на методах с научной валидацией:
 
 - **Wheel of Life** (11 сфер жизни, включая духовность и ценности)
 - **Фильтр аутентичных целей** — проверка целей на внутреннюю мотивацию (Stage 1\.5)
-- **Архитектура целей** — SMART+ цели с этапами и привычками
-- **Weekly Review** — evidence-based ретроспектива
-- **Habit Loop** — Cue-Routine-Reward с отслеживанием
-- **Регуляция эмоций** — техники, информированные DBT
-- **Triggering Precision** — точное определение корней прокрастинации
-- **Адаптивный стиль коммуникации** — калибровка под личность пользователя (Big Five × TTM × MI)
+- **Core Values Discovery** — bottom-up выявление ценностей + Compass Mode для daily decisions
+- **Архитектура целей** — BHAG → OKR → WOOP с привычками (Cue-Routine-Reward)
+- **Weekly Review** — 7-step GTD + Scrum Retro + Wins + Habit Review
+- **Регуляция эмоций** — DBT-informed (Cognitive Reappraisal, Grounding, Self-Compassion, Conflict Reappraisal)
+- **Health & Metabolism Track** (opt-in) — сон, стресс, белок, клетчатка как evidence-based рычаги аппетита
+- **Goal Concordance** — диадическая координация целей с партнёром (Transactive Goal Dynamics)
+- **Адаптивный стиль коммуникации** — Big Five × TTM × MI
 
 **4-этапный коучинговый поток:**
 1. **Диагностика** → 2. **Архитектура целей** → 3. **Исполнение** → 4. **Глубокая работа**
@@ -46,7 +58,7 @@
 
 ### Claude.ai (ZIP Skill)
 
-1. Скачайте `life-planning-coach-v0.17.0.zip` из [Релизов](https://github.com/azagreev/life-planning-coach/releases)
+1. Скачайте `life-planning-coach-v0.19.0.zip` из [Релизов](https://github.com/azagreev/life-planning-coach/releases)
 2. Claude → Settings → Capabilities → включить "Code execution and file creation"
 3. Customize → Skills → + → Upload ZIP
 4. Наберите `/life-planning-coach` в любом чате
@@ -55,7 +67,7 @@
 
 ### Grok (xAI) — Один файл
 
-1. Скачайте `life-planning-coach-v0.17.0-grok.md`
+1. Скачайте `life-planning-coach-v0.19.0-grok.md`
 2. Скопируйте всё содержимое, вставьте в [grok.com](https://grok.com)
 3. Добавьте: `Ты — Life Planning Coach. Начни сессию.`
 
@@ -64,7 +76,7 @@
 ### Kimi OK Computer (Веб-агент)
 
 1. Перейдите на [kimi.com/agent](https://kimi.com/agent)
-2. Создайте агента → вставьте `life-planning-coach-v0.17.0-kimi.md` в системный промпт
+2. Создайте агента → вставьте `life-planning-coach-v0.19.0-kimi.md` в системный промпт
 3. Сохраните и начните диалог
 
 **→ [Полное руководство по Kimi Web](references/platforms/USER_GUIDE_KIMI_OKCOMPUTER.md)**

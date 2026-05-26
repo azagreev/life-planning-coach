@@ -62,6 +62,19 @@
 
 Загрузи `references/habit_loop.md` если нужно ремонтировать привычку.
 
+### 6.5. Health Track Review (опционально, если активен)
+
+Если `diagnosis.health_metabolism.active == true` — 1-2 минуты:
+- «Как был сон на этой неделе? (час/качество)»
+- «Уровень стресса 1-10?»
+- «Что было самым тяжёлым в питании?»
+
+Обнови `diagnosis.health_metabolism.{sleep_quality, sleep_hours, stress_level, last_assessed}`. Если был активный micro_experiment — оцени outcome, добавь в `micro_experiments_log[]`.
+
+**Не дави.** Если пользователь устал — пропустите этот шаг, вернитесь через неделю. См. `references/track_health_metabolism.md`.
+
+---
+
 ### 7. Reward Audit (опционально, при прокрастинации)
 Если в Scrum Retro появились паттерны «зависал в соцсетях», «не мог начать», «делал что угодно вместо X» — загрузи `references/reward_audit.md`. Проверь, не «крадёт» ли cheap dopamine мотивацию у KR.
 
@@ -83,10 +96,10 @@
 
 ## Persona adaptations
 
-- **ADHD** (`references/adhd_mode.md`): **Micro-Review** — 3 вопроса вместо 7 шагов, 15 минут, визуальный формат (таблица или эмодзи-чек). Никаких free-form reflection.
-- **Unemployed / transitional** (`references/time_structure_unemployed.md`): без review «карьерного домена». Фокус — purpose + social anchors + small wins. Главный вопрос: «Что дало смысл на этой неделе?»
-- **Elder homebound** (`references/elder_homebound_mode.md`): **Micro-Check-In** — 3 вопроса, 5 минут. Никакого Wheel of Life с Career/Finance/Romance. Якори дня и память важнее KR.
-- **Planning Friction** (`references/planning_friction_audit.md`): templated Sunday Review — фиксированный набор 4 вопросов, без open-ended reflection.
+- **ADHD** (`references/mode_adhd.md`): **Micro-Review** — 3 вопроса вместо 7 шагов, 15 минут, визуальный формат (таблица или эмодзи-чек). Никаких free-form reflection.
+- **Unemployed / transitional** (`references/mode_unemployed.md`): без review «карьерного домена». Фокус — purpose + social anchors + small wins. Главный вопрос: «Что дало смысл на этой неделе?»
+- **Elder homebound** (`references/mode_elder.md`): **Micro-Check-In** — 3 вопроса, 5 минут. Никакого Wheel of Life с Career/Finance/Romance. Якори дня и память важнее KR.
+- **Planning Friction** (`references/mode_planning_friction.md`): templated Sunday Review — фиксированный набор 4 вопросов, без open-ended reflection.
 
 ---
 

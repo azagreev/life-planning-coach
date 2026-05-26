@@ -1,6 +1,6 @@
 ---
 name: life-planning-coach
-version: 0.18.0
+version: 0.19.0
 author: Andrey Zagreev
 last_updated: 2026-05-26
 description: >-
@@ -47,10 +47,10 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 - Результат: baseline профиль (soft / direct / structured / exploratory). См. `references/communication_style.md` для полного протокола.
 
 **Persona Detection** (1 мин, опционально):
-- ADHD / сложности с фокусом → `references/adhd_mode.md`
-- Безработица / декрет / переход → `references/time_structure_unemployed.md`
-- Пожилой возраст / homebound / ограниченная мобильность → `references/elder_homebound_mode.md`
-- «Планирование вызывает сопротивление» → `references/planning_friction_audit.md`
+- ADHD / сложности с фокусом → `references/mode_adhd.md`
+- Безработица / декрет / переход → `references/mode_unemployed.md`
+- Пожилой возраст / homebound / ограниченная мобильность → `references/mode_elder.md`
+- «Планирование вызывает сопротивление» → `references/mode_planning_friction.md`
 
 **Readiness Gate**: После Phase 0 спроси «На шкале 1–10, насколько комфортно продолжать?». Если < 6 — пауза или Phase 0.5 (см. `references/module_phase1_diagnostic.md` для ER Protocol).
 
@@ -148,7 +148,7 @@ on session_start:
 |----------|---------|
 | Не срабатывает на триггер-фразы | Проверь description в frontmatter и что скилл включён. |
 | Не готов к глубокой работе | Track A в Phase 1 (Quick Diagnostic, 20–30 мин). Не дави. |
-| Cloud Storage недоступен | Graceful fallback на AI Memory + Paper Coach. |
+| Drive недоступен | Graceful fallback на AI Memory + Paper Coach. |
 | Calendar connector не работает | Phase 5 в Paper Coach Mode — markdown-таблицы. |
 | Просит пропустить вопрос | Всегда разрешай. |
 | Пропуск > 7 дней | Загрузи `references/recovery_protocol.md`. |
@@ -160,7 +160,7 @@ on session_start:
 
 - **Никогда не хардкодь** API-ключи, токены или личные данные в SKILL.md или скриптах.
 - **AI Memory**: Ключевые факты записываются автоматически в формате «Запомни: пользователь работает над целью X».
-- **Cloud Storage**: Данные в `Life Planning Coach Wiki/`. Скилл обновляет файлы, не имеет прямого доступа к токенам.
+- **Drive**: Данные в `Life Planning Coach Wiki/`. Скилл обновляет файлы, не имеет прямого доступа к токенам.
 - **Consent**: Всегда спрашивай разрешения перед личными темами. Skip option для любого вопроса.
 - **Data retention**: Архивируй старые сессии в `05_Archive/` раз в квартал.
 - **Disclaimer**: Это **не замена психотерапии**. При устойчивом чувстве безысходицы или мыслях о самоповреждении — порекомендуй обратиться к лицензированному специалисту.
@@ -184,7 +184,7 @@ on session_start:
 - **Weekly review**: `weekly_review.md`, `win_alert.md`, `recovery_protocol.md`, `reward_audit.md`
 - **Dashboard**: `dashboard_guide.md`
 - **Calendar**: `calendar_constants.md`, `calendar_integration.md`, `energy_scheduling.md`, `workload_warning.md`, `calendar_pattern_analyzer.md`, `chronotype_native_planning.md`, `fresh_start_engine.md`, `shutdown_ritual.md`
-- **Persona / style**: `communication_style.md`, `adhd_mode.md`, `time_structure_unemployed.md`, `elder_homebound_mode.md`, `planning_friction_audit.md`
+- **Persona / style**: `communication_style.md`, `mode_adhd.md`, `mode_unemployed.md`, `mode_elder.md`, `mode_planning_friction.md`
 - **ER / micro / UI**: `emotion_regulation.md`, `micro_sessions.md`, `quick_decision.md`, `markdown_tables.md`, `status_icons.md`, `science_backing.md`
 
 (Пути относительно `references/`.)

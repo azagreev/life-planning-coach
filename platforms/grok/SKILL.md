@@ -1,6 +1,6 @@
 ---
 name: life-planning-coach
-version: 0.18.0
+version: 0.19.0
 description: >-
   Проведи полную диагностику жизни, построй систему целей от 25 лет до сегодняшнего дня и поддерживай еженедельную ретроспективу. Используй при запросах: "помоги спланировать жизнь", "не знаю куда двигаться", "какие у меня цели", "life planning", "постановка целей", "хочу разобраться в себе", "нужен план на жизнь", "ретроспектива", "обзор недели", "wheel of life", "ikigai", "BHAG", "OKR для жизни", "WOOP", "жизненные цели", "самопознание", "баланс жизни", "помоги найти себя", "life compass", "план на 5 лет", "выгорание", "перепутье". НЕ активируй на: конкретные бизнес-задачи, проектный менеджмент, технический troubleshooting, юридические вопросы. Язык: русский (адаптируется к языку пользователя).
 ---
@@ -37,10 +37,10 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 - Результат: baseline профиль (soft / direct / structured / exploratory). См. `references/communication_style.md` для полного протокола.
 
 **Persona Detection** (1 мин, опционально):
-- ADHD / сложности с фокусом → `references/adhd_mode.md`
-- Безработица / декрет / переход → `references/time_structure_unemployed.md`
-- Пожилой возраст / homebound / ограниченная мобильность → `references/elder_homebound_mode.md`
-- «Планирование вызывает сопротивление» → `references/planning_friction_audit.md`
+- ADHD / сложности с фокусом → `references/mode_adhd.md`
+- Безработица / декрет / переход → `references/mode_unemployed.md`
+- Пожилой возраст / homebound / ограниченная мобильность → `references/mode_elder.md`
+- «Планирование вызывает сопротивление» → `references/mode_planning_friction.md`
 
 <!-- INLINED REF: module_phase1_diagnostic.md -->
 <details>
@@ -97,12 +97,21 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
    - Когда: жёсткая самокритика («я тупой / ленивый / бесполезный»).
    - 3 шага: Mindfulness → Common humanity → Self-kindness.
 ---
+#### Health Track entry (opt-in, schema v2.1+)
+Если в диалоге появляются маркеры «вес», «энергия», «выгорание», «нет дисциплины», «диета», «сон», «питание» — предложи opt-in Health Track:
+> «Я могу добавить отдельный трек по метаболизму — сон, стресс, белок, клетчатка. Это evidence-based рычаги, не диета. Хочешь?»
+При согласии:
+1. Установи `diagnosis.health_metabolism.active = true`.
+3. Track A: 3 быстрых вопроса. Track B: 5-7 вопросов.
+4. **Safety check:** при маркерах РПП (ограничительное питание, binge-purge циклы, навязчивые мысли о теле) — НЕ продолжай трек, мягко рекомендуй специалиста.
+**Не блокирует core flow** — пользователь может пропустить и вернуться позже.
+---
 #### Persona adaptations
 После Style Calibration в Phase 0 могла включиться одна из персон. Применяй её к Phase 1:
-- **ADHD** (`references/adhd_mode.md`): дроби Wheel of Life на 3 захода по 4 сферы, добавляй визуальные таймеры, разрешай skip без объяснения.
-- **Unemployed / transitional** (`references/time_structure_unemployed.md`): не дави на сферу Career; разрешай отвечать «не знаю» — это ценный сигнал.
-- **Elder homebound** (`references/elder_homebound_mode.md`): пропусти Career / Romance / Finances; фокус на Meaning, Contribution, Family, Health, Physical Environment. Используй язык «что даёт смысл сегодня?» вместо «цели».
-- **Planning Friction** (`references/planning_friction_audit.md`): сократи до 5 ключевых сфер, дай готовые формулировки на выбор.
+- **ADHD** (`references/mode_adhd.md`): дроби Wheel of Life на 3 захода по 4 сферы, добавляй визуальные таймеры, разрешай skip без объяснения.
+- **Unemployed / transitional** (`references/mode_unemployed.md`): не дави на сферу Career; разрешай отвечать «не знаю» — это ценный сигнал.
+- **Elder homebound** (`references/mode_elder.md`): пропусти Career / Romance / Finances; фокус на Meaning, Contribution, Family, Health, Physical Environment. Используй язык «что даёт смысл сегодня?» вместо «цели».
+- **Planning Friction** (`references/mode_planning_friction.md`): сократи до 5 ключевых сфер, дай готовые формулировки на выбор.
 ---
 #### State writes (если включена персистентность)
 В конце Phase 1 запиши в state v2 (`references/state_v2_schema.md`):
@@ -227,7 +236,7 @@ on session_start:
 |----------|---------|
 | Не срабатывает на триггер-фразы | Проверь description в frontmatter и что скилл включён. |
 | Не готов к глубокой работе | Track A в Phase 1 (Quick Diagnostic, 20–30 мин). Не дави. |
-| Google Drive connector недоступен | Graceful fallback на Native Memory + Paper Coach. |
+| Drive недоступен | Graceful fallback на Native Memory + Paper Coach. |
 | Calendar connector не работает | Phase 5 в Paper Coach Mode — markdown-таблицы. |
 | Просит пропустить вопрос | Всегда разрешай. |
 | Пропуск > 7 дней |См. `references/recovery_protocol.md`. |
@@ -239,7 +248,7 @@ on session_start:
 
 - **Никогда не хардкодь** API-ключи, токены или личные данные в SKILL.md или скриптах.
 - **Native Memory**: Ключевые факты записываются автоматически в формате «Запомни: пользователь работает над целью X».
-- **Google Drive connector**: Данные в `Life Planning Coach Wiki/`. Скилл обновляет файлы, не имеет прямого доступа к токенам.
+- **Drive**: Данные в `Life Planning Coach Wiki/`. Скилл обновляет файлы, не имеет прямого доступа к токенам.
 - **Consent**: Всегда спрашивай разрешения перед личными темами. Skip option для любого вопроса.
 - **Data retention**: Архивируй старые сессии в `05_Archive/` раз в квартал.
 - **Disclaimer**: Это **не замена психотерапии**. При устойчивом чувстве безысходицы или мыслях о самоповреждении — порекомендуй обратиться к лицензированному специалисту.
@@ -263,7 +272,7 @@ on session_start:
 - **Weekly review**: `weekly_review.md`, `win_alert.md`, `recovery_protocol.md`, `reward_audit.md`
 - **Dashboard**: `dashboard_guide.md`
 - **Calendar**: `calendar_constants.md`, `calendar_integration.md`, `energy_scheduling.md`, `workload_warning.md`, `calendar_pattern_analyzer.md`, `chronotype_native_planning.md`, `fresh_start_engine.md`, `shutdown_ritual.md`
-- **Persona / style**: `communication_style.md`, `adhd_mode.md`, `time_structure_unemployed.md`, `elder_homebound_mode.md`, `planning_friction_audit.md`
+- **Persona / style**: `communication_style.md`, `mode_adhd.md`, `mode_unemployed.md`, `mode_elder.md`, `mode_planning_friction.md`
 - **ER / micro / UI**: `emotion_regulation.md`, `micro_sessions.md`, `quick_decision.md`, `markdown_tables.md`, `status_icons.md`, `science_backing.md`
 
 (Пути относительно `references/`.)
@@ -569,6 +578,17 @@ on session_start:
 ---
 #### Scientific Backing
 ---
+#### 4. Conflict Reappraisal (для recurring отношенческих конфликтов, v0.19.0+)
+**Source:** Finkel et al. (2013). *Psychological Science*. [DOI: 10.1177/0956797612474938](https://doi.org/10.1177/0956797612474938)
+**Effect:** Снижает emotional reactivity к recurring конфликтам через смену перспективы.
+##### When to use
+Пользователь возвращается к одному и тому же конфликту с партнёром, чувствует «застрял», эмоциональный дренаж мешает целям.
+##### Protocol (3 шага, 3-5 минут)
+1. **Distance:** «Представь, что этот конфликт описывает нейтральный наблюдатель, который желает добра вам обоим. Что бы он сказал?»
+2. **Repair:** «Что один маленький шаг к восстановлению связи прямо сейчас — извинение, прикосновение, общий смех?» (Gottman repair attempts — https://www.gottman.com/blog/r-is-for-repair/)
+3. **Reframe:** «Что вы оба пытаетесь защитить в этом конфликте? Не позиции — потребности.»
+**Не заменяет терапию.** При abuse / насилии — стоп, рекомендуй специалиста и safety.
+---
 #### Trigger Phrases (for SKILL.md description)
 Слова-сигналы, по которым скилл должен активировать ER Protocol:
 - "Я в стрессе", "меня всё достало"
@@ -622,21 +642,19 @@ on session_start:
 - `compass_question` — формулируется в **Compass Mode** ниже
 ---
 #### Compass Mode (FR-04 Practical Application)
-После того как 3–5 core values определены — превращаем их в инструмент ежедневных решений (FR-04 из `docs/research/prd_core_values_discovery.md`). Закрывает разрыв «ценности на бумаге vs ценности в действии».
+3–5 core values → инструмент ежедневных решений (FR-04 из `docs/research/prd_core_values_discovery.md`).
 ##### Compass Questions (по 1 на ценность)
-Для каждой core value сформулируй вопрос, который пользователь задаёт себе **в момент развилки**. Шаблоны:
-- «Расширяет ли этот выбор моё [name], или сужает?»
-- «Действую ли я сейчас из [name], или против?»
-Примеры: Autonomy → «Это увеличивает мою свободу или связывает руки?»; Mastery → «Я расту, или повторяю?»; Contribution → «Что от этого получает кто-то кроме меня?»
+Шаблоны: «Расширяет ли этот выбор моё [name], или сужает?» / «Действую сейчас из [name] или против?»
+Примеры: Autonomy → «Увеличивает мою свободу?»; Mastery → «Я расту или повторяю?»; Contribution → «Что от этого получает кто-то кроме меня?»
 Запиши в `state.diagnosis.core_values[i].compass_question`.
 ##### Daily Decision Protocol (3 шага, ≤ 60 сек)
-1. **Pause** — назови выбор вслух или письменно.
-2. **Compass question** — задай вопрос топ-ценности, активной в контексте.
-3. **Decision** — выбери действие, согласное с ответом. Не сходится — назови цену и решай осознанно.
+1. **Pause** — назови выбор.
+2. **Compass question** — задай вопрос топ-ценности.
+3. **Decision** — действие, согласное с ответом. Не сходится — назови цену и решай осознанно.
 Не «правильно/неправильно» — «алигнед или нет».
-##### Alignment Audit (в Phase 3 Weekly Review, 3–5 мин)
+##### Alignment Audit (в Phase 3, 3-5 мин)
 ##### Link с Authentic Goal Filter
-При добавлении цели в `goal_filter.active_goals[]` — **обязательно** заполни `core_values_alignment: ["CV1", "CV3"]` (минимум 1). Цель без alignment не проходит фильтр без явного объяснения «почему важно несмотря на».
+При добавлении цели — **обязательно** `core_values_alignment: ["CV1", "CV3"]` (≥ 1). Без alignment цель не проходит без явного «почему важно несмотря на».
 ---
 #### Authentic Goal Filter (для каждой цели)
 ##### 1. Red Flag Detector (6+1)
@@ -664,11 +682,21 @@ L3 = страх / стыд / долг → цель введена извне.
 2. Если ещё 10 лет жизни — отложил или ускорил?
 3. Эта цель из внешних сигналов или из тишины?
 4. Что теряешь, отказавшись? — статус? облегчение?
-##### 6. True Goal Score — Радар (НЕ формула!)
+##### 7. Partner Coordination Check (опц., schema v2.2+)
+**Триггер:** маркеры «партнёр / жена / муж / семья / we / наш / вместе» в формулировке цели.
+3 вопроса (Goal Concordance, Rosta-Filep 2023):
+1. **Communication (1-10):** «Насколько обсуждал цель с партнёром?»
+2. **Cooperation (1-10):** «Где может поддержать / препятствия со стороны отношений?»
+3. **Compatibility (1-10):** «Совместимость с приоритетами партнёра?»
+**Disclaimer:** «Это coaching, не therapy. При кризисе в отношениях — к специалисту.»
+Запиши в `goal_filter.active_goals[].partner_coordination = {communication, cooperation, compatibility, obstacles[]}`. Индивидуальная цель → `null`.
+---
+##### 8. True Goal Score — Радар (НЕ формула!)
 5 осей (1–10): **Ценности** / **Энергия** / **Влияние** (на Wheel of Life) / **Реалистичность** / **Аутентичность**. Радар асимметричный → цель требует доработки. Не суммируй — показывай форму.
 ---
 #### Goal Portfolio + Weak Patterns
-Корзины: 🟢 **Active** → Phase 2 | 🟡 **On Pause** (re-check 3 мес) | 🔍 **Pattern Analysis** (повторяющийся pattern). 🎉 Прошедшая фильтр цель + инсайт → `references/win_alert.md`.
+Корзины: 🟢 Active → Phase 2 | 🟡 On Pause (re-check 3 мес) | 🔍 Pattern Analysis. 🎉 Прошедшая фильтр цель + инсайт → `references/win_alert.md`.
+**Weak formulations** (vague / negation / no-time / external / unrealistic) → `references/weak_goal_taxonomy.md` + Sanity-Check.
 ---
 #### State writes
 В конце Phase 1.5 запиши в state v2 (`references/state_v2_schema.md`):
@@ -676,24 +704,23 @@ L3 = страх / стыд / долг → цель введена извне.
 - `diagnosis.core_values[]`: `[{value_id (CV1+), name, description, derived_from: [{type: "domain"|"experience"|"energizing_activity", ref}], compass_question, priority_rank (1–7), discovered_at, last_reviewed}]`
 - `diagnosis.core_values_source`: `"pvq_topdown"|"bottomup_discovery"|"mixed"`
 **Goal Filter portfolio:**
-- `goal_filter.active_goals[]`: `{goal_id, title, radar{values,energy,impact,feasibility,authenticity}, core_values_alignment: ["CV1","CV3"] (≥ 1 обязательно), deep_why_chain, red_flags_screened, societal_pressure_score (1–10), added_at}`
+- `goal_filter.active_goals[]`: `{goal_id, title, radar{values,energy,impact,feasibility,authenticity}, core_values_alignment: ["CV1","CV3"] (≥ 1 обязательно), deep_why_chain, red_flags_screened, societal_pressure_score (1–10), partner_coordination: null|{communication,cooperation,compatibility,obstacles} (v2.2+, для партнёрских целей), added_at}`
 - `goal_filter.paused_goals[]`: `{goal_id, title, red_flags, insight, paused_at}` для 🟡 On Pause
 - `goal_filter.patterns[]`: `{pattern_id, red_flag, count, insight}` для 🔍 — инкрементируй counter
 **Session:** `completed_phases` append `"1.5"`.
 Запись через `references/templates/Goals.md` (radar блок) и `references/templates/Core_Values_Compass.md` (compass per value).
 ---
 #### Common exit transitions
-- **Phase 2 (Goal Architecture)** — стандартный переход для 🟢 Active целей → `references/module_phase2_goal_architecture.md`
-- **Phase 0.5 (ER Protocol)** — если фильтр спровоцировал сильную эмоцию (например, осознание «я 10 лет жил не свою жизнь»)
-- **Pause** — если ≥ 50% целей оказались интроектами, не дави. Предложи неделю на «отпустить» прежде чем строить новое.
+- **Phase 2** — для 🟢 Active целей → `references/module_phase2_goal_architecture.md`
+- **Phase 0.5 ER** — если всплыла сильная эмоция; **Pause** — если ≥ 50% = интроекты.
 ---
 #### Gotchas
-- **НЕ обесценивай** цели, которые пользователь принёс. Фильтр — не «эта плохая», а «эта твоя или чужая».
-- **НЕ оценивай** Goal Score числом / суммой осей. Показывай форму радара.
-- **НЕ выкидывай** 🟡 On Pause цели — они часто становятся 🟢 через 3–6 месяцев.
-- **НЕ применяй** Core Values Discovery если у пользователя уже есть ясные топ-3 — это лишний оверхед.
-- **ВСЕГДА** даём skip option для любого вопроса фильтра, особенно соматических.
-- **ВСЕГДА** проверяй цели на Red Flags ДО разработки SMART+ архитектуры в Phase 2.
+- **НЕ обесценивай** цели пользователя. Фильтр = «твоя или чужая», не «плохая».
+- **НЕ оценивай** Goal Score числом. Форма радара, не сумма.
+- **НЕ выкидывай** 🟡 On Pause — часто становятся 🟢 через 3–6 мес.
+- **НЕ применяй** Core Values Discovery если есть ясные топ-3.
+- **ВСЕГДА** skip option, особенно для соматики.
+- **ВСЕГДА** Red Flags ДО Phase 2 Architecture.
 
 </details>
 <!-- END INLINED REF: module_phase1_5_goal_filter.md -->
@@ -759,6 +786,11 @@ WOOP — единственный научно валидированный фо
 - Anchor: к какому существующему ритуалу привязываем (Habit Stacking)
 Пример: «После того как налил кофе утром (anchor + cue) — пишу одно предложение в дневнике (routine, ≤ 2 мин) — отмечаю крестиком в календаре (reward).»
 ---
+#### Partner Discussion Checkpoint (если цель партнёрская)
+Если у цели заполнен `goal_filter.active_goals[].partner_coordination` (schema v2.2+) — добавь явный шаг в декомпозицию:
+> **Discussion checkpoint:** «Когда обсудишь это с партнёром — до или после первого милстона?» Запиши в `key_results` как отдельный KR `discuss_with_partner` (target_value: date, status: todo).
+Это закрепляет communication из Goal Coordination в исполняемом плане, не оставляя её как «по ходу обсудим».
+---
 #### Action Breakdown (для сложных целей)
 Если цель из WOOP сложная (Career / Finances / Health / Home / Learning) и Daily WOOP не получается сформулировать — разбей на шаги.
 - Каждый шаг ≤ 30 минут ИЛИ с бинарным критерием выполнения.
@@ -766,10 +798,10 @@ WOOP — единственный научно валидированный фо
 - Opt-in: предлагай, не навязывай.
 ---
 #### Persona adaptations
-- **ADHD** (`references/adhd_mode.md`): C.A.R. method — Capture / Action / Review. Tasks ≤ 2 минут или с body double. Никаких «список из 10 шагов на день». Time buffer × 2 для любых оценок.
-- **Unemployed / transitional** (`references/time_structure_unemployed.md`): фокус на purpose exploration, не на «карьерные цели». Micro-contribution и service — источники смысла на переходе.
-- **Elder homebound** (`references/elder_homebound_mode.md`): НЕ цели в смысле SMART. Якоря дня и meaning. «Что даёт reason to get up today?» Legacy through memory — а не achievement.
-- **Planning Friction** (`references/planning_friction_audit.md`): Smart defaults — 25 мин на митинг, 45 мин на задачу, 15 мин буфер. Готовые шаблоны дня (Deep Work / Meeting / Recovery).
+- **ADHD** (`references/mode_adhd.md`): C.A.R. method — Capture / Action / Review. Tasks ≤ 2 минут или с body double. Никаких «список из 10 шагов на день». Time buffer × 2 для любых оценок.
+- **Unemployed / transitional** (`references/mode_unemployed.md`): фокус на purpose exploration, не на «карьерные цели». Micro-contribution и service — источники смысла на переходе.
+- **Elder homebound** (`references/mode_elder.md`): НЕ цели в смысле SMART. Якоря дня и meaning. «Что даёт reason to get up today?» Legacy through memory — а не achievement.
+- **Planning Friction** (`references/mode_planning_friction.md`): Smart defaults — 25 мин на митинг, 45 мин на задачу, 15 мин буфер. Готовые шаблоны дня (Deep Work / Meeting / Recovery).
 ---
 #### State writes
 В конце Phase 2 запиши в state v2 (`references/state_v2_schema.md`):
@@ -851,6 +883,13 @@ WOOP — единственный научно валидированный фо
 - Какие привычки работают? (✅ зелёный)
 - Какие требуют корректировки cue/reward? (⚠ жёлтый)
 - Какие сломались и нужно вернуть на старт «≤ 2 мин»? (🔁)
+##### 6.5. Health Track Review (опционально, если активен)
+Если `diagnosis.health_metabolism.active == true` — 1-2 минуты:
+- «Как был сон на этой неделе? (час/качество)»
+- «Уровень стресса 1-10?»
+- «Что было самым тяжёлым в питании?»
+Обнови `diagnosis.health_metabolism.{sleep_quality, sleep_hours, stress_level, last_assessed}`. Если был активный micro_experiment — оцени outcome, добавь в `micro_experiments_log[]`.
+---
 ##### 7. Reward Audit (опционально, при прокрастинации)
 ---
 #### Output: Next Week Plan
@@ -858,10 +897,10 @@ WOOP — единственный научно валидированный фо
 Максимум 3–5 priorities. Если получается 7+ — режь.
 ---
 #### Persona adaptations
-- **ADHD** (`references/adhd_mode.md`): **Micro-Review** — 3 вопроса вместо 7 шагов, 15 минут, визуальный формат (таблица или эмодзи-чек). Никаких free-form reflection.
-- **Unemployed / transitional** (`references/time_structure_unemployed.md`): без review «карьерного домена». Фокус — purpose + social anchors + small wins. Главный вопрос: «Что дало смысл на этой неделе?»
-- **Elder homebound** (`references/elder_homebound_mode.md`): **Micro-Check-In** — 3 вопроса, 5 минут. Никакого Wheel of Life с Career/Finance/Romance. Якори дня и память важнее KR.
-- **Planning Friction** (`references/planning_friction_audit.md`): templated Sunday Review — фиксированный набор 4 вопросов, без open-ended reflection.
+- **ADHD** (`references/mode_adhd.md`): **Micro-Review** — 3 вопроса вместо 7 шагов, 15 минут, визуальный формат (таблица или эмодзи-чек). Никаких free-form reflection.
+- **Unemployed / transitional** (`references/mode_unemployed.md`): без review «карьерного домена». Фокус — purpose + social anchors + small wins. Главный вопрос: «Что дало смысл на этой неделе?»
+- **Elder homebound** (`references/mode_elder.md`): **Micro-Check-In** — 3 вопроса, 5 минут. Никакого Wheel of Life с Career/Finance/Romance. Якори дня и память важнее KR.
+- **Planning Friction** (`references/mode_planning_friction.md`): templated Sunday Review — фиксированный набор 4 вопросов, без open-ended reflection.
 ---
 #### State writes
 В конце Phase 3 запиши в state v2 (`references/state_v2_schema.md`):
@@ -945,9 +984,9 @@ WOOP — единственный научно валидированный фо
 - **Closing**: всегда заверши вопросом «Что ты видишь? На что хочется обратить внимание?» — это передаёт agency пользователю.
 ---
 #### Persona adaptations
-- **ADHD** (`references/adhd_mode.md`): минимизируй цифры. Один большой визуал (radar) + 3 ключевых wins. Никаких сводных таблиц на 30 строк.
-- **Elder homebound** (`references/elder_homebound_mode.md`): не показывай KR / Velocity. Только wheel (без Career/Romance/Finance) + меморный блок («что было важного на этой неделе»).
-- **Planning Friction** (`references/planning_friction_audit.md`): один таб (Overview). Не подавай 3 таба сразу.
+- **ADHD** (`references/mode_adhd.md`): минимизируй цифры. Один большой визуал (radar) + 3 ключевых wins. Никаких сводных таблиц на 30 строк.
+- **Elder homebound** (`references/mode_elder.md`): не показывай KR / Velocity. Только wheel (без Career/Romance/Finance) + меморный блок («что было важного на этой неделе»).
+- **Planning Friction** (`references/mode_planning_friction.md`): один таб (Overview). Не подавай 3 таба сразу.
 ---
 #### State writes
 Phase 4 в норме **не пишет** в state — только читает. Исключение:
@@ -1016,10 +1055,10 @@ Phase 4 в норме **не пишет** в state — только читает
 **Task Breakdown** для сложных WOOP — `references/action_breakdown_template.md`, шаги ≤ 30 мин или бинарный критерий.
 ---
 #### Persona adaptations
-- **ADHD** (`references/adhd_mode.md`): **Time Buffer Rule × 2** на все оценки. Visual timer prompts. Body double для страшных задач. Никаких «расписать день поминутно» — даём блоки по 90 мин с большими буферами.
-- **Unemployed / transitional** (`references/time_structure_unemployed.md`): **Sharp Hours 9:00–13:00** — активный поиск / обучение. После 17:00 — строго свободное время. Social activities как якоря дня.
-- **Elder homebound** (`references/elder_homebound_mode.md`): **Day anchors** — ритуалы, не задачи. «Чай в 10, растения в 15, передача в 20». Никаких KR-милстоунов.
-- **Planning Friction** (`references/planning_friction_audit.md`): **Smart defaults** — 25 мин митинг, 45 мин задача, 15 мин буфер. Day templates: Deep Work / Meeting / Recovery. 10%-rule на корректировки.
+- **ADHD** (`references/mode_adhd.md`): **Time Buffer Rule × 2** на все оценки. Visual timer prompts. Body double для страшных задач. Никаких «расписать день поминутно» — даём блоки по 90 мин с большими буферами.
+- **Unemployed / transitional** (`references/mode_unemployed.md`): **Sharp Hours 9:00–13:00** — активный поиск / обучение. После 17:00 — строго свободное время. Social activities как якоря дня.
+- **Elder homebound** (`references/mode_elder.md`): **Day anchors** — ритуалы, не задачи. «Чай в 10, растения в 15, передача в 20». Никаких KR-милстоунов.
+- **Planning Friction** (`references/mode_planning_friction.md`): **Smart defaults** — 25 мин митинг, 45 мин задача, 15 мин буфер. Day templates: Deep Work / Meeting / Recovery. 10%-rule на корректировки.
 ---
 #### State writes
 В конце Phase 5 запиши в state v2 (`references/state_v2_schema.md`):

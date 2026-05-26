@@ -177,8 +177,8 @@
 ```
 
 **If Charls-type detected:**
-- Load `references/elder_homebound_mode.md`
-- Do NOT load `references/adhd_mode.md` — different audience
+- Load `references/mode_elder.md`
+- Do NOT load `references/mode_adhd.md` — different audience
 - Do NOT load standard `references/goal_architecture.md` — too ambitious
 - Adapt `references/weekly_review.md` — micro-check-in format
 
@@ -227,7 +227,7 @@
 
 ---
 
-## 5. Proposed Reference File: `references/elder_homebound_mode.md`
+## 5. Proposed Reference File: `references/mode_elder.md`
 
 **Structure (≤120 lines):**
 
@@ -257,10 +257,10 @@
 
 | v0.14.0 Feature | Adaptation for Charls |
 |-----------------|----------------------|
-| `adhd_mode.md` | ❌ Not applicable |
-| `time_structure_unemployed.md` | ⚠️ Partially — role loss, but Charls has no «job search» |
-| **`elder_homebound_mode.md`** | ✅ **New P0 for Charls** |
-| `planning_friction_audit.md` | ❌ Not applicable |
+| `mode_adhd.md` | ❌ Not applicable |
+| `mode_unemployed.md` | ⚠️ Partially — role loss, but Charls has no «job search» |
+| **`mode_elder.md`** | ✅ **New P0 for Charls** |
+| `mode_planning_friction.md` | ❌ Not applicable |
 | Fresh Start Engine | ✅ Can adapt — «New day = new anchor» |
 | Recovery Protocol | ✅ Critical — restart after «empty days» |
 | Win Alert | ✅ Micro-celebration: «Today you told me a story» |

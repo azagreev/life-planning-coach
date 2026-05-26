@@ -8,6 +8,81 @@
 
 ## [Unreleased]
 
+## [0.19.0] — 2026-05-28
+
+**Health Track + Goal Concordance + Persona Rename + README Positioning + Drive Consistency** — content depth (3 PRD-driven фичи) + technical debt cleanup (persona naming unified, README first impression rewrite) + Drive terminology consistency.
+
+### Added
+
+- **Schema 2.0.1 → 2.2** (`references/state_v2_schema.md`) — два additive bumps:
+  - **2.1:** `diagnosis.health_metabolism` блок (opt-in трек метаболического здоровья): sleep/stress/protein/fiber/chewing/caffeine + micro_experiments_log
+  - **2.2:** `goal_filter.active_goals[].partner_coordination` optional sub-block (Goal Concordance): communication/cooperation/compatibility/obstacles
+- **`references/track_health_metabolism.md`** — новый Tier 3 ref (~2.5K tokens):
+  - 7 evidence-based рычагов (Spiegel 2004, Epel 2001, Leidy 2015, Wanders 2011, Chmiel 2025, Drake 2013, Kanchanasurakit 2023)
+  - Диагностические вопросы Track A/B
+  - 3 шаблона рефрейминга самокритики
+  - 3 примера микро-экспериментов
+  - Safety: РПП → специалист
+- **Phase 1.5 Partner Coordination Check (step 7)** — opt-in vetting партнёрских целей (Rosta-Filep 2023, Transactive Goal Dynamics Fitzsimons & Finkel)
+- **Phase 2 Partner Discussion Checkpoint** — фиксирует communication в плане при наличии `partner_coordination`
+- **Phase 1 Health Track opt-in entry** — триггеры «вес/энергия/выгорание/диета/сон» → загрузка Tier 3 ref
+- **Phase 3 Health Track Review (optional step 6.5)** — еженедельная оценка сон/стресс/питание
+- **emotion_regulation.md** — добавлена Conflict Reappraisal technique (Finkel et al. 2013) + Gottman repair attempts
+- **3 новых test файла, 40 тестов:**
+  - `test_v019_health_concordance.py` (27 тестов): schema 2.2, Health Track Tier 3, Phase 1/3/1.5/2 integration, ER refs
+  - `test_persona_renames.py` (7 тестов): file rename, no old refs, naming convention
+  - `test_cross_lingual_consistency.py` (6 тестов): Drive terminology, README positioning
+
+### Changed
+
+- **Persona modules renamed** (16 файлов affected, 169 cross-ref replacements):
+  - `adhd_mode.md` → `mode_adhd.md`
+  - `time_structure_unemployed.md` → `mode_unemployed.md`
+  - `elder_homebound_mode.md` → `mode_elder.md`
+  - `planning_friction_audit.md` → `mode_planning_friction.md`
+- **README.md** — first impression rewrite:
+  - Новый promise: «Превращает диалог с AI в evidence-based личный план: цели, привычки, ретроспективный ритм»
+  - Comparison table: Notion/Todoist vs Generic AI-coach vs Life Planning Coach
+  - Quick-start компактнее (3 платформы в 5 строк)
+  - Полный список методик (расширенный) — ниже первого экрана
+- **SKILL.master.md** — Drive terminology consistency (replaced "Cloud Storage" в prose с "Drive"), persona paths updated, master = 3981 tokens (≤ 4000 budget)
+- **Platform builds** — все 4 платформы пересобраны для v0.19.0 (claude/grok/kimi/kimi-cli)
+- **`tests/unit/test_v018_gating_state_writes.py`** — `test_schema_version_2_0_1` переведён на semver regex 2.0.1+ (accepts 2.1, 2.2 и далее)
+- **`tests/system/test_v140_features.py`** — fixture `lazy_load_extras` обновлён для новых persona имён (52 refs)
+
+### Fixed
+
+- Persona module naming наконец-то consistent — все 4 файла начинаются с `mode_`, sort order чёткий.
+- README первое впечатление переделано: promise → comparison → quick-start (порядок), методики раскрыты после первого экрана.
+- Drive terminology консистентен в SKILL.master.md и AI_Instructions.md.
+- Phase 1.5 module остался в budget (2478/2500) после добавления Partner Coordination Check — урезание verbose Compass Mode + Authentic Goal Filter секций.
+
+### Tooling
+
+- **Новый скрипт** `scripts/rename_persona_modules.py` — atomic migration для persona renames с dry-run по умолчанию. Содержит self-skip + archive-skip + UTF-8 encoding safety. Можно использовать как шаблон для будущих rename-операций.
+
+### Acceptance criteria
+
+- ✅ Schema bumped 2.0.1 → 2.2 (additive, backward compat: 2.0 doc парсится 2.2 клиентом)
+- ✅ Все 7 рычагов Health Track в `track_health_metabolism.md` + Tier 3 file ≤ 2500 tokens (2494)
+- ✅ Phase 1 имеет opt-in Health entry, Phase 3 — optional Health Review, Phase 1.5 — Partner Coordination Check (step 7)
+- ✅ 4 persona переименованы, 0 old-path refs в runtime files
+- ✅ README первые 30 строк: promise → comparison → quick-start (порядок проверен тестом)
+- ✅ SKILL.master.md = 3981 tokens (≤ 4000), все 6 phase modules ≤ 2500
+- ✅ 40 новых тестов pass, 0 real test failures (только release-flow)
+- ✅ Все 4 платформы пересобраны
+
+### Roadmap progress
+
+✅ Health & Metabolism Track — реализован
+✅ Goal Concordance — реализован
+✅ Persona modules consolidation — реализован
+✅ Quick wins: README rewrite + Cross-Lingual fixes
+
+### Что дальше
+
+- **v1.0.0** — Build pipeline rework (unified Python script) + platform lazy-loading для Claude.ai + production-ready polish
+
 ## [0.18.0] — 2026-05-27
 
 **Gating + State Writes + Core Values Compass Mode** — замыкание operational контракта между skill и state v2. Каждая фаза знает что писать; gating запускается явно по детекту коннекторов; Core Values flow проходит весь PRD включая Compass Mode (FR-04).
@@ -222,10 +297,10 @@ Legacy wiki пользователи (8 spheres / `schema_version < 2.0`): пр�
 ## [0.14.0] — 2026-05-20
 
 ### Добавлено
-- **`references/adhd_mode.md`** — адаптивный коучинг для executive function (ADHD): C.A.R. метод, 5-Minute Rule, визуальный таймер, time buffer 2×, body doubling, external scaffolding. Opt-in ONLY, MI-aligned, без медицинских советов
-- **`references/time_structure_unemployed.md`** — структура дня для безработных и переходных периодов: 4-блочный шаблон, Sharp Hours (9–13), 10 принципов, social anchors, small wins. Без вины/стыда
-- **`references/elder_homebound_mode.md`** — коучинг для solo aging с ограниченной мобильностью: нормализация solo aging, микро-якоря, mattering, наследие через память, достоинство в ограничениях (Франкл). Без патронизации
-- **`references/planning_friction_audit.md`** — аудит трения в планировании: 7 вопросов, 3 шаблона дня (Deep Work/Meeting/Recovery), smart defaults, 10% Adjustment Rule
+- **`references/mode_adhd.md`** — адаптивный коучинг для executive function (ADHD): C.A.R. метод, 5-Minute Rule, визуальный таймер, time buffer 2×, body doubling, external scaffolding. Opt-in ONLY, MI-aligned, без медицинских советов
+- **`references/mode_unemployed.md`** — структура дня для безработных и переходных периодов: 4-блочный шаблон, Sharp Hours (9–13), 10 принципов, social anchors, small wins. Без вины/стыда
+- **`references/mode_elder.md`** — коучинг для solo aging с ограниченной мобильностью: нормализация solo aging, микро-якоря, mattering, наследие через память, достоинство в ограничениях (Франкл). Без патронизации
+- **`references/mode_planning_friction.md`** — аудит трения в планировании: 7 вопросов, 3 шаблона дня (Deep Work/Meeting/Recovery), smart defaults, 10% Adjustment Rule
 - **Persona Detection Hooks** — `SKILL.master.md` Phase 0/1: определение персоны (ADHD / unemployed / elder homebound / planning friction) + адаптации Phase 2/3/5
 - **`tests/system/test_v140_features.py`** — 45 тестов (4 reference + persona hooks + platform integration)
 

@@ -1,7 +1,7 @@
 # State v2 Schema — Single Source of Truth
 
-> **Версия схемы:** `2.0.1`
-> **Дата:** 2026-05-27
+> **Версия схемы:** `2.2`
+> **Дата:** 2026-05-28
 > **Заменяет:** `references/conversation_state_schema.md` (v1)
 > **Используется:** HTML dashboard, 8 wiki templates, dashboard_guide.md, SKILL.master.md gating logic
 
@@ -35,7 +35,7 @@ State v2 — единый источник правды о пользовате�
 
 ```jsonc
 {
-  "schema_version": "2.0.1",
+  "schema_version": "2.2",
   "user_id": "uuid-v4",
   "created_at": "2026-05-26T10:00:00Z",
   "updated_at": "2026-05-27T10:00:00Z",
@@ -150,6 +150,22 @@ State v2 — единый источник правды о пользовате�
       "good_at": null,                 // в чём я хорош
       "world_needs": null,             // что нужно миру
       "paid_for": null                 // за что мне платят
+    },
+
+    // ====================================
+    // HEALTH_METABOLISM — v2.1 (opt-in track)
+    // ====================================
+    "health_metabolism": {
+      "active": false,                 // включён ли трек у пользователя
+      "sleep_quality": null,           // 1-10
+      "sleep_hours": null,             // float, e.g. 7.5
+      "stress_level": null,            // 1-10 (10 = максимальный стресс)
+      "protein_target_met": null,      // bool (~0.8-1.2 г/кг)
+      "fiber_target_met": null,        // bool (~25-30 г/день)
+      "chewing_awareness": null,       // 1-10 (сколько раз пережёвывает осознанно)
+      "caffeine_cutoff_hour": null,    // 0-23 (час после которого не пьёт кофеин)
+      "last_assessed": null,           // ISO timestamp
+      "micro_experiments_log": []      // [{date, lever, hypothesis, outcome, duration_days}]
     }
   },
 
@@ -236,15 +252,13 @@ State v2 — единый источник правды о пользовате�
         "deep_why_chain": [],          // 3 уровня
         "red_flags_screened": [],      // RF1-RF7
         "societal_pressure_score": null, // 1-10, ниже = меньше внешнего давления
-        "added_at": null
+        "added_at": null,
 
-        // Будущий schema bump 2.2:
-        // "partner_coordination": {
-        //   "communication": 1-10,
-        //   "cooperation": 1-10,
-        //   "compatibility": 1-10,
-        //   "obstacles": []
-        // }
+        // v2.2 — Goal Concordance / Partner Coordination (optional)
+        // Заполняется ТОЛЬКО если цель затрагивает партнёра/семью (маркеры
+        // в формулировке: «партнёр», «жена», «муж», «семья», «we», «наш»).
+        // Если null — цель индивидуальная.
+        "partner_coordination": null    // {communication: 1-10, cooperation: 1-10, compatibility: 1-10, obstacles: []}
       }
     ],
     "paused_goals": [
@@ -458,6 +472,38 @@ State v2 — единый источник правды о пользовате�
 | `compass_question` | string | Вопрос для daily decision making |
 | `priority_rank` | int | 1-7 (топ-7 core values максимум) |
 
+### 3.4.1 diagnosis.health_metabolism (v2.1+)
+
+Opt-in трек метаболического здоровья. Активируется явно через Phase 1 Health Track entry. Если `active=false` — поля игнорируются HTML dashboard и phase modules.
+
+| Поле | Тип | Описание |
+|---|---|---|
+| `active` | bool | Флаг включения трека (default false) |
+| `sleep_quality` | 1-10 / null | Субъективная оценка качества сна |
+| `sleep_hours` | float / null | Часов сна за последнюю ночь |
+| `stress_level` | 1-10 / null | Субъективный стресс |
+| `protein_target_met` | bool / null | ~0.8-1.2 г/кг достигнуто за последние 7 дней |
+| `fiber_target_met` | bool / null | ~25-30 г/день |
+| `chewing_awareness` | 1-10 / null | Осознанность жевания |
+| `caffeine_cutoff_hour` | int 0-23 / null | Час, после которого не пьёт кофеин |
+| `last_assessed` | ISO 8601 / null | Когда последний раз обновлено |
+| `micro_experiments_log` | array | `[{date, lever, hypothesis, outcome, duration_days}]` |
+
+PRD: `docs/research/prd_health_metabolism.md`. Tier 3 ref: `references/track_health_metabolism.md`. **Ограничение:** трек не для расстройств пищевого поведения; coach даёт coaching, не therapy.
+
+### 3.4.2 goal_filter.active_goals[].partner_coordination (v2.2+, optional)
+
+Заполняется ТОЛЬКО для целей, затрагивающих партнёра/семью (триггеры в формулировке: «партнёр», «жена/муж», «семья», «we», «наш»). Если цель индивидуальная — поле остаётся `null` и не валидируется.
+
+| Поле | Тип | Описание |
+|---|---|---|
+| `communication` | 1-10 | Насколько обсуждаешь эту цель с партнёром |
+| `cooperation` | 1-10 | В чём партнёр поддерживает / препятствует |
+| `compatibility` | 1-10 | Совместимость с целями/приоритетами партнёра |
+| `obstacles` | array | Список препятствий со стороны отношений (свободный текст) |
+
+Источник методологии: Transactive Goal Dynamics (Fitzsimons & Finkel) + Rosta-Filep et al. 2023. PRD: `docs/research/prd_goal_concordance.md`.
+
 ### 3.5 goals.* sphere references
 
 Все цели должны ссылаться на canonical sphere ID (см. §1). Запрещено использовать legacy имена.
@@ -477,8 +523,8 @@ State v2 — единый источник правды о пользовате�
 ### 4.1 Additive bumps (минор и patch)
 
 - `2.0 → 2.0.1`: добавление `session.gating_mode` tracker для observability persistence mode. Старые клиенты v2.0 игнорируют unknown field. Не требует миграции.
-- `2.0.1 → 2.1`: добавление Health & Metabolism Track (`health_metabolism` блок). Старые клиенты игнорируют unknown field.
-- `2.1 → 2.2`: добавление Goal Concordance (`goals.goal_filter.active_goals[].partner_coordination`). Старые клиенты игнорируют unknown property.
+- `2.0.1 → 2.1`: добавление Health & Metabolism Track (`diagnosis.health_metabolism` блок). Старые клиенты игнорируют unknown field. **Реализован в v0.19.0.**
+- `2.1 → 2.2`: добавление Goal Concordance (`goal_filter.active_goals[].partner_coordination` optional sub-block). Старые клиенты игнорируют unknown property. **Реализован в v0.19.0.**
 
 ### 4.2 Breaking bumps (мажор)
 
@@ -645,8 +691,10 @@ Life Planning Coach Wiki/
 | `calendar_events_log` | Phase 5 MCP create events | ✅ **(v0.18.0)** `module_phase5_execution.md` State Writes |
 | `recovery_sessions_log` | Phase 5 + recovery_protocol.md | ✅ **(v0.18.0)** `module_phase5_execution.md` State Writes |
 | `persistence_retry.*` | SKILL.master.md (bootstrap, backfill) | ✅ **(v0.18.0)** master + `templates/AI_Instructions.md` |
+| `diagnosis.health_metabolism.*` | Phase 1 Health Track entry (opt-in) + Phase 3 Health review | ✅ **(v0.19.0, schema 2.1)** `module_phase1_diagnostic.md` + `module_phase3_weekly_review.md` + `track_health_metabolism.md` |
+| `goal_filter.active_goals[].partner_coordination` | Phase 1.5 Partner Coordination Check (step 7) | ✅ **(v0.19.0, schema 2.2)** `module_phase1_5_goal_filter.md` |
 
-**Все write-rules** теперь явно прописаны в соответствующих модулях. Tests (`tests/unit/test_v018_gating_state_writes.py`) гарантируют, что каждое поле имеет write-trigger.
+**Все write-rules** теперь явно прописаны в соответствующих модулях. Tests (`tests/unit/test_v018_gating_state_writes.py`, `tests/unit/test_v019_health_concordance.py`) гарантируют, что каждое поле имеет write-trigger.
 
 ---
 
@@ -680,5 +728,7 @@ Life Planning Coach Wiki/
 
 ## 12. Changelog схемы
 
+- **2.2** (2026-05-28) — Add `goal_filter.active_goals[].partner_coordination` optional sub-block (Goal Concordance, PRD v2.0). Источник: Transactive Goal Dynamics (Fitzsimons & Finkel) + Rosta-Filep 2023. Additive, без миграции — поле остаётся `null` для индивидуальных целей.
+- **2.1** (2026-05-28) — Add `diagnosis.health_metabolism` opt-in блок (PRD v2.1): sleep/stress/protein/fiber/chewing/caffeine метрики + micro_experiments_log. Activate через Phase 1 Health Track entry. Additive, не активируется без opt-in.
 - **2.0.1** (2026-05-27) — Add `session.gating_mode` tracker. Close 7 write-rule gaps в §9 (persona.active_mode, emotion_regulation_log, wins_log, reward_audit_results, calendar_events_log, recovery_sessions_log, core_values_alignment). Additive, без миграции.
 - **2.0** (2026-05-26) — Initial v2 release. Canonical 11 spheres, persona block, core_values, full habits cue/routine/reward, wins_log first-class, persistence_retry tracking.

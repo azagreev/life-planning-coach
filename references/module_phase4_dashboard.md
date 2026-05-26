@@ -84,9 +84,9 @@
 
 ## Persona adaptations
 
-- **ADHD** (`references/adhd_mode.md`): минимизируй цифры. Один большой визуал (radar) + 3 ключевых wins. Никаких сводных таблиц на 30 строк.
-- **Elder homebound** (`references/elder_homebound_mode.md`): не показывай KR / Velocity. Только wheel (без Career/Romance/Finance) + меморный блок («что было важного на этой неделе»).
-- **Planning Friction** (`references/planning_friction_audit.md`): один таб (Overview). Не подавай 3 таба сразу.
+- **ADHD** (`references/mode_adhd.md`): минимизируй цифры. Один большой визуал (radar) + 3 ключевых wins. Никаких сводных таблиц на 30 строк.
+- **Elder homebound** (`references/mode_elder.md`): не показывай KR / Velocity. Только wheel (без Career/Romance/Finance) + меморный блок («что было важного на этой неделе»).
+- **Planning Friction** (`references/mode_planning_friction.md`): один таб (Overview). Не подавай 3 таба сразу.
 
 ---
 

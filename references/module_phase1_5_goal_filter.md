@@ -49,33 +49,30 @@
 
 ## Compass Mode (FR-04 Practical Application)
 
-После того как 3–5 core values определены — превращаем их в инструмент ежедневных решений (FR-04 из `docs/research/prd_core_values_discovery.md`). Закрывает разрыв «ценности на бумаге vs ценности в действии».
+3–5 core values → инструмент ежедневных решений (FR-04 из `docs/research/prd_core_values_discovery.md`).
 
 ### Compass Questions (по 1 на ценность)
 
-Для каждой core value сформулируй вопрос, который пользователь задаёт себе **в момент развилки**. Шаблоны:
-- «Расширяет ли этот выбор моё [name], или сужает?»
-- «Действую ли я сейчас из [name], или против?»
-
-Примеры: Autonomy → «Это увеличивает мою свободу или связывает руки?»; Mastery → «Я расту, или повторяю?»; Contribution → «Что от этого получает кто-то кроме меня?»
+Шаблоны: «Расширяет ли этот выбор моё [name], или сужает?» / «Действую сейчас из [name] или против?»
+Примеры: Autonomy → «Увеличивает мою свободу?»; Mastery → «Я расту или повторяю?»; Contribution → «Что от этого получает кто-то кроме меня?»
 
 Запиши в `state.diagnosis.core_values[i].compass_question`.
 
 ### Daily Decision Protocol (3 шага, ≤ 60 сек)
 
-1. **Pause** — назови выбор вслух или письменно.
-2. **Compass question** — задай вопрос топ-ценности, активной в контексте.
-3. **Decision** — выбери действие, согласное с ответом. Не сходится — назови цену и решай осознанно.
+1. **Pause** — назови выбор.
+2. **Compass question** — задай вопрос топ-ценности.
+3. **Decision** — действие, согласное с ответом. Не сходится — назови цену и решай осознанно.
 
 Не «правильно/неправильно» — «алигнед или нет».
 
-### Alignment Audit (в Phase 3 Weekly Review, 3–5 мин)
+### Alignment Audit (в Phase 3, 3-5 мин)
 
-Таблица: Ценность | Где жил из неё | Где разъезд | Что в понедельник. Полный шаблон + долгосрочный лог — `references/templates/Core_Values_Compass.md`.
+Таблица: Ценность | Где жил из неё | Где разъезд | Что в понедельник. Шаблон — `references/templates/Core_Values_Compass.md`.
 
 ### Link с Authentic Goal Filter
 
-При добавлении цели в `goal_filter.active_goals[]` — **обязательно** заполни `core_values_alignment: ["CV1", "CV3"]` (минимум 1). Цель без alignment не проходит фильтр без явного объяснения «почему важно несмотря на».
+При добавлении цели — **обязательно** `core_values_alignment: ["CV1", "CV3"]` (≥ 1). Без alignment цель не проходит без явного «почему важно несмотря на».
 
 ---
 
@@ -113,16 +110,31 @@ L3 = страх / стыд / долг → цель введена извне.
 3. Эта цель из внешних сигналов или из тишины?
 4. Что теряешь, отказавшись? — статус? облегчение?
 
-### 6. True Goal Score — Радар (НЕ формула!)
+### 7. Partner Coordination Check (опц., schema v2.2+)
+
+**Триггер:** маркеры «партнёр / жена / муж / семья / we / наш / вместе» в формулировке цели.
+
+3 вопроса (Goal Concordance, Rosta-Filep 2023):
+1. **Communication (1-10):** «Насколько обсуждал цель с партнёром?»
+2. **Cooperation (1-10):** «Где может поддержать / препятствия со стороны отношений?»
+3. **Compatibility (1-10):** «Совместимость с приоритетами партнёра?»
+
+**Disclaimer:** «Это coaching, не therapy. При кризисе в отношениях — к специалисту.»
+
+Запиши в `goal_filter.active_goals[].partner_coordination = {communication, cooperation, compatibility, obstacles[]}`. Индивидуальная цель → `null`.
+
+---
+
+### 8. True Goal Score — Радар (НЕ формула!)
 5 осей (1–10): **Ценности** / **Энергия** / **Влияние** (на Wheel of Life) / **Реалистичность** / **Аутентичность**. Радар асимметричный → цель требует доработки. Не суммируй — показывай форму.
 
 ---
 
 ## Goal Portfolio + Weak Patterns
 
-Корзины: 🟢 **Active** → Phase 2 | 🟡 **On Pause** (re-check 3 мес) | 🔍 **Pattern Analysis** (повторяющийся pattern). 🎉 Прошедшая фильтр цель + инсайт → `references/win_alert.md`.
+Корзины: 🟢 Active → Phase 2 | 🟡 On Pause (re-check 3 мес) | 🔍 Pattern Analysis. 🎉 Прошедшая фильтр цель + инсайт → `references/win_alert.md`.
 
-**Weak formulations** (vague / negation / no-time / external / unrealistic) → загрузи `references/weak_goal_taxonomy.md` + Sanity-Check 5 вопросов.
+**Weak formulations** (vague / negation / no-time / external / unrealistic) → `references/weak_goal_taxonomy.md` + Sanity-Check.
 
 ---
 
@@ -135,7 +147,7 @@ L3 = страх / стыд / долг → цель введена извне.
 - `diagnosis.core_values_source`: `"pvq_topdown"|"bottomup_discovery"|"mixed"`
 
 **Goal Filter portfolio:**
-- `goal_filter.active_goals[]`: `{goal_id, title, radar{values,energy,impact,feasibility,authenticity}, core_values_alignment: ["CV1","CV3"] (≥ 1 обязательно), deep_why_chain, red_flags_screened, societal_pressure_score (1–10), added_at}`
+- `goal_filter.active_goals[]`: `{goal_id, title, radar{values,energy,impact,feasibility,authenticity}, core_values_alignment: ["CV1","CV3"] (≥ 1 обязательно), deep_why_chain, red_flags_screened, societal_pressure_score (1–10), partner_coordination: null|{communication,cooperation,compatibility,obstacles} (v2.2+, для партнёрских целей), added_at}`
 - `goal_filter.paused_goals[]`: `{goal_id, title, red_flags, insight, paused_at}` для 🟡 On Pause
 - `goal_filter.patterns[]`: `{pattern_id, red_flag, count, insight}` для 🔍 — инкрементируй counter
 
@@ -147,17 +159,16 @@ L3 = страх / стыд / долг → цель введена извне.
 
 ## Common exit transitions
 
-- **Phase 2 (Goal Architecture)** — стандартный переход для 🟢 Active целей → `references/module_phase2_goal_architecture.md`
-- **Phase 0.5 (ER Protocol)** — если фильтр спровоцировал сильную эмоцию (например, осознание «я 10 лет жил не свою жизнь»)
-- **Pause** — если ≥ 50% целей оказались интроектами, не дави. Предложи неделю на «отпустить» прежде чем строить новое.
+- **Phase 2** — для 🟢 Active целей → `references/module_phase2_goal_architecture.md`
+- **Phase 0.5 ER** — если всплыла сильная эмоция; **Pause** — если ≥ 50% = интроекты.
 
 ---
 
 ## Gotchas
 
-- **НЕ обесценивай** цели, которые пользователь принёс. Фильтр — не «эта плохая», а «эта твоя или чужая».
-- **НЕ оценивай** Goal Score числом / суммой осей. Показывай форму радара.
-- **НЕ выкидывай** 🟡 On Pause цели — они часто становятся 🟢 через 3–6 месяцев.
-- **НЕ применяй** Core Values Discovery если у пользователя уже есть ясные топ-3 — это лишний оверхед.
-- **ВСЕГДА** даём skip option для любого вопроса фильтра, особенно соматических.
-- **ВСЕГДА** проверяй цели на Red Flags ДО разработки SMART+ архитектуры в Phase 2.
+- **НЕ обесценивай** цели пользователя. Фильтр = «твоя или чужая», не «плохая».
+- **НЕ оценивай** Goal Score числом. Форма радара, не сумма.
+- **НЕ выкидывай** 🟡 On Pause — часто становятся 🟢 через 3–6 мес.
+- **НЕ применяй** Core Values Discovery если есть ясные топ-3.
+- **ВСЕГДА** skip option, особенно для соматики.
+- **ВСЕГДА** Red Flags ДО Phase 2 Architecture.

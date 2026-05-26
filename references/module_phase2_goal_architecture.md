@@ -82,6 +82,16 @@ WOOP — единственный научно валидированный фо
 
 ---
 
+## Partner Discussion Checkpoint (если цель партнёрская)
+
+Если у цели заполнен `goal_filter.active_goals[].partner_coordination` (schema v2.2+) — добавь явный шаг в декомпозицию:
+
+> **Discussion checkpoint:** «Когда обсудишь это с партнёром — до или после первого милстона?» Запиши в `key_results` как отдельный KR `discuss_with_partner` (target_value: date, status: todo).
+
+Это закрепляет communication из Goal Coordination в исполняемом плане, не оставляя её как «по ходу обсудим».
+
+---
+
 ## Action Breakdown (для сложных целей)
 
 Если цель из WOOP сложная (Career / Finances / Health / Home / Learning) и Daily WOOP не получается сформулировать — разбей на шаги.
@@ -95,10 +105,10 @@ WOOP — единственный научно валидированный фо
 
 ## Persona adaptations
 
-- **ADHD** (`references/adhd_mode.md`): C.A.R. method — Capture / Action / Review. Tasks ≤ 2 минут или с body double. Никаких «список из 10 шагов на день». Time buffer × 2 для любых оценок.
-- **Unemployed / transitional** (`references/time_structure_unemployed.md`): фокус на purpose exploration, не на «карьерные цели». Micro-contribution и service — источники смысла на переходе.
-- **Elder homebound** (`references/elder_homebound_mode.md`): НЕ цели в смысле SMART. Якоря дня и meaning. «Что даёт reason to get up today?» Legacy through memory — а не achievement.
-- **Planning Friction** (`references/planning_friction_audit.md`): Smart defaults — 25 мин на митинг, 45 мин на задачу, 15 мин буфер. Готовые шаблоны дня (Deep Work / Meeting / Recovery).
+- **ADHD** (`references/mode_adhd.md`): C.A.R. method — Capture / Action / Review. Tasks ≤ 2 минут или с body double. Никаких «список из 10 шагов на день». Time buffer × 2 для любых оценок.
+- **Unemployed / transitional** (`references/mode_unemployed.md`): фокус на purpose exploration, не на «карьерные цели». Micro-contribution и service — источники смысла на переходе.
+- **Elder homebound** (`references/mode_elder.md`): НЕ цели в смысле SMART. Якоря дня и meaning. «Что даёт reason to get up today?» Legacy through memory — а не achievement.
+- **Planning Friction** (`references/mode_planning_friction.md`): Smart defaults — 25 мин на митинг, 45 мин на задачу, 15 мин буфер. Готовые шаблоны дня (Deep Work / Meeting / Recovery).
 
 ---
 

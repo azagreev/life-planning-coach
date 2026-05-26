@@ -78,10 +78,10 @@
 
 ## Persona adaptations
 
-- **ADHD** (`references/adhd_mode.md`): **Time Buffer Rule × 2** на все оценки. Visual timer prompts. Body double для страшных задач. Никаких «расписать день поминутно» — даём блоки по 90 мин с большими буферами.
-- **Unemployed / transitional** (`references/time_structure_unemployed.md`): **Sharp Hours 9:00–13:00** — активный поиск / обучение. После 17:00 — строго свободное время. Social activities как якоря дня.
-- **Elder homebound** (`references/elder_homebound_mode.md`): **Day anchors** — ритуалы, не задачи. «Чай в 10, растения в 15, передача в 20». Никаких KR-милстоунов.
-- **Planning Friction** (`references/planning_friction_audit.md`): **Smart defaults** — 25 мин митинг, 45 мин задача, 15 мин буфер. Day templates: Deep Work / Meeting / Recovery. 10%-rule на корректировки.
+- **ADHD** (`references/mode_adhd.md`): **Time Buffer Rule × 2** на все оценки. Visual timer prompts. Body double для страшных задач. Никаких «расписать день поминутно» — даём блоки по 90 мин с большими буферами.
+- **Unemployed / transitional** (`references/mode_unemployed.md`): **Sharp Hours 9:00–13:00** — активный поиск / обучение. После 17:00 — строго свободное время. Social activities как якоря дня.
+- **Elder homebound** (`references/mode_elder.md`): **Day anchors** — ритуалы, не задачи. «Чай в 10, растения в 15, передача в 20». Никаких KR-милстоунов.
+- **Planning Friction** (`references/mode_planning_friction.md`): **Smart defaults** — 25 мин митинг, 45 мин задача, 15 мин буфер. Day templates: Deep Work / Meeting / Recovery. 10%-rule на корректировки.
 
 ---
 

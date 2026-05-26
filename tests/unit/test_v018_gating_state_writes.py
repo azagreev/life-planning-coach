@@ -64,16 +64,14 @@ class TestSchemaVersion(unittest.TestCase):
     """State v2 schema must declare version 2.0.1 with gating_mode field."""
 
     def test_schema_version_2_0_1(self):
+        """v0.18.0 introduced 2.0.1; later versions (2.1, 2.2) preserve gating_mode."""
+        import re
         body = _read(SCHEMA)
-        self.assertIn(
-            '"schema_version": "2.0.1"',
-            body,
-            "state_v2_schema.md must declare schema_version 2.0.1 in JSON-схеме",
-        )
-        self.assertIn(
-            "`2.0.1`",
-            body,
-            "state_v2_schema.md header must declare version 2.0.1",
+        # Accept any 2.0.1+ semver (2.0.1, 2.1, 2.2, etc.) — gating_mode field is preserved
+        match = re.search(r'"schema_version":\s*"(2\.(?:0\.[1-9]\d*|[1-9]\d*(?:\.\d+)?))"', body)
+        self.assertIsNotNone(
+            match,
+            "state_v2_schema.md must declare schema_version 2.0.1 or later in JSON",
         )
 
     def test_session_gating_mode_field_declared(self):
