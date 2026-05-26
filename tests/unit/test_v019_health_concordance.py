@@ -52,12 +52,31 @@ class TestSchemaV2_2(unittest.TestCase):
 
     def test_schema_v2_2_declared(self):
         body = _read(SCHEMA)
-        self.assertIn(
-            '"schema_version": "2.2"',
+        # Accept 2.2 or any 2.2.x patch bump (additive fields only)
+        self.assertRegex(
             body,
-            "state_v2_schema.md must declare schema_version 2.2 in JSON",
+            r'"schema_version":\s*"2\.2(?:\.\d+)?"',
+            "state_v2_schema.md must declare schema_version 2.2 or 2.2.x in JSON",
         )
-        self.assertIn("`2.2`", body, "state_v2_schema.md header must declare 2.2")
+        self.assertRegex(
+            body, r"`2\.2(?:\.\d+)?`", "state_v2_schema.md header must declare 2.2 or 2.2.x"
+        )
+
+    def test_wiki_cleanup_mode_field_documented(self):
+        """v2.2.1 — Layered cleanup defaults (Path A fallback strategy)."""
+        body = _read(SCHEMA)
+        self.assertIn(
+            "wiki_cleanup_mode",
+            body,
+            "state_v2_schema.md must declare persistence_retry.drive.wiki_cleanup_mode",
+        )
+        # All 4 modes must be enumerated
+        for mode in ("apps_script", "batch_weekly", "reminder", "ignore"):
+            self.assertIn(
+                mode,
+                body,
+                f"state_v2_schema.md must document wiki_cleanup_mode value '{mode}'",
+            )
 
     def test_health_metabolism_block_present(self):
         body = _read(SCHEMA)

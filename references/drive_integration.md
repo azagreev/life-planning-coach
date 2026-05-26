@@ -78,7 +78,18 @@ search_files(
 
 ⚠️ **NEVER use `read_file_content` для `.md`** — returns `{}` silently. ALWAYS `download_file_content`.
 
-### Cleanup protocol (user side, one-time setup)
+### Cleanup — Layered defaults (4 modes)
+
+User picks один из 4 при first Drive connect; choice persists в `persistence_retry.drive.wiki_cleanup_mode`.
+
+| Mode | Write cadence | Skill notifications | User setup |
+|------|---------------|--------------------|-----------|
+| `apps_script` | per-session | One-time link к script setup | ~3 min one-time |
+| `batch_weekly` | end-of-week только | "сохраню в воскресенье" mention | none |
+| `reminder` (default) | per-session | Quarterly: "N файлов, вот query для cleanup" | none |
+| `ignore` | per-session | none | none |
+
+#### Mode 1 — `apps_script` (recommended для tech-savvy users)
 
 Pre-built Apps Script: [`references/templates/lpc_wiki_cleanup.gs`](templates/lpc_wiki_cleanup.gs).
 
@@ -89,7 +100,52 @@ User setup (~3 min, paste-once):
 4. `installTrigger()` once → daily 03:00 trigger
 5. Forget about it
 
-Поведение: keeps last 5 most recent per category + всё < 30 дней. Surplus → Drive trash (recoverable 30 days). Configurable via constants in script.
+Behaviour: keeps last 5 per category + всё < 30 дней. Surplus → Drive trash (recoverable 30 days). Configurable via script constants.
+
+#### Mode 2 — `batch_weekly`
+
+Skill пишет snapshots ТОЛЬКО end-of-week (e.g. Sunday session OR explicit "save weekly progress" command). Intermediate state lives в conversation memory только.
+
+```
+~50 weeks × 8 categories = ~400 files/year (vs ~2400 в per-session mode)
+
+8x reduction в file count. Trade-off: если mid-week conversation lost,
+теряются intermediate changes (state.session restart from last weekly snapshot).
+```
+
+Naming convention остаётся `{Category}_{ISO}.md` для consistency с другими modes.
+
+#### Mode 3 — `reminder` (default, no setup)
+
+Skill пишет per-session как обычно. Quarterly (или каждые 30 sessions — whichever first) skill включает в conversation:
+
+```
+📂 Wiki status: {count} файлов в LPC_Wiki/, последний cleanup {days_ago} дней назад.
+
+Хочешь почистить? В Drive UI search bar:
+  modifiedDate before:{cutoff_date} ({prefix1} OR {prefix2} OR ...)
+→ select all → Move to trash. Восстановимо 30 дней.
+
+Можешь игнорировать — skill работает дальше.
+```
+
+Skill records timestamp в `wiki_cleanup_last_reminder_at` after showing notice. Default cleanup cutoff = 90 days ago.
+
+#### Mode 4 — `ignore`
+
+Skill пишет per-session, никаких notifications. Файлы накапливаются органически.
+
+```
+Реалистичные numbers:
+  1 год: ~400 файлов, ~2 MB
+  3 года: ~1200 файлов, ~6 MB
+  5 лет: ~2000 файлов, ~10 MB
+
+Drive free quota = 15 GB. Storage не проблема никогда.
+Single pain point: визуальный шум в Drive UI.
+```
+
+Manual cleanup в любой момент через Drive UI (search + multi-select + trash).
 
 ### Why this architecture
 

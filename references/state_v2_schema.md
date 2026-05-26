@@ -1,6 +1,6 @@
 # State v2 Schema — Single Source of Truth
 
-> **Версия схемы:** `2.2`
+> **Версия схемы:** `2.2.1`
 > **Дата:** 2026-05-28
 > **Заменяет:** `references/conversation_state_schema.md` (v1)
 > **Используется:** HTML dashboard, 8 wiki templates, dashboard_guide.md, SKILL.master.md gating logic
@@ -35,7 +35,7 @@ State v2 — единый источник правды о пользовате�
 
 ```jsonc
 {
-  "schema_version": "2.2",
+  "schema_version": "2.2.1",
   "user_id": "uuid-v4",
   "created_at": "2026-05-26T10:00:00Z",
   "updated_at": "2026-05-27T10:00:00Z",
@@ -409,8 +409,11 @@ State v2 — единый источник правды о пользовате�
       "unsaved_sessions_dates": [],
       "backoff_until_session": 0,
       "user_declined_count": 0,
-      "first_connection_at": null,     // когда впервые подключился (для bootstrap)
-      "wiki_bootstrapped": false
+      "first_connection_at": null,         // когда впервые подключился (для bootstrap)
+      "wiki_bootstrapped": false,
+      "wiki_cleanup_mode": null,           // null | "apps_script" | "batch_weekly" | "reminder" | "ignore" (см. drive_integration.md §Layered cleanup)
+      "wiki_cleanup_last_reminder_at": null,  // ISO timestamp последнего reminder (для quarterly cadence)
+      "wiki_cleanup_chosen_at": null       // ISO timestamp когда user сделал выбор
     },
     "calendar": {
       "available_last_session": null,
@@ -637,6 +640,35 @@ Life Planning Coach Wiki/
 После bootstrap:
 - `persistence_retry.drive.wiki_bootstrapped = true`
 - `persistence_retry.drive.first_connection_at = now()`
+- Skill спрашивает user о `wiki_cleanup_mode` (см. §7.1)
+
+### 7.1 Cleanup mode choice (после bootstrap)
+
+После создания Wiki structure, skill промптит user:
+
+```
+"Skill пишет snapshots в Drive (Hot_Cache_TS.md и т.д.) и они накапливаются.
+Как ты хочешь управлять файлами?
+  1. apps_script   — установлю Apps Script (3 min, auto-cleanup forever)
+  2. batch_weekly  — skill пишет реже (раз в неделю — меньше файлов)
+  3. reminder      — skill quarterly напомнит почистить (по умолчанию)
+  4. ignore        — skill пишет per-session, файлы накапливаются (norm Drive storage)"
+
+Запиши выбор:
+  persistence_retry.drive.wiki_cleanup_mode = "<choice>"
+  persistence_retry.drive.wiki_cleanup_chosen_at = now()
+```
+
+Behavior per mode:
+
+| Mode | Write cadence | Skill notifications | Setup required |
+|------|---------------|--------------------|-----------------| 
+| `apps_script` | per-session | one-time link к `templates/lpc_wiki_cleanup.gs` setup | ~3 min user setup |
+| `batch_weekly` | end-of-week только | "сохраню в воскресенье" mention | none |
+| `reminder` | per-session | quarterly: "N файлов, вот query для cleanup" | none |
+| `ignore` | per-session | none | none |
+
+Если user не выбрал — default = `reminder`.
 
 ---
 
