@@ -12,7 +12,7 @@ while read local_ref local_sha remote_ref remote_sha; do
     # Проверяем только теги (refs/tags/)
     if [[ "$remote_ref" == refs/tags/v* ]]; then
         TAG="${remote_ref#refs/tags/}"
-        RELEASE_NOTES="references/archive/RELEASE_NOTES_${TAG}.md"
+        RELEASE_NOTES="docs/archive/RELEASE_NOTES_${TAG}.md"
 
         if [ ! -f "$RELEASE_NOTES" ]; then
             echo ""

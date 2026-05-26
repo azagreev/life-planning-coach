@@ -50,10 +50,14 @@ echo "→ Проверка на stale версии..."
 STALE=$(grep -rn "version.*0\.[0-9]\+\.\?[0-9]*" --include="*.py" --include="*.md" --include="*.toml" . \
     | grep -v "node_modules" \
     | grep -v ".git/" \
-    | grep -v "references/release_checklist_" \
-    | grep -v "references/tasks/" \
-    | grep -v "PLAN-FINAL.md" \
-    | grep -v "VERSION_SOURCES.md" \
+    | grep -v "docs/archive/release/release_checklist_" \
+    | grep -v "docs/archive/release/acceptance_criteria_" \
+    | grep -v "docs/tasks/" \
+    | grep -v "docs/planning/plan_" \
+    | grep -v "docs/archive/PLAN" \
+    | grep -v "docs/archive/plan_v" \
+    | grep -v "docs/archive/VERSION_SOURCES.md" \
+    | grep -v "docs/archive/RELEASE_NOTES_" \
     | grep -v "test_" \
     | grep -v "sync-version.sh" \
     | grep -v "$NEW_VERSION" \

@@ -8,6 +8,37 @@
 
 ## [Unreleased]
 
+## [0.15.1] — 2026-05-26
+
+**Dev-only cleanup** — `references/` теперь содержит только runtime-артефакты. Dev-only содержимое перенесено в `docs/`, что уменьшает шум в IDE/grep, упрощает build-скрипт и улучшает git diff.
+
+### Изменено
+- **`references/research/` → `docs/research/`** (26 файлов: исследования, PRD, RICE-методология, план v1.0 templates rebuild).
+- **`references/tasks/` → `docs/tasks/`** (9 файлов: developer / tester / test_report по версиям v0.4–v0.6).
+- **`references/audit/` → `docs/audit/`** (1 файл: calendar integration audit).
+- **`references/archive/` → `docs/archive/`** (включая `RELEASE_NOTES_v*.md`).
+- **Legacy файлы из `references/` root → `docs/`:**
+  - `acceptance_criteria_v0.4/v0.5/v0.6/v0.7.md` → `docs/archive/release/`
+  - `release_checklist_v0.4/v0.6.md` → `docs/archive/release/`
+  - `plan_v0.15.0.md`, `plan_roadmap_backlog_cleanup.md` → `docs/planning/`
+  - `research_communication_style_v0.6.md`, `research_diagnostic_audit_v0.5.md`, `research_diagnostic_deep_dive.md`, `research_stage_1.5_enhanced_spec.md` (shadow-версии runtime файлов) → `docs/research/shadows/`
+  - `competitive_research_2026.md`, `persistence_research_plan.md` → `docs/research/`
+
+### Updated
+- **`scripts/release.sh`** — путь release notes `references/archive/` → `docs/archive/`.
+- **`scripts/sync-version.sh`** — исключения для stale-version check обновлены под `docs/`.
+- **`.github/hooks/pre-push-release-guard` + `.git/hooks/pre-push`** — путь release notes `references/archive/` → `docs/archive/`.
+- **`tests/system/test_roadmap_integrity.py`** — сообщение об ошибке использует новый путь.
+- Все active md-файлы (`BACKLOG.md`, `ROADMAP.md`, `CHANGELOG.md`, `AGENTS.md`, `references/templates/AI_Instructions.md`, `references/templates/Core_Values_Compass.md`, `references/state_v2_schema.md`, `docs/migration_v1_to_v2.md`) — ссылки обновлены на новые пути.
+
+### Добавлено
+- **`tests/unit/test_references_runtime_only.py`** — инвариант-тест: запрещает появление `research/`, `tasks/`, `audit/`, `archive/` subdirs внутри `references/`, плюс ловит legacy filename patterns. Гарантирует, что cleanup не вернётся регрессией.
+
+### Effect
+- `references/` теперь содержит 34 markdown файла (было 75+ с поддиректориями).
+- Из runtime namespace убрано ~50K токенов dev-only артефактов.
+- Build-скрипт не подгружает dev-only content в platform SKILL.md.
+
 ## [0.15.0] — 2026-05-26
 
 **Templates Rebuild + State v2 Foundation** — подготовительный блок v1.0 архитектурного рефакторинга. Устраняет structural drift между state schema, HTML dashboard, wiki templates и dashboard_guide. Single source of truth через state v2.
@@ -18,8 +49,8 @@
 - **HTML dashboard v1.0.0** — Core Values panel (Overview tab) + скрытые placeholders для Health Track / Goal Concordance (активируются при schema bump 2.1/2.2).
 - **`docs/migration_v1_to_v2.md`** — миграция legacy 8-sphere wiki → canonical 11 spheres + rollback инструкция.
 - **`docs/research/dashboard_architecture_v1.md`** — вынесенный 2538-строчный архитектурный doc (dev-only, не в runtime).
-- **`references/research/plan_v1.0_templates_rebuild.md`** — план rebuild всех 3 шаблонов, RICE 30.0.
-- **`references/research/prd_core_values_discovery.md`, `prd_health_metabolism.md`, `prd_goal_concordance.md`** — три новых PRD (Health/Concordance → schema bumps 2.1/2.2 в будущем).
+- **`docs/research/plan_v1.0_templates_rebuild.md`** — план rebuild всех 3 шаблонов, RICE 30.0.
+- **`docs/research/prd_core_values_discovery.md`, `prd_health_metabolism.md`, `prd_goal_concordance.md`** — три новых PRD (Health/Concordance → schema bumps 2.1/2.2 в будущем).
 - **`tests/unit/test_templates_v2.py`** — 21 тест: canonical spheres consistency, state v2 schema completeness, HTML data-driven, wiki schema_version, token budgets, dashboard_guide thin, schema versioning.
 
 ### Изменено
@@ -28,7 +59,7 @@
 - **8 wiki templates** — все frontmatter `schema_version: "2.0"`. `Wheel_of_Life_History.md` — 11 canonical spheres (было 8 с legacy именами). `Goals.md` — AGF radar блок на каждую цель + `core_values_alignment` + закомментированный Concordance placeholder + полный Habit Loop (cue / routine / reward / anchor). `Hot_Cache.md` + `Raw_Session.md` + `USER_PROGRESS_JOURNAL.md` — поля под persona, emotion_regulation, wins, calendar_events. `Index.md` — убраны broken refs на `Concepts/Frameworks/Sources` (не существовали). `Progress_Dashboard.md` — repurposed как text-mode dashboard для Paper Coach Mode.
 - **`references/conversation_state_schema.md`** — помечен DEPRECATED, указатель на v2.
 - **`ROADMAP.md`** — Testing & Integration Hardening сдвинут v0.15.0 → v0.16.0. Health/Concordance PRD добавлены в v0.17.0 Candidate.
-- **`BACKLOG.md` + `references/research/rice_evaluation_backlog.md`** — добавлены 4 entries: Core Values Discovery (#18, RICE 32.7), Health & Metabolism (#19, RICE 11.7), Goal Concordance (#20, RICE 7.5), Templates Rebuild v1.0 (#21, RICE 30.0).
+- **`BACKLOG.md` + `docs/research/rice_evaluation_backlog.md`** — добавлены 4 entries: Core Values Discovery (#18, RICE 32.7), Health & Metabolism (#19, RICE 11.7), Goal Concordance (#20, RICE 7.5), Templates Rebuild v1.0 (#21, RICE 30.0).
 
 ### Исправлено
 - **`tests/system/test_v090_features.py`** — добавлен `encoding='utf-8'` в `tempfile.NamedTemporaryFile`. Чинит pre-existing Windows `UnicodeEncodeError` (cp1251) при emoji в JS dashboard.
@@ -96,9 +127,9 @@ Legacy wiki пользователи (8 spheres / `schema_version < 2.0`): пр�
 - **Habit Stack Builder** (`references/habit_stack_builder.md`) — progressive ritual escalation (2→5→10→15 мин), Two-Day Rule, habit anchoring (B = MAP)
 - **Shutdown Ritual** (`references/shutdown_ritual.md`) — 5 шагов (Capture→Review→Plan→Celebrate→Close), Zeigarnik elimination, psychological detachment
 - **Fresh Start Engine** (`references/fresh_start_engine.md`) — temporal landmarks (Monday, 1st, New Year, birthday), dark side protection
-- **Calendar Integration Audit** (`references/audit/AUDIT_CALENDAR_INTEGRATION.md`) — 15 gaps, 4 критических
-- **Planning Research synthesis** (`references/research/planning_research_2026-05-20.md`) — 12 evidence-based идей с RICE-оценками
-- **RICE Methodology v1.1** (`references/research/rice_methodology.md`) — AI Session-based effort estimation (XS/S/M/L/XL/XXL) + Context Pressure
+- **Calendar Integration Audit** (`docs/audit/AUDIT_CALENDAR_INTEGRATION.md`) — 15 gaps, 4 критических
+- **Planning Research synthesis** (`docs/research/planning_research_2026-05-20.md`) — 12 evidence-based идей с RICE-оценками
+- **RICE Methodology v1.1** (`docs/research/rice_methodology.md`) — AI Session-based effort estimation (XS/S/M/L/XL/XXL) + Context Pressure
 - **4 platform USER_GUIDEs** (`references/platforms/USER_GUIDE_*.md`) + `CROSS_PLATFORM_COMPARISON.md` — feature matrix, decision tree
 - **E2E behavioral testing framework** (`tests/e2e/`) — golden dataset (20 cases), evaluation rubric, manual test protocol
 - **Release automation** — `scripts/release.sh` (7-step atomic release) + `scripts/extract-release-notes.py`

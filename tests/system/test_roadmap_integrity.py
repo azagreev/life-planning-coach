@@ -83,5 +83,5 @@ class TestRoadmapIntegrity:
         if stale:
             pytest.fail(
                 f"ROADMAP.md contains detailed sections for released versions: {stale}\n"
-                f"Release details belong in CHANGELOG.md or references/archive/."
+                f"Release details belong in CHANGELOG.md or docs/archive/."
             )

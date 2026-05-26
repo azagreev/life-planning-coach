@@ -164,5 +164,5 @@ def migrate_v1_to_v2(wiki_root):
 ## Связанные документы
 
 - [`references/state_v2_schema.md`](../references/state_v2_schema.md) — полная v2 схема + §8 migration table
-- [`references/research/plan_v1.0_templates_rebuild.md`](../references/research/plan_v1.0_templates_rebuild.md) — план rebuild
+- [`docs/research/plan_v1.0_templates_rebuild.md`](research/plan_v1.0_templates_rebuild.md) — план rebuild
 - [`references/conversation_state_schema.md`](../references/conversation_state_schema.md) — legacy v1 (deprecated)

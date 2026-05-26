@@ -3,7 +3,7 @@ schema_version: "2.0"
 template_version: "1.0"
 last_updated: "YYYY-MM-DD"
 purpose: "Core Values Compass — 5-7 core values + compass questions для daily decision making"
-source_prd: "references/research/prd_core_values_discovery.md"
+source_prd: "docs/research/prd_core_values_discovery.md"
 ---
 
 # 🧭 Core Values Compass
@@ -129,7 +129,7 @@ source_prd: "references/research/prd_core_values_discovery.md"
 - **Good Time Journal** — энергия и flow (Designing Your Life, Stanford)
 - **Schwartz PVQ** — кросс-культурная база (10 базовых ценностей)
 
-Полная методология: [prd_core_values_discovery.md](../../research/prd_core_values_discovery.md)
+Полная методология: [prd_core_values_discovery.md](../../docs/research/prd_core_values_discovery.md)
 
 ---
 

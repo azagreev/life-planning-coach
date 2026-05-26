@@ -11,7 +11,7 @@
 - **Текущая версия:** `v0.14.0`
 - **Источник правды по версии:** `git describe --tags --abbrev=0`
 - **История релизов:** [CHANGELOG.md](CHANGELOG.md)
-- **Архив старого roadmap:** [references/archive/ROADMAP_before_cleanup_2026-05-21.md](references/archive/ROADMAP_before_cleanup_2026-05-21.md)
+- **Архив старого roadmap:** [docs/archive/ROADMAP_before_cleanup_2026-05-21.md](docs/archive/ROADMAP_before_cleanup_2026-05-21.md)
 
 ---
 
@@ -30,7 +30,7 @@
 
 - [ ] **Coverage report + badge** — `pytest-cov`, минимальный порог 85%, badge в `README.md`.
 - [ ] **Pre-commit hooks** — `ruff`, `mypy`, trailing-whitespace check.
-- [ ] **PoC MCP** — Gate 0-2: OAuth, CRUD, `suggest_time`; результаты в `references/research/mcp_poc_log.md`.
+- [ ] **PoC MCP** — Gate 0-2: OAuth, CRUD, `suggest_time`; результаты в `docs/research/mcp_poc_log.md`.
 
 ### P2 (желательно)
 
@@ -52,11 +52,11 @@
 
 ### Возможный scope
 
-- [ ] **Google Health MCP интеграция** — выбрать один путь из `references/research/google_health_mcp_integration_research.md`, определить security boundary и тестовый контур.
+- [ ] **Google Health MCP интеграция** — выбрать один путь из `docs/research/google_health_mcp_integration_research.md`, определить security boundary и тестовый контур.
 - [ ] **Composite Readiness Model** — CRI formula, 4 зоны, адаптация весов под персоны (ADHD 30/70, Elder 25/75).
 - [ ] **Timezone edge-case hardening** — сценарии путешествий, DST, смена рабочей зоны, человекочитаемые fallback-сообщения.
-- [ ] **Health & Metabolism Track** — schema v2.1, см. `references/research/prd_health_metabolism.md`.
-- [ ] **Goal Concordance** — schema v2.2, см. `references/research/prd_goal_concordance.md`.
+- [ ] **Health & Metabolism Track** — schema v2.1, см. `docs/research/prd_health_metabolism.md`.
+- [ ] **Goal Concordance** — schema v2.2, см. `docs/research/prd_goal_concordance.md`.
 
 ### Gate перед переносом в committed roadmap
 

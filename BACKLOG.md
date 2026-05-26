@@ -3,7 +3,7 @@
 > **Для кого:** Внутреннее планирование, идеи без committed версии, research debt и техдолг.  
 > **Принцип:** Каждая активная идея имеет триггер и RICE score.  
 > **Баги:** Активные баги — в [BUGS.md](BUGS.md).  
-> **История:** Выпущенные версии — в [CHANGELOG.md](CHANGELOG.md). Старый backlog сохранён в [references/archive/BACKLOG_before_cleanup_2026-05-21.md](references/archive/BACKLOG_before_cleanup_2026-05-21.md).
+> **История:** Выпущенные версии — в [CHANGELOG.md](CHANGELOG.md). Старый backlog сохранён в [docs/archive/BACKLOG_before_cleanup_2026-05-21.md](docs/archive/BACKLOG_before_cleanup_2026-05-21.md).
 
 ---
 
@@ -35,7 +35,7 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Триггер:** Решение автора после аудита онбординга и research validation.
 - **Статус:** 💡 Идея, исследование завершено, ждёт отдельного plan mode.
 - **RICE:** Reach 70 [GUESS] × Impact 2.0 × Confidence 75% / Effort M=2 EAS, Context Pressure High = **52.5** (Quick Win).
-- **Артефакты:** `references/research/track0_micro_goal_research.md`; предстоит создать `references/track0_micro_goal.md`.
+- **Артефакты:** `docs/research/track0_micro_goal_research.md`; предстоит создать `references/track0_micro_goal.md`.
 - **Риск:** Нужно решить, Track 0 заменяет Phase 0 или дополняет её.
 
 ### Переписать позиционирование README.md
@@ -71,7 +71,7 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Триггер:** Подготовительный блок v1.0 архитектурного рефакторинга.
 - **Статус:** 📋 Plan ready (2026-05-26), 5 тасков созданы (B1-B5).
 - **RICE:** Reach 100 × Impact 2.0 × Confidence 75% / Effort M=5 EAS, Context Pressure Medium = **30.0** (Quick Win).
-- **Артефакты:** `references/research/plan_v1.0_templates_rebuild.md`; предстоит `references/state_v2_schema.md`, обновлённые `references/templates/*`, новый `references/templates/Core_Values_Compass.md`, rebuild `life-planning-dashboard.html`, split `references/dashboard_guide.md` → `references/module_phase4_dashboard.md` + `docs/research/dashboard_architecture_v1.md`.
+- **Артефакты:** `docs/research/plan_v1.0_templates_rebuild.md`; предстоит `references/state_v2_schema.md`, обновлённые `references/templates/*`, новый `references/templates/Core_Values_Compass.md`, rebuild `life-planning-dashboard.html`, split `references/dashboard_guide.md` → `references/module_phase4_dashboard.md` + `docs/research/dashboard_architecture_v1.md`.
 - **Риск:** Legacy wiki пользователи (8 spheres) требуют deprecation map + migration prompt; HTML breaking changes → bump v1.0.0.
 
 ### Core Values Discovery Exercise
@@ -80,7 +80,7 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Триггер:** Жалобы на абстрактность ценностей в Authentic Goal Filter или плановое улучшение Track B.
 - **Статус:** 📋 PRD готов (v1.0, 2026-05-25), ждёт plan mode.
 - **RICE:** Reach 70 [GUESS] × Impact 2.0 × Confidence 70% / Effort L=3 EAS, Context Pressure Medium = **32.7** (Quick Win).
-- **Артефакты:** `references/research/prd_core_values_discovery.md`; предстоит обновить `references/diagnostic_methods.md`, `references/authentic_goal_filter.md`, `SKILL.master.md`.
+- **Артефакты:** `docs/research/prd_core_values_discovery.md`; предстоит обновить `references/diagnostic_methods.md`, `references/authentic_goal_filter.md`, `SKILL.master.md`.
 - **Риск:** Перегрузка пользователя при глубокой версии; качество извлечения сильно зависит от промптинга.
 
 ### Health & Metabolism Track
@@ -89,7 +89,7 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Триггер:** Запрос на body/health-aware coaching или после стабилизации Google Health MCP research.
 - **Статус:** 📋 PRD готов (v2.1, 2026-05-24), ждёт plan mode.
 - **RICE:** Reach 45 [GUESS] × Impact 2.0 × Confidence 65% / Effort XL=5 EAS, Context Pressure High = **11.7** (High Priority).
-- **Артефакты:** `references/research/prd_health_metabolism.md`; предстоит создать `references/health-metabolism.md` и обновить `SKILL.master.md` (диагностика, ретроспектива, рефрейминг).
+- **Артефакты:** `docs/research/prd_health_metabolism.md`; предстоит создать `references/health-metabolism.md` и обновить `SKILL.master.md` (диагностика, ретроспектива, рефрейминг).
 - **Риск:** Не подменять терапию РПП; часть рычагов (жевание, хлорогеновая кислота) имеет умеренную/низкую доказательную базу.
 
 ### Goal Concordance / Romantic Relationships
@@ -98,7 +98,7 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Триггер:** Спрос от Портретов 2 и 3 (long-term relationships, interdependent planning) или плановое расширение personal-life evidence base.
 - **Статус:** 📋 PRD готов (v2.0, 2026-05-25), ждёт plan mode.
 - **RICE:** Reach 25 [GUESS] × Impact 1.5 × Confidence 60% / Effort L=3 EAS, Context Pressure Medium = **7.5** (Medium Priority).
-- **Артефакты:** `references/research/prd_goal_concordance.md`; предстоит обновить `references/goal_architecture.md`, `references/emotion_regulation.md`, `references/communication_style.md`.
+- **Артефакты:** `docs/research/prd_goal_concordance.md`; предстоит обновить `references/goal_architecture.md`, `references/emotion_regulation.md`, `references/communication_style.md`.
 - **Риск:** Coaching, а не therapy — нужны явные disclaimers и мягкая подача у тревожных/избегающих пользователей.
 
 ### Интеграция с Google Tasks MCP
@@ -143,7 +143,7 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Триггер:** Жалобы на скорость/стоимость или перед крупным расширением references.
 - **Статус:** 🔬 Research, запланировано.
 - **RICE:** Reach 100 × Impact 1.5 × Confidence 40% / Effort XL=5 EAS, Context Pressure Medium = **12.0** (High Priority).
-- **Deliverable:** `references/research/token_audit_report.md`, рекомендации и PR с оптимизациями при значимой экономии.
+- **Deliverable:** `docs/research/token_audit_report.md`, рекомендации и PR с оптимизациями при значимой экономии.
 
 ### Cross-Lingual Consistency
 
@@ -159,7 +159,7 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Триггер:** v0.16 candidate decision.
 - **Статус:** 🔬 Research completed, implementation не утверждена.
 - **RICE:** Reach 40 [GUESS] × Impact 2.0 × Confidence 45% / Effort XL=5 EAS, Context Pressure Crit = **7.2** (Medium Priority).
-- **Артефакт:** `references/research/google_health_mcp_integration_research.md`.
+- **Артефакт:** `docs/research/google_health_mcp_integration_research.md`.
 - **Риск:** Высокая privacy/security нагрузка.
 
 ### Body Doubling via AI
@@ -199,7 +199,7 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 
 - [CHANGELOG.md](CHANGELOG.md) — факты по выпущенным версиям.
 - [ROADMAP.md](ROADMAP.md) — будущий committed scope.
-- [references/archive/BACKLOG_before_cleanup_2026-05-21.md](references/archive/BACKLOG_before_cleanup_2026-05-21.md) — архив старого backlog.
+- [docs/archive/BACKLOG_before_cleanup_2026-05-21.md](docs/archive/BACKLOG_before_cleanup_2026-05-21.md) — архив старого backlog.
 
 Ключевые статусы, зафиксированные при чистке:
 

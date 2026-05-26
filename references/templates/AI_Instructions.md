@@ -142,4 +142,4 @@ if no:
 
 ---
 
-**Связанные:** `references/state_v2_schema.md` (canonical schema), `references/research/plan_v1.0_templates_rebuild.md` (план rebuild)
+**Связанные:** `references/state_v2_schema.md` (canonical schema), `docs/research/plan_v1.0_templates_rebuild.md` (план rebuild)

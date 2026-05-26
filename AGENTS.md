@@ -48,7 +48,7 @@ git describe --tags --abbrev=0
 - **Название:** `life-planning-coach` — evidence-based coaching skill
 - **Платформы:** Claude.ai (primary), Grok (xAI), Kimi OK Computer (Moonshot AI), Kimi Code CLI (terminal)
 - **Язык:** Русский (primary)
-- **Версия:** v0.15.0 (источник правды — git tag)
+- **Версия:** v0.15.1 (источник правды — git tag)
 - **Репозиторий:** https://github.com/azagreev/life-planning-coach
 - **Ветка:** `main`
 
@@ -107,11 +107,11 @@ P2 (4): Energy Check, Wheel of Life 11 доменов, Progressive Disclosure, Z
 bash scripts/release.sh X.Y.Z
 ```
 
-**ЗАПРЕЩЕНО создавать релизы вручную.** Title = только тег (`v0.15.0`). Описание генерируется автоматически из CHANGELOG.md.
+**ЗАПРЕЩЕНО создавать релизы вручную.** Title = только тег (`v0.15.1`). Описание генерируется автоматически из CHANGELOG.md.
 
 **Защита:** Git hook + GitHub Actions (`release-guard.yml`) + этот документ.
 
-**Примечание:** `references/archive/RELEASE_NOTES_*.md` — generated artifacts, создаются автоматически `scripts/release.sh` из CHANGELOG.md. Не редактировать вручную.
+**Примечание:** `docs/archive/RELEASE_NOTES_*.md` — generated artifacts, создаются автоматически `scripts/release.sh` из CHANGELOG.md. Не редактировать вручную.
 
 ### 4.3 System tests
 `python3 -m pytest tests/ -q` → **190+ passed**.
@@ -132,7 +132,7 @@ Effort:     AI Sessions (XS/S/M/L/XL/XXL) + Context Pressure
 **Effort v1.1 (AI Sessions):** Разработчик — AI-агент. Person-days — фикция.
 Единица измерения: Estimated AI Sessions (EAS) + Context Pressure (Low/Med/High/Crit).
 Шкала: XS=0.5, S=1, M=2, L=3, XL=5, XXL=8.
-Подробнее: `references/research/rice_methodology.md` §4.
+Подробнее: `docs/research/rice_methodology.md` §4.
 
 **Интерпретация:**
 
@@ -204,4 +204,4 @@ bash scripts/release.sh X.Y.Z
 ---
 
 *Обновлено: 2026-05-20*  
-*AGENTS.md v4.3 для life-planning-coach v0.15.0+*
+*AGENTS.md v4.3 для life-planning-coach v0.15.1+*

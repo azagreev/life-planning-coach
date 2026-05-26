@@ -660,10 +660,10 @@ Life Planning Coach Wiki/
 
 ## 11. Связанные документы
 
-- [plan_v1.0_templates_rebuild.md](research/plan_v1.0_templates_rebuild.md) — план rebuild всех шаблонов
-- [prd_core_values_discovery.md](research/prd_core_values_discovery.md) — источник `core_values` блока
-- [prd_health_metabolism.md](research/prd_health_metabolism.md) — schema bump 2.1
-- [prd_goal_concordance.md](research/prd_goal_concordance.md) — schema bump 2.2
+- [plan_v1.0_templates_rebuild.md](../docs/research/plan_v1.0_templates_rebuild.md) — план rebuild всех шаблонов
+- [prd_core_values_discovery.md](../docs/research/prd_core_values_discovery.md) — источник `core_values` блока
+- [prd_health_metabolism.md](../docs/research/prd_health_metabolism.md) — schema bump 2.1
+- [prd_goal_concordance.md](../docs/research/prd_goal_concordance.md) — schema bump 2.2
 - `conversation_state_schema.md` (deprecated) — v1, оставлен для backward reference
 
 ---
