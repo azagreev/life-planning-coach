@@ -73,12 +73,23 @@ class TestVersionConsistency:
             f"AGENTS.md version {match.group(1)} != git tag {git_tag_version}"
         )
 
-    def test_no_pyproject_toml_exists(self):
-        """pyproject.toml must not exist (was removed as duplicate)."""
+    def test_pyproject_toml_has_no_version(self):
+        """pyproject.toml may exist (v0.16.0+) but must NOT declare package version.
+
+        setup.py остаётся source of truth для package version.
+        pyproject.toml только конфигурирует pytest / coverage / ruff.
+        """
         pyproject = PROJECT_ROOT / "pyproject.toml"
-        assert not pyproject.exists(), (
-            "pyproject.toml exists but was removed as duplicate of setup.py. "
-            "Use setup.py as single source for package metadata."
+        if not pyproject.exists():
+            return  # OK if not present
+        content = pyproject.read_text(encoding="utf-8")
+        # Forbid `[project]` table or top-level `version = "..."` (package metadata).
+        assert "[project]" not in content, (
+            "pyproject.toml must not contain [project] table — use setup.py for package metadata."
+        )
+        forbidden_version_decl = re.search(r'^version\s*=\s*"[\d.]+"', content, re.MULTILINE)
+        assert not forbidden_version_decl, (
+            "pyproject.toml declares package version — use setup.py instead."
         )
 
     def test_no_stale_versions_in_source_files(self, git_tag_version):

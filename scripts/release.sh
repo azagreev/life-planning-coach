@@ -134,7 +134,8 @@ echo "[5/7] Проверка на GitHub..."
 sleep 3
 
 # Проверяем версию в README на GitHub
-GITHUB_README=$(gh api "repos/$REPO/contents/README.md" --jq '.content' | python3 -c "import sys, base64; print(base64.b64decode(sys.stdin.read()).decode('utf-8'))" | grep -oP '\*\*Версия:\*\*\s*\K[0-9.]+' || true)
+PYTHON_BIN="$(command -v python3 || command -v python || echo python3)"
+GITHUB_README=$(gh api "repos/$REPO/contents/README.md" --jq '.content' | "$PYTHON_BIN" -c "import sys, base64; print(base64.b64decode(sys.stdin.read()).decode('utf-8'))" | grep -oP '\*\*Версия:\*\*\s*\K[0-9.]+' || true)
 
 if [ "$GITHUB_README" != "$VERSION" ]; then
     echo "❌ Версия на GitHub ($GITHUB_README) ≠ ожидаемой ($VERSION)"
@@ -167,7 +168,7 @@ else
     RELEASE_NOTES_FILE="docs/archive/RELEASE_NOTES_$TAG.md"
     if [ ! -f "$RELEASE_NOTES_FILE" ]; then
         echo "→ Генерация release notes из CHANGELOG.md..."
-        python3 scripts/extract-release-notes.py "$VERSION"
+        "$PYTHON_BIN" scripts/extract-release-notes.py "$VERSION"
     fi
 
     if [ -f "$RELEASE_NOTES_FILE" ]; then

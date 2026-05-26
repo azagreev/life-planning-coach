@@ -254,3 +254,82 @@ class TestFreeSlotAlgorithm:
             (time(11, 0), time(12, 0)),
             (time(13, 0), time(14, 0)),
         ]
+
+    def test_events_outside_work_window_are_ignored(self):
+        """Events fully outside work hours must not consume slot capacity."""
+        busy = [
+            (time(7, 0), time(8, 0)),       # before work
+            (time(19, 0), time(20, 0)),     # after work
+        ]
+        assert _find_free_slots(busy, (time(9, 0), time(18, 0)), 30) == [
+            (time(9, 0), time(18, 0))
+        ]
+
+    def test_events_partially_outside_work_window_clipped(self):
+        """Events overlapping window edges are clipped, not skipped."""
+        busy = [
+            (time(8, 0), time(10, 0)),      # extends into work
+            (time(17, 30), time(20, 0)),    # extends past work
+        ]
+        assert _find_free_slots(busy, (time(9, 0), time(18, 0)), 30) == [
+            (time(10, 0), time(17, 30))
+        ]
+
+    def test_exact_duration_gap_is_returned(self):
+        """A gap exactly matching requested duration must be selected."""
+        busy = [
+            (time(9, 0), time(10, 0)),
+            (time(10, 30), time(18, 0)),
+        ]
+        # 30-minute gap [10:00, 10:30] exactly matches requested 30 min.
+        assert _find_free_slots(busy, (time(9, 0), time(18, 0)), 30) == [
+            (time(10, 0), time(10, 30))
+        ]
+
+    def test_long_duration_filters_short_gaps(self):
+        """Increasing duration must drop gaps that no longer fit."""
+        busy = [
+            (time(10, 0), time(11, 0)),
+            (time(12, 0), time(13, 0)),
+            (time(14, 30), time(18, 0)),
+        ]
+        # 30-min duration → 3 gaps; 90-min duration → only large early gap.
+        thirty = _find_free_slots(busy, (time(9, 0), time(18, 0)), 30)
+        ninety = _find_free_slots(busy, (time(9, 0), time(18, 0)), 90)
+        assert len(thirty) == 3
+        assert ninety == [(time(13, 0), time(14, 30))]
+
+    def test_zero_busy_with_short_window_under_duration(self):
+        """Work window shorter than requested duration → no slots."""
+        assert _find_free_slots([], (time(9, 0), time(9, 20)), 30) == []
+
+    def test_limit_parameter_caps_results(self):
+        """limit < 3 must cap returned slots."""
+        busy = [
+            (time(10, 0), time(11, 0)),
+            (time(12, 0), time(13, 0)),
+            (time(14, 0), time(15, 0)),
+        ]
+        slots = _find_free_slots(
+            busy, (time(9, 0), time(18, 0)), 30, limit=2
+        )
+        assert len(slots) == 2
+        assert slots == [
+            (time(9, 0), time(10, 0)),
+            (time(11, 0), time(12, 0)),
+        ]
+
+    def test_unsorted_busy_intervals_handled(self):
+        """Algorithm must sort input before merging."""
+        busy = [
+            (time(14, 0), time(15, 0)),
+            (time(10, 0), time(11, 0)),
+            (time(12, 0), time(13, 0)),
+        ]
+        slots = _find_free_slots(busy, (time(9, 0), time(18, 0)), 30)
+        # Sorted internally → same as already-sorted input.
+        assert slots == [
+            (time(9, 0), time(10, 0)),
+            (time(11, 0), time(12, 0)),
+            (time(13, 0), time(14, 0)),
+        ]

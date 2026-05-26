@@ -1,0 +1,39 @@
+# Pre-commit hooks для life-planning-coach.
+# Установка: pip install pre-commit && pre-commit install
+# Запуск вручную: pre-commit run --all-files
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: '\.md$|\.svg$'  # markdown allows trailing 2-space for soft break
+      - id: end-of-file-fixer
+        exclude: '\.svg$|^dist/|^\.build/'
+      - id: check-yaml
+        exclude: '^references/templates/.*\.md$'  # templates have YAML frontmatter that pre-commit can't parse
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ['--maxkb=2048']
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+        exclude: '\.bat$|\.cmd$|^life-planning-dashboard\.html$'
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.4
+    hooks:
+      - id: ruff
+        args: [--fix]
+        exclude: '^(\.build|dist|docs/archive|docs/research)/'
+      - id: ruff-format
+        exclude: '^(\.build|dist|docs/archive|docs/research)/'
+
+  - repo: local
+    hooks:
+      - id: pytest-quick
+        name: pytest (unit + light system)
+        entry: python -m pytest tests/unit tests/system/test_skill_structure.py tests/system/test_master_skill_integrity.py -q
+        language: system
+        pass_filenames: false
+        stages: [pre-push]

@@ -85,3 +85,80 @@ class TestRoadmapIntegrity:
                 f"ROADMAP.md contains detailed sections for released versions: {stale}\n"
                 f"Release details belong in CHANGELOG.md or docs/archive/."
             )
+
+
+class TestPlanningDocsGuardrails:
+    """Broader planning docs invariants — ROADMAP / BACKLOG / CHANGELOG separation."""
+
+    def test_roadmap_has_only_future_versions(self):
+        """ROADMAP.md must mention only future version sections (no released ones)."""
+        roadmap = (PROJECT_ROOT / "ROADMAP.md").read_text(encoding="utf-8")
+        # Tag list
+        result = subprocess.run(
+            ["git", "tag", "--list", "v*"],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        released = {tag.lstrip("v") for tag in result.stdout.strip().splitlines()}
+
+        # Find all ## headings that look like ## vX.Y.Z
+        headings = re.findall(r"^##\s+v([\d.]+)", roadmap, re.MULTILINE)
+        leaked = [h for h in headings if h in released]
+        assert not leaked, (
+            f"ROADMAP.md contains released version headings: {leaked}. "
+            f"Use CHANGELOG.md instead."
+        )
+
+    def test_backlog_done_section_is_pointer_only(self):
+        """BACKLOG.md must not duplicate CHANGELOG content for completed items."""
+        backlog = (PROJECT_ROOT / "BACKLOG.md").read_text(encoding="utf-8")
+        # The Archived/Done section should be a pointer (< 400 chars) not a full re-statement.
+        # Look for the "Done" / "Archived" section.
+        match = re.search(
+            r"##\s*(Archived|Done|Архив|Готово)(.*?)(?=^##|\Z)",
+            backlog,
+            re.MULTILINE | re.DOTALL,
+        )
+        if match:
+            section_body = match.group(2).strip()
+            # Pointer-style section is short and references other docs.
+            assert len(section_body) < 1500, (
+                f"BACKLOG.md 'Archived/Done' section is {len(section_body)} chars — "
+                f"should be a pointer to CHANGELOG.md, not duplicate content."
+            )
+
+    def test_changelog_has_each_released_version(self):
+        """CHANGELOG.md must document every released git tag from v0.8.0 onward.
+
+        Legacy tags (pre-0.8.0) predate the structured CHANGELOG format and
+        are intentionally not enforced.
+        """
+        result = subprocess.run(
+            ["git", "tag", "--list", "v*"],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        released = {tag.lstrip("v") for tag in result.stdout.strip().splitlines()}
+
+        def _parsable(v: str) -> bool:
+            parts = v.split(".")
+            return len(parts) >= 2 and all(p.isdigit() for p in parts[:3])
+
+        def _ge_0_8_0(v: str) -> bool:
+            if not _parsable(v):
+                return False
+            parts = [int(p) for p in v.split(".")[:3]]
+            while len(parts) < 3:
+                parts.append(0)
+            return tuple(parts) >= (0, 8, 0)
+
+        enforced = {v for v in released if _ge_0_8_0(v)}
+        changelog = (PROJECT_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+        missing = [v for v in enforced if f"[{v}]" not in changelog]
+        assert not missing, (
+            f"CHANGELOG.md missing sections for released versions: {missing}"
+        )

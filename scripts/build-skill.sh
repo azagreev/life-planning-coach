@@ -18,7 +18,22 @@ SKILL_FOLDER="${BUILD_DIR}/life-planning-coach"
 
 # ── 0. Generate platform-specific skills ─────────────────────────────────────
 echo "Generating platform skills..."
-python3 "${SCRIPT_DIR}/build-platform-skill.py" all
+# Detect python interpreter. On Windows, /WindowsApps/python3 is the MS Store
+# stub launcher that returns exit 9009 with "Python " stderr — useless.
+# Prefer real python that responds to --version.
+pick_python() {
+    for candidate in "${PYTHON:-}" python3 python py; do
+        [ -z "$candidate" ] && continue
+        if "$candidate" --version >/dev/null 2>&1; then
+            echo "$candidate"
+            return 0
+        fi
+    done
+    echo "python3"  # last-resort fallback
+}
+PYTHON_BIN="$(pick_python)"
+# Force UTF-8 stdio so emoji in build output don't crash cp1251 console (Windows).
+PYTHONIOENCODING=utf-8 "$PYTHON_BIN" "${SCRIPT_DIR}/build-platform-skill.py" all
 
 # ── 0.5. Sync Claude skill to root SKILL.md (backward compatibility) ──────────
 cp "${PROJECT_ROOT}/platforms/claude/SKILL.md" "${SKILL_MD}"

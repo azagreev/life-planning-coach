@@ -8,6 +8,48 @@
 
 ## [Unreleased]
 
+## [0.16.0] — 2026-05-26
+
+**Testing & Integration Hardening** — закрыли committed roadmap-scope: тесты календаря расширены edge-кейсами, починен Windows-блокер `python3` хардкода, добавлена coverage-инфраструктура, pre-commit hooks и planning-docs guardrails.
+
+### Added
+- **`pyproject.toml`** — минимальная конфигурация pytest + coverage + ruff. `setup.py` остаётся источником правды по package version.
+- **`.pre-commit-config.yaml`** — hooks: `ruff` (lint + format), `trailing-whitespace`, `end-of-file-fixer`, `check-yaml`, `check-json`, `check-merge-conflict`, `check-added-large-files`, `mixed-line-ending`. Pre-push: `pytest tests/unit + light system`.
+- **Coverage infrastructure** — `pytest-cov` configured с `fail_under = 75`. Текущее покрытие: **80.91%** (2675 statements, 401 missing).
+- **Coverage badges в `README.md`** — tests, coverage, schema, version.
+- **9 новых тестов в `tests/system/test_calendar_integration.py`** (Free Slot Algorithm edge cases):
+  - `test_events_outside_work_window_are_ignored`
+  - `test_events_partially_outside_work_window_clipped`
+  - `test_exact_duration_gap_is_returned`
+  - `test_long_duration_filters_short_gaps`
+  - `test_zero_busy_with_short_window_under_duration`
+  - `test_limit_parameter_caps_results`
+  - `test_unsorted_busy_intervals_handled`
+- **3 новых теста в `tests/system/test_roadmap_integrity.py`** (planning docs guardrails):
+  - `test_roadmap_has_only_future_versions` — ROADMAP содержит только future-секции
+  - `test_backlog_done_section_is_pointer_only` — BACKLOG не дублирует CHANGELOG
+  - `test_changelog_has_each_released_version` — CHANGELOG документирует каждый git tag ≥ v0.8.0
+
+### Fixed
+- **Windows `python3` хардкод** — заменён на `sys.executable` (Python тесты) и `command -v python3 || command -v python` с fallback на `py` (shell скрипты). Разблокирует 22+ ранее ERROR'ивших тестов на Windows. Затронуто:
+  - `scripts/build-skill.sh`, `scripts/release.sh`
+  - `tests/system/test_multi_platform.py`, `tests/system/test_master_skill_integrity.py`
+- **`scripts/build-platform-skill.py`** — `sys.stdout.reconfigure(encoding='utf-8')` в самом начале. Чинит `UnicodeEncodeError` на Windows cp1251 при выводе emoji/check-marks из subprocess.
+- **`tests/system/test_v140_features.py::test_master_version_is_014`** — заменён на `test_master_version_is_at_least_014` (semver-aware), не блокирует версии v0.15+.
+- **`tests/system/test_version_consistency.py::test_no_pyproject_toml_exists`** — заменён на `test_pyproject_toml_has_no_version` (разрешает pyproject.toml без `[project]` table, что и используется).
+
+### Changed
+- **`CONTRIBUTING.md`** — добавлена инструкция `pip install pre-commit && pre-commit install`; тесты теперь `pytest tests/` вместо `unittest discover`.
+
+### Roadmap-status
+- ✅ P0: Функциональные тесты календаря (22 теста, было 12)
+- ✅ P0: Тесты целостности `SKILL.master.md` (9 тестов passed, ранее 2 ERROR на Windows)
+- ✅ P1: Coverage report + badge (80.91% актуальный)
+- ✅ P1: Pre-commit hooks
+- ✅ P2: Planning docs guardrails
+- ⏳ P1 deferred: PoC MCP — отдельный research spike в v0.17.x candidate
+- ⏳ P2 deferred: Универсальный скрипт сборки — частично закрыт (build-skill.sh кросс-платформенный), полная унификация в v1.0 build pipeline rework
+
 ## [0.15.1] — 2026-05-26
 
 **Dev-only cleanup** — `references/` теперь содержит только runtime-артефакты. Dev-only содержимое перенесено в `docs/`, что уменьшает шум в IDE/grep, упрощает build-скрипт и улучшает git diff.

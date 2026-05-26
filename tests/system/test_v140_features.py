@@ -4,6 +4,7 @@ Covers: adhd_mode.md, time_structure_unemployed.md, elder_homebound_mode.md,
 planning_friction_audit.md, persona hooks in SKILL.master.md, platform integration.
 """
 
+import re
 from pathlib import Path
 
 import pytest
@@ -264,9 +265,17 @@ class TestPersonaHooks:
 class TestPlatformIntegrationV14:
     """Verify platform files build correctly and contain v0.14.0 content"""
 
-    def test_master_version_is_014(self):
+    def test_master_version_is_at_least_014(self):
+        """v0.14 introduced inclusive coaching layer — version must be ≥ 0.14.0."""
         content = (PROJECT_ROOT / "SKILL.master.md").read_text(encoding="utf-8")
-        assert "version: 0.14.0" in content
+        match = re.search(r"^version:\s*([\d.]+)", content, re.MULTILINE)
+        assert match, "SKILL.master.md must declare version in frontmatter"
+        parts = [int(p) for p in match.group(1).split(".")[:3]]
+        while len(parts) < 3:
+            parts.append(0)
+        assert tuple(parts) >= (0, 14, 0), (
+            f"SKILL.master.md version {match.group(1)} < 0.14.0 (v140 features expected)"
+        )
 
     def test_all_four_references_in_master(self):
         content = (PROJECT_ROOT / "SKILL.master.md").read_text(encoding="utf-8")

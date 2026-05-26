@@ -1,7 +1,12 @@
 # 🧭 Life Planning Coach
 
+![tests](https://img.shields.io/badge/tests-430%2B%20passed-brightgreen)
+![coverage](https://img.shields.io/badge/coverage-80%25-brightgreen)
+![schema](https://img.shields.io/badge/state%20schema-v2.0-blue)
+![version](https://img.shields.io/badge/version-0.16.0-blue)
+
 > **Интерактивный evidence-based life coach** для Claude.ai, Grok (xAI) и Kimi (OK Computer + Code CLI).  
-> **Версия:** 0.15.1 | [Релизы](https://github.com/azagreev/life-planning-coach/releases) | [CHANGELOG](CHANGELOG.md)
+> **Версия:** 0.16.0 | [Релизы](https://github.com/azagreev/life-planning-coach/releases) | [CHANGELOG](CHANGELOG.md)
 
 ---
 

@@ -6,11 +6,17 @@
 
 1. **Форкните** репозиторий
 2. **Создайте ветку** для ваших изменений: `git checkout -b feature/название`
-3. **Внесите изменения** и убедитесь, что:
-   - Python-код проходит `py_compile`
-   - Release-тесты проходят: `python -m unittest discover -s tests/release -v`
-4. **Закоммитьте** с понятным сообщением
-5. **Откройте Pull Request** с описанием изменений
+3. **Установите pre-commit hooks** (v0.16.0+):
+   ```bash
+   pip install pre-commit
+   pre-commit install
+   ```
+   Hooks автоматически прогоняют ruff (lint + format), whitespace и pytest перед push.
+4. **Внесите изменения** и убедитесь, что:
+   - `python -m pytest tests/ -q --ignore=tests/e2e` → ≥ 430 passed
+   - Coverage ≥ 75% (`python -m pytest --cov`)
+5. **Закоммитьте** с понятным сообщением
+6. **Откройте Pull Request** с описанием изменений
 
 ## Что приветствуется
 

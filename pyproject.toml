@@ -1,0 +1,51 @@
+# pyproject.toml — minimal config for pytest + coverage + ruff.
+# setup.py остаётся источником правды для пакета (legacy compat).
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = "-q"
+# e2e tests require external services — skip by default; opt-in via `-m e2e`.
+markers = [
+    "e2e: end-to-end tests requiring external services",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["scripts", "tests"]
+omit = [
+    "tests/e2e/*",
+    "*/__pycache__/*",
+    ".build/*",
+    "dist/*",
+]
+
+[tool.coverage.report]
+# Skill is markdown-first; Python coverage is a code-health signal, not a quality gate.
+# Threshold reflects scripts/ + tests/ — the actually-runnable Python in the repo.
+fail_under = 75
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+]
+
+[tool.coverage.html]
+directory = ".coverage_html"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = [".build", "dist", "docs/archive", "docs/research"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = [
+    "E501",   # line-length — handled by formatter, не блокируем CI
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

@@ -10,6 +10,7 @@ Validates:
 
 import re
 import subprocess
+import sys
 import yaml
 from pathlib import Path
 
@@ -121,7 +122,7 @@ class TestGeneratedFiles:
     def rebuild_platforms(self):
         """Ensure platform files are up-to-date before testing."""
         result = subprocess.run(
-            ["python3", str(BUILD_SCRIPT), "all"],
+            [sys.executable, str(BUILD_SCRIPT), "all"],
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
@@ -204,7 +205,7 @@ class TestNoCrossContamination:
     @pytest.fixture(scope="class", autouse=True)
     def rebuild_platforms(self):
         result = subprocess.run(
-            ["python3", str(BUILD_SCRIPT), "all"],
+            [sys.executable, str(BUILD_SCRIPT), "all"],
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
@@ -261,7 +262,7 @@ class TestBuildScript:
 
     def test_build_script_runnable(self):
         result = subprocess.run(
-            ["python3", str(BUILD_SCRIPT), "--help"],
+            [sys.executable, str(BUILD_SCRIPT), "--help"],
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
@@ -272,7 +273,7 @@ class TestBuildScript:
 
     def test_build_outputs_all_platforms(self):
         result = subprocess.run(
-            ["python3", str(BUILD_SCRIPT), "all"],
+            [sys.executable, str(BUILD_SCRIPT), "all"],
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,

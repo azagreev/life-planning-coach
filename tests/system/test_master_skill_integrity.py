@@ -7,6 +7,7 @@ platform artifacts and referenced progressive-disclosure files.
 
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -121,7 +122,7 @@ class TestMasterPlatformSync:
     @pytest.fixture(scope="class", autouse=True)
     def rebuild_platforms(self):
         result = subprocess.run(
-            ["python3", str(BUILD_SCRIPT), "all"],
+            [sys.executable, str(BUILD_SCRIPT), "all"],
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,

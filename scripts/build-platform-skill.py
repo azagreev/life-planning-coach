@@ -13,6 +13,11 @@ import os
 import re
 import sys
 import yaml
+
+# Force UTF-8 stdio so emoji/check-marks (✓) in build output don't crash on Windows cp1251 console.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
 from pathlib import Path
 
 
