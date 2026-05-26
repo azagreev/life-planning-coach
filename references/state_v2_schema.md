@@ -2,7 +2,7 @@
 
 > **Версия схемы:** `2.2.1`
 > **Дата:** 2026-05-28
-> **Заменяет:** `references/conversation_state_schema.md` (v1)
+> **Заменяет:** `references/conversation_state_schema.md` (v1 — удалён в v1.1.0; migration таблица в §8 ниже)
 > **Используется:** HTML dashboard, 8 wiki templates, dashboard_guide.md, SKILL.master.md gating logic
 
 State v2 — единый источник правды о пользователе. Все три шаблона (wiki, HTML dashboard, dashboard_guide) рендерят срезы этого состояния. Skill пишет в state v2 при условиях gating (см. §5).
@@ -749,7 +749,7 @@ Behavior per mode:
 - [prd_core_values_discovery.md](../docs/research/prd_core_values_discovery.md) — источник `core_values` блока + Compass Mode (FR-04)
 - [prd_health_metabolism.md](../docs/research/prd_health_metabolism.md) — schema bump 2.1
 - [prd_goal_concordance.md](../docs/research/prd_goal_concordance.md) — schema bump 2.2
-- `conversation_state_schema.md` (deprecated) — v1, оставлен для backward reference
+- `conversation_state_schema.md` — v1 schema удалён в v1.1.0. Migration таблица сохранена в §8 выше для legacy forks.
 - `tests/unit/test_v018_gating_state_writes.py` — гарантирует write-rules для всех полей §9
 - `tests/unit/test_tier_token_budgets.py` — Tier 1/2 budgets check
 - `references/templates/AI_Instructions.md` — bootstrap + backfill + gating protocols (operational layer)
