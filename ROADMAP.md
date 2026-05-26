@@ -8,39 +8,10 @@
 
 ## Текущий статус
 
-- **Текущая версия:** `v1.0.0` 🎉
+- **Текущая версия:** `v1.1.0` 🎉 (releasing 2026-05-26)
 - **Источник правды по версии:** `git describe --tags --abbrev=0`
 - **История релизов:** [CHANGELOG.md](CHANGELOG.md)
 - **Архив старого roadmap:** [docs/archive/ROADMAP_before_cleanup_2026-05-21.md](docs/archive/ROADMAP_before_cleanup_2026-05-21.md)
-
----
-
-## v1.1.0 (planned) — Methodology Foundation + Deprecation
-
-**Тема:** Поднять buried evidence-based methods + cleanup legacy. Низкий риск, additive.
-**Базис:** [PRD v0.15 Methodology Upgrade](docs/research/prd_v0.15_methodology_upgrade.md), обсуждён 2026-05-26.
-
-### Methodology (PRD v0.15 surface & cleanup)
-
-- [ ] **Implementation Intentions promote** (RICE 180) — извлечь в standalone ref или поднять в Phase 5 как primary planning protocol. If-Then format в Calendar prompts и WOOP Plan step.
-- [ ] **Tiny Habits primary framing** (RICE 112) — переписать `habit_loop.md`: Tiny Habits (B=MAP) §1, classical Cue-Routine-Reward §2 (diagnostic для existing habits).
-- [ ] **Cut SMART references** (RICE 90) — grep + remove vestigial SMART mentions; вместо них — BHAG/OKR/WOOP architecture.
-- [ ] **Evidence citations** (RICE 35) — в каждом методе add evidence box с источником + effect size (Gollwitzer d=0.65, Michie COM-B citation, WOOP meta-analyses).
-
-### Deprecation cleanup (existing planned)
-
-- [ ] Удалить `scripts/build-skill.sh` (replaced by `build-skill.py build`)
-- [ ] Удалить `scripts/sync-version.sh` (replaced by `build-skill.py version`)
-- [ ] Удалить `references/conversation_state_schema.md` (v1 schema, replaced by v2)
-- [ ] Coverage target → 70-85% (extend build-skill.py unit tests)
-
-### Drive Wiki follow-ups (from Drive PoC 2026-05-26)
-
-- [ ] Skill module refactor под Path A append-only protocol (RICE 56)
-- [ ] Verify Zapier MCP availability на claude.ai web (Path F, RICE 45)
-- [ ] File Anthropic GitHub issue evidence (Path E lobbying, RICE 60)
-
-**Estimated effort:** ~5 EAS. Estimated release: ближайший спринт.
 
 ---
 
