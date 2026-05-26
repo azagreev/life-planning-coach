@@ -688,9 +688,8 @@ on session_start:
 - Skill создаёт реальные события через connector с подтверждением (схема и quirks — `calendar_integration.md`).
 - Использует `references/calendar_constants.md`: COLOR_MAP, presets, failure modes.
 ##### Mode B: Paper Coach Mode (fallback)
-- Calendar недоступен (нет Max plan, не подключён connector) или пользователь не хочет подключать.
-- Работаем через markdown — Daily Top-3 + Time Blocks таблицей (`references/markdown_tables.md`).
-- Фраза для пользователя: «В этом режиме я не создаю события автоматически — вот ваш план в текстовом виде. Скопируйте в свой календарь или заметки. Research показывает: люди, которые записывают планы от руки, запоминают их на 42% лучше.»
+- Calendar недоступен или user не хочет — работаем через markdown (`markdown_tables.md`).
+- Фраза: «Не создаю события — вот план текстом. Записанные от руки планы запоминаются на 42% лучше.»
 #### Pre-flight: Workload Check
 - 🟢 **Green** (< 60% забронированного времени): создаём всё.
 - 🟡 **Yellow** (60–80%): подсветим, что добавляем НА фоне уже плотной недели. Спросим подтверждение.

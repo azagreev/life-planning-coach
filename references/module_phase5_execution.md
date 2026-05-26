@@ -3,13 +3,15 @@
 > **Tier:** 2 (lazy-load module)
 > **Загружается:** когда пользователь готов перейти от планирования к исполнению, или при запросе «запланируй», «в календарь», «когда сделать».
 > **Предусловие:** есть цели из Phase 2 ИЛИ конкретное намерение, которое стоит зафиксировать во времени.
-> **Связанные refs:** `calendar_constants.md`, `calendar_integration.md`, `energy_scheduling.md`, `workload_warning.md`, `chronotype_native_planning.md`, `shutdown_ritual.md`, `markdown_tables.md`
+> **Связанные refs:** `implementation_intentions.md` (primary), `calendar_constants.md`, `calendar_integration.md`, `energy_scheduling.md`, `workload_warning.md`, `chronotype_native_planning.md`, `shutdown_ritual.md`, `markdown_tables.md`
 
 ---
 
 ## Why calendar matters
 
-> 60% намерений без временного слота забываются через 48 часов (Milkman et al., 2021). Запланированное событие в календаре имеет 80%+ вероятность выполнения vs 30% для списка задач. «Лучше тупой карандаш, чем острый ум» — календарь — это твой карандаш.
+> 60% намерений без слота забываются за 48ч (Milkman 2021). Calendar event = 80%+ выполнения vs 30% list. Календарь — карандаш.
+
+**Implementation Intentions** (Gollwitzer d=0.65) — primary tool. Calendar block = WHEN-type if-then; Top-3 = if-then. См. `implementation_intentions.md`.
 
 ---
 
@@ -31,9 +33,8 @@
 - Использует `references/calendar_constants.md`: COLOR_MAP, presets, failure modes.
 
 ### Mode B: Paper Coach Mode (fallback)
-- Calendar недоступен (нет Max plan, не подключён connector) или пользователь не хочет подключать.
-- Работаем через markdown — Daily Top-3 + Time Blocks таблицей (`references/markdown_tables.md`).
-- Фраза для пользователя: «В этом режиме я не создаю события автоматически — вот ваш план в текстовом виде. Скопируйте в свой календарь или заметки. Research показывает: люди, которые записывают планы от руки, запоминают их на 42% лучше.»
+- Calendar недоступен или user не хочет — работаем через markdown (`markdown_tables.md`).
+- Фраза: «Не создаю события — вот план текстом. Записанные от руки планы запоминаются на 42% лучше.»
 
 ---
 

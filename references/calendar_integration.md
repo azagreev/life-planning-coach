@@ -107,6 +107,8 @@ Note: latency dominated by LLM reasoning + permission UX, not MCP transport. Thi
 
 Use **connector-specific field names** (NOT Google API shape).
 
+> Каждое recurring event = WHEN-type Implementation Intention ("когда X — то Y"). См. [`implementation_intentions.md`](implementation_intentions.md) для framing.
+
 ### Weekly Review
 ```
 create_event(
