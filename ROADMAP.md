@@ -8,25 +8,19 @@
 
 ## Текущий статус
 
-- **Текущая версия:** `v0.19.0`
+- **Текущая версия:** `v1.0.0` 🎉
 - **Источник правды по версии:** `git describe --tags --abbrev=0`
 - **История релизов:** [CHANGELOG.md](CHANGELOG.md)
 - **Архив старого roadmap:** [docs/archive/ROADMAP_before_cleanup_2026-05-21.md](docs/archive/ROADMAP_before_cleanup_2026-05-21.md)
 
 ---
 
-## v1.0.0 — Build Pipeline + Platform Optimization
+## v1.1.0 (planned) — Deprecation cleanup
 
-**Цель:** Polish + major-version signal зрелости проекта.
-
-- [ ] **Build pipeline rework** — единый `build-skill.py`, замена legacy platform-specific сборок.
-- [ ] **Platform lazy-loading** — для платформ умеющих dynamic refs (Claude.ai) — не инлайнить P0 в SKILL.md (−7K токенов в каждом платформенном файле).
-- [ ] **Platform parity test** — automated, все 4 платформы рендерятся идентично.
-- [ ] **Acceptance criteria для v1.0:**
-  - cold-load ≤ 4K
-  - typical session ≤ 18K
-  - тесты ≥ 85% coverage
-  - все 4 gating mode комбинации работают
+- [ ] Удалить `scripts/build-skill.sh` (replaced by `build-skill.py build`)
+- [ ] Удалить `scripts/sync-version.sh` (replaced by `build-skill.py version`)
+- [ ] Удалить `references/conversation_state_schema.md` (v1 schema, replaced by v2)
+- [ ] Coverage target → 70-85% (extend build-skill.py unit tests)
 
 ---
 

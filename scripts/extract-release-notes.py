@@ -64,7 +64,8 @@ def main() -> int:
         print(section, end="")
         return 0
 
-    output_dir = Path("references/archive")
+    # Output location moved from references/archive/ → docs/archive/ in v0.15.x
+    output_dir = Path("docs/archive")
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / f"RELEASE_NOTES_{tag}.md"
 

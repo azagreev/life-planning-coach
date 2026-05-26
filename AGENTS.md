@@ -48,7 +48,7 @@ git describe --tags --abbrev=0
 - **Название:** `life-planning-coach` — evidence-based coaching skill
 - **Платформы:** Claude.ai (primary), Grok (xAI), Kimi OK Computer (Moonshot AI), Kimi Code CLI (terminal)
 - **Язык:** Русский (primary)
-- **Версия:** v0.19.0 (источник правды — git tag)
+- **Версия:** v1.0.0 (источник правды — git tag)
 - **Репозиторий:** https://github.com/azagreev/life-planning-coach
 - **Ветка:** `main`
 
@@ -104,17 +104,25 @@ P2 (4): Energy Check, Wheel of Life 11 доменов, Progressive Disclosure, Z
 
 ### 4.2 Release process
 ```bash
-bash scripts/release.sh X.Y.Z
+python scripts/build-skill.py release X.Y.Z   # v1.0+ unified CLI
+# OR (deprecated, will be removed in v1.1):
+# bash scripts/release.sh X.Y.Z
 ```
 
-**ЗАПРЕЩЕНО создавать релизы вручную.** Title = только тег (`v0.19.0`). Описание генерируется автоматически из CHANGELOG.md.
+**ЗАПРЕЩЕНО создавать релизы вручную.** Title = только тег (`v1.0.0`). Описание генерируется автоматически из CHANGELOG.md.
+
+**Sub-commands `build-skill.py`** (v1.0+):
+- `build` — все 4 платформы + ZIP/skill/grok-md/kimi-md/kimi-cli-zip
+- `version X.Y.Z` — sync version во все source files (replaces sync-version.sh)
+- `verify` — pre-release checks (tests, working tree, version, ZIP freshness)
+- `release X.Y.Z` — full flow (verify + version + build + commit + tag + push + gh release)
 
 **Защита:** Git hook + GitHub Actions (`release-guard.yml`) + этот документ.
 
-**Примечание:** `docs/archive/RELEASE_NOTES_*.md` — generated artifacts, создаются автоматически `scripts/release.sh` из CHANGELOG.md. Не редактировать вручную.
+**Примечание:** `docs/archive/RELEASE_NOTES_*.md` — generated artifacts, создаются автоматически из CHANGELOG.md. Не редактировать вручную.
 
 ### 4.3 System tests
-`python3 -m pytest tests/ -q` → **190+ passed**.
+`python -m pytest tests/ -q` → **540+ passed**.
 
 ### 4.4 Prioritization (RICE)
 
@@ -204,4 +212,4 @@ bash scripts/release.sh X.Y.Z
 ---
 
 *Обновлено: 2026-05-20*  
-*AGENTS.md v4.3 для life-planning-coach v0.19.0+*
+*AGENTS.md v4.3 для life-planning-coach v1.0.0+*

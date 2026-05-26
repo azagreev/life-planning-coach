@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 #
+# ⚠ DEPRECATED in v1.0.0 — use `python scripts/build-skill.py build`.
+# Will be removed in v1.1. See MIGRATION_v1.md §3.
+#
 # Build script for the life-planning-coach skill artifact.
 # Creates a ZIP archive of the skill folder per Anthropic's official requirements:
 # https://support.claude.com/en/articles/12512180-use-skills-in-claude
 #
 # The ZIP must contain the skill folder at the root level, not just SKILL.md.
+
+echo "⚠ DEPRECATED: bash scripts/build-skill.sh — use 'python scripts/build-skill.py build' instead" >&2
+echo "   See MIGRATION_v1.md §3. This wrapper will be removed in v1.1." >&2
+echo "" >&2
 
 set -euo pipefail
 

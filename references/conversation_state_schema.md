@@ -1,10 +1,10 @@
 # Conversation State JSON Schema (v1 — DEPRECATED)
 
-> ⚠️ **DEPRECATED как v1.** Заменено на [`state_v2_schema.md`](state_v2_schema.md).
-> Этот файл сохранён для обратной совместимости с wiki пользователей в legacy формате.
-> Миграция: [`docs/migration_v1_to_v2.md`](../docs/migration_v1_to_v2.md).
+> ⚠️ **DEPRECATED. Will be removed in v1.1.**
+> Use [`state_v2_schema.md`](state_v2_schema.md) (v2.2+, canonical).
+> Migration guide: [`../MIGRATION_v1.md`](../MIGRATION_v1.md) §2.
 >
-> **Для новых имплементаций используй `state_v2_schema.md`** — single source of truth для HTML dashboard, wiki templates и dashboard_guide.
+> Этот файл сохранён для обратной совместимости с wiki пользователей в legacy формате. Skill детектирует `schema_version < 2.0` и переключается в legacy mode без записи v2 формата. Новые инсталляции должны использовать v2 с самого начала.
 
 > **Для Claude (legacy mode):** Эта схема всё ещё применима для пользователей с frontmatter `schema_version < 2.0` в wiki. Skill читает schema_version и переключается в legacy mode без записи v2 формата.
 

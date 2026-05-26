@@ -1,4 +1,7 @@
 #!/bin/bash
+# ⚠ DEPRECATED in v1.0.0 — use `python scripts/build-skill.py version X.Y.Z`.
+# Will be removed in v1.1. See MIGRATION_v1.md §3.
+#
 # sync-version.sh — Единый источник правды для версии проекта
 #
 # Источник правды: git tag (git describe --tags --abbrev=0)
@@ -8,6 +11,10 @@
 #   bash scripts/sync-version.sh 0.7.0
 #
 # После запуска проверьте diff и закоммитьте изменения.
+
+echo "⚠ DEPRECATED: bash scripts/sync-version.sh — use 'python scripts/build-skill.py version X.Y.Z' instead" >&2
+echo "   See MIGRATION_v1.md §3. This wrapper will be removed in v1.1." >&2
+echo "" >&2
 
 set -euo pipefail
 

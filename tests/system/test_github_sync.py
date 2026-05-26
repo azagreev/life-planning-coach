@@ -137,16 +137,25 @@ class TestGitHubSync:
         current_tag = result.stdout.strip()
         current_version = current_tag.lstrip("v")
 
-        expected_file = PROJECT_ROOT / "references/archive" / f"RELEASE_NOTES_{current_tag}.md"
+        # Output location moved from references/archive/ → docs/archive/ in v0.15.x
+        expected_file = PROJECT_ROOT / "docs/archive" / f"RELEASE_NOTES_{current_tag}.md"
         file_existed_before = expected_file.exists()
 
         try:
-            # Run extractor (idempotent if file already exists)
+            # Use sys.executable for cross-platform (Windows MS Store stub for python3
+            # returns exit 9009; sys.executable is always the actual interpreter).
+            # Force UTF-8 stdio so the script's ✅ output doesn't crash cp1251 console.
+            import os
+            import sys
+            env = os.environ.copy()
+            env["PYTHONIOENCODING"] = "utf-8"
             result = subprocess.run(
-                ["python3", "scripts/extract-release-notes.py", current_version],
+                [sys.executable, "scripts/extract-release-notes.py", current_version],
                 cwd=PROJECT_ROOT,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                env=env,
                 check=True,
             )
 
