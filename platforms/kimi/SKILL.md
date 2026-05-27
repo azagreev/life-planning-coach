@@ -664,6 +664,14 @@ on session_start:
 #### Scientific Backing
 #### 4. Conflict Reappraisal (для recurring отношенческих конфликтов, v0.19.0+)
 1. **Distance:** «Представь, что этот конфликт описывает нейтральный наблюдатель, который желает добра вам обоим. Что бы он сказал?»
+#### 5. COM-B Upsell — когда «не могу начать» повторяется (v1.3.0+)
+- После **первого** decline («не сейчас», «давай позже») — не настаивай, отметь mentally
+- После **второго** decline в той же сессии — НЕ повторяй upsell в этой сессии
+- В следующей сессии (если повтор жалобы) — можно offer заново
+- Mirror pattern: `persistence_retry.drive.user_declined_count` (см. `state_v2_schema.md` §3.6)
+- **Phase 1 COM-B entry** (`module_phase1_diagnostic.md`) — после Wheel of Life, sphere-level
+- **Phase 3 escalation** (`module_phase3_weekly_review.md` Step 8) — gap ≥ 2 недели на той же priority
+- **Direct request** (Routing Map в `SKILL.master.md`) — пользователь сам спрашивает «как себя заставить»
 #### Trigger Phrases (for SKILL.md description)
 - "Я в стрессе", "меня всё достало"
 - "Тревожно", "боюсь", "паника"

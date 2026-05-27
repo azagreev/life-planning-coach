@@ -203,6 +203,47 @@
 
 ---
 
+## 5. COM-B Upsell — когда «не могу начать» повторяется (v1.3.0+)
+
+**Source:** Michie, S., van Stralen, M.M., West, R. (2011). The behaviour change wheel: A new method for characterising and designing behaviour change interventions. *Implementation Science*, 6(42). [DOI: 10.1186/1748-5908-6-42](https://doi.org/10.1186/1748-5908-6-42)
+
+### When to use
+Пользователь в Phase 0.5 / lean_conversation mode возвращается к одной и той же жалобе «знаю, что важно, но не делаю» — даже после ER protocol. ER снимает эмоциональный block (стресс, тревога, самокритика), но не диагностирует механизм бездействия. Если эмоция стихла, а «не делается» осталось — это сигнал к COM-B.
+
+### Why не в Phase 1
+Phase 1 диагностика — sphere-level («в *сфере X* не делаю»). Этот upsell — single-behavior level («одно конкретное действие не делается»). Routing одинаковый, но точка входа другая: для lean_conversation users без full_persistence Phase 1 не trigger'ится автоматически.
+
+### Protocol (1 шаг, 30 секунд)
+
+**Soft suggestion** (opt-in, после verbatim ER protocol):
+
+```
+«Слышу: эмоция стихла, но "не делается" остаётся. Это не про силу воли.
+Чаще ломается один из трёх элементов — навык, среда, или мотивация.
+
+Хочешь, разберём за 5 минут через короткую диагностику? Это даст конкретное
+направление — куда двигаться вместо общего "собраться".»
+```
+
+### Routing после accept
+Загрузи `references/com_b_diagnostic.md` (полный 9-вопрос protocol → primary gap → targeted intervention). См. там же §«Промпт patterns для skill» § Short trigger prompt — текст уже готов.
+
+### Decline handling
+- После **первого** decline («не сейчас», «давай позже») — не настаивай, отметь mentally
+- После **второго** decline в той же сессии — НЕ повторяй upsell в этой сессии
+- В следующей сессии (если повтор жалобы) — можно offer заново
+- Mirror pattern: `persistence_retry.drive.user_declined_count` (см. `state_v2_schema.md` §3.6)
+
+### Не путать с
+- **Phase 1 COM-B entry** (`module_phase1_diagnostic.md`) — после Wheel of Life, sphere-level
+- **Phase 3 escalation** (`module_phase3_weekly_review.md` Step 8) — gap ≥ 2 недели на той же priority
+- **Direct request** (Routing Map в `SKILL.master.md`) — пользователь сам спрашивает «как себя заставить»
+
+### Architecture note
+Этот upsell живёт в ER module (Tier 2), не в `SKILL.master.md` (Tier 1). Решение закрепляет v1.2.0 architecture decision: Phase 0 COM-B trigger удалён из master под Tier 1 budget pressure (см. CHANGELOG `## [1.2.0]` Architecture decisions). Discovery работает через Tier 2 routing: master → `emotion_regulation.md` § 5 → `com_b_diagnostic.md`.
+
+---
+
 ## Trigger Phrases (for SKILL.md description)
 
 Слова-сигналы, по которым скилл должен активировать ER Protocol:

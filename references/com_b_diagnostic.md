@@ -98,10 +98,12 @@ COM-B — **диагностический entry point**, не основной 
 
 | Phase | Триггер | Что делает |
 |-------|---------|------------|
-| **Phase 0** (master) | Сигнал «не могу начать», «знаю, что важно, но не делаю», «пытаюсь — не получается» в Emotional Landing | Soft suggestion: «Хочешь, разберём что именно мешает? Есть короткая 5-минутная диагностика». Opt-in, не блокирует flow. |
+| **Phase 0.5 ER upsell** (`emotion_regulation.md` § 5, v1.3.0+) | Повтор жалобы «знаю, что важно, но не делаю» / «не могу начать» **после** ER protocol (эмоция стихла, поведение нет). Особенно для lean_conversation users без full_persistence. | Soft suggestion: «Эмоция стихла, но "не делается" остаётся. Хочешь разберём за 5 минут через короткую диагностику?» Opt-in, after 2 declines в сессии — больше не повторяй. |
 | **Phase 1** (`module_phase1_diagnostic.md`) | После Wheel of Life: повторяющаяся жалоба «знаю, что в сфере X плохо — не делаю ничего» | Explicit opt-in: «Я могу помочь понять, почему именно "не делаю". Это COM-B диагностика, 3-5 минут». |
 | **Phase 3** (`module_phase3_weekly_review.md`) | Step 9 «Why? Three Whys» — если gap повторяется ≥ 2 недели на той же priority | Escalation: «Это не одноразовая проблема — давай разберём через COM-B». |
 | **Routing Map** (SKILL.master.md) | Прямой пользовательский запрос «не понимаю почему не делаю», «как себя заставить», «нет силы воли» | Direct entry в COM-B без обхода через phases. |
+
+> **v1.2.0 architecture note:** Phase 0 trigger в `SKILL.master.md` был удалён под Tier 1 budget pressure. ER upsell (v1.3.0) закрывает этот gap через Tier 2 routing — discovery работает без затрат master tokens. См. CHANGELOG `## [1.2.0]` Architecture decisions и `## [1.3.0]` для контекста.
 
 ---
 
