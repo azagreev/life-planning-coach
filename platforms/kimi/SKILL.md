@@ -1108,6 +1108,45 @@ on session_start:
 
 <!-- END INLINED REF: module_phase5_execution.md -->
 
+<!-- INLINED REF: premortem.md -->
+## 📄 premortem
+
+### Premortem (Klein) — выявление рисков через prospective hindsight
+#### Что это
+#### Evidence base
+##### Почему it works (механизм)
+1. **Снимает defense mechanism** — «если бы провалилось» psychologically безопаснее чем «как может провалиться» (не обвинение, а thought experiment).
+#### Когда применять (explicit gates)
+#### Протокол (5 шагов, 10–15 минут)
+##### Step 1 — Time travel framing (1 мин)
+##### Step 2 — Brainstorm 5 reasons (5 мин)
+##### Step 3 — Cluster reasons по категориям (2 мин)
+##### Step 4 — Mitigation через Implementation Intentions (5 мин) ⭐ critical
+- Risk: «забил после двух плохих недель»
+- Risk: «партнёр расстроится из-за времени на цель»
+- Risk: «scope раздуется на середине квартала»
+##### Step 5 — State writes + next review (1 мин)
+#### Промпт patterns для skill
+##### Trigger prompt (для OKR с confidence ≤ 6)
+##### Mitigation prompt (Step 4)
+##### Mid-quarter escalation prompt (Phase 3)
+#### Когда **не** использовать
+- **Daily WOOP / weekly priorities** — WOOP уже содержит obstacle/plan, Premortem дублирует. Overkill.
+- **Эмоциональный block / depressive state** — упражнение представления провала может ухудшить состояние. Сначала ER protocol (`emotion_regulation.md`). После — закрывай Premortem **Self-Compassion Break** ритуалом.
+- **Нет конкретной цели** — Premortem требует measurable target. Если цель в формате «хочу больше энергии» — сначала Phase 2 → SMART-ish formulation.
+- **Перфекционист с высокой тревожностью** — для них Premortem может стать новым источником ruminating. Используй upfront opt-in и short version (3 risks вместо 5).
+- **Цель уже завершена** — это postmortem, не premortem. Используй AAR (Phase 3 Weekly Review, шаги 8–11).
+#### State writes
+#### Cross-references
+- **`implementation_intentions.md`** §Coping plans — critical mitigation pattern (Step 4)
+- **`module_phase2_goal_architecture.md`** §3 12-Week Quarter — trigger по confidence ≤ 6
+- **`module_phase3_weekly_review.md`** — mid-quarter escalation trigger (after PR3 lean AAR)
+- **`emotion_regulation.md`** — Self-Compassion Break как closing ritual
+- **`evidence_map.md`** §Premortem — full evidence citation
+#### TL;DR
+
+<!-- END INLINED REF: premortem.md -->
+
 <!-- INLINED REF: weekly_review.md -->
 ## 📄 weekly_review
 
