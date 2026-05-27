@@ -271,7 +271,7 @@ on session_start:
 
 - **State / schema**: `state_v2_schema.md`, `templates/`
 - **Diagnostic**: `diagnostic_methods.md`, `authentic_goal_filter.md`, `weak_goal_taxonomy.md`, `com_b_diagnostic.md`
-- **Goal arch**: `goal_architecture.md`, `habit_loop.md`, `habit_stack_builder.md`, `action_breakdown_template.md`, `environment_design.md`
+- **Goal arch**: `goal_architecture.md`, `habit_loop.md`, `habit_stack_builder.md`, `action_breakdown_template.md`, `environment_design.md`, `premortem.md`
 - **Weekly review**: `weekly_review.md`, `win_alert.md`, `recovery_protocol.md`, `reward_audit.md`
 - **Dashboard**: `dashboard_guide.md`
 - **Calendar**: `calendar_constants.md`, `calendar_integration.md`, `energy_scheduling.md`, `workload_warning.md`, `calendar_pattern_analyzer.md`, `chronotype_native_planning.md`, `fresh_start_engine.md`, `shutdown_ritual.md`
@@ -1448,6 +1448,7 @@ L3 = страх / стыд / долг → цель введена извне.
 - 1–3 Objectives, каждый с 2–3 Key Results.
 - KR должны быть **измеримыми**: «прочитать 4 книги», «провести 12 сессий», «дойти до 80 кг».
 - Прогресс ≥ 70% к концу квартала = успех (не 100% — иначе цели слишком лёгкие).
+- **Premortem** при `confidence ≤ 6` / horizon ≥ 1y → `references/premortem.md`.
 ##### 4. Weekly Priorities — 3–5 в неделю
 - НЕ задачи, а **приоритеты** недели — на чём фокус.
 - Привязаны к KR из 12-Week.
@@ -1790,6 +1791,91 @@ Phase 4 в норме **не пишет** в state — только читает
 
 </details>
 <!-- END INLINED REF: module_phase5_execution.md -->
+
+<!-- INLINED REF: premortem.md -->
+<details>
+<summary>📄 premortem (полный протокол)</summary>
+
+### Premortem (Klein) — выявление рисков через prospective hindsight
+> **Tier:** 3 (lazy-load deep reference)
+> **Загружается:** Phase 2 для важных OKR (confidence ≤ 6 или horizon ≥ 1 год); explicit запрос «что может пойти не так»; mid-quarter check при stagnation.
+> **Связанные refs:** `implementation_intentions.md` §Coping plans (mitigation pattern), `module_phase2_goal_architecture.md` §Premortem Trigger, `evidence_map.md` §Premortem, `emotion_regulation.md` (closing self-compassion если упражнение давит эмоционально).
+---
+#### Что это
+**Premortem** — техника prospective hindsight: представь, что цель уже провалена, и объясни *почему*. Перевёрнутая логика postmortem: вместо разбора post-факта работаем с проекцией будущего. Это снимает блок «слепого оптимизма», который мешает увидеть реальные риски на этапе планирования.
+В отличие от обычного risk analysis («перечисли возможные риски»), Premortem использует **future-perfect frame**: «прошло 3 месяца, цель провалена — теперь объясни». Этот сдвиг времени снимает defensive thinking и достаёт причины, которые в обычном планировании остаются невидимыми.
+---
+#### Evidence base
+> **Источник:** Klein, G. (2007). Performing a Project Premortem. *Harvard Business Review*. [Статья](https://hbr.org/2007/09/performing-a-project-premortem)
+>
+> **Theoretical backing:** prospective hindsight literature (Mitchell, Russo & Pennington 1989) — представление события как уже случившегося повышает способность генерировать причины на **~30%** vs forward-looking планирование.
+>
+> **Что это значит на практике:** Premortem за 10–15 минут типично достаёт 2–4 риска, которые не появляются в обычной planning беседе. Эти риски не «новая информация» — пользователь их знал, но не озвучивал, потому что forward-frame активирует confirmation bias и optimism.
+##### Почему it works (механизм)
+1. **Снимает defense mechanism** — «если бы провалилось» psychologically безопаснее чем «как может провалиться» (не обвинение, а thought experiment).
+2. **Активирует concrete reasoning** — мозг описывает конкретный sequence событий, не abstract категории риска.
+3. **Generates mitigations naturally** — для каждой причины мозг сразу предлагает контр-меру (the next obvious thought).
+4. **Mitigation через Implementation Intentions** — каждый identified risk → coping plan в формате if-then. Это и есть критическая связка с уже существующим `implementation_intentions.md` §Coping plans.
+---
+#### Когда применять (explicit gates)
+Premortem — **не для каждой цели**. Это диагностика важных goals, иначе превращается в overhead. Запускай при выполнении хотя бы одного gate:
+**НЕ применять** для daily WOOP / weekly priorities — overkill. Эти уровни уже имеют obstacle/coping plan в WOOP-формате.
+---
+#### Протокол (5 шагов, 10–15 минут)
+Веди упражнение неспешно. Не сваливайся в «список рисков» — держи time-travel frame на всех 5 шагах.
+##### Step 1 — Time travel framing (1 мин)
+> «Закрой глаза на 10 секунд. Представь: прошло [3 месяца / 1 год — горизонт OKR]. Цель провалена. Не "почти получилось" — провалена. Что чувствуешь? Какой первый образ?»
+Зафиксируй reaction (эмоция + первый образ). Это якорь для упражнения — возвращайся к нему, если пользователь сваливается в abstract.
+##### Step 2 — Brainstorm 5 reasons (5 мин)
+> «Теперь объясни, *почему* провалилось. Минимум **5 причин**. Не цензурируй — чем "глупее" причина, тем ценнее. "Я просто забил" — это причина. "Заболел в январе" — это причина. "Партнёр расстроился и я съехал" — причина.»
+**Правило:** не меньше 5, лучше 7–8. Первые 2–3 — поверхностные. Реальные insights приходят на 4–6 причине, когда поверхностный список исчерпан.
+##### Step 3 — Cluster reasons по категориям (2 мин)
+Сгруппируй причины в 5 типов (это даёт structural picture):
+Distribution показывает где лежит главная уязвимость. Чисто Internal → COM-B Capability/Motivation. Чисто External → planning buffer / contingency. Motivation drift → re-check Phase 1.5 (authentic goal filter).
+##### Step 4 — Mitigation через Implementation Intentions (5 мин) ⭐ critical
+Возьми **top-3 risks** (самые вероятные × самые impact). Для каждой — coping plan в формате if-then. Это прямой переход в `implementation_intentions.md` §Coping plans.
+**Шаблон:**
+> «Если [precisely момент когда риск проявится], то я [конкретное действие — не "постараюсь", а исполняемое].»
+**Примеры:**
+- Risk: «забил после двух плохих недель»
+  → Coping plan: «Если пропущу 2 недели подряд, то открою premortem.md → Step 5 запись и переоценю scope.»
+- Risk: «партнёр расстроится из-за времени на цель»
+  → Coping plan: «Если партнёр озвучит недовольство, то я не защищаюсь — назначаю 30 мин разговор в течение 48 часов и пересматриваю partner_coordination.»
+- Risk: «scope раздуется на середине квартала»
+  → Coping plan: «Если в week 6 review я добавил > 1 нового KR — drop самый новый или пересмотри cycle.»
+**Каждая mitigation = одна записанная II.** Не «учту риски» — конкретный if-then.
+##### Step 5 — State writes + next review (1 мин)
+Зафиксируй Premortem в state (см. §State writes ниже). Назначь **next_review_date** — обычно середина OKR cycle (week 6 для 12-week). На этом review проверяем: realизовался ли какой risk, сработал ли coping plan.
+---
+#### Промпт patterns для skill
+##### Trigger prompt (для OKR с confidence ≤ 6)
+##### Mitigation prompt (Step 4)
+##### Mid-quarter escalation prompt (Phase 3)
+---
+#### Когда **не** использовать
+- **Daily WOOP / weekly priorities** — WOOP уже содержит obstacle/plan, Premortem дублирует. Overkill.
+- **Эмоциональный block / depressive state** — упражнение представления провала может ухудшить состояние. Сначала ER protocol (`emotion_regulation.md`). После — закрывай Premortem **Self-Compassion Break** ритуалом.
+- **Нет конкретной цели** — Premortem требует measurable target. Если цель в формате «хочу больше энергии» — сначала Phase 2 → SMART-ish formulation.
+- **Перфекционист с высокой тревожностью** — для них Premortem может стать новым источником ruminating. Используй upfront opt-in и short version (3 risks вместо 5).
+- **Цель уже завершена** — это postmortem, не premortem. Используй AAR (Phase 3 Weekly Review, шаги 8–11).
+---
+#### State writes
+В конце Premortem запиши:
+`goals.premortem_assessments[]`: append:
+См. `state_v2_schema.md` §3.5.1 (schema v2.2.3+) для full документации.
+---
+#### Cross-references
+- **`implementation_intentions.md`** §Coping plans — critical mitigation pattern (Step 4)
+- **`module_phase2_goal_architecture.md`** §3 12-Week Quarter — trigger по confidence ≤ 6
+- **`module_phase3_weekly_review.md`** — mid-quarter escalation trigger (after PR3 lean AAR)
+- **`emotion_regulation.md`** — Self-Compassion Break как closing ritual
+- **`evidence_map.md`** §Premortem — full evidence citation
+---
+#### TL;DR
+Premortem (Klein 2007) — 5-step упражнение через future-perfect frame: «прошло 3 мес., цель провалена — объясни». За 10–15 мин достаёт 2–4 риска, не появляющихся в обычном планировании. Mitigation = coping plans через `implementation_intentions.md`. Применять для важных OKR (confidence ≤ 6 / horizon ≥ 1y / partner_coord), не для daily WOOP. Closing self-compassion при эмоциональной нагрузке.
+
+</details>
+<!-- END INLINED REF: premortem.md -->
 
 <!-- INLINED REF: weekly_review.md -->
 <details>

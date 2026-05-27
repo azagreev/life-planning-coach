@@ -56,10 +56,11 @@ P0_REFS = [
     "dashboard_guide.md",
     "calendar_constants.md",
     # v1.2.0 — Evidence-based methods (PRD v0.15). Inlined для grok/kimi
-    # потому что 9-question COM-B протокол / 7 environment design практик
-    # должны быть доступны без lazy-load.
+    # потому что 9-question COM-B протокол / 7 environment design практик /
+    # 5-step Premortem должны быть доступны без lazy-load.
     "com_b_diagnostic.md",
     "environment_design.md",
+    "premortem.md",
 ]
 
 

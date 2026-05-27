@@ -271,7 +271,7 @@ on session_start:
 
 - **State / schema**: `state_v2_schema.md`, `templates/`
 - **Diagnostic**: `diagnostic_methods.md`, `authentic_goal_filter.md`, `weak_goal_taxonomy.md`, `com_b_diagnostic.md`
-- **Goal arch**: `goal_architecture.md`, `habit_loop.md`, `habit_stack_builder.md`, `action_breakdown_template.md`, `environment_design.md`
+- **Goal arch**: `goal_architecture.md`, `habit_loop.md`, `habit_stack_builder.md`, `action_breakdown_template.md`, `environment_design.md`, `premortem.md`
 - **Weekly review**: `weekly_review.md`, `win_alert.md`, `recovery_protocol.md`, `reward_audit.md`
 - **Dashboard**: `dashboard_guide.md`
 - **Calendar**: `calendar_constants.md`, `calendar_integration.md`, `energy_scheduling.md`, `workload_warning.md`, `calendar_pattern_analyzer.md`, `chronotype_native_planning.md`, `fresh_start_engine.md`, `shutdown_ritual.md`
@@ -922,6 +922,7 @@ on session_start:
 - 1–3 Objectives, каждый с 2–3 Key Results.
 - KR должны быть **измеримыми**: «прочитать 4 книги», «провести 12 сессий», «дойти до 80 кг».
 - Прогресс ≥ 70% к концу квартала = успех (не 100% — иначе цели слишком лёгкие).
+- **Premortem** при `confidence ≤ 6` / horizon ≥ 1y → `references/premortem.md`.
 ##### 4. Weekly Priorities — 3–5 в неделю
 - НЕ задачи, а **приоритеты** недели — на чём фокус.
 - Привязаны к KR из 12-Week.
@@ -1106,6 +1107,45 @@ on session_start:
 - **ВСЕГДА** связывай каждое событие с конкретным KR (`kr_link`) — иначе календарь превращается в задачник.
 
 <!-- END INLINED REF: module_phase5_execution.md -->
+
+<!-- INLINED REF: premortem.md -->
+## 📄 premortem
+
+### Premortem (Klein) — выявление рисков через prospective hindsight
+#### Что это
+#### Evidence base
+##### Почему it works (механизм)
+1. **Снимает defense mechanism** — «если бы провалилось» psychologically безопаснее чем «как может провалиться» (не обвинение, а thought experiment).
+#### Когда применять (explicit gates)
+#### Протокол (5 шагов, 10–15 минут)
+##### Step 1 — Time travel framing (1 мин)
+##### Step 2 — Brainstorm 5 reasons (5 мин)
+##### Step 3 — Cluster reasons по категориям (2 мин)
+##### Step 4 — Mitigation через Implementation Intentions (5 мин) ⭐ critical
+- Risk: «забил после двух плохих недель»
+- Risk: «партнёр расстроится из-за времени на цель»
+- Risk: «scope раздуется на середине квартала»
+##### Step 5 — State writes + next review (1 мин)
+#### Промпт patterns для skill
+##### Trigger prompt (для OKR с confidence ≤ 6)
+##### Mitigation prompt (Step 4)
+##### Mid-quarter escalation prompt (Phase 3)
+#### Когда **не** использовать
+- **Daily WOOP / weekly priorities** — WOOP уже содержит obstacle/plan, Premortem дублирует. Overkill.
+- **Эмоциональный block / depressive state** — упражнение представления провала может ухудшить состояние. Сначала ER protocol (`emotion_regulation.md`). После — закрывай Premortem **Self-Compassion Break** ритуалом.
+- **Нет конкретной цели** — Premortem требует measurable target. Если цель в формате «хочу больше энергии» — сначала Phase 2 → SMART-ish formulation.
+- **Перфекционист с высокой тревожностью** — для них Premortem может стать новым источником ruminating. Используй upfront opt-in и short version (3 risks вместо 5).
+- **Цель уже завершена** — это postmortem, не premortem. Используй AAR (Phase 3 Weekly Review, шаги 8–11).
+#### State writes
+#### Cross-references
+- **`implementation_intentions.md`** §Coping plans — critical mitigation pattern (Step 4)
+- **`module_phase2_goal_architecture.md`** §3 12-Week Quarter — trigger по confidence ≤ 6
+- **`module_phase3_weekly_review.md`** — mid-quarter escalation trigger (after PR3 lean AAR)
+- **`emotion_regulation.md`** — Self-Compassion Break как closing ritual
+- **`evidence_map.md`** §Premortem — full evidence citation
+#### TL;DR
+
+<!-- END INLINED REF: premortem.md -->
 
 <!-- INLINED REF: weekly_review.md -->
 ## 📄 weekly_review

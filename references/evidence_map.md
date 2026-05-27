@@ -48,9 +48,10 @@
 
 ### Premortem
 
-> **Evidence:** 🟡 Средний (academic). Theoretical base: cognitive bias literature on outcome reasoning.
+> **Evidence:** 🟡 Средний (academic). Theoretical base: cognitive bias literature on outcome reasoning + prospective hindsight (Mitchell, Russo & Pennington 1989).
 > **Source:** Klein, G. (2007). Performing a Project Premortem. *Harvard Business Review*. [Article](https://hbr.org/2007/09/performing-a-project-premortem)
-> **Status:** Planned для v1.2 (Phase 2 trigger для important goals).
+>
+> **Used in:** `premortem.md` (full deep ref), Phase 2 trigger для важных OKR (`confidence_score ≤ 6` / horizon ≥ 1y / `partner_coordination` block / explicit request / mid-quarter stagnation). Mitigation pipeline через `implementation_intentions.md` §Coping plans (top-3 risks → if-then plans). State persistence: `goals.premortem_assessments[]` (schema v2.2.3+).
 
 ---
 
