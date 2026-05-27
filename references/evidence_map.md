@@ -109,7 +109,7 @@
 ### Wheel of Life (life balance assessment)
 
 > **Evidence:** 🟠 Средний (practical). Coaching tool с decades of use. No strong academic RCTs.
-> **Used in:** Phase 1 diagnostic. v1.3 plan: frequency-gated к 1×/30 days.
+> **Used in:** Phase 1 diagnostic (`module_phase1_diagnostic.md` § WoL Frequency Gate), frequency-gated к 1×/30 days (PRD v0.15 §5). State: `diagnosis.wheel_of_life.last_assessed_at` (schema 2.2.5+, v1.3.0).
 
 ### Schwartz Values Theory
 

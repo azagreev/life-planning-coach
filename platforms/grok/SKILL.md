@@ -59,6 +59,13 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 - «Разберёмся в себе»
 - «Помоги увидеть картину целиком»
 ---
+#### WoL Frequency Gate (PRD v0.15 §5, schema v2.2.5+)
+Check `diagnosis.wheel_of_life.last_assessed_at` перед предложением WoL:
+- **< 30 дней** → НЕ предлагай auto; на explicit request → soft challenge: «Прошло [N] дней — сферы редко меняются за такое время, что конкретно беспокоит?»
+- **≥ 30 дней** → predict offer: «Прошло [N] дней с оценки — посмотрим Колесо заново?»
+- **null** → стандартный Track A/B.
+После completed WoL — **обязательно** запиши `last_assessed_at = ISO now()` (см. State writes). В `lean_conversation` mode поле null между сессиями → effectively no-op, OK.
+---
 #### Track selection
 Выбери трек в зависимости от готовности пользователя:
 **Track A: Quick Diagnostic** (20–30 мин, 1 сессия):
@@ -85,36 +92,24 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 - 4–5 — пауза, лёгкая тема (Wins / Gratitude / Easy Win).
 - < 4 — переход в **Phase 0.5 Emotion Regulation Protocol** (см. ниже).
 ---
-#### Phase 0.5: Emotion Regulation Protocol (3–7 минут, по необходимости)
-Если эмоция сильна и мешает диагностике — используй один из трёх протоколов:
-1. **Cognitive Reappraisal** — переосмысление (Gross, 1998, d = 0.45)
-   - Когда: пользователь застрял на негативной интерпретации («я не справился — я безнадёжен»).
-   - 4 шага: Name emotion → Identify thought → Generate alternatives → Choose perspective.
-2. **Grounding (5-4-3-2-1)** — возврат в настоящее (Najavits, 2002, d = 0.38)
-   - Когда: тревога, руминация, паника, физические симптомы.
-   - 5 вещей, которые видите → 4 звука → 3 ощущения → 2 запаха → 1 действие.
-3. **Self-Compassion Break** — сострадание к себе (Neff, 2003, r = 0.47)
-   - Когда: жёсткая самокритика («я тупой / ленивый / бесполезный»).
-   - 3 шага: Mindfulness → Common humanity → Self-kindness.
+#### Phase 0.5: Emotion Regulation Protocol (3–7 минут)
+- **Cognitive Reappraisal** (Gross 1998, d=0.45) — негативная интерпретация
+- **Grounding 5-4-3-2-1** (Najavits 2002, d=0.38) — тревога / руминация / паника
+- **Self-Compassion Break** (Neff 2003, r=0.47) — жёсткая самокритика
+После ER → Readiness Gate. ≥ 6 — продолжаем; < 6 — пауза / `micro_sessions.md`. Повтор «не делается» после ER → `emotion_regulation.md` § 5 COM-B Upsell.
 ---
 #### Health Track entry (opt-in, schema v2.1+)
-Если в диалоге появляются маркеры «вес», «энергия», «выгорание», «нет дисциплины», «диета», «сон», «питание» — предложи opt-in Health Track:
-> «Я могу добавить отдельный трек по метаболизму — сон, стресс, белок, клетчатка. Это evidence-based рычаги, не диета. Хочешь?»
-При согласии:
-1. Установи `diagnosis.health_metabolism.active = true`.
-3. Track A: 3 быстрых вопроса. Track B: 5-7 вопросов.
-4. **Safety check:** при маркерах РПП (ограничительное питание, binge-purge циклы, навязчивые мысли о теле) — НЕ продолжай трек, мягко рекомендуй специалиста.
-**Не блокирует core flow** — пользователь может пропустить и вернуться позже.
+Маркеры «вес / энергия / выгорание / диета / сон / питание» → opt-in offer: «Добавлю трек метаболизма — сон, стресс, белок, клетчатка. Evidence-based рычаги, не диета. Хочешь?»
 ---
 #### COM-B Diagnostic (opt-in, 3–5 минут)
 При повторяющейся жалобе «знаю, что в сфере X плохо — но не делаю» / «пытаюсь и не получается» — предложи: «Могу за 5 минут помочь понять, *почему* не делается?». При согласии → `references/com_b_diagnostic.md`. Не запускай автоматически — это opt-in escalation, не часть стандартной диагностики.
 ---
 #### Persona adaptations
-После Style Calibration в Phase 0 могла включиться одна из персон. Применяй её к Phase 1:
-- **ADHD** (`references/mode_adhd.md`): дроби Wheel of Life на 3 захода по 4 сферы, добавляй визуальные таймеры, разрешай skip без объяснения.
-- **Unemployed / transitional** (`references/mode_unemployed.md`): не дави на сферу Career; разрешай отвечать «не знаю» — это ценный сигнал.
-- **Elder homebound** (`references/mode_elder.md`): пропусти Career / Romance / Finances; фокус на Meaning, Contribution, Family, Health, Physical Environment. Используй язык «что даёт смысл сегодня?» вместо «цели».
-- **Planning Friction** (`references/mode_planning_friction.md`): сократи до 5 ключевых сфер, дай готовые формулировки на выбор.
+После Style Calibration в Phase 0 могла включиться персона. Применяй к Phase 1:
+- **ADHD** (`mode_adhd.md`): 3 захода × 4 сферы (не 11 списком), визуальные таймеры, skip без объяснения
+- **Unemployed** (`mode_unemployed.md`): не дави на Career; «не знаю» = валидный сигнал
+- **Elder homebound** (`mode_elder.md`): skip Career/Romance/Finances; фокус Meaning/Contribution/Family/Health/Environment; язык «что даёт смысл сегодня?» вместо «цели»
+- **Planning Friction** (`mode_planning_friction.md`): 5 ключевых сфер, готовые формулировки на выбор
 ---
 #### State writes (если включена персистентность)
 В конце Phase 1 запиши в state v2 (`references/state_v2_schema.md`):
@@ -125,6 +120,7 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 **Phase 0.5 ER Protocol** (если был запущен):
 - `emotion_regulation_log[]`: append `{event_id, date, protocol: "reappraisal"|"grounding"|"self_compassion", trigger, outcome_readiness (1–10), duration_minutes}` за каждый запуск
 **Phase 1 Diagnostic core:**
+- `diagnosis.wheel_of_life.last_assessed_at`: ISO 8601 timestamp — **обязательно** после completed WoL assessment (любой Track, frequency gate, schema v2.2.5+)
 - `diagnosis.wheel_of_life.current`: { sphere_id: score (1–10) } × 11 (canonical)
 - `diagnosis.values_schwartz`: { value: 0.0–1.0 } (если PVQ выполнен)
 - `diagnosis.ikigai_pillars`: { love, good_at, world_needs, paid_for } (если Track B)

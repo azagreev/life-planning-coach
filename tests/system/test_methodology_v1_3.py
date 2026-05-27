@@ -170,3 +170,184 @@ class TestCOMBUpsell:
         """
         lines = er_content.splitlines()
         assert len(lines) <= 350, f"emotion_regulation.md too long: {len(lines)} lines (max 350)"
+
+
+class TestWoLFrequencyGate:
+    """PR-A: WoL frequency gate в Phase 1 module + schema 2.2.5."""
+
+    @pytest.fixture(scope="class")
+    def phase1_content(self):
+        path = REFERENCES / "module_phase1_diagnostic.md"
+        assert path.exists(), f"Missing {path}"
+        return path.read_text(encoding="utf-8")
+
+    @pytest.fixture(scope="class")
+    def schema_content(self):
+        path = REFERENCES / "state_v2_schema.md"
+        return path.read_text(encoding="utf-8")
+
+    @pytest.fixture(scope="class")
+    def evidence_map_content(self):
+        path = REFERENCES / "evidence_map.md"
+        return path.read_text(encoding="utf-8")
+
+    def test_phase1_has_wol_frequency_gate_section(self, phase1_content):
+        """Phase 1 module должен содержать `## WoL Frequency Gate` heading."""
+        assert "## WoL Frequency Gate" in phase1_content, (
+            "module_phase1_diagnostic.md must have '## WoL Frequency Gate' section "
+            "(v1.3.0 PR-A). PRD v0.15 §5."
+        )
+
+    def test_phase1_wol_gate_three_branches(self, phase1_content):
+        """Gate должен покрывать все 3 ветки: < 30d, ≥ 30d, null."""
+        # Find section
+        idx = phase1_content.find("## WoL Frequency Gate")
+        assert idx != -1
+        next_h = phase1_content.find("\n## ", idx + 1)
+        section = phase1_content[idx:next_h] if next_h != -1 else phase1_content[idx:]
+        lower = section.lower()
+
+        assert "30 дней" in lower or "30 days" in lower, "Must mention 30-day threshold"
+        assert "< 30" in section or "&lt; 30" in section, "Missing < 30 days branch"
+        assert "≥ 30" in section or ">= 30" in section, "Missing ≥ 30 days branch"
+        assert "null" in lower, "Missing null (never assessed) branch"
+
+    def test_phase1_wol_gate_mentions_last_assessed_at(self, phase1_content):
+        """Gate должен reference field `last_assessed_at` для check."""
+        assert "last_assessed_at" in phase1_content, (
+            "WoL gate must check diagnosis.wheel_of_life.last_assessed_at field"
+        )
+
+    def test_phase1_state_write_includes_last_assessed_at(self, phase1_content):
+        """State writes секция должна require write `last_assessed_at` after completion."""
+        # Find State writes section
+        idx = phase1_content.find("## State writes")
+        assert idx != -1, "State writes section missing"
+        state_section = phase1_content[idx:]
+
+        assert "last_assessed_at" in state_section, (
+            "State writes должна include обязательный write `last_assessed_at` после WoL completion"
+        )
+        assert "обязательно" in state_section.lower(), (
+            "Write trigger должна быть marked как обязательная"
+        )
+
+    def test_phase1_under_token_budget(self, phase1_content):
+        """Regression guard: Phase 1 module ≤ 2500 tokens (chars/3 estimate)."""
+        approx_tokens = len(phase1_content) // 3
+        assert approx_tokens <= 2500, (
+            f"module_phase1_diagnostic.md = {approx_tokens} tokens > 2500 limit. "
+            f"Trim verbose sections or move detail к state_v2_schema.md / external refs."
+        )
+
+    def test_evidence_map_wol_entry_updated(self, evidence_map_content):
+        """evidence_map.md WoL entry должен mention frequency gate implementation, не v1.3 plan."""
+        # Find WoL entry
+        idx = evidence_map_content.find("### Wheel of Life")
+        assert idx != -1, "Wheel of Life entry missing в evidence_map.md"
+        entry = evidence_map_content[idx:idx + 500]
+
+        assert "v1.3 plan" not in entry, (
+            "WoL entry все еще говорит 'v1.3 plan' — после ship должен говорить о реализации"
+        )
+        assert "last_assessed_at" in entry, (
+            "WoL entry должна mention `last_assessed_at` field (schema 2.2.5)"
+        )
+        assert "2.2.5" in entry, "Must reference schema 2.2.5"
+
+    def test_phase1_no_forbidden_words_in_wol_gate(self, phase1_content):
+        """Forbidden words check scoped к WoL Frequency Gate section."""
+        idx = phase1_content.find("## WoL Frequency Gate")
+        assert idx != -1
+        next_h = phase1_content.find("\n## ", idx + 1)
+        section = phase1_content[idx:next_h] if next_h != -1 else phase1_content[idx:]
+
+        forbidden = ["надо", "должен", "обязан"]
+        stripped = _strip_quoted(section).lower()
+        # «обязательно» в State writes context допустимо как marker для skill —
+        # whitelist его (содержит «обязан» substring но другой смысл).
+        # Используем substring check excluding «обязательно»:
+        for word in forbidden:
+            if word == "обязан":
+                # Allow «обязательно» (modifier для write trigger)
+                lines = [l for l in stripped.splitlines() if word in l and "обязательно" not in l]
+                assert not lines, f"Forbidden '{word}' (not 'обязательно') в WoL gate: {lines}"
+            else:
+                assert word not in stripped, f"Forbidden '{word}' в WoL gate"
+
+
+class TestSchemaWoLField:
+    """PR-A: schema 2.2.4 → 2.2.5 (additive bump, last_assessed_at field)."""
+
+    @pytest.fixture(scope="class")
+    def content(self):
+        path = REFERENCES / "state_v2_schema.md"
+        return path.read_text(encoding="utf-8")
+
+    def test_schema_version_bumped_to_2_2_5(self, content):
+        """`schema_version` в JSON literal должен быть 2.2.5."""
+        assert '"schema_version": "2.2.5"' in content, (
+            "JSON schema literal must say schema_version: 2.2.5"
+        )
+
+    def test_header_version_2_2_5(self, content):
+        """Header `Версия схемы` должна показывать 2.2.5."""
+        assert "**Версия схемы:** `2.2.5`" in content, (
+            "Header line должна show Версия схемы: 2.2.5"
+        )
+
+    def test_last_assessed_at_field_in_json_schema(self, content):
+        """JSON schema должна include last_assessed_at field в wheel_of_life block."""
+        # wheel_of_life block должен содержать last_assessed_at
+        wol_idx = content.find('"wheel_of_life": {')
+        assert wol_idx != -1
+        # Next 500 chars должны иметь last_assessed_at
+        wol_block = content[wol_idx:wol_idx + 500]
+        assert "last_assessed_at" in wol_block, (
+            "wheel_of_life block в JSON schema must include last_assessed_at field"
+        )
+
+    def test_3_4_4_section_documented(self, content):
+        """Должна быть §3.4.4 doc для last_assessed_at field."""
+        assert "### 3.4.4 diagnosis.wheel_of_life.last_assessed_at" in content, (
+            "Missing §3.4.4 documentation for last_assessed_at field"
+        )
+
+    def test_additive_bump_2_2_4_to_2_2_5_documented(self, content):
+        """§4.1 Additive bumps должна mention `2.2.4 → 2.2.5` transition."""
+        assert "2.2.4 → 2.2.5" in content, (
+            "Missing §4.1 entry для 2.2.4 → 2.2.5 bump"
+        )
+
+    def test_field_matrix_includes_last_assessed_at(self, content):
+        """§9 Field availability matrix должна include row для last_assessed_at."""
+        idx = content.find("## 9. Field availability matrix")
+        assert idx != -1
+        # Slice до next ## header (or end of file)
+        next_h = content.find("\n## ", idx + 1)
+        matrix_section = content[idx:next_h] if next_h != -1 else content[idx:]
+        assert "diagnosis.wheel_of_life.last_assessed_at" in matrix_section, (
+            "§9 field matrix должна have row для last_assessed_at"
+        )
+        assert "2.2.5" in matrix_section, "Matrix row должен mention schema 2.2.5"
+
+    def test_changelog_2_2_5_entry_exists(self, content):
+        """§12 Changelog должна have 2.2.5 entry с PRD reference."""
+        idx = content.find("## 12. Changelog схемы")
+        assert idx != -1
+        cl_section = content[idx:]
+        assert "**2.2.5**" in cl_section, "Missing 2.2.5 changelog entry"
+        # Section должна быть FIRST (newest first ordering)
+        first_entry_pos = cl_section.find("**2.")
+        first_2_5 = cl_section.find("**2.2.5**")
+        assert first_2_5 == first_entry_pos, (
+            "2.2.5 entry must be FIRST (newest first ordering)"
+        )
+
+    def test_changelog_2_2_4_entry_still_present(self, content):
+        """Regression guard: history-preserving bumps."""
+        idx = content.find("## 12. Changelog схемы")
+        cl_section = content[idx:] if idx != -1 else ""
+        assert "**2.2.4**" in cl_section, "v2.2.4 changelog entry должна remain"
+        assert "**2.2.3**" in cl_section, "v2.2.3 changelog entry должна remain"
+        assert "**2.2.2**" in cl_section, "v2.2.2 changelog entry должна remain"
