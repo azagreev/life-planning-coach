@@ -9,25 +9,44 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          # Full history + tags for test_version_consistency.py (git describe --tags)
+          # and test_github_sync.py (git rev-list origin/main..main).
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Ensure local main ref exists
+        # test_github_sync.py runs `git rev-parse main` — on PR/feature checkouts
+        # there's no local main branch, so create one tracking origin/main.
+        run: |
+          git fetch origin main --tags --force
+          git branch -f main origin/main 2>/dev/null || true
 
       - name: Install dependencies
         run: |
           pip install pytest
 
+      - name: Build artifacts
+        # MUST run before tests — test_skill_package.py validates dist/ outputs.
+        # Executable bit for build-skill.{sh,py} is stored in the git index
+        # (this commit also sets mode 100755), so no chmod needed in CI.
+        run: bash scripts/build-skill.sh
+
       - name: Run all tests
         run: python3 -m pytest tests/ -q --tb=short
 
-      - name: Build artifacts
-        run: bash scripts/build-skill.sh
-
       - name: Verify artifacts
+        # Use `find` instead of `test -f <glob>` — the *.zip glob expands to
+        # both life-planning-coach-v*.zip and life-planning-coach-v*-kimi-cli.zip,
+        # which breaks `test -f` (binary operator expected on >1 arg).
         run: |
           ls -la dist/
-          test -f dist/life-planning-coach-*.zip
-          test -f dist/life-planning-coach-*.skill
-          test -f dist/life-planning-coach-*-grok.md
-          test -f dist/life-planning-coach-*-kimi.md
-          test -f dist/life-planning-coach-*-kimi-cli.zip
+          set -e
+          find dist -maxdepth 1 -name 'life-planning-coach-v*.zip' -not -name '*-kimi-cli.zip' | grep -q . || { echo "Missing main ZIP"; exit 1; }
+          find dist -maxdepth 1 -name 'life-planning-coach-v*.skill' | grep -q . || { echo "Missing .skill"; exit 1; }
+          find dist -maxdepth 1 -name 'life-planning-coach-v*-grok.md' | grep -q . || { echo "Missing grok.md"; exit 1; }
+          find dist -maxdepth 1 -name 'life-planning-coach-v*-kimi.md' | grep -q . || { echo "Missing kimi.md"; exit 1; }
+          find dist -maxdepth 1 -name 'life-planning-coach-v*-kimi-cli.zip' | grep -q . || { echo "Missing kimi-cli.zip"; exit 1; }
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
