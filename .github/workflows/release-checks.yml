@@ -36,13 +36,17 @@ jobs:
         run: python3 -m pytest tests/ -q --tb=short
 
       - name: Verify artifacts
+        # Use `find` instead of `test -f <glob>` — the *.zip glob expands to
+        # both life-planning-coach-v*.zip and life-planning-coach-v*-kimi-cli.zip,
+        # which breaks `test -f` (binary operator expected on >1 arg).
         run: |
           ls -la dist/
-          test -f dist/life-planning-coach-*.zip
-          test -f dist/life-planning-coach-*.skill
-          test -f dist/life-planning-coach-*-grok.md
-          test -f dist/life-planning-coach-*-kimi.md
-          test -f dist/life-planning-coach-*-kimi-cli.zip
+          set -e
+          find dist -maxdepth 1 -name 'life-planning-coach-v*.zip' -not -name '*-kimi-cli.zip' | grep -q . || { echo "Missing main ZIP"; exit 1; }
+          find dist -maxdepth 1 -name 'life-planning-coach-v*.skill' | grep -q . || { echo "Missing .skill"; exit 1; }
+          find dist -maxdepth 1 -name 'life-planning-coach-v*-grok.md' | grep -q . || { echo "Missing grok.md"; exit 1; }
+          find dist -maxdepth 1 -name 'life-planning-coach-v*-kimi.md' | grep -q . || { echo "Missing kimi.md"; exit 1; }
+          find dist -maxdepth 1 -name 'life-planning-coach-v*-kimi-cli.zip' | grep -q . || { echo "Missing kimi-cli.zip"; exit 1; }
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
