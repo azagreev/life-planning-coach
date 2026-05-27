@@ -106,6 +106,11 @@
 >
 > **Used in:** `com_b_diagnostic.md` (full deep ref), Phase 0 / Phase 1 opt-in diagnostic, Phase 3 Weekly Review escalation. Routing к targeted interventions: Capability → `habit_loop.md` §1 Tiny Habits + `action_breakdown_template.md`; Opportunity → `environment_design.md`; Motivation → `module_phase2_goal_architecture.md` §Layer 5 WOOP + `module_phase1_5_goal_filter.md` Compass Mode.
 
+### After Action Review — Runtime pattern (v1.3.0)
+
+> **Source:** US Army TC 25-20 (1993) — original AAR doctrine.
+> **Used in:** `module_phase3_weekly_review.md` Step 9 Lessons Learned (v1.3.0). Pattern matching через skill-instruction (NOT Python algorithm): при write нового lesson skill loads last 4 weekly_reviews, оценивает semantic similarity (same `category` + общая тема) с previous lessons, increments `sighted_count` существующего OR appends new с `sighted_count: 1`. Surface threshold `sighted_count ≥ 3` → quarterly OKR / Habits / Environment adjustment via Phase 2 или Phase 1.5. Schema 2.2.4+, см. `state_v2_schema.md` §3.5.2.
+
 ### Wheel of Life (life balance assessment)
 
 > **Evidence:** 🟠 Средний (practical). Coaching tool с decades of use. No strong academic RCTs.
