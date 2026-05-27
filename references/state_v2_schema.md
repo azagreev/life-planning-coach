@@ -603,9 +603,9 @@ AAR Gap Analysis (Step 8) и Lessons Learned (Step 9) из `module_phase3_weekly
 
 | Поле lessons_learned[] | Описание |
 |---|---|
-| `lesson` | Конкретный insight |
+| `lesson` | Конкретный insight (≤ 1 предложение, action-oriented) |
 | `category` | `"planning"` / `"habits"` / `"energy"` / `"environment"` / etc. (free-text) |
-| `sighted_count` | Инкремент при повторе |
+| `sighted_count` | Инкремент при semantic match с previous lesson (same category + общая тема: «time blocking», «morning routine», «recovery») в last 4 weekly_reviews. Иначе append с `sighted_count: 1`. Surface threshold ≥ 3 → quarterly OKR adjustment. Pattern-matching protocol — `module_phase3_weekly_review.md` Step 9 (v1.3.0+, runtime skill-instruction, не Python algorithm). |
 
 ### 3.5.1 goals.premortem_assessments (v2.2.3+, opt-in)
 

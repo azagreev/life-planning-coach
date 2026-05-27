@@ -351,3 +351,154 @@ class TestSchemaWoLField:
         assert "**2.2.4**" in cl_section, "v2.2.4 changelog entry должна remain"
         assert "**2.2.3**" in cl_section, "v2.2.3 changelog entry должна remain"
         assert "**2.2.2**" in cl_section, "v2.2.2 changelog entry должна remain"
+
+
+class TestAARSightedCountRuntime:
+    """PR-B: AAR sighted_count runtime pattern matching в Phase 3 Step 9.
+
+    Закрывает v1.2 follow-up: без runtime instruction Step 9 был simple journal,
+    surface threshold (sighted_count ≥ 3) никогда не triggered. См. ROADMAP.md
+    «v1.3.0 → AAR sighted_count runtime pattern matching» (RICE 120).
+    """
+
+    @pytest.fixture(scope="class")
+    def phase3_content(self):
+        path = REFERENCES / "module_phase3_weekly_review.md"
+        return path.read_text(encoding="utf-8")
+
+    @pytest.fixture(scope="class")
+    def schema_content(self):
+        path = REFERENCES / "state_v2_schema.md"
+        return path.read_text(encoding="utf-8")
+
+    @pytest.fixture(scope="class")
+    def evidence_map_content(self):
+        path = REFERENCES / "evidence_map.md"
+        return path.read_text(encoding="utf-8")
+
+    def test_step_9_has_pattern_matching_instruction(self, phase3_content):
+        """Step 9 должен содержать explicit pattern-match protocol."""
+        # Find Step 9
+        idx = phase3_content.find("### 9. Lessons Learned")
+        assert idx != -1
+        next_h = phase3_content.find("\n## ", idx + 1)
+        step9 = phase3_content[idx:next_h] if next_h != -1 else phase3_content[idx:]
+        lower = step9.lower()
+
+        assert "pattern-match" in lower or "pattern match" in lower, (
+            "Step 9 must explicitly document pattern-matching instruction"
+        )
+        assert "last 4 weekly_reviews" in lower or "weekly_reviews[]" in lower, (
+            "Step 9 must reference weekly_reviews historical data window"
+        )
+        assert "semantic similarity" in lower or "общая тема" in lower, (
+            "Step 9 must mention semantic similarity criteria"
+        )
+
+    def test_step_9_increment_vs_append_logic(self, phase3_content):
+        """Both 'increment existing' и 'append new' branches должны быть documented."""
+        idx = phase3_content.find("### 9. Lessons Learned")
+        assert idx != -1
+        next_h = phase3_content.find("\n## ", idx + 1)
+        step9 = phase3_content[idx:next_h] if next_h != -1 else phase3_content[idx:]
+        lower = step9.lower()
+
+        assert "increment" in lower, "Step 9 must document increment branch (match found)"
+        assert "append" in lower, "Step 9 must document append branch (no match)"
+        assert "sighted_count" in step9, "Step 9 must reference sighted_count field"
+
+    def test_step_9_has_surface_threshold_prompt(self, phase3_content):
+        """Surface prompt template для sighted_count ≥ 3 должен присутствовать."""
+        idx = phase3_content.find("### 9. Lessons Learned")
+        assert idx != -1
+        next_h = phase3_content.find("\n## ", idx + 1)
+        step9 = phase3_content[idx:next_h] if next_h != -1 else phase3_content[idx:]
+        lower = step9.lower()
+
+        assert "≥ 3" in step9 or ">= 3" in step9, "Surface threshold ≥ 3 must be explicit"
+        assert "третий раз" in lower or "третья неделя" in lower or "третий" in lower, (
+            "Surface prompt template должен mention 'третий раз' / pattern recognition"
+        )
+        assert "системный" in lower or "паттерн" in lower, (
+            "Prompt должен frame insight как 'системный pattern' / 'паттерн'"
+        )
+
+    def test_step_9_routes_to_phase_2_or_phase_1_5(self, phase3_content):
+        """Accept → routing к Phase 2 (OKR) или Phase 1.5 (Compass)."""
+        idx = phase3_content.find("### 9. Lessons Learned")
+        assert idx != -1
+        next_h = phase3_content.find("\n## ", idx + 1)
+        step9 = phase3_content[idx:next_h] if next_h != -1 else phase3_content[idx:]
+        lower = step9.lower()
+
+        assert "phase 2" in lower or "okr" in lower, (
+            "Routing к Phase 2 (OKR recalibration) должна быть mentioned"
+        )
+        assert "phase 1.5" in lower or "compass" in lower, (
+            "Routing к Phase 1.5 Compass должна быть mentioned"
+        )
+
+    def test_step_9_handles_lt_4_reviews_edge_case(self, phase3_content):
+        """Если < 4 weekly_reviews — gate inactive (just append)."""
+        idx = phase3_content.find("### 9. Lessons Learned")
+        assert idx != -1
+        next_h = phase3_content.find("\n## ", idx + 1)
+        step9 = phase3_content[idx:next_h] if next_h != -1 else phase3_content[idx:]
+        lower = step9.lower()
+
+        assert "< 4" in step9 or "gate inactive" in lower or "just append" in lower, (
+            "Step 9 must explicitly handle edge case: reviews count < 4 → no pattern match"
+        )
+
+    def test_phase3_under_token_budget(self, phase3_content):
+        """Regression guard: Phase 3 module ≤ 2500 tokens."""
+        approx_tokens = len(phase3_content) // 3
+        assert approx_tokens <= 2500, (
+            f"module_phase3_weekly_review.md = {approx_tokens} tokens > 2500 limit. "
+            f"Trim verbose sections (state writes per AGENTS §3.6, etc.)."
+        )
+
+    def test_schema_clarifies_sighted_count_semantics(self, schema_content):
+        """state_v2_schema.md §3.5.2 должна clarify sighted_count semantics."""
+        # Find §3.5.2 section
+        idx = schema_content.find("### 3.5.2 weekly_reviews[].gap_analysis + lessons_learned")
+        assert idx != -1, "§3.5.2 section должна exist"
+        next_h = schema_content.find("\n### ", idx + 1)
+        section = schema_content[idx:next_h] if next_h != -1 else schema_content[idx:idx + 2500]
+
+        assert "sighted_count" in section, "§3.5.2 must mention sighted_count"
+        assert ("semantic match" in section.lower() or "семантич" in section.lower()), (
+            "§3.5.2 sighted_count row must clarify 'semantic match' semantics (NOT just 'инкремент')"
+        )
+        assert ("last 4" in section.lower() or "4 weekly" in section.lower()), (
+            "§3.5.2 must specify 'last 4 weekly_reviews' window"
+        )
+
+    def test_evidence_map_aar_runtime_pattern_entry(self, evidence_map_content):
+        """evidence_map.md должен have entry для AAR Runtime pattern (v1.3.0)."""
+        assert "After Action Review" in evidence_map_content, (
+            "evidence_map.md must have After Action Review entry"
+        )
+        assert "Runtime pattern" in evidence_map_content or "runtime pattern" in evidence_map_content.lower(), (
+            "evidence_map.md must mention 'Runtime pattern' (v1.3.0 PR-B addition)"
+        )
+        # Should mention skill-instruction (NOT code/algorithm)
+        assert ("skill-instruction" in evidence_map_content.lower() or
+                "skill instruction" in evidence_map_content.lower() or
+                "NOT python" in evidence_map_content or
+                "не python" in evidence_map_content.lower() or
+                "not python" in evidence_map_content.lower()), (
+            "evidence_map.md должен document что pattern matching = skill-instruction, не algorithm"
+        )
+
+    def test_no_forbidden_words_in_step_9(self, phase3_content):
+        """Forbidden words check scoped к Step 9."""
+        idx = phase3_content.find("### 9. Lessons Learned")
+        assert idx != -1
+        next_h = phase3_content.find("\n## ", idx + 1)
+        step9 = phase3_content[idx:next_h] if next_h != -1 else phase3_content[idx:]
+
+        forbidden = ["надо", "должен", "обязан"]
+        stripped = _strip_quoted(step9).lower()
+        for word in forbidden:
+            assert word not in stripped, f"Forbidden '{word}' в Step 9 outside quotes"

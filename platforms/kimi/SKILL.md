@@ -1029,6 +1029,7 @@ on session_start:
 ##### 7. Reward Audit (опционально, при прокрастинации)
 ##### 8. Gap Analysis (AAR «Why?», опц.)
 ##### 9. Lessons Learned (AAR, 2 мин)
+1. Load `weekly_reviews[]` (last 4) из state.
 #### Output: Next Week Plan
 #### Persona adaptations
 - **ADHD** (`references/mode_adhd.md`): **Micro-Review** — 3 вопроса вместо 9 шагов, 15 минут, визуальный формат (таблица или эмодзи-чек). Никаких free-form reflection. AAR 8–9 — skip.
@@ -1036,15 +1037,13 @@ on session_start:
 - **Elder homebound** (`references/mode_elder.md`): **Micro-Check-In** — 3 вопроса, 5 минут. Никакого Wheel of Life с Career/Finance/Romance. Якори дня и память важнее KR.
 - **Planning Friction** (`references/mode_planning_friction.md`): templated Sunday Review — фиксированный набор 4 вопросов, без open-ended reflection.
 #### State writes
-- `weekly_reviews[]`: append `{review_id, date, format: "gtd_scrum", gtd: {get_clear[], get_current[], get_creative[]}, scrum_retro: {worked[], didnt_work[], changes[]}, lead_measures: {sphere_id: value}, lag_measures: {sphere_id: value}, execution_score (0–10), adjustments[]}`
-- `wins_log[]`: append `{win_id, date, description, goal_id (если связан), sphere_id, category: "milestone"|"first"|"streak"|"breakthrough", celebrated_via: "win_alert"|"weekly_review"}` — за каждую отмеченную победу
-- `habits[habit_id].status`: `"on_track"|"at_risk"|"off_track"` (после Habit Review шаг 6)
-- `habits[habit_id].current_streak` / `best_streak`: обновить
-- `habits[habit_id].last_completed`: ISO timestamp
-- `reward_audit_results[]`: append `{audit_id, date, cheap_dopamine_sources: [{source, frequency_per_day, awareness_level}], high_friction_sources[], grayscale_commitment: null|"tried"|"adopted", next_check_date}` — только если шаг 7 выполнен
-- `goals.weekly_priorities[]`: replace (новая неделя) `[{priority_id, title, sphere_id, completed: false, week_number}]` (max 3–5)
-- `session.completed_phases`: append `"3"`
-- `session.last_session_at`: ISO timestamp
+- `weekly_reviews[]` (§3.5): append review record (GTD + Scrum + lead/lag + execution_score + adjustments)
+- `weekly_reviews[].gap_analysis[]` + `lessons_learned[]` (§3.5.2): Steps 8–9, **Step 9 pattern-match увеличивает `sighted_count` существующего lesson** если semantic match с last 4 reviews; иначе append с `sighted_count: 1`
+- `wins_log[]` (§3.7): append min 1 win per session — **обязательно** (Step 5 Celebration)
+- `habits[].status` (§3.6): update on_track / at_risk / off_track + streaks (Step 6)
+- `reward_audit_results[]`: append если Step 7 выполнен
+- `goals.weekly_priorities[]`: replace новой неделей (max 3–5, Next Week Plan)
+- `session.completed_phases`: append `"3"`; `session.last_session_at`: ISO
 #### Common exit transitions
 - **Phase 5 (Execution)** — занеси Next Week Plan в календарь → `references/module_phase5_execution.md`
 - **Phase 4 (Dashboard)** — пользователь хочет визуальный обзор прогресса → `references/module_phase4_dashboard.md`

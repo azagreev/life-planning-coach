@@ -82,7 +82,18 @@
 Skip при `execution_score ≥ 70%`. Top-1–2 gap → Three Whys + категория (internal/external/both). Повтор ≥ 2 недели → COM-B (`references/com_b_diagnostic.md`).
 
 ### 9. Lessons Learned (AAR, 2 мин)
-1 lesson → `weekly_reviews[].lessons_learned[]`. Surface при `sighted_count ≥ 3`. Schema v2.2.4+, см. `state_v2_schema.md`.
+
+Сформулируй 1 lesson (≤ 1 предложение, action-oriented). Перед append:
+
+**Pattern-match с last 4 weekly_reviews:**
+1. Load `weekly_reviews[]` (last 4) из state.
+2. Для каждого previous lesson — semantic similarity (same `category` + общая тема: «time blocking», «morning routine», «recovery»).
+3. Match → **increment** `sighted_count` existing; иначе append с `sighted_count: 1`. Если reviews < 4 — just append (gate inactive).
+
+**Surface при `sighted_count ≥ 3`** — это паттерн, не разовое:
+> «Это третий раз с похожим инсайтом ([lesson цитата]). Похоже на системный pattern — добавить явно как adjustment к 12-Week OKR / Habits / Environment Design?»
+
+Accept → route в Phase 2 (OKR confidence recalibration) или Phase 1.5 (Compass для values alignment). Schema v2.2.4+, см. `state_v2_schema.md` §3.5.2.
 
 ---
 
@@ -111,30 +122,17 @@ Skip при `execution_score ≥ 70%`. Top-1–2 gap → Three Whys + катег
 
 ## State writes
 
-В конце Phase 3 запиши в state v2 (`references/state_v2_schema.md`):
+Полные schema details — в `state_v2_schema.md` (per AGENTS §3.6 budget policy). Краткий map:
 
-**Weekly review record:**
-- `weekly_reviews[]`: append `{review_id, date, format: "gtd_scrum", gtd: {get_clear[], get_current[], get_creative[]}, scrum_retro: {worked[], didnt_work[], changes[]}, lead_measures: {sphere_id: value}, lag_measures: {sphere_id: value}, execution_score (0–10), adjustments[]}`
+- `weekly_reviews[]` (§3.5): append review record (GTD + Scrum + lead/lag + execution_score + adjustments)
+- `weekly_reviews[].gap_analysis[]` + `lessons_learned[]` (§3.5.2): Steps 8–9, **Step 9 pattern-match увеличивает `sighted_count` существующего lesson** если semantic match с last 4 reviews; иначе append с `sighted_count: 1`
+- `wins_log[]` (§3.7): append min 1 win per session — **обязательно** (Step 5 Celebration)
+- `habits[].status` (§3.6): update on_track / at_risk / off_track + streaks (Step 6)
+- `reward_audit_results[]`: append если Step 7 выполнен
+- `goals.weekly_priorities[]`: replace новой неделей (max 3–5, Next Week Plan)
+- `session.completed_phases`: append `"3"`; `session.last_session_at`: ISO
 
-**Wins (first-class, шаг 5 Celebration — обязательно min 1 запись):**
-- `wins_log[]`: append `{win_id, date, description, goal_id (если связан), sphere_id, category: "milestone"|"first"|"streak"|"breakthrough", celebrated_via: "win_alert"|"weekly_review"}` — за каждую отмеченную победу
-
-**Habits status update:**
-- `habits[habit_id].status`: `"on_track"|"at_risk"|"off_track"` (после Habit Review шаг 6)
-- `habits[habit_id].current_streak` / `best_streak`: обновить
-- `habits[habit_id].last_completed`: ISO timestamp
-
-**Reward Audit (шаг 7, опционально при прокрастинации):**
-- `reward_audit_results[]`: append `{audit_id, date, cheap_dopamine_sources: [{source, frequency_per_day, awareness_level}], high_friction_sources[], grayscale_commitment: null|"tried"|"adopted", next_check_date}` — только если шаг 7 выполнен
-
-**Next Week Plan:**
-- `goals.weekly_priorities[]`: replace (новая неделя) `[{priority_id, title, sphere_id, completed: false, week_number}]` (max 3–5)
-
-**Session:**
-- `session.completed_phases`: append `"3"`
-- `session.last_session_at`: ISO timestamp
-
-Запись через `references/templates/USER_PROGRESS_JOURNAL.md` (review record + reward_audit category) и `references/templates/Goals.md` (секция «Победы» — топ-5 в Hot_Cache.md).
+Запись через `templates/USER_PROGRESS_JOURNAL.md` + `templates/Goals.md` (Hot_Cache wins топ-5).
 
 ---
 
