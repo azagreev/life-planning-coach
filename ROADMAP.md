@@ -8,22 +8,10 @@
 
 ## Текущий статус
 
-- **Текущая версия:** `v1.1.0` 🎉 (releasing 2026-05-26)
+- **Текущая версия:** `v1.2.0` 🎉 (releasing 2026-05-27)
 - **Источник правды по версии:** `git describe --tags --abbrev=0`
 - **История релизов:** [CHANGELOG.md](CHANGELOG.md)
 - **Архив старого roadmap:** [docs/archive/ROADMAP_before_cleanup_2026-05-21.md](docs/archive/ROADMAP_before_cleanup_2026-05-21.md)
-
----
-
-## v1.2.0 (planned) — New Evidence-Based Methods
-
-**Тема:** Заполнить genuine gaps в evidence-strong methods. Additive — старые paths не ломаем.
-
-- [ ] **COM-B Model diagnostic** (RICE 60) — новый `references/com_b_diagnostic.md`; Phase 0 integration; routing к right intervention (Capability gap → skill building, Opportunity gap → environment design, Motivation gap → WOOP/Compass).
-- [ ] **AAR principles integration** (RICE 31.5) — merge "gap analysis" в existing 7-step Weekly Review (steps 8-11: planned vs actual, why gap, what to change).
-- [ ] **Premortem trigger** (RICE 42) — Phase 2 для важных OKR; "представь через 3 мес. цель провалена — 5 причин" → mitigation Implementation Intentions.
-
-**Estimated effort:** ~5 EAS.
 
 ---
 
