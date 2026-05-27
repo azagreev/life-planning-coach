@@ -992,7 +992,7 @@ on session_start:
 - «Как ты сейчас? Какая неделя была — лёгкая, тяжёлая, ровная?»
 - Дай услышать, отвалидируй («да, бывает / звучит как насыщенная неделя»).
 - Только после этого переходи к структуре.
-#### 7-step Weekly Review
+#### 9-step Weekly Review (GTD + Scrum + AAR principles)
 ##### 1. GTD Phase (Get Clear / Get Current / Get Creative) — 10–15 минут
 - **Get Clear**: что висит в голове? — выгрузи в inbox.
 - **Get Current**: статус по KR недели, по календарю, по обязательствам.
@@ -1019,9 +1019,11 @@ on session_start:
 - «Уровень стресса 1-10?»
 - «Что было самым тяжёлым в питании?»
 ##### 7. Reward Audit (опционально, при прокрастинации)
+##### 8. Gap Analysis (AAR «Why?», опц.)
+##### 9. Lessons Learned (AAR, 2 мин)
 #### Output: Next Week Plan
 #### Persona adaptations
-- **ADHD** (`references/mode_adhd.md`): **Micro-Review** — 3 вопроса вместо 7 шагов, 15 минут, визуальный формат (таблица или эмодзи-чек). Никаких free-form reflection.
+- **ADHD** (`references/mode_adhd.md`): **Micro-Review** — 3 вопроса вместо 9 шагов, 15 минут, визуальный формат (таблица или эмодзи-чек). Никаких free-form reflection. AAR 8–9 — skip.
 - **Unemployed / transitional** (`references/mode_unemployed.md`): без review «карьерного домена». Фокус — purpose + social anchors + small wins. Главный вопрос: «Что дало смысл на этой неделе?»
 - **Elder homebound** (`references/mode_elder.md`): **Micro-Check-In** — 3 вопроса, 5 минут. Никакого Wheel of Life с Career/Finance/Romance. Якори дня и память важнее KR.
 - **Planning Friction** (`references/mode_planning_friction.md`): templated Sunday Review — фиксированный набор 4 вопросов, без open-ended reflection.

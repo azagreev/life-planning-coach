@@ -28,7 +28,7 @@
 
 ---
 
-## 7-step Weekly Review
+## 9-step Weekly Review (GTD + Scrum + AAR principles)
 
 ### 1. GTD Phase (Get Clear / Get Current / Get Creative) — 10–15 минут
 - **Get Clear**: что висит в голове? — выгрузи в inbox.
@@ -78,6 +78,12 @@
 ### 7. Reward Audit (опционально, при прокрастинации)
 Если в Scrum Retro появились паттерны «зависал в соцсетях», «не мог начать», «делал что угодно вместо X» — загрузи `references/reward_audit.md`. Проверь, не «крадёт» ли cheap dopamine мотивацию у KR.
 
+### 8. Gap Analysis (AAR «Why?», опц.)
+Skip при `execution_score ≥ 70%`. Top-1–2 gap → Three Whys + категория (internal/external/both). Повтор ≥ 2 недели → COM-B (`references/com_b_diagnostic.md`).
+
+### 9. Lessons Learned (AAR, 2 мин)
+1 lesson → `weekly_reviews[].lessons_learned[]`. Surface при `sighted_count ≥ 3`. Schema v2.2.4+, см. `state_v2_schema.md`.
+
 ---
 
 ## Output: Next Week Plan
@@ -96,7 +102,7 @@
 
 ## Persona adaptations
 
-- **ADHD** (`references/mode_adhd.md`): **Micro-Review** — 3 вопроса вместо 7 шагов, 15 минут, визуальный формат (таблица или эмодзи-чек). Никаких free-form reflection.
+- **ADHD** (`references/mode_adhd.md`): **Micro-Review** — 3 вопроса вместо 9 шагов, 15 минут, визуальный формат (таблица или эмодзи-чек). Никаких free-form reflection. AAR 8–9 — skip.
 - **Unemployed / transitional** (`references/mode_unemployed.md`): без review «карьерного домена». Фокус — purpose + social anchors + small wins. Главный вопрос: «Что дало смысл на этой неделе?»
 - **Elder homebound** (`references/mode_elder.md`): **Micro-Check-In** — 3 вопроса, 5 минут. Никакого Wheel of Life с Career/Finance/Romance. Якори дня и память важнее KR.
 - **Planning Friction** (`references/mode_planning_friction.md`): templated Sunday Review — фиксированный набор 4 вопросов, без open-ended reflection.

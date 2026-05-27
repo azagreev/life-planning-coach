@@ -161,7 +161,9 @@
 ### After Action Review (AAR)
 
 > **Evidence:** 🟠 Средний (practical strong). US Army developed, decades of organizational use.
-> **Status:** Planned для v1.2 (merge AAR principles в existing Weekly Review).
+> **Sources:** US Army TC 25-20 (1993); Garvin, D. (2000). *Learning in Action: A Guide to Putting the Learning Organization to Work*. Harvard Business School Press.
+>
+> **Used in:** `module_phase3_weekly_review.md` шаги 8–9 (Lean AAR integration: 7-step → 9-step). Step 8 Gap Analysis (Three Whys + категория internal/external/both, повтор ≥ 2 недели → COM-B escalation). Step 9 Lessons Learned (`sighted_count ≥ 3` → quarterly systemic adjustment). Skip при `execution_score ≥ 70%`. ADHD/elder persona opt-out. State: `weekly_reviews[].gap_analysis[]` + `lessons_learned[]` (schema v2.2.4+).
 
 ---
 
