@@ -6,7 +6,7 @@
 ![version](https://img.shields.io/badge/version-1.1.0-blue)
 
 > **Превращает диалог с AI в evidence-based личный план:** цели, привычки, ретроспективный ритм. Без приложений, подписок, лишних аккаунтов.
-> **Версия:** 1.1.0 | [Релизы](https://github.com/azagreev/life-planning-coach/releases) | [CHANGELOG](CHANGELOG.md)
+> **Версия:** 1.2.0 | [Релизы](https://github.com/azagreev/life-planning-coach/releases) | [CHANGELOG](CHANGELOG.md)
 
 ---
 
