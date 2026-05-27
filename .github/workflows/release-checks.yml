@@ -9,16 +9,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          # Full history + tags for test_version_consistency.py (git describe --tags)
+          # and test_github_sync.py (git rev-list origin/main..main).
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Ensure local main ref exists
+        # test_github_sync.py runs `git rev-parse main` — on PR/feature checkouts
+        # there's no local main branch, so create one tracking origin/main.
+        run: |
+          git fetch origin main --tags --force
+          git branch -f main origin/main 2>/dev/null || true
 
       - name: Install dependencies
         run: |
           pip install pytest
 
-      - name: Run all tests
-        run: python3 -m pytest tests/ -q --tb=short
+      - name: Make build script executable
+        # test_skill_package.py::test_build_script_is_executable checks os.X_OK
+        run: chmod +x scripts/build-skill.sh scripts/build-skill.py
 
       - name: Build artifacts
+        # MUST run before tests — test_skill_package.py validates dist/ outputs.
         run: bash scripts/build-skill.sh
+
+      - name: Run all tests
+        run: python3 -m pytest tests/ -q --tb=short
 
       - name: Verify artifacts
         run: |
