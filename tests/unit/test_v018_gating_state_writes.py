@@ -43,7 +43,7 @@ GATING_MODES = [
     "lean_conversation",
 ]
 
-TIER1_BUDGET_TOKENS = 4000
+TIER1_BUDGET_TOKENS = 4100  # bumped 4000→4100 в v1.2.0 (Tier 3 refs для COM-B, env_design, Premortem)
 PER_MODULE_BUDGET_TOKENS = 2500
 
 

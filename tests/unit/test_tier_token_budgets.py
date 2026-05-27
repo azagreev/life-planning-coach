@@ -35,7 +35,10 @@ CANONICAL_PHASE_MODULES = [
 ]
 
 # Budgets in approx-tokens (1 token ≈ 3 chars for Russian-heavy text).
-TIER1_BUDGET_TOKENS = 4000
+# Tier 1 budget bumped 4000 → 4100 in v1.2.0 to accommodate Tier 3 references
+# for 3 new evidence-based methods (COM-B, Environment Design, Premortem).
+# Each new ref adds ~7 tokens (path в Tier 3 listing). Headroom ~2.5%.
+TIER1_BUDGET_TOKENS = 4100
 PER_MODULE_BUDGET_TOKENS = 2500
 ALL_MODULES_BUDGET_TOKENS = 14000
 

@@ -271,7 +271,7 @@ on session_start:
 
 - **State / schema**: `state_v2_schema.md`, `templates/`
 - **Diagnostic**: `diagnostic_methods.md`, `authentic_goal_filter.md`, `weak_goal_taxonomy.md`, `com_b_diagnostic.md`
-- **Goal arch**: `goal_architecture.md`, `habit_loop.md`, `habit_stack_builder.md`, `action_breakdown_template.md`, `environment_design.md`
+- **Goal arch**: `goal_architecture.md`, `habit_loop.md`, `habit_stack_builder.md`, `action_breakdown_template.md`, `environment_design.md`, `premortem.md`
 - **Weekly review**: `weekly_review.md`, `win_alert.md`, `recovery_protocol.md`, `reward_audit.md`
 - **Dashboard**: `dashboard_guide.md`
 - **Calendar**: `calendar_constants.md`, `calendar_integration.md`, `energy_scheduling.md`, `workload_warning.md`, `calendar_pattern_analyzer.md`, `chronotype_native_planning.md`, `fresh_start_engine.md`, `shutdown_ritual.md`
@@ -922,6 +922,7 @@ on session_start:
 - 1–3 Objectives, каждый с 2–3 Key Results.
 - KR должны быть **измеримыми**: «прочитать 4 книги», «провести 12 сессий», «дойти до 80 кг».
 - Прогресс ≥ 70% к концу квартала = успех (не 100% — иначе цели слишком лёгкие).
+- **Premortem** при `confidence ≤ 6` / horizon ≥ 1y → `references/premortem.md`.
 ##### 4. Weekly Priorities — 3–5 в неделю
 - НЕ задачи, а **приоритеты** недели — на чём фокус.
 - Привязаны к KR из 12-Week.

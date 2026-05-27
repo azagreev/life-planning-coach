@@ -1,6 +1,6 @@
 # State v2 Schema — Single Source of Truth
 
-> **Версия схемы:** `2.2.2`
+> **Версия схемы:** `2.2.3`
 > **Дата:** 2026-05-27
 > **Заменяет:** `references/conversation_state_schema.md` (v1 — удалён в v1.1.0; migration таблица в §8 ниже)
 > **Используется:** HTML dashboard, 8 wiki templates, dashboard_guide.md, SKILL.master.md gating logic
@@ -35,7 +35,7 @@ State v2 — единый источник правды о пользовате�
 
 ```jsonc
 {
-  "schema_version": "2.2.2",
+  "schema_version": "2.2.3",
   "user_id": "uuid-v4",
   "created_at": "2026-05-26T10:00:00Z",
   "updated_at": "2026-05-27T10:00:00Z",
@@ -236,6 +236,28 @@ State v2 — единый источник правды о пользовате�
         "plan": null,                  // if-then
         "sphere_id": null,
         "active": true
+      }
+    ],
+
+    // ====================================
+    // PREMORTEM ASSESSMENTS — v2.2.3 (opt-in для важных OKR)
+    // ====================================
+    // Запускается через Premortem trigger в Phase 2 (confidence ≤ 6 / horizon ≥ 1y /
+    // partner_coord / explicit request / mid-quarter stagnation). См. references/premortem.md.
+    "premortem_assessments": [
+      {
+        "premortem_id": "PM1",
+        "goal_id": "O1",               // ссылка на 12-Week OKR objective
+        "conducted_at": "2026-05-27T15:30:00Z",
+        "trigger": "low_confidence",   // "low_confidence"|"long_horizon"|"partner_coord"|"explicit_request"|"mid_quarter_stagnation"
+        "top_risks": [
+          {
+            "risk": "забил после двух плохих недель",
+            "category": "internal",    // "internal"|"external"|"missed_inputs"|"scope_creep"|"motivation_drift"
+            "mitigation_intention": "Если пропущу 2 недели подряд, то открою premortem.md → Step 5 и переоценю scope."
+          }
+        ],
+        "next_review_date": "2026-07-08"  // обычно week 6 для 12-week OKR
       }
     ]
   },
@@ -532,6 +554,23 @@ Opt-in результат COM-B диагностики (Michie, van Stralen, Wes
 
 Все цели должны ссылаться на canonical sphere ID (см. §1). Запрещено использовать legacy имена.
 
+### 3.5.1 goals.premortem_assessments (v2.2.3+, opt-in)
+
+Результаты Premortem упражнения (Klein 2007 HBR). Запускается через Phase 2 trigger для важных OKR. Если список пуст — Premortem не проводился. Используется для tracking realized risks на mid-quarter review (Phase 3, week 6).
+
+| Поле | Тип | Описание |
+|---|---|---|
+| `premortem_id` | string | `PM1`, `PM2`, ... |
+| `goal_id` | string | Ссылка на `goals.twelve_week_okr.objectives[].objective_id` или `goals.life_themes[].theme_id` |
+| `conducted_at` | ISO 8601 | Когда упражнение было проведено |
+| `trigger` | enum | `"low_confidence"` / `"long_horizon"` / `"partner_coord"` / `"explicit_request"` / `"mid_quarter_stagnation"` |
+| `top_risks[]` | array | Top-3 risks с mitigation: `{risk (string), category, mitigation_intention (if-then format, ссылается на II)}` |
+| `top_risks[].category` | enum | `"internal"` / `"external"` / `"missed_inputs"` / `"scope_creep"` / `"motivation_drift"` |
+| `top_risks[].mitigation_intention` | string | Coping plan в формате `«Если [precisely момент], то [конкретный action]»` (см. `implementation_intentions.md` §Coping plans) |
+| `next_review_date` | ISO 8601 (date) | Когда проверить реализацию рисков (обычно week 6 для 12-week OKR) |
+
+Источник методологии: Klein, G. (2007). *Performing a Project Premortem*. HBR. См. `references/premortem.md` для полного протокола.
+
 ### 3.6 habits
 
 В отличие от v1 (только streak counts) — теперь полный Habit Loop с cue/routine/reward + Tiny Habits + anchor для habit stacking.
@@ -550,6 +589,7 @@ Opt-in результат COM-B диагностики (Michie, van Stralen, Wes
 - `2.0.1 → 2.1`: добавление Health & Metabolism Track (`diagnosis.health_metabolism` блок). Старые клиенты игнорируют unknown field. **Реализован в v0.19.0.**
 - `2.1 → 2.2`: добавление Goal Concordance (`goal_filter.active_goals[].partner_coordination` optional sub-block). Старые клиенты игнорируют unknown property. **Реализован в v0.19.0.**
 - `2.2 → 2.2.2`: добавление `diagnosis.com_b_assessment` optional поле (COM-B диагностика, PRD v0.15 §COM-B). Старые клиенты игнорируют unknown field. **Реализован в v1.2.0.** (2.2.1 был внутренний bump без публичной фиксации.)
+- `2.2.2 → 2.2.3`: добавление `goals.premortem_assessments[]` optional массив (Premortem упражнение, Klein 2007 HBR). Старые клиенты игнорируют unknown field. **Реализован в v1.2.0** (PR2/3).
 
 ### 4.2 Breaking bumps (мажор)
 
@@ -748,6 +788,7 @@ Behavior per mode:
 | `diagnosis.health_metabolism.*` | Phase 1 Health Track entry (opt-in) + Phase 3 Health review | ✅ **(v0.19.0, schema 2.1)** `module_phase1_diagnostic.md` + `module_phase3_weekly_review.md` + `track_health_metabolism.md` |
 | `goal_filter.active_goals[].partner_coordination` | Phase 1.5 Partner Coordination Check (step 7) | ✅ **(v0.19.0, schema 2.2)** `module_phase1_5_goal_filter.md` |
 | `diagnosis.com_b_assessment` | Phase 0 / Phase 1 / Phase 3 COM-B opt-in diagnostic | ✅ **(v1.2.0, schema 2.2.2)** `module_phase1_diagnostic.md` + `com_b_diagnostic.md` |
+| `goals.premortem_assessments[]` | Phase 2 Premortem trigger (confidence ≤ 6 / horizon ≥ 1y / partner_coord) | ✅ **(v1.2.0, schema 2.2.3)** `module_phase2_goal_architecture.md` + `premortem.md` |
 
 **Все write-rules** теперь явно прописаны в соответствующих модулях. Tests (`tests/unit/test_v018_gating_state_writes.py`, `tests/unit/test_v019_health_concordance.py`) гарантируют, что каждое поле имеет write-trigger.
 
@@ -783,6 +824,7 @@ Behavior per mode:
 
 ## 12. Changelog схемы
 
+- **2.2.3** (2026-05-27) — Add `goals.premortem_assessments[]` optional массив (Premortem упражнение для важных OKR, PRD v0.15 §Premortem). Источник: Klein, G. (2007). *Performing a Project Premortem*. HBR. Активируется через Phase 2 trigger (confidence ≤ 6 / horizon ≥ 1y / partner_coord / explicit_request / mid_quarter_stagnation). Mitigation через if-then coping plans (Implementation Intentions). Additive, без миграции — массив пуст если упражнение не запускалось. Реализовано в **v1.2.0**.
 - **2.2.2** (2026-05-27) — Add `diagnosis.com_b_assessment` optional поле (COM-B диагностика причин бездействия, PRD v0.15 §COM-B). Источник: Michie, van Stralen, West (2011) *Implementation Science* 6(42). Активируется через opt-in COM-B протокол в Phase 0/1/3. Additive, без миграции — поле остаётся `null` если диагностика не выполнялась. Реализовано в **v1.2.0**.
 - **2.2** (2026-05-28) — Add `goal_filter.active_goals[].partner_coordination` optional sub-block (Goal Concordance, PRD v2.0). Источник: Transactive Goal Dynamics (Fitzsimons & Finkel) + Rosta-Filep 2023. Additive, без миграции — поле остаётся `null` для индивидуальных целей.
 - **2.1** (2026-05-28) — Add `diagnosis.health_metabolism` opt-in блок (PRD v2.1): sleep/stress/protein/fiber/chewing/caffeine метрики + micro_experiments_log. Activate через Phase 1 Health Track entry. Additive, не активируется без opt-in.

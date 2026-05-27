@@ -103,10 +103,10 @@ class TestTypicalSessionBudgets(unittest.TestCase):
         )
 
     def test_master_cold_load_under_4k(self):
-        """v0.17+ Tier 1 budget — should never regress."""
+        """v0.17+ Tier 1 budget — bumped 4000→4100 в v1.2.0 (+3 evidence-based refs)."""
         self.assertLessEqual(
-            _tokens(MASTER), 4_000,
-            f"Master cold-load ≈ {_tokens(MASTER)} tokens > 4000"
+            _tokens(MASTER), 4_100,
+            f"Master cold-load ≈ {_tokens(MASTER)} tokens > 4100"
         )
 
     def test_phase_module_typical_under_2_5k(self):
