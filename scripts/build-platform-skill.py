@@ -55,6 +55,11 @@ P0_REFS = [
     "emotion_regulation.md",
     "dashboard_guide.md",
     "calendar_constants.md",
+    # v1.2.0 — Evidence-based methods (PRD v0.15). Inlined для grok/kimi
+    # потому что 9-question COM-B протокол / 7 environment design практик
+    # должны быть доступны без lazy-load.
+    "com_b_diagnostic.md",
+    "environment_design.md",
 ]
 
 
@@ -310,6 +315,13 @@ def ultra_condense(text: str) -> str:
     return "\n".join(result)
 
 
+def _existing_refs() -> set[str]:
+    """Return set of ref filenames that actually exist on disk in references/."""
+    if not REFERENCES_DIR.exists():
+        return set()
+    return {p.name for p in REFERENCES_DIR.glob("*.md") if p.is_file()}
+
+
 def _build_inline_block(ref: str, condensed: str, platform: str) -> str:
     """Wrap condensed ref content in platform-appropriate inline markers."""
     if platform == "grok":
@@ -351,7 +363,13 @@ def inline_references(skill_text: str, platform: str) -> str:
     3. Non-P0 refs get their load verb downgraded to neutral `См.`.
     """
     ref_pattern = r"`references/([^`]+\.md)`"
-    refs = set(re.findall(ref_pattern, skill_text))
+    refs_mentioned = set(re.findall(ref_pattern, skill_text))
+
+    # P0_REFS могут упоминаться без `references/` префикса (например, bare filename
+    # в Tier 3 listing). Single-file платформам всё равно нужен полный inlined
+    # content — добавляем такие refs в processing set, даже если они не
+    # матчатся прямым pattern.
+    refs = refs_mentioned | (set(P0_REFS) & set(_existing_refs()))
 
     pending_appends: list[str] = []
 

@@ -1,7 +1,7 @@
 # State v2 Schema — Single Source of Truth
 
-> **Версия схемы:** `2.2.1`
-> **Дата:** 2026-05-28
+> **Версия схемы:** `2.2.2`
+> **Дата:** 2026-05-27
 > **Заменяет:** `references/conversation_state_schema.md` (v1 — удалён в v1.1.0; migration таблица в §8 ниже)
 > **Используется:** HTML dashboard, 8 wiki templates, dashboard_guide.md, SKILL.master.md gating logic
 
@@ -35,7 +35,7 @@ State v2 — единый источник правды о пользовате�
 
 ```jsonc
 {
-  "schema_version": "2.2.1",
+  "schema_version": "2.2.2",
   "user_id": "uuid-v4",
   "created_at": "2026-05-26T10:00:00Z",
   "updated_at": "2026-05-27T10:00:00Z",
@@ -151,6 +151,13 @@ State v2 — единый источник правды о пользовате�
       "world_needs": null,             // что нужно миру
       "paid_for": null                 // за что мне платят
     },
+
+    // ====================================
+    // COM-B ASSESSMENT — v2.2.2 (opt-in diagnostic)
+    // ====================================
+    // Заполняется ТОЛЬКО если COM-B диагностика была выполнена
+    // (см. references/com_b_diagnostic.md). Если null — не выполнялась.
+    "com_b_assessment": null,          // {capability, opportunity, motivation: "ok"|"gap", primary_gap, assessed_at}
 
     // ====================================
     // HEALTH_METABOLISM — v2.1 (opt-in track)
@@ -494,6 +501,20 @@ Opt-in трек метаболического здоровья. Активир�
 
 PRD: `docs/research/prd_health_metabolism.md`. Tier 3 ref: `references/track_health_metabolism.md`. **Ограничение:** трек не для расстройств пищевого поведения; coach даёт coaching, не therapy.
 
+### 3.4.3 diagnosis.com_b_assessment (v2.2.2+, optional)
+
+Opt-in результат COM-B диагностики (Michie, van Stralen, West 2011). Заполняется ТОЛЬКО если пользователь прошёл COM-B протокол (см. `references/com_b_diagnostic.md`). Если null — диагностика не выполнялась. Используется для routing к targeted интервенциям (Capability → Tiny Habits; Opportunity → environment_design; Motivation → WOOP/Compass) и для tracking повторных gap в Phase 3 Weekly Review.
+
+| Поле | Тип | Описание |
+|---|---|---|
+| `capability` | `"ok"` / `"gap"` | Capability компонент: знание шагов + физические ресурсы |
+| `opportunity` | `"ok"` / `"gap"` | Opportunity: среда (физическая + социальная) поддерживает |
+| `motivation` | `"ok"` / `"gap"` | Motivation: рефлексивная (важность) + автоматическая (pull) |
+| `primary_gap` | `"capability"` / `"opportunity"` / `"motivation"` / null | Самое блокирующее звено (если все три gap — обычно motivation first) |
+| `assessed_at` | ISO 8601 | Когда диагностика выполнена. После 14 дней — re-assess рекомендован. |
+
+Источник методологии: `docs/research/prd_v0.15_methodology_upgrade.md` §8 COM-B Model.
+
 ### 3.4.2 goal_filter.active_goals[].partner_coordination (v2.2+, optional)
 
 Заполняется ТОЛЬКО для целей, затрагивающих партнёра/семью (триггеры в формулировке: «партнёр», «жена/муж», «семья», «we», «наш»). Если цель индивидуальная — поле остаётся `null` и не валидируется.
@@ -528,6 +549,7 @@ PRD: `docs/research/prd_health_metabolism.md`. Tier 3 ref: `references/track_hea
 - `2.0 → 2.0.1`: добавление `session.gating_mode` tracker для observability persistence mode. Старые клиенты v2.0 игнорируют unknown field. Не требует миграции.
 - `2.0.1 → 2.1`: добавление Health & Metabolism Track (`diagnosis.health_metabolism` блок). Старые клиенты игнорируют unknown field. **Реализован в v0.19.0.**
 - `2.1 → 2.2`: добавление Goal Concordance (`goal_filter.active_goals[].partner_coordination` optional sub-block). Старые клиенты игнорируют unknown property. **Реализован в v0.19.0.**
+- `2.2 → 2.2.2`: добавление `diagnosis.com_b_assessment` optional поле (COM-B диагностика, PRD v0.15 §COM-B). Старые клиенты игнорируют unknown field. **Реализован в v1.2.0.** (2.2.1 был внутренний bump без публичной фиксации.)
 
 ### 4.2 Breaking bumps (мажор)
 
@@ -725,6 +747,7 @@ Behavior per mode:
 | `persistence_retry.*` | SKILL.master.md (bootstrap, backfill) | ✅ **(v0.18.0)** master + `templates/AI_Instructions.md` |
 | `diagnosis.health_metabolism.*` | Phase 1 Health Track entry (opt-in) + Phase 3 Health review | ✅ **(v0.19.0, schema 2.1)** `module_phase1_diagnostic.md` + `module_phase3_weekly_review.md` + `track_health_metabolism.md` |
 | `goal_filter.active_goals[].partner_coordination` | Phase 1.5 Partner Coordination Check (step 7) | ✅ **(v0.19.0, schema 2.2)** `module_phase1_5_goal_filter.md` |
+| `diagnosis.com_b_assessment` | Phase 0 / Phase 1 / Phase 3 COM-B opt-in diagnostic | ✅ **(v1.2.0, schema 2.2.2)** `module_phase1_diagnostic.md` + `com_b_diagnostic.md` |
 
 **Все write-rules** теперь явно прописаны в соответствующих модулях. Tests (`tests/unit/test_v018_gating_state_writes.py`, `tests/unit/test_v019_health_concordance.py`) гарантируют, что каждое поле имеет write-trigger.
 
@@ -760,6 +783,7 @@ Behavior per mode:
 
 ## 12. Changelog схемы
 
+- **2.2.2** (2026-05-27) — Add `diagnosis.com_b_assessment` optional поле (COM-B диагностика причин бездействия, PRD v0.15 §COM-B). Источник: Michie, van Stralen, West (2011) *Implementation Science* 6(42). Активируется через opt-in COM-B протокол в Phase 0/1/3. Additive, без миграции — поле остаётся `null` если диагностика не выполнялась. Реализовано в **v1.2.0**.
 - **2.2** (2026-05-28) — Add `goal_filter.active_goals[].partner_coordination` optional sub-block (Goal Concordance, PRD v2.0). Источник: Transactive Goal Dynamics (Fitzsimons & Finkel) + Rosta-Filep 2023. Additive, без миграции — поле остаётся `null` для индивидуальных целей.
 - **2.1** (2026-05-28) — Add `diagnosis.health_metabolism` opt-in блок (PRD v2.1): sleep/stress/protein/fiber/chewing/caffeine метрики + micro_experiments_log. Activate через Phase 1 Health Track entry. Additive, не активируется без opt-in.
 - **2.0.1** (2026-05-27) — Add `session.gating_mode` tracker. Close 7 write-rule gaps в §9 (persona.active_mode, emotion_regulation_log, wins_log, reward_audit_results, calendar_events_log, recovery_sessions_log, core_values_alignment). Additive, без миграции.

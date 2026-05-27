@@ -96,6 +96,12 @@
 
 ---
 
+## COM-B Diagnostic (opt-in, 3–5 минут)
+
+При повторяющейся жалобе «знаю, что в сфере X плохо — но не делаю» / «пытаюсь и не получается» — предложи: «Могу за 5 минут помочь понять, *почему* не делается?». При согласии → `references/com_b_diagnostic.md`. Не запускай автоматически — это opt-in escalation, не часть стандартной диагностики.
+
+---
+
 ## Persona adaptations
 
 После Style Calibration в Phase 0 могла включиться одна из персон. Применяй её к Phase 1:
@@ -124,6 +130,7 @@
 - `diagnosis.wheel_of_life.current`: { sphere_id: score (1–10) } × 11 (canonical)
 - `diagnosis.values_schwartz`: { value: 0.0–1.0 } (если PVQ выполнен)
 - `diagnosis.ikigai_pillars`: { love, good_at, world_needs, paid_for } (если Track B)
+- `diagnosis.com_b_assessment`: `{capability: "ok"|"gap", opportunity: "ok"|"gap", motivation: "ok"|"gap", primary_gap: "capability"|"opportunity"|"motivation"|null, assessed_at: ISO}` (только если COM-B диагностика выполнена, schema v2.2.2+)
 - `session.completed_phases`: append `"1"` (или `"0.5"` для ER)
 - `session.current_track`: `"quick"|"deep"`
 - `session.readiness_gates[]`: append `{phase, score, timestamp}`

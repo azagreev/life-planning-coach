@@ -88,6 +88,12 @@
 > **Sample:** 96 participants, real-world habit tracking.
 > **Used in:** `habit_loop.md` §5; corrects 21-day myth.
 
+### Environment Design (friction asymmetry, cue design, choice architecture)
+
+> **Evidence:** 🔵 Высокий. Combines Lally habit-context research, Fogg B=MAP Prompt component, Thaler & Sunstein nudge theory, Wood et al. context-dependent automaticity.
+> **Sources:** Lally 2010 (habits need stable context); Fogg 2019 (Prompt = environmental trigger в B=MAP); Thaler & Sunstein 2008 (*Nudge* — default switching, choice architecture); Wood, Quinn & Kashy 2002 (43% поведения автоматическое в стабильном контексте).
+> **Used in:** `environment_design.md` (full deep ref, NEW в v1.2); primary intervention для COM-B Opportunity gap; secondary в `habit_loop.md` §1.2 anchor pattern.
+
 ---
 
 ## Diagnostics и self-regulation
@@ -96,7 +102,8 @@
 
 > **Evidence:** 🔵 Высокий. Foundational для UK Behaviour Change Wheel.
 > **Source:** Michie, S., van Stralen, M. M., & West, R. (2011). The behaviour change wheel: A new method for characterising and designing behaviour change interventions. *Implementation Science*, 6(42). [Source](https://doi.org/10.1186/1748-5908-6-42)
-> **Status:** Planned для v1.2 (Phase 0 diagnostic).
+>
+> **Used in:** `com_b_diagnostic.md` (full deep ref), Phase 0 / Phase 1 opt-in diagnostic, Phase 3 Weekly Review escalation. Routing к targeted interventions: Capability → `habit_loop.md` §1 Tiny Habits + `action_breakdown_template.md`; Opportunity → `environment_design.md`; Motivation → `module_phase2_goal_architecture.md` §Layer 5 WOOP + `module_phase1_5_goal_filter.md` Compass Mode.
 
 ### Wheel of Life (life balance assessment)
 
