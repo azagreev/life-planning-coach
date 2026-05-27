@@ -305,6 +305,166 @@ on session_start:
 
 Эти блоки соответствуют `references/module_*.md` и `references/*.md` из Routing Map / References. Сохранены здесь, потому что текущая платформа не поддерживает lazy-load.
 
+<!-- INLINED REF: authentic_goal_filter.md -->
+## 📄 authentic_goal_filter
+
+### Stage 1.5: Authentic Goal Filter + Goal Portfolio
+#### Core Principle
+- Self-Concordance (Sheldon & Elliot, 1999): цели, aligned с ценностями → higher well-being + attainment
+- Self-Determination Theory (Deci & Ryan): intrinsic goals > extrinsic for well-being
+- Somatic Marker Hypothesis (Damasio): тело реагирует на аутентичные/неаутентичные цели до мозга
+- Introjects (Freud, Ferenczi): бессознательное принятие чужих установок
+#### Protocol Flow
+#### 1. Red Flag Detector v1.0
+##### 🔴 Red Flag 1 — Интроект родителя/авторитета
+##### 🔴 Red Flag 2 — Сравнение с другими
+##### 🔴 Red Flag 3 — Страх быть «неудачником»
+##### 🔴 Red Flag 4 — Статус vs Свобода
+##### 🔴 Red Flag 5 — Срочность извне
+##### 🔴 Red Flag 6 — Скрытая цель
+##### ⚪ Red Flag 7 — Свой вариант
+- 0 flags → вероятно аутентичная, но всё равно пройти остальные шаги
+- 1–2 flags → жёлтая зона, внимание к шагам 3–5
+- 3+ flags → красная зона, скорее всего интроект
+#### 2. Values Alignment Check
+- ≥ 8/10 → сильное alignment
+- 5–7/10 → умеренное, уточнить формулировку цели
+- < 5/10 → цель конфликтует с ценностями, пересмотреть
+#### 3. Energy Check (Somatic Marker)
+- 🟢 Лёгкость, тепло, расширение в груди → аутентичная
+- 🟡 Нейтрально, ничего не чувствую → возможно, интеллектуальная цель
+- 🔴 Тяжесть, сжатие, напряжение → вероятно, интроект
+#### 4. Deep Why (3 уровня)
+- Корневая мотивация связана с **ценностями** → аутентичная
+- Корневая мотивация связана с **статусом/одобрением/страхом** → интроект
+- Корневая мотивация: «чтобы наконец-то доказать...» → интроект
+#### 5. Societal Pressure Test
+1. **«Если бы никто никогда не узнал о вашем достижении — вы бы всё равно хотели эту цель?»**
+   - Проверяет: внутренняя vs внешняя мотивация
+   - Проверяет: социальное сравнение vs самоопределение
+   - Проверяет: подход (approach) vs избегание (avoidance)
+   - Проверяет: intrinsic vs extrinsic goals (SDT)
+- 4 ответа «своя/внутренняя/свобода» → зелёная зона
+- 2–3 смешанных → жёлтая зона, уточнить
+- 0–1 «своя» → красная зона, интроект
+#### 6. True Goal Score — Radar Chart
+##### 5 осей (оценка 1–10)
+##### ASCII-визуализация (для чата)
+##### Интерпретация паттернов
+#### 7. Goal Portfolio
+##### 🟢 Активные цели
+##### 🟡 Цели на паузе
+##### 🔍 Паттерн-анализ
+- Externalization: «Это не вы — это голос [кого-то]»
+- Values re-check: «А что ВАМ на самом деле важно?»
+- Reframe: «Если бы [голос] замолчал — что бы вы хотели?»
+#### 8. Wheel of Life — 11 доменов (обновление для Stage 1)
+1. 🏥 **Здоровье и физическая форма**
+- Ikigai: «что мир от вас нуждается»
+- Frankl: смысл через служение
+- Self-Transcendence (Schwartz PVQ): highest value level
+#### 9. Интеграция с Stage 2 (Goal Architecture)
+- Не паниковать
+- Вернуться к Stage 1 (пересмотреть ценности)
+- Или: взять 1 🟡 On Pause goal с highest Аутентичность и пересмотреть
+#### 10. Safety & Ethics
+- Пользователь в кризисе (оценки < 3/10 по всем сферам)
+- Пользователь явно просит «просто помоги сделать» (bypass request)
+- Пользователь в precontemplation stage (не видит проблемы)
+- Маленькие задачи (< 2 недель): не нужен полный фильтр
+- Экстренные цели (health, safety): action first, filter later
+- Пользователь явно говорит «я уверен, что это моё» → honor autonomy
+#### Источники
+1. **Sheldon, K.M. & Elliot, A.J.** (1999). Goal striving, need satisfaction, and longitudinal well-being. *JPSP*, 76(3), 482-497.
+
+<!-- END INLINED REF: authentic_goal_filter.md -->
+
+<!-- INLINED REF: calendar_constants.md -->
+## 📄 calendar_constants
+
+### Calendar Constants для Google Calendar
+#### Calendar Tools Available (8 confirmed)
+#### COLOR_MAP
+#### REMINDER_PRESETS
+#### RRULE_PRESETS
+#### Event Data Schema
+##### Request shape (connector-specific — что передавать в `create_event` / `update_event`)
+##### Response shape (что возвращает Google через connector)
+##### RRULE UNTIL — критичный формат
+- ✅ `"RRULE:FREQ=DAILY;UNTIL=20260610T205959Z"`
+- ❌ `"RRULE:FREQ=DAILY;UNTIL=20260610T235959"` (отклоняется с `UNPARSABLE_NUMBER`)
+#### Presets
+##### Weekly Review Reminder
+- `summary`: "Weekly Review"
+- `description`: "Weekly Review — ретроспектива недели:\n1. Что прошло хорошо?\n2. Что можно улучшить?\n3. Какие уроки извлечены?\n4. Приоритеты на следующую неделю"
+- `duration`: 30 мин
+- `colorId`: 5
+- `reminders`: weekly_review preset
+- `recurrence`: weekly_sunday
+##### WOOP Reminder
+- `summary`: "WOOP Сессия"
+- `description`: "WOOP-сессия (Wish, Outcome, Obstacle, Plan)..."
+- `duration`: 15 мин
+- `colorId`: 7
+- `reminders`: woop preset
+- `recurrence`: daily
+##### Milestone Event
+- `summary`: "Milestone: {title}"
+- `colorId`: 11
+- `reminders`: milestone preset
+##### Time Block
+- `colorId`: определяется из COLOR_MAP по типу активности
+- `reminders`: определяется из REMINDER_PRESETS по типу активности
+#### Failure Modes
+#### Free Slots Analysis
+1. Определить рабочее окно (по умолчанию 9-18)
+#### Daily Top-3
+1. Хранить в conversation state
+
+<!-- END INLINED REF: calendar_constants.md -->
+
+<!-- INLINED REF: com_b_diagnostic.md -->
+## 📄 com_b_diagnostic
+
+### COM-B Diagnostic (Michie, van Stralen, West)
+#### Что это
+#### Evidence base — почему именно это method
+##### Почему it works (механизм)
+1. **Замена «либо/либо» на «и/и/и»** — поведение требует всех трёх компонентов одновременно. Если убрать обвинение «у тебя нет силы воли» и посмотреть на ability/environment — часто оказывается, что мотивация в порядке, а сломан другой элемент.
+#### Три компонента
+#### Диагностический протокол (3–5 минут, 9 вопросов)
+##### Capability — «могу ли я физически и когнитивно»
+1. **Physical:** «Есть ли у тебя физические/практические ресурсы делать это? Время, инструменты, тело в форме?»
+##### Opportunity — «среда позволяет»
+##### Motivation — «хочу ли я сознательно и автоматически»
+#### Determination logic — какой gap primary
+- **Capability gap:** ответы 1–3 показывают «не знаю как», «нет навыка», «первый шаг неясен», «делаю криво» → routing в Capability ветку.
+- **Opportunity gap:** ответы 4–6 показывают «среда мешает», «времени нет», «нет поддержки», «контекст не складывается» → Opportunity ветка.
+- **Motivation gap:** ответы 7–9 показывают важность ≤ 6, «каждый раз уговариваю», «это для других» → Motivation ветка.
+#### Routing logic — где какая интервенция
+#### Где это уже встроено в LPC
+#### Промпт patterns для skill
+##### Short trigger prompt (Phase 0 soft suggestion)
+##### Full 9-question protocol (Phase 1 / explicit opt-in)
+##### Routing prompt после determination
+#### Когда **не** использовать
+- **Первая сессия с пользователем** — COM-B опt-in, не primary diagnostic. Нарушает Phase 0 contract «5–10 минут до согласия».
+- **Эмоциональный block / crisis state** — сначала Phase 0.5 ER Protocol (`emotion_regulation.md`). COM-B requires cognitive engagement.
+- **Нет конкретной цели/поведения** — COM-B диагностирует «почему не делаю *вот это*». Если «вот это» неясно — сначала Phase 2 goal definition.
+- **Пользователь устал / hostile к структуре** — Reduce to one question: «Если убрать всё лишнее — что главное мешает: не знаешь как, среда давит, или внутри не хочется?»
+- **Поведение разовое, не повторяющееся** — COM-B про паттерны бездействия. Для одного решения — overkill.
+#### Cross-references
+- **`action_breakdown_template.md`** — primary intervention для Capability gap (декомпозиция до видимого первого шага)
+- **`habit_loop.md`** §1 Tiny Habits — Capability gap через B=MAP снижение Ability
+- **`environment_design.md`** — primary intervention для Opportunity gap (NEW в v1.2)
+- **`module_phase2_goal_architecture.md`** §Layer 5 WOOP — Motivation gap через mental contrasting
+- **`module_phase1_5_goal_filter.md`** Compass Mode — Motivation gap через values alignment
+- **`implementation_intentions.md`** — coping plans для удержания routing intervention
+- **`evidence_map.md`** §COM-B — full evidence citation
+#### TL;DR
+
+<!-- END INLINED REF: com_b_diagnostic.md -->
+
 <!-- INLINED REF: communication_style.md -->
 ## 📄 communication_style
 
@@ -379,6 +539,60 @@ on session_start:
 1. **Costa, P.T. & McCrae, R.R.** (1997). *Revised NEO Personality Inventory*. Psychological Assessment Resources.
 
 <!-- END INLINED REF: communication_style.md -->
+
+<!-- INLINED REF: diagnostic_methods.md -->
+## 📄 diagnostic_methods
+
+### Stage 1: Diagnostic Methods — Detailed Protocols
+#### Two-Track Architecture 🛤️
+##### Track A: Quick Diagnostic ("Первый взгляд") — 20-30 мин, ~20 вопросов
+##### Track B: Deep Diagnostic ("Полная картина") — 65-105 мин, ~50-55 вопросов, 2-4 сессии
+- **Сессия 1:** Phase 0 + Phase 1 (20–25 мин)
+- **Сессия 2:** Phase 2 + Phase 3A (20–30 мин)
+- **Сессия 3:** Phase 3B + Phase 3C (15–25 мин)
+- **Сессия 4:** Phase 4A + Phase 4B (опц.) + Phase 4C (20–30 мин)
+#### Readiness Gate Protocol 🚦
+- **8–10:** "Отлично, двигаемся дальше 🌱"
+- **5–7:** "Давайте сделаем паузу. Что сделало бы комфортнее?"
+- **1–4:** "Понял. Может, сегодня хватит? Мы можем продолжить в другой раз."
+#### Phase 0: Emotional Landing (ОБЯЗАТЕЛЬНА, 5-10 минут)
+##### ПРАВИЛО: Эту фазу НЕЛЬЗЯ пропускать. Никакая диагностика не начинается без предварительного эмоционального контакта.
+##### Protocol
+#### Chronotype Quick Calibration (Phase 0 Extension)
+#### Phase 1: Wheel of Life (Paul Meyer)
+##### Categories (11 domains)
+1. **Health / Fitness** — физическое здоровье, энергия, сон, питание
+##### Protocol
+##### Visualization (ASCII)
+##### Calibration Questions
+- "Что означает 10 в этой сфере для вас?"
+- "Когда в последний раз эта сфера была на 8+? Что было по-другому?"
+- "Какая одна сфера влияет на остальные больше всего?"
+##### Readiness Gate
+#### Phase 2: Values Clarification (Schwartz PVQ) — УПРОЩЁННЫЙ
+##### 10 Basic Values (circumplex model)
+1. **Self-Direction** — независимость, креативность, свобода
+##### Protocol (3 шага, ~10 вопросов)
+##### Integration with Wheel of Life
+##### Readiness Gate
+#### Phase 3: Designing Your Life (Burnett & Evans)
+##### 3A. Workview / Lifeview Compass — Micro Format
+##### 3B. Good Time Journal (Energy Tracking)
+##### 3C. Odyssey Plans (3 альтернативные жизни на 5 лет)
+##### Readiness Gate (после каждой подфазы 3A/3B/3C)
+#### Phase 4: Ikigai + Life Story
+##### 4A. Ikigai: Reason for Being (Ken Mogi + Kamiya)
+##### 4B. Life Story — ОПЦИОНАЛЬНО
+##### 4C. Integration: Life Compass
+##### Readiness Gate
+#### Session Breakdown for Stage 1
+##### Track A: Quick — 1 сессия
+##### Track B: Deep — 4 сессии
+#### Session Breakdown for Stage 1.5 (Authentic Goal Filter)
+#### Appendix: Сравнение старого и нового подхода
+#### Appendix: Устаревший подход (для справки)
+
+<!-- END INLINED REF: diagnostic_methods.md -->
 
 <!-- INLINED REF: emotion_regulation.md -->
 ## 📄 emotion_regulation
@@ -461,6 +675,168 @@ on session_start:
 - "Хочу бросить всё", "сбежать"
 
 <!-- END INLINED REF: emotion_regulation.md -->
+
+<!-- INLINED REF: environment_design.md -->
+## 📄 environment_design
+
+### Environment Design — проектирование среды под поведение
+#### Что это
+#### Evidence base — почему это работает
+#### 7 практик environment design
+##### 1. Friction asymmetry — асимметрия трения
+##### 2. Cue removal — убрать триггеры нежелаемого
+- Соцсети: удалить приложения с домашнего экрана (cue = иконка)
+- Сладкое: не покупать в магазин (cue = вид в холодильнике)
+- Бесцельный браузинг: закрыть вкладки, очистить bookmarks bar
+- Курение: убрать пепельницу с балкона
+##### 3. Cue placement — добавить triggers для желаемого
+- Витамины рядом с кофемашиной (cue после morning coffee)
+- Книга на подушке (cue перед сном)
+- Спортивная форма на стуле с вечера (cue утром)
+- Список Top-3 на ноутбуке закрытом (cue после открытия)
+##### 4. Context switching — смена контекста ломает паттерн
+- Не можешь сосредоточиться дома → работай из кафе/коворкинга (новый контекст = чистая Ability)
+- Хочешь меньше есть вечером → перестань есть на диване перед ТВ (контекст = ассоциация)
+- Хочешь больше читать → читай только в одном кресле (стабилизация cue)
+##### 5. Social architecture — спроектировать окружение
+- **Accountability partner** — еженедельный 15-мин check-in. Не coach, а peer на том же пути.
+- **Identity groups** — running club, book club, языковые встречи. Норма группы становится твоей normal.
+- **Информационная диета** — кого читаешь/слушаешь? Подписки = social environment.
+- **Remove dampeners** — есть человек, который активно saboтirует (партнёр пьёт когда ты бросаешь)? Честный разговор или дистанция.
+##### 6. Default switching — opt-out вместо opt-in
+- Auto-перевод на сберегательный счёт 1-го числа (default = save, не default = spend)
+- Recurring доставка продуктов (default = здоровая еда дома)
+- Calendar по умолчанию = deep work блоки утром, meetings только после 14:00
+- Phone settings: grayscale, no notifications, screen time limits (default = меньше залипания)
+##### 7. Calendar as environment — время как контекст
+- Eженедельный sport-block (вт/чт 18:00) → cue = напоминание
+- Daily deep work (10:00-11:30) → cue = блок в календаре + auto-DND
+- Sunday review (вс 18:00) → cue = recurring event с интегрированным template
+- Quarterly review (1-я суббота квартала) → cue = invite за 3 дня
+#### Когда применять — Opportunity gap из COM-B
+- «Времени нет» (на самом деле — нет защищённого блока)
+- «Дома никак» (среда не настроена)
+- «Все отвлекают» (нет social/digital boundaries)
+- «Каждый раз забываю» (нет cue в среде)
+- «Хочу, но как-то не складывается» (нет recurring context)
+#### Промпт patterns для skill
+##### Diagnostic prompt после COM-B Opportunity gap
+##### Friction asymmetry prompt
+##### Cue placement prompt (anchor + environment)
+#### Когда **не** использовать
+- **Capability gap primary** — environment без skill не сработает; сначала Tiny Habits.
+- **Motivation gap primary** — environment design «работает на автоматизме», но если внутри нет pull, юзер быстро откатит изменения среды (купит сладкое обратно). Сначала WOOP/Compass.
+- **Crisis/burnout state** — переделка environment требует энергии. Дай recovery сначала.
+- **Юзер живёт не один** — изменения общего пространства требуют переговоров с домашними. Не предлагай unilateral overhaul.
+- **Travel / нестабильный контекст** — стабилизировать нечего. Дождись Fresh Start window (новый дом, переезд, новая работа).
+#### Cross-references
+- **`com_b_diagnostic.md`** §Routing logic — primary entry point из Opportunity gap
+- **`habit_loop.md`** §1.2 Anchor to Existing Routine — anchor pattern = cue placement
+- **`implementation_intentions.md`** §Три формы — WHERE/WHEN types напрямую используют environment cues
+- **`calendar_integration.md`** §Prompt Patterns — calendar as environment (практика 7)
+- **`fresh_start_engine.md`** — context change windows (переезд, новый год, понедельник)
+- **`evidence_map.md`** §Tiny Habits, §Habit Timeline — evidence для environmental cues
+#### TL;DR
+
+<!-- END INLINED REF: environment_design.md -->
+
+<!-- INLINED REF: goal_architecture.md -->
+## 📄 goal_architecture
+
+### Stage 2: Goal Architecture — Detailed Protocols
+#### Layer 1: BHAG (Big Hairy Audacious Goal)
+##### Protocol
+##### Characteristics of Good Personal BHAG
+#### Layer 2: Life Themes (OKR-style, 1-3 years)
+##### Structure
+##### Personal OKR Best Practices
+##### Scoring
+#### Layer 3: 12-Week Quarter
+##### Why 12 Weeks Instead of Annual?
+##### Protocol
+##### 12-Week Execution Tracker
+#### Layer 4: Weekly Priorities (3-5 Priorities)
+##### Ivy Lee Method (1918)
+##### Weekly Priority Template
+#### Layer 5: Daily WOOP + Implementation Intentions
+##### WOOP Protocol (Oettingen)
+##### Implementation Intentions (Gollwitzer)
+##### Daily Template
+#### Integration: The Full Stack
+##### Alignment Check
+
+<!-- END INLINED REF: goal_architecture.md -->
+
+<!-- INLINED REF: habit_loop.md -->
+## 📄 habit_loop
+
+### Habit Loop Framework
+#### Core Principle
+#### 1. Tiny Habits (BJ Fogg) — PRIMARY для создания привычек
+##### 1.1. Make It Tiny
+- Не «30 минут йоги» → «1 поза на коврике"
+- Не «читать книгу» → «открыть книгу на 1 странице"
+- Не «убрать квартиру" → «сложить 1 вещь"
+##### 1.2. Anchor to Existing Routine (= Implementation Intention)
+- ✅ "После утреннего кофе..."
+- ✅ "После того как сяду в машину..."
+- ✅ "После закрытия крышки ноутбука..."
+- ❌ "После пробуждения" (слишком размыто)
+- ❌ "После работы" (нет чёткого триггера)
+- ❌ "По вечерам" (нет конкретики)
+##### 1.3. Celebrate Immediately
+- Сказать себе "Отлично!"
+- Улыбнуться
+- Сделать "да!" жест
+- Почувствовать гордость (даже за 30 секунд)
+#### 2. Cue-Routine-Reward Loop — DIAGNOSTIC для существующих привычек
+##### Модель
+##### Golden Rule of Habit Change
+- **Cue** — оставить тот же
+- **Reward** — оставить тот же
+- **Routine** — изменить
+##### Keystone Habits
+- 🏥 Утренняя зарядка → лучшее питание, сон, продуктивность
+- 🍽️ Регулярные семейные ужины → улучшение отношений, академическая успеваемость детей
+- 🛏️ Заправка кровати → чувство порядка, дисциплины
+#### 3. Habit Stacking (James Clear)
+##### 3.1. The Stack
+##### 3.2. Identity-Based Habits
+- «Я бегу» (behavior) → «Я бегун" (identity)
+- «Я пишу" (behavior) → «Я писатель" (identity)
+##### 3.3. Make It Easy
+- **Environment design:** коврик для йоги на виду, книга на подушке, фрукты на столе
+- **Two-Minute Rule:** если новая привычка занимает >2 минут — уменьшите
+- **Friction reduction:** уберите препятствия для хороших, добавьте для плохих
+#### 4. Context-Dependent Repetition (Wendy Wood)
+##### 4.1. Habits = Context-Response Associations
+- Одно и то же время
+- Одно и то же место
+- Одно и то же предыдущее действие
+##### 4.2. Context Change as Reset
+##### 4.3. Friction Matters More Than Willpower
+#### 5. Timeline & Expectations (Phillippa Lally)
+##### 5.1. How Long?
+- **Median:** 66 дней до автоматичности
+- **Range:** 18–254 дней (в зависимости от сложности)
+- **Миф 21 дня:** нет научного основания (происходит от Мальца, 1960, про пластическую хирургию, не привычки)
+- **1 пропущенный день:** не влияет на формирование
+- **2–3 пропущенных дня подряд:** риск сброса прогресса
+- **Recovery:** см. `references/recovery_protocol.md` — не нагонять, просто продолжить
+#### 6. Integration with Life Planning
+- **Goal:** Написать книгу
+- **Weekly Priority:** 3 часа письма
+- **WOOP:** "Я буду писать по утрам (Wish), чтобы закончить черновик (Outcome), но могу отвлечься на телефон (Obstacle), поэтому положу телефон в другую комнату (Plan)"
+- **Habit:** «После утреннего кофе, я открою документ и напишу 1 предложение. Потом скажу себе "Отлично!"»
+#### 7. When NOT to use
+- Пользователь в кризисе → Emotional Landing first
+- Пользователь в precontemplation → не навязывать привычки, использовать consciousness raising
+- Цель требует когнитивной гибкости, не автоматизма (творческие задачи)
+- Пользователь явно говорит "я не хочу рутины" → honor autonomy
+#### 8. Quick Reference: Habit Design Checklist
+#### Scientific Backing
+
+<!-- END INLINED REF: habit_loop.md -->
 
 <!-- INLINED REF: module_phase1_5_goal_filter.md -->
 ## 📄 module_phase1_5_goal_filter
@@ -730,3 +1106,41 @@ on session_start:
 - **ВСЕГДА** связывай каждое событие с конкретным KR (`kr_link`) — иначе календарь превращается в задачник.
 
 <!-- END INLINED REF: module_phase5_execution.md -->
+
+<!-- INLINED REF: weekly_review.md -->
+## 📄 weekly_review
+
+### Stage 3: Weekly Review & Retrospective — Detailed Protocols
+#### Overview
+- **23% улучшение производительности** от 15 минут рефлексии (Di Stefano et al., Harvard)
+- Незавершённые цели деградируют когнитивную производительность (Masicampo & Baumeister)
+- Мониторинг прогресса напрямую увеличивает достижение целей (Harkin et al., Psychological Bulletin)
+#### Part 1: GTD Weekly Review (David Allen)
+##### Phase A: Get Clear (20 min)
+##### Phase B: Get Current (15 min)
+##### Phase C: Get Creative (10 min)
+#### Part 2: Scrum Retrospective
+##### Format Options (rotate weekly)
+#### Part 3: Progress Audit
+##### Lead vs Lag Measures
+- Сбросить 10 кг
+- Накопить $50,000
+- Закончить курс
+- Тренироваться 4 раза в неделю
+- Откладывать 20% дохода
+- Учиться 1 час в день
+##### Confidence Ratings
+#### Part 4: Adjustment Protocol
+##### When to Pivot vs Persist (3-Gate Framework)
+##### 10% Adjustment Rule
+##### Seasonal Planning
+#### Integrated Weekly Review Template (45-60 min)
+#### 15-Minute Minimalist Version
+#### Science References
+- Di Stefano et al. (2014). Learning by Thinking. Harvard Business School. 23% improvement.
+- Masicampo & Baumeister (2011). Consider it done! JPSP 101(4), 667-683.
+- Harkin et al. (2016). Monitoring goal progress. Psychological Bulletin.
+- Gollwitzer & Sheeran (2006). Implementation intentions. 94 studies, d = 0.65.
+- Amabile & Kramer (2011). The Progress Principle. Harvard Business Review.
+
+<!-- END INLINED REF: weekly_review.md -->
