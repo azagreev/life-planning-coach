@@ -1,6 +1,6 @@
 # State v2 Schema — Single Source of Truth
 
-> **Версия схемы:** `2.2.4`
+> **Версия схемы:** `2.2.5`
 > **Дата:** 2026-05-27
 > **Заменяет:** `references/conversation_state_schema.md` (v1 — удалён в v1.1.0; migration таблица в §8 ниже)
 > **Используется:** HTML dashboard, 8 wiki templates, dashboard_guide.md, SKILL.master.md gating logic
@@ -35,7 +35,7 @@ State v2 — единый источник правды о пользовате�
 
 ```jsonc
 {
-  "schema_version": "2.2.4",
+  "schema_version": "2.2.5",
   "user_id": "uuid-v4",
   "created_at": "2026-05-26T10:00:00Z",
   "updated_at": "2026-05-27T10:00:00Z",
@@ -87,6 +87,7 @@ State v2 — единый источник правды о пользовате�
   // ============================================================
   "diagnosis": {
     "wheel_of_life": {
+      "last_assessed_at": null,        // ISO 8601 / null (NEW v2.2.5) — frequency gate для re-assessment (PRD v0.15 §5: skip < 30d, offer re-assess ≥ 30d)
       "current": {
         "health": null,                // 1-10 или null если не оценено
         "finances": null,
@@ -553,6 +554,25 @@ Opt-in результат COM-B диагностики (Michie, van Stralen, Wes
 
 Источник методологии: `docs/research/prd_v0.15_methodology_upgrade.md` §8 COM-B Model.
 
+### 3.4.4 diagnosis.wheel_of_life.last_assessed_at (v2.2.5+, optional)
+
+Frequency gate для Wheel of Life re-assessment. PRD v0.15 §5: WoL — опциональный инструмент, не routine; «не чаще 1 раза в 30 дней». Phase 1 module проверяет это поле перед предложением WoL.
+
+| Поле | Тип | Описание |
+|---|---|---|
+| `last_assessed_at` | ISO 8601 / null | Timestamp последней completed Wheel of Life assessment. `null` = never assessed. |
+
+**Gating logic в `module_phase1_diagnostic.md` §WoL Frequency Gate:**
+- `now() - last_assessed_at < 30 days` → skip auto-offer; explicit user request → soft challenge
+- `≥ 30 days` → predict offer re-assess
+- `null` → стандартный Track A/B flow
+
+**Write trigger:** обязательно после completed WoL assessment (любой Track A/B), set `last_assessed_at = now()` ISO 8601.
+
+Additive, без миграции — старые v2.2.x клиенты игнорируют unknown field. Существующие пользователи получают `null` → стандартный flow на первом entry, затем gate активен.
+
+Источник методологии: PRD v0.15 §5 Wheel of Life refactor.
+
 ### 3.4.2 goal_filter.active_goals[].partner_coordination (v2.2+, optional)
 
 Заполняется ТОЛЬКО для целей, затрагивающих партнёра/семью (триггеры в формулировке: «партнёр», «жена/муж», «семья», «we», «наш»). Если цель индивидуальная — поле остаётся `null` и не валидируется.
@@ -624,6 +644,7 @@ AAR Gap Analysis (Step 8) и Lessons Learned (Step 9) из `module_phase3_weekly
 - `2.2 → 2.2.2`: добавление `diagnosis.com_b_assessment` optional поле (COM-B диагностика, PRD v0.15 §COM-B). Старые клиенты игнорируют unknown field. **Реализован в v1.2.0.** (2.2.1 был внутренний bump без публичной фиксации.)
 - `2.2.2 → 2.2.3`: добавление `goals.premortem_assessments[]` optional массив (Premortem упражнение, Klein 2007 HBR). Старые клиенты игнорируют unknown field. **Реализован в v1.2.0** (PR2/3).
 - `2.2.3 → 2.2.4`: добавление `weekly_reviews[].gap_analysis[]` + `weekly_reviews[].lessons_learned[]` optional полей (AAR Gap Analysis + pattern capture, US Army TC 25-20). Старые клиенты игнорируют unknown fields. **Реализован в v1.2.0** (PR3/3).
+- `2.2.4 → 2.2.5`: добавление `diagnosis.wheel_of_life.last_assessed_at` optional ISO 8601 поле (PRD v0.15 §5 frequency gate). Phase 1 module skips WoL auto-offer < 30 days, offers re-assess ≥ 30 days. Старые клиенты игнорируют unknown field. **Реализован в v1.3.0** (PR-A).
 
 ### 4.2 Breaking bumps (мажор)
 
@@ -824,6 +845,7 @@ Behavior per mode:
 | `diagnosis.com_b_assessment` | Phase 0 / Phase 1 / Phase 3 COM-B opt-in diagnostic | ✅ **(v1.2.0, schema 2.2.2)** `module_phase1_diagnostic.md` + `com_b_diagnostic.md` |
 | `goals.premortem_assessments[]` | Phase 2 Premortem trigger (confidence ≤ 6 / horizon ≥ 1y / partner_coord) | ✅ **(v1.2.0, schema 2.2.3)** `module_phase2_goal_architecture.md` + `premortem.md` |
 | `weekly_reviews[].gap_analysis[]` + `lessons_learned[]` | Phase 3 AAR steps 8–9 (Lean Gap Analysis + pattern capture) | ✅ **(v1.2.0, schema 2.2.4)** `module_phase3_weekly_review.md` шаги 8–9 |
+| `diagnosis.wheel_of_life.last_assessed_at` | Phase 1 Wheel of Life completion (любой Track A/B) | ✅ **(v1.3.0, schema 2.2.5)** `module_phase1_diagnostic.md` §WoL Frequency Gate |
 
 **Все write-rules** теперь явно прописаны в соответствующих модулях. Tests (`tests/unit/test_v018_gating_state_writes.py`, `tests/unit/test_v019_health_concordance.py`) гарантируют, что каждое поле имеет write-trigger.
 
@@ -859,6 +881,7 @@ Behavior per mode:
 
 ## 12. Changelog схемы
 
+- **2.2.5** (2026-05-27) — Add `diagnosis.wheel_of_life.last_assessed_at` optional ISO 8601 timestamp поле (PRD v0.15 §5 frequency gate). Phase 1 module gates WoL auto-offer: skip < 30 days; offer re-assess ≥ 30 days; null = never assessed → standard flow. Source: PRD v0.15 §5 «WoL не чаще 1 раза в 30 дней». Additive, без миграции — поле остаётся null для existing users. Реализовано в **v1.3.0** (PR-A).
 - **2.2.4** (2026-05-27) — Add `weekly_reviews[].gap_analysis[]` + `weekly_reviews[].lessons_learned[]` optional полей (AAR Gap Analysis + pattern capture, PRD v0.15 §After Action Review). Источник: After Action Review (US Army TC 25-20, 1993) + Garvin (2000) *Learning in Action*. Lean integration — 7-step → 9-step Weekly Review с Step 8 Gap Analysis (Three Whys + COM-B escalation) и Step 9 Lessons Learned (`sighted_count ≥ 3` → quarterly adjustment). Skip при `execution_score ≥ 70%`. ADHD persona opt-out. Additive. Реализовано в **v1.2.0** (PR3/3).
 - **2.2.3** (2026-05-27) — Add `goals.premortem_assessments[]` optional массив (Premortem упражнение для важных OKR, PRD v0.15 §Premortem). Источник: Klein, G. (2007). *Performing a Project Premortem*. HBR. Активируется через Phase 2 trigger (confidence ≤ 6 / horizon ≥ 1y / partner_coord / explicit_request / mid_quarter_stagnation). Mitigation через if-then coping plans (Implementation Intentions). Additive, без миграции — массив пуст если упражнение не запускалось. Реализовано в **v1.2.0**.
 - **2.2.2** (2026-05-27) — Add `diagnosis.com_b_assessment` optional поле (COM-B диагностика причин бездействия, PRD v0.15 §COM-B). Источник: Michie, van Stralen, West (2011) *Implementation Science* 6(42). Активируется через opt-in COM-B протокол в Phase 0/1/3. Additive, без миграции — поле остаётся `null` если диагностика не выполнялась. Реализовано в **v1.2.0**.
