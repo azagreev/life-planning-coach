@@ -26,12 +26,10 @@ jobs:
         run: |
           pip install pytest
 
-      - name: Make build script executable
-        # test_skill_package.py::test_build_script_is_executable checks os.X_OK
-        run: chmod +x scripts/build-skill.sh scripts/build-skill.py
-
       - name: Build artifacts
         # MUST run before tests — test_skill_package.py validates dist/ outputs.
+        # Executable bit for build-skill.{sh,py} is stored in the git index
+        # (this commit also sets mode 100755), so no chmod needed in CI.
         run: bash scripts/build-skill.sh
 
       - name: Run all tests
