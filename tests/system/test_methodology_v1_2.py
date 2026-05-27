@@ -13,6 +13,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.helpers.forbidden_words import assert_no_forbidden
+
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 REFERENCES = PROJECT_ROOT / "references"
 PLATFORMS = PROJECT_ROOT / "platforms"
@@ -86,9 +88,8 @@ class TestComBDiagnostic:
         assert "primary_gap" in lower, "Must document primary_gap field"
 
     def test_no_forbidden_words(self, content):
-        forbidden = ["надо", "должен", "обязан"]
-        for word in forbidden:
-            assert word not in content.lower(), f"Forbidden directive word '{word}' found"
+        # Migrated в v1.3.0 (PR-D) к shared helper с whitelist Russian quoted speech.
+        assert_no_forbidden(content, ["надо", "должен", "обязан"])
 
 
 class TestEnvironmentDesign:
@@ -138,9 +139,8 @@ class TestEnvironmentDesign:
         assert "когда" in lower and ("использовать" in lower or "применять" in lower)
 
     def test_no_forbidden_words(self, content):
-        forbidden = ["надо", "должен", "обязан"]
-        for word in forbidden:
-            assert word not in content.lower(), f"Forbidden directive word '{word}' found"
+        # Migrated в v1.3.0 (PR-D) к shared helper с whitelist Russian quoted speech.
+        assert_no_forbidden(content, ["надо", "должен", "обязан"])
 
 
 class TestMasterIntegration:
@@ -336,9 +336,8 @@ class TestPremortem:
             assert field in content, f"Missing schema field: {field}"
 
     def test_no_forbidden_words(self, content):
-        forbidden = ["надо", "должен", "обязан"]
-        for word in forbidden:
-            assert word not in content.lower(), f"Forbidden directive word '{word}' found"
+        # Migrated в v1.3.0 (PR-D) к shared helper с whitelist Russian quoted speech.
+        assert_no_forbidden(content, ["надо", "должен", "обязан"])
 
 
 class TestPhase2ModuleIntegration:

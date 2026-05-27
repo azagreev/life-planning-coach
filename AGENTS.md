@@ -94,6 +94,40 @@ P2 (4): Energy Check, Wheel of Life 11 доменов, Progressive Disclosure, Z
 
 См. `SKILL.md` и `references/authentic_goal_filter.md`. Обязательная сфера: Духовность, смысл и ценности.
 
+### 3.6 State Writes Policy (per-module budget pressure)
+
+**Правило:** При создании или редактировании phase-модуля (`references/module_phase*.md`) под per-module token budget pressure (≥ 2400/2500 tokens) — state write rules **ТОЛЬКО** в `references/state_v2_schema.md` (соответствующий §3.x), а в модуле inline-секция «State writes» удаляется или сводится к одной cross-ref ссылке:
+```markdown
+**State writes:** см. `state_v2_schema.md` §3.X.Y.
+```
+
+**Rationale:**
+- `state_v2_schema.md` — single source of truth для schema полей. Дублирование в модулях ведёт к drift при schema bumps.
+- Per-module budget жёсткий (2500 tokens) — inline state writes тратят 100-300 tokens, которые лучше потратить на routing instructions.
+- Precedent: v1.2.0 «State writes inline убраны из Phase 2 + Phase 3 modules под per-module budget pressure» (см. CHANGELOG.md `## [1.2.0]` Architecture decisions).
+
+**Когда inline OK:**
+- Модуль ≤ 2200 tokens (есть headroom)
+- Краткое (≤ 30 tokens) summary с обязательной cross-ref ссылкой на `state_v2_schema.md` для full schema
+
+### 3.7 Test Authoring: Forbidden Words
+
+При написании новых tests, проверяющих forbidden directive words (`надо` / `должен` / `обязан` / etc.) в content модулей — использовать helper:
+
+```python
+from tests.helpers.forbidden_words import assert_no_forbidden
+
+assert_no_forbidden(
+    content,
+    ["надо", "должен", "обязан"],
+    context="references/example.md",
+)
+```
+
+Helper автоматически whitelists Russian quoted speech `«...»` — позволяет включать directive слова в quoted user examples / anti-patterns без false-positive. Введён в v1.3.0 (PR-D).
+
+**Migration старых tests** (custom whitelist logic в `test_v060_content.py`, `test_v071_features.py`, etc.) — by-need, не массовый refactor.
+
 ---
 
 ## 4. Git Workflow

@@ -18,9 +18,15 @@ jobs:
       - name: Ensure local main ref exists
         # test_github_sync.py runs `git rev-parse main` — on PR/feature checkouts
         # there's no local main branch, so create one tracking origin/main.
+        # v1.3.0 (PR-D): explicit error if branch creation fails (was silent `|| true`,
+        # masking shallow-clone / race-condition issues that broke downstream tests).
         run: |
           git fetch origin main --tags --force
-          git branch -f main origin/main 2>/dev/null || true
+          git branch -f main origin/main || {
+            echo "::error::Failed to create local 'main' ref from 'origin/main'."
+            echo "::error::Hint: check fetch-depth=0 + actions/checkout@v5 + presence of origin/main."
+            exit 1
+          }
 
       - name: Install dependencies
         run: |
