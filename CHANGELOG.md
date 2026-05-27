@@ -63,7 +63,7 @@
 - PR #3 — `feat/v1.2-premortem` (Premortem)
 - PR #5 — `feat/v1.2-aar-gap-analysis` (Lean AAR)
 
-Плюс ortogonal PR #4 — `fix/ci-release-checks` (закрыт accumulating release-checks failures на CI). Merge order: #4 → #2 → #3 → #5 → этот release prep PR.
+Плюс orthogonal PR #4 — `fix/ci-release-checks` (закрывает accumulating release-checks failures на CI). Merge order: #4 → #2 → #3 → #5 → этот release prep PR.
 
 ## [1.1.0] — 2026-05-26
 
