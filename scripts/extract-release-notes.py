@@ -10,6 +10,13 @@ import re
 import sys
 from pathlib import Path
 
+# Force UTF-8 stdio so emoji/check-marks (✅) and Cyrillic in print don't crash
+# on Windows cp1251 console (BUG-009, v1.3.0). hasattr() guard для Python < 3.7
+# совместимости (no-op там). Файлы пишутся через open(..., encoding="utf-8") уже.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
+
 
 def main() -> int:
     args = sys.argv[1:]

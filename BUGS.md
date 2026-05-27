@@ -76,58 +76,42 @@ Step 5 видимо использует Python subprocess (через bash → 
 
 ---
 
+---
+
+## Закрытые баги
+
 ### BUG-009: `scripts/extract-release-notes.py` крашится на финальном print под Windows cp1251
 - **Приоритет:** P2
-- **Статус:** open
+- **Статус:** resolved
+- **Исправлено:** 2026-05-27
 - **Найден:** 2026-05-27
-- **Версия:** v1.2.0 (release prep)
+- **Версия:** v1.2.0 (release prep) → исправлено в v1.3.0
 - **Owner:** @azagreev
-- **Файлы:** `scripts/extract-release-notes.py` (строка 73)
+- **Файлы:** `scripts/extract-release-notes.py`
 
 **Описание:**
-`extract-release-notes.py` корректно генерирует файл `docs/archive/RELEASE_NOTES_vX.Y.Z.md`, но крашится на финальном `print(f"✅ Release notes сохранены: {output_path}")` под Windows default encoding (cp1251).
+`extract-release-notes.py` корректно генерирует файл `docs/archive/RELEASE_NOTES_vX.Y.Z.md`, но крашился на финальном `print(f"✅ Release notes сохранены: {output_path}")` под Windows default encoding (cp1251).
 
-**Expected:**
+**Root cause:**
+Python 3 на Windows по default использует cp1251 для stdout. ✅ emoji и кириллица в print не encode'ятся. Файл записывается через `open(..., encoding="utf-8")` — это работало нормально; проблема была только на print → stdout.
+
+**Resolution:**
+В начале `scripts/extract-release-notes.py` (после `import sys`) добавлен guard:
+```python
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
+```
+Тот же pattern уже использован в `scripts/build-platform-skill.py` (строки 17-20). `hasattr()` guard сохраняет совместимость с Python < 3.7 (no-op там). Defensive regression test добавлен в `tests/unit/test_extract_release_notes.py::test_stdout_reconfigure_present_for_windows_safety`.
+
+**Verification:**
 ```
 $ python scripts/extract-release-notes.py 1.2.0
 ✅ Release notes сохранены: docs/archive/RELEASE_NOTES_v1.2.0.md
 $ echo $?
 0
 ```
-
-**Actual:**
-```
-UnicodeEncodeError: 'charmap' codec can't encode character '✅' in position 0: character maps to <undefined>
-```
-Exit code 1 (несмотря на то, что файл успешно создан).
-
-**Steps to reproduce:**
-1. На Windows (PowerShell / cmd / Git Bash) без `PYTHONIOENCODING=utf-8`
-2. `python scripts/extract-release-notes.py 1.2.0`
-3. UnicodeEncodeError на финальном print
-
-**Root cause:**
-Python 3 на Windows по default использует cp1251 для stdout. ✅ emoji (`✅`) и кириллица в print не encode'ятся. Файл записывается через `open(..., encoding="utf-8")` — нормально; проблема только на print stdout.
-
-**Workaround (текущий):**
-`PYTHONIOENCODING=utf-8 python scripts/extract-release-notes.py 1.2.0`
-
-**Resolution (предлагаемый):**
-В начале `scripts/extract-release-notes.py` добавить:
-```python
-import sys
-if hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(encoding="utf-8")
-```
-(Тот же pattern уже использован в `scripts/build-platform-skill.py` строки 17-20 — see BUG-007 era.)
-
-Альтернатива — убрать emoji из print, заменить на ASCII (`[OK]`).
-
----
-
----
-
-## Закрытые баги
+(На Windows без `PYTHONIOENCODING=utf-8` prefix.)
 
 ### BUG-007: `dashboard_guide.md` (2538 строк) невозможно инлайнить полностью в Grok/Kimi
 - **Приоритет:** P0
@@ -261,9 +245,9 @@ HTML Dashboard содержит старую реализацию Wheel of Life 
 
 | Метрика | Значение |
 |---------|----------|
-| Открыто | 2 |
+| Открыто | 1 |
 | In Progress | 0 |
 | P0 | 0 |
 | P1 | 0 |
-| P2 | 2 |
-| Закрыто | 7 |
+| P2 | 1 |
+| Закрыто | 8 |

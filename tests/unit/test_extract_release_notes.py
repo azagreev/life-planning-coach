@@ -82,3 +82,24 @@ def test_extract_stdout_mode(monkeypatch, capsys):
     assert rc == 0
     out = capsys.readouterr().out
     assert "## Что нового в v0.17.0" in out
+
+
+def test_stdout_reconfigure_present_for_windows_safety():
+    """Regression guard для BUG-009 (v1.3.0): script reconfigures stdout to UTF-8
+    so emoji/Cyrillic в финальном print не крашатся под Windows cp1251 default.
+
+    Pattern matches `scripts/build-platform-skill.py` строки 17-20.
+    Если кто-то случайно удалит guard — этот тест поймает регрессию.
+    """
+    script_path = PROJECT_ROOT / "scripts" / "extract-release-notes.py"
+    source = script_path.read_text(encoding="utf-8")
+
+    assert "sys.stdout.reconfigure" in source, (
+        "scripts/extract-release-notes.py must reconfigure stdout to UTF-8 "
+        "to avoid UnicodeEncodeError on Windows cp1251 (BUG-009). "
+        "See scripts/build-platform-skill.py строки 17-20 для reference pattern."
+    )
+    assert "hasattr(sys.stdout, \"reconfigure\")" in source or \
+           "hasattr(sys.stdout, 'reconfigure')" in source, (
+        "reconfigure() call must be guarded by hasattr() для Python < 3.7 совместимости."
+    )
