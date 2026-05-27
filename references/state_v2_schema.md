@@ -1,6 +1,6 @@
 # State v2 Schema — Single Source of Truth
 
-> **Версия схемы:** `2.2.3`
+> **Версия схемы:** `2.2.4`
 > **Дата:** 2026-05-27
 > **Заменяет:** `references/conversation_state_schema.md` (v1 — удалён в v1.1.0; migration таблица в §8 ниже)
 > **Используется:** HTML dashboard, 8 wiki templates, dashboard_guide.md, SKILL.master.md gating logic
@@ -35,7 +35,7 @@ State v2 — единый источник правды о пользовате�
 
 ```jsonc
 {
-  "schema_version": "2.2.3",
+  "schema_version": "2.2.4",
   "user_id": "uuid-v4",
   "created_at": "2026-05-26T10:00:00Z",
   "updated_at": "2026-05-27T10:00:00Z",
@@ -351,7 +351,23 @@ State v2 — единый источник правды о пользовате�
       "lead_measures": {},             // {sphere_id: value}
       "lag_measures": {},
       "execution_score": null,         // 0-10
-      "adjustments": []
+      "adjustments": [],
+      // AAR (Lean) — v2.2.4 (опц., skip при execution_score ≥ 70%)
+      "gap_analysis": [
+        {
+          "gap_id": "GA1",
+          "what": "не дошёл до OKR weekly KR #2",
+          "why_three_levels": ["переоценил время", "не блокировал утренние слоты", "нет pre-commit к chronotype scheduling"],
+          "category": "internal"        // "internal"|"external"|"both"
+        }
+      ],
+      "lessons_learned": [
+        {
+          "lesson": "блокируй 2-3 утренних deep work слота в вс вечером",
+          "category": "planning",       // free-text для группировки
+          "sighted_count": 1            // surface при ≥ 3
+        }
+      ]
     }
   ],
 
@@ -554,6 +570,23 @@ Opt-in результат COM-B диагностики (Michie, van Stralen, Wes
 
 Все цели должны ссылаться на canonical sphere ID (см. §1). Запрещено использовать legacy имена.
 
+### 3.5.2 weekly_reviews[].gap_analysis + lessons_learned (v2.2.4+, opt-in)
+
+AAR Gap Analysis (Step 8) и Lessons Learned (Step 9) из `module_phase3_weekly_review.md`. `gap_analysis` skip при `execution_score ≥ 70%`. **COM-B escalation:** тот же gap (по what/category) повторяется ≥ 2 недели → загрузить `references/com_b_diagnostic.md`. **Lessons surface:** `sighted_count ≥ 3` → quarterly OKR adjustment. Источник: After Action Review (US Army TC 25-20, 1993) + Garvin (2000) *Learning in Action*.
+
+| Поле gap_analysis[] | Описание |
+|---|---|
+| `gap_id` | `GA1`, `GA2`, ... |
+| `what` | Краткое описание провала |
+| `why_three_levels` | Three Whys: поверхностный → глубже → системный |
+| `category` | `"internal"` / `"external"` / `"both"` |
+
+| Поле lessons_learned[] | Описание |
+|---|---|
+| `lesson` | Конкретный insight |
+| `category` | `"planning"` / `"habits"` / `"energy"` / `"environment"` / etc. (free-text) |
+| `sighted_count` | Инкремент при повторе |
+
 ### 3.5.1 goals.premortem_assessments (v2.2.3+, opt-in)
 
 Результаты Premortem упражнения (Klein 2007 HBR). Запускается через Phase 2 trigger для важных OKR. Если список пуст — Premortem не проводился. Используется для tracking realized risks на mid-quarter review (Phase 3, week 6).
@@ -590,6 +623,7 @@ Opt-in результат COM-B диагностики (Michie, van Stralen, Wes
 - `2.1 → 2.2`: добавление Goal Concordance (`goal_filter.active_goals[].partner_coordination` optional sub-block). Старые клиенты игнорируют unknown property. **Реализован в v0.19.0.**
 - `2.2 → 2.2.2`: добавление `diagnosis.com_b_assessment` optional поле (COM-B диагностика, PRD v0.15 §COM-B). Старые клиенты игнорируют unknown field. **Реализован в v1.2.0.** (2.2.1 был внутренний bump без публичной фиксации.)
 - `2.2.2 → 2.2.3`: добавление `goals.premortem_assessments[]` optional массив (Premortem упражнение, Klein 2007 HBR). Старые клиенты игнорируют unknown field. **Реализован в v1.2.0** (PR2/3).
+- `2.2.3 → 2.2.4`: добавление `weekly_reviews[].gap_analysis[]` + `weekly_reviews[].lessons_learned[]` optional полей (AAR Gap Analysis + pattern capture, US Army TC 25-20). Старые клиенты игнорируют unknown fields. **Реализован в v1.2.0** (PR3/3).
 
 ### 4.2 Breaking bumps (мажор)
 
@@ -789,6 +823,7 @@ Behavior per mode:
 | `goal_filter.active_goals[].partner_coordination` | Phase 1.5 Partner Coordination Check (step 7) | ✅ **(v0.19.0, schema 2.2)** `module_phase1_5_goal_filter.md` |
 | `diagnosis.com_b_assessment` | Phase 0 / Phase 1 / Phase 3 COM-B opt-in diagnostic | ✅ **(v1.2.0, schema 2.2.2)** `module_phase1_diagnostic.md` + `com_b_diagnostic.md` |
 | `goals.premortem_assessments[]` | Phase 2 Premortem trigger (confidence ≤ 6 / horizon ≥ 1y / partner_coord) | ✅ **(v1.2.0, schema 2.2.3)** `module_phase2_goal_architecture.md` + `premortem.md` |
+| `weekly_reviews[].gap_analysis[]` + `lessons_learned[]` | Phase 3 AAR steps 8–9 (Lean Gap Analysis + pattern capture) | ✅ **(v1.2.0, schema 2.2.4)** `module_phase3_weekly_review.md` шаги 8–9 |
 
 **Все write-rules** теперь явно прописаны в соответствующих модулях. Tests (`tests/unit/test_v018_gating_state_writes.py`, `tests/unit/test_v019_health_concordance.py`) гарантируют, что каждое поле имеет write-trigger.
 
@@ -824,6 +859,7 @@ Behavior per mode:
 
 ## 12. Changelog схемы
 
+- **2.2.4** (2026-05-27) — Add `weekly_reviews[].gap_analysis[]` + `weekly_reviews[].lessons_learned[]` optional полей (AAR Gap Analysis + pattern capture, PRD v0.15 §After Action Review). Источник: After Action Review (US Army TC 25-20, 1993) + Garvin (2000) *Learning in Action*. Lean integration — 7-step → 9-step Weekly Review с Step 8 Gap Analysis (Three Whys + COM-B escalation) и Step 9 Lessons Learned (`sighted_count ≥ 3` → quarterly adjustment). Skip при `execution_score ≥ 70%`. ADHD persona opt-out. Additive. Реализовано в **v1.2.0** (PR3/3).
 - **2.2.3** (2026-05-27) — Add `goals.premortem_assessments[]` optional массив (Premortem упражнение для важных OKR, PRD v0.15 §Premortem). Источник: Klein, G. (2007). *Performing a Project Premortem*. HBR. Активируется через Phase 2 trigger (confidence ≤ 6 / horizon ≥ 1y / partner_coord / explicit_request / mid_quarter_stagnation). Mitigation через if-then coping plans (Implementation Intentions). Additive, без миграции — массив пуст если упражнение не запускалось. Реализовано в **v1.2.0**.
 - **2.2.2** (2026-05-27) — Add `diagnosis.com_b_assessment` optional поле (COM-B диагностика причин бездействия, PRD v0.15 §COM-B). Источник: Michie, van Stralen, West (2011) *Implementation Science* 6(42). Активируется через opt-in COM-B протокол в Phase 0/1/3. Additive, без миграции — поле остаётся `null` если диагностика не выполнялась. Реализовано в **v1.2.0**.
 - **2.2** (2026-05-28) — Add `goal_filter.active_goals[].partner_coordination` optional sub-block (Goal Concordance, PRD v2.0). Источник: Transactive Goal Dynamics (Fitzsimons & Finkel) + Rosta-Filep 2023. Additive, без миграции — поле остаётся `null` для индивидуальных целей.

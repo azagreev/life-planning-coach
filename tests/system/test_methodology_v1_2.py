@@ -377,17 +377,17 @@ class TestEvidenceMapPremortemUpdated:
         assert "implementation_intentions.md" in section, "Should reference II for mitigation"
 
 
-class TestSchemaV2_2_3:
-    """Validate state_v2_schema.md bump для Premortem (PR2)."""
+class TestSchemaPremortemField:
+    """Validate state_v2_schema.md содержит Premortem bump (history-preserving)."""
 
     @pytest.fixture(scope="class")
     def content(self):
         path = REFERENCES / "state_v2_schema.md"
         return path.read_text(encoding="utf-8")
 
-    def test_schema_version_bumped_to_2_2_3(self, content):
-        assert "2.2.3" in content, "Schema version must be bumped to 2.2.3"
-        assert '"schema_version": "2.2.3"' in content
+    def test_2_2_3_in_changelog(self, content):
+        # 2.2.3 bump должен остаться в §12 Changelog после прогрессии версии
+        assert "**2.2.3**" in content, "2.2.3 changelog entry must persist"
 
     def test_premortem_assessments_field_documented(self, content):
         assert "premortem_assessments" in content
@@ -406,6 +406,103 @@ class TestSchemaV2_2_3:
         # §9 Field availability matrix
         assert "goals.premortem_assessments" in content
         assert "schema 2.2.3" in content or "v1.2.0, schema 2.2.3" in content
+
+
+class TestAARGapAnalysis:
+    """Validate module_phase3_weekly_review.md Lean AAR integration (PR3)."""
+
+    @pytest.fixture(scope="class")
+    def content(self):
+        path = REFERENCES / "module_phase3_weekly_review.md"
+        return path.read_text(encoding="utf-8")
+
+    def test_weekly_review_renamed_to_9_step(self, content):
+        assert "## 9-step Weekly Review" in content
+        assert "## 7-step Weekly Review" not in content
+        assert "AAR" in content
+
+    def test_step_8_gap_analysis_present(self, content):
+        assert "### 8." in content
+        assert "Gap Analysis" in content
+
+    def test_step_9_lessons_learned_present(self, content):
+        assert "### 9." in content
+        assert "Lessons Learned" in content
+
+    def test_step_8_has_execution_70_gate(self, content):
+        assert "execution_score" in content and ("70%" in content or "≥ 70" in content)
+
+    def test_step_8_three_whys(self, content):
+        assert "Three Whys" in content or "three whys" in content.lower()
+
+    def test_step_8_gap_categories(self, content):
+        lower = content.lower()
+        assert "internal" in lower and "external" in lower and "both" in lower
+
+    def test_step_8_com_b_escalation(self, content):
+        assert "com_b_diagnostic.md" in content
+        assert "2 недели" in content or "≥ 2" in content
+
+    def test_step_9_sighted_count_surface_threshold(self, content):
+        assert "sighted_count" in content
+        assert "≥ 3" in content or ">= 3" in content
+
+    def test_step_9_references_schema(self, content):
+        assert "v2.2.4" in content or "2.2.4" in content
+        assert "state_v2_schema.md" in content
+
+    def test_adhd_persona_opt_out(self, content):
+        adhd_idx = content.find("**ADHD**")
+        assert adhd_idx >= 0
+        adhd_section = content[adhd_idx:adhd_idx + 500]
+        assert "AAR" in adhd_section and "skip" in adhd_section.lower()
+
+    def test_module_under_token_budget(self, content):
+        approx_tokens = len(content) // 3
+        assert approx_tokens <= 2500
+
+
+class TestEvidenceMapAARUpdated:
+    """Validate evidence_map.md AAR status update (PR3)."""
+
+    def test_aar_no_longer_planned(self):
+        path = REFERENCES / "evidence_map.md"
+        content = path.read_text(encoding="utf-8")
+        aar_idx = content.find("### After Action Review")
+        assert aar_idx >= 0
+        section = content[aar_idx:aar_idx + 1500]
+        assert "Planned для v1.2" not in section
+        assert "Used in:" in section
+        assert "module_phase3_weekly_review.md" in section
+        assert "TC 25-20" in section
+
+
+class TestSchemaAARField:
+    """Validate state_v2_schema.md bump для AAR (PR3)."""
+
+    @pytest.fixture(scope="class")
+    def content(self):
+        path = REFERENCES / "state_v2_schema.md"
+        return path.read_text(encoding="utf-8")
+
+    def test_schema_version_bumped_to_2_2_4(self, content):
+        assert "2.2.4" in content
+        assert '"schema_version": "2.2.4"' in content
+
+    def test_gap_analysis_field_documented(self, content):
+        assert "gap_analysis" in content
+        assert "3.5.2" in content or "weekly_reviews[].gap_analysis" in content
+        for field in ["gap_id", "what", "why_three_levels", "category"]:
+            assert field in content
+
+    def test_lessons_learned_field_documented(self, content):
+        assert "lessons_learned" in content
+        for field in ["lesson", "category", "sighted_count"]:
+            assert field in content
+
+    def test_changelog_entry_2_2_4_added(self, content):
+        assert "**2.2.4**" in content
+        assert "TC 25-20" in content or "AAR" in content
 
 
 class TestPlatformIntegration:

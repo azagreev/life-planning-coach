@@ -40,7 +40,7 @@ CANONICAL_PHASE_MODULES = [
 # Each new ref adds ~7 tokens (path в Tier 3 listing). Headroom ~2.5%.
 TIER1_BUDGET_TOKENS = 4100
 PER_MODULE_BUDGET_TOKENS = 2500
-ALL_MODULES_BUDGET_TOKENS = 14000
+ALL_MODULES_BUDGET_TOKENS = 15000  # bumped 14000→15000 в v1.2.0 (phase2 +Premortem, phase3 +AAR)
 
 
 def _approx_tokens(text: str) -> int:
