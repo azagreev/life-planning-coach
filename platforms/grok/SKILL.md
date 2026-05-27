@@ -106,6 +106,9 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 4. **Safety check:** при маркерах РПП (ограничительное питание, binge-purge циклы, навязчивые мысли о теле) — НЕ продолжай трек, мягко рекомендуй специалиста.
 **Не блокирует core flow** — пользователь может пропустить и вернуться позже.
 ---
+#### COM-B Diagnostic (opt-in, 3–5 минут)
+При повторяющейся жалобе «знаю, что в сфере X плохо — но не делаю» / «пытаюсь и не получается» — предложи: «Могу за 5 минут помочь понять, *почему* не делается?». При согласии → `references/com_b_diagnostic.md`. Не запускай автоматически — это opt-in escalation, не часть стандартной диагностики.
+---
 #### Persona adaptations
 После Style Calibration в Phase 0 могла включиться одна из персон. Применяй её к Phase 1:
 - **ADHD** (`references/mode_adhd.md`): дроби Wheel of Life на 3 захода по 4 сферы, добавляй визуальные таймеры, разрешай skip без объяснения.
@@ -267,8 +270,8 @@ on session_start:
 ### Tier 3 — Deep refs (грузятся phase-модулями)
 
 - **State / schema**: `state_v2_schema.md`, `templates/`
-- **Diagnostic**: `diagnostic_methods.md`, `authentic_goal_filter.md`, `weak_goal_taxonomy.md`
-- **Goal arch**: `goal_architecture.md`, `habit_loop.md`, `habit_stack_builder.md`, `action_breakdown_template.md`
+- **Diagnostic**: `diagnostic_methods.md`, `authentic_goal_filter.md`, `weak_goal_taxonomy.md`, `com_b_diagnostic.md`
+- **Goal arch**: `goal_architecture.md`, `habit_loop.md`, `habit_stack_builder.md`, `action_breakdown_template.md`, `environment_design.md`
 - **Weekly review**: `weekly_review.md`, `win_alert.md`, `recovery_protocol.md`, `reward_audit.md`
 - **Dashboard**: `dashboard_guide.md`
 - **Calendar**: `calendar_constants.md`, `calendar_integration.md`, `energy_scheduling.md`, `workload_warning.md`, `calendar_pattern_analyzer.md`, `chronotype_native_planning.md`, `fresh_start_engine.md`, `shutdown_ritual.md`

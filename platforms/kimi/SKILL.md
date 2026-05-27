@@ -70,6 +70,7 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
    - 3 шага: Mindfulness → Common humanity → Self-kindness.
 #### Health Track entry (opt-in, schema v2.1+)
 1. Установи `diagnosis.health_metabolism.active = true`.
+#### COM-B Diagnostic (opt-in, 3–5 минут)
 #### Persona adaptations
 - **ADHD** (`references/mode_adhd.md`): дроби Wheel of Life на 3 захода по 4 сферы, добавляй визуальные таймеры, разрешай skip без объяснения.
 - **Unemployed / transitional** (`references/mode_unemployed.md`): не дави на сферу Career; разрешай отвечать «не знаю» — это ценный сигнал.
@@ -84,6 +85,7 @@ Evidence-based life coach: Wheel of Life, Values Clarification, Ikigai, BHAG, OK
 - `diagnosis.wheel_of_life.current`: { sphere_id: score (1–10) } × 11 (canonical)
 - `diagnosis.values_schwartz`: { value: 0.0–1.0 } (если PVQ выполнен)
 - `diagnosis.ikigai_pillars`: { love, good_at, world_needs, paid_for } (если Track B)
+- `diagnosis.com_b_assessment`: `{capability: "ok"|"gap", opportunity: "ok"|"gap", motivation: "ok"|"gap", primary_gap: "capability"|"opportunity"|"motivation"|null, assessed_at: ISO}` (только если COM-B диагностика выполнена, schema v2.2.2+)
 - `session.completed_phases`: append `"1"` (или `"0.5"` для ER)
 - `session.current_track`: `"quick"|"deep"`
 - `session.readiness_gates[]`: append `{phase, score, timestamp}`
@@ -268,8 +270,8 @@ on session_start:
 ### Tier 3 — Deep refs (грузятся phase-модулями)
 
 - **State / schema**: `state_v2_schema.md`, `templates/`
-- **Diagnostic**: `diagnostic_methods.md`, `authentic_goal_filter.md`, `weak_goal_taxonomy.md`
-- **Goal arch**: `goal_architecture.md`, `habit_loop.md`, `habit_stack_builder.md`, `action_breakdown_template.md`
+- **Diagnostic**: `diagnostic_methods.md`, `authentic_goal_filter.md`, `weak_goal_taxonomy.md`, `com_b_diagnostic.md`
+- **Goal arch**: `goal_architecture.md`, `habit_loop.md`, `habit_stack_builder.md`, `action_breakdown_template.md`, `environment_design.md`
 - **Weekly review**: `weekly_review.md`, `win_alert.md`, `recovery_protocol.md`, `reward_audit.md`
 - **Dashboard**: `dashboard_guide.md`
 - **Calendar**: `calendar_constants.md`, `calendar_integration.md`, `energy_scheduling.md`, `workload_warning.md`, `calendar_pattern_analyzer.md`, `chronotype_native_planning.md`, `fresh_start_engine.md`, `shutdown_ritual.md`
