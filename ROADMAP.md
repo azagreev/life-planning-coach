@@ -15,13 +15,30 @@
 
 ---
 
-## v1.3.0 (planned) — Architectural Refactor
+## v1.3.0 (planned) — WoL Refactor + v1.2 Follow-ups
 
-**Тема:** Address PRD's WoL concern. Требует state schema bump (additive).
+**Тема:** Address PRD's WoL concern + close v1.2 code review gaps. Требует state schema bump (additive).
+
+### Core (existing)
 
 - [ ] **Wheel of Life frequency gate** (RICE 35) — add `diagnosis.wheel_of_life.last_assessed_at` поле; Phase 1 gating: skip WoL если assessed < 30 days ago; offer re-assess после 30 days.
 
-**Estimated effort:** ~3 EAS.
+### v1.2 follow-ups (из code review)
+
+- [ ] **AAR sighted_count runtime pattern matching** (RICE 120) — skill-instruction в Step 9: при write нового lesson — search в last 4 weekly_reviews по similar lesson+category, increment counter если match. Без этого Step 9 = simple journal, surface threshold (`sighted_count ≥ 3`) никогда не trigger'ся. ~1 EAS.
+- [ ] **COM-B Phase 0 soft upsell** (RICE 126) — секция в `references/emotion_regulation.md` cross-ref к `com_b_diagnostic.md` для пользователей которые застряли на «не могу начать» в Phase 0.5 ER protocol (lean conversation mode не проходит через Phase 1 trigger). ~0.5 EAS.
+- [ ] **Trivial cleanup bundle** (RICE 180 в среднем, ~0.75 EAS total) — три trivial items одним PR:
+  - State writes inline policy в AGENTS.md §IA decomposition («при per-module budget pressure → state writes ТОЛЬКО в state_v2_schema.md»)
+  - Whitelist quoted speech (`«[^»]*»`) в `test_no_forbidden_words` чтобы перестать переформулировать user quotes
+  - Explicit error для `git branch -f main origin/main` в `.github/workflows/release-checks.yml` (silent failure → diagnosable)
+
+### Observed risks (revisit после месяца использования v1.2)
+
+- [ ] **Premortem trigger rank-order/AND logic** (RICE 84) — 5 OR conditions могут trigger слишком часто для junior users. Defer до user feedback.
+- [ ] **lessons_learned category drift** (RICE 56) — free-text без validation. Defer до first real usage data (что они реально category используют).
+- [ ] **`find dist -name -not` fragile pattern** (RICE 70) — explicit regex `dist/life-planning-coach-v[0-9.]+\.zip`. Defer до first break при добавлении нового archive variant.
+
+**Estimated effort:** ~5 EAS (core 3 + follow-ups 2).
 
 ---
 

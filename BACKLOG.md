@@ -49,6 +49,30 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Артефакты:** PRD в `docs/research/`; новые refs (implementation_intentions, com_b_diagnostic, premortem); reframed habit_loop, weekly_review; state v2 schema bump для WoL.last_assessed_at.
 - **Риск:** Parts Work deferred (RICE 5, низкая evidence); "simplification" deferred (no specific pain identified).
 
+### v1.2 follow-ups (epic) — code review observations
+
+- **Описание:** 6 items из code review PRs #2/#3/#5 (v1.2 series). Включены в **ROADMAP v1.3.0** (см. секцию «v1.2 follow-ups»). Здесь — детализация с RICE.
+- **Триггер:** Code review 2026-05-27 после открытия PR #2/#3/#5. См. session transcript для full discussion.
+- **Статус:** 📋 Committed в v1.3.0 roadmap; 3 risks deferred до user feedback.
+
+**Items в v1.3.0:**
+
+1. **AAR sighted_count runtime** — Reach 80 × Impact 2.5 × Confidence 60% / Effort 1 EAS, Medium = **120** (Quick Win). Skill-instruction-based natural-language match (no code). Без него Step 9 = journal, теряется core AAR value (pattern recognition для quarterly adjustments).
+2. **COM-B Phase 0 soft upsell** — Reach 70 × Impact 1.5 × Confidence 60% / Effort 0.5 EAS, Low = **126** (Quick Win). Cross-ref в `emotion_regulation.md` для lean conversation users.
+3. **Trivial cleanup bundle** (3-в-1 PR) — Avg RICE **180** (Quick Win, trivial). State writes policy в AGENTS.md + quoted speech whitelist в `test_no_forbidden_words` + explicit error в release-checks.yml.
+
+**Items deferred до user feedback (revisit ~30 дней после v1.2 release):**
+
+4. **Premortem triggers rank-order** — RICE 84. 5 OR conditions noise risk. Defer.
+5. **lessons_learned category drift** — RICE 56. Free-text validation. Defer.
+6. **`find dist` fragile pattern** — RICE 70. Future-proofing CI. Defer.
+
+**Item НЕ committed (offered, declined):**
+
+- **ADR-001 budget bumps policy** — RICE 160 (recommended в review, отклонён в planning). Erosion risk остаётся; revisit если в v1.3 потребуется ещё bump.
+
+**Артефакты:** Detailed discussion в session transcript; review notes в PR #2/#3/#5 comments (если posted inline). Future implementation PRs на ветках `fix/v1.3-aar-sighted-count`, `feat/v1.3-com-b-upsell`, `chore/v1.3-trivial-cleanup`.
+
 ### QA Hardening — надёжность, edge cases, безопасность
 
 - **Описание:** Input validation, MCP timeout handling, prompt-injection reinforcement, human-friendly errors.
