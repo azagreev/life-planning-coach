@@ -41,7 +41,89 @@
 
 ## Открытые баги
 
-_Нет открытых багов._
+### BUG-008: `scripts/release.sh` падает на step 5 (verification) на Windows
+- **Приоритет:** P2
+- **Статус:** open
+- **Найден:** 2026-05-27
+- **Версия:** v1.2.0 (release flow)
+- **Owner:** @azagreev
+- **Файлы:** `scripts/release.sh` (step 5), вероятно `scripts/build-skill.py` или sync-version subprocess
+
+**Описание:**
+`release.sh` шаг 5 «Проверка на GitHub» падает с ошибкой `Python write /dev/stdout: The pipe is being closed.`. Steps 1-4 (preconditions / version sync / commit / push) проходят успешно — commit и push на GitHub выполняются. Падение на verification = step 5+ (создание тега + GitHub Release) **не выполняются автоматически**.
+
+**Expected:**
+Полный flow: build → version sync → commit → push → **verify on GitHub** → tag → GitHub Release без ошибок.
+
+**Actual:**
+Steps 1-4 ok, step 5 крашится с pipe error, далее release.sh exits. Tag + GitHub Release нужно делать вручную:
+```
+git -c tag.gpgSign=false tag -a v1.2.0 <commit> -m "..."
+git push origin v1.2.0
+gh release create v1.2.0 ...
+```
+
+**Steps to reproduce:**
+1. На Windows (PowerShell или Git Bash через MSYS)
+2. `PYTHONIOENCODING=utf-8 bash scripts/release.sh 1.2.0`
+3. Дождаться step 5 «Проверка на GitHub» → pipe error
+
+**Root cause (предполагаемый):**
+Step 5 видимо использует Python subprocess (через bash → python pipe) с PIPE stdout/stderr. Windows MSYS bash + Python 3.12 + cp1251 default encoding + subprocess pipe — где-то комбинация ломает stdout flush. Возможно проблема в `scripts/sync-version.sh` или другом subprocess который step 5 запускает.
+
+**Workaround (текущий):**
+Выполнить tag + GitHub release вручную после release.sh падения. См. сессию v1.2.0 release log как пример.
+
+---
+
+### BUG-009: `scripts/extract-release-notes.py` крашится на финальном print под Windows cp1251
+- **Приоритет:** P2
+- **Статус:** open
+- **Найден:** 2026-05-27
+- **Версия:** v1.2.0 (release prep)
+- **Owner:** @azagreev
+- **Файлы:** `scripts/extract-release-notes.py` (строка 73)
+
+**Описание:**
+`extract-release-notes.py` корректно генерирует файл `docs/archive/RELEASE_NOTES_vX.Y.Z.md`, но крашится на финальном `print(f"✅ Release notes сохранены: {output_path}")` под Windows default encoding (cp1251).
+
+**Expected:**
+```
+$ python scripts/extract-release-notes.py 1.2.0
+✅ Release notes сохранены: docs/archive/RELEASE_NOTES_v1.2.0.md
+$ echo $?
+0
+```
+
+**Actual:**
+```
+UnicodeEncodeError: 'charmap' codec can't encode character '✅' in position 0: character maps to <undefined>
+```
+Exit code 1 (несмотря на то, что файл успешно создан).
+
+**Steps to reproduce:**
+1. На Windows (PowerShell / cmd / Git Bash) без `PYTHONIOENCODING=utf-8`
+2. `python scripts/extract-release-notes.py 1.2.0`
+3. UnicodeEncodeError на финальном print
+
+**Root cause:**
+Python 3 на Windows по default использует cp1251 для stdout. ✅ emoji (`✅`) и кириллица в print не encode'ятся. Файл записывается через `open(..., encoding="utf-8")` — нормально; проблема только на print stdout.
+
+**Workaround (текущий):**
+`PYTHONIOENCODING=utf-8 python scripts/extract-release-notes.py 1.2.0`
+
+**Resolution (предлагаемый):**
+В начале `scripts/extract-release-notes.py` добавить:
+```python
+import sys
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+```
+(Тот же pattern уже использован в `scripts/build-platform-skill.py` строки 17-20 — see BUG-007 era.)
+
+Альтернатива — убрать emoji из print, заменить на ASCII (`[OK]`).
+
+---
 
 ---
 
@@ -179,9 +261,9 @@ HTML Dashboard содержит старую реализацию Wheel of Life 
 
 | Метрика | Значение |
 |---------|----------|
-| Открыто | 0 |
+| Открыто | 2 |
 | In Progress | 0 |
 | P0 | 0 |
 | P1 | 0 |
-| P2 | 0 |
+| P2 | 2 |
 | Закрыто | 7 |
