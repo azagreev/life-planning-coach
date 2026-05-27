@@ -48,7 +48,7 @@ git describe --tags --abbrev=0
 - **Название:** `life-planning-coach` — evidence-based coaching skill
 - **Платформы:** Claude.ai (primary), Grok (xAI), Kimi OK Computer (Moonshot AI), Kimi Code CLI (terminal)
 - **Язык:** Русский (primary)
-- **Версия:** v1.2.0 (источник правды — git tag)
+- **Версия:** v1.3.0 (источник правды — git tag)
 - **Репозиторий:** https://github.com/azagreev/life-planning-coach
 - **Ветка:** `main`
 
@@ -143,7 +143,7 @@ python scripts/build-skill.py release X.Y.Z   # v1.0+ unified CLI
 # bash scripts/release.sh X.Y.Z
 ```
 
-**ЗАПРЕЩЕНО создавать релизы вручную.** Title = только тег (`v1.2.0`). Описание генерируется автоматически из CHANGELOG.md.
+**ЗАПРЕЩЕНО создавать релизы вручную.** Title = только тег (`v1.3.0`). Описание генерируется автоматически из CHANGELOG.md.
 
 **Sub-commands `build-skill.py`** (v1.0+):
 - `build` — все 4 платформы + ZIP/skill/grok-md/kimi-md/kimi-cli-zip
@@ -246,4 +246,4 @@ bash scripts/release.sh X.Y.Z
 ---
 
 *Обновлено: 2026-05-20*  
-*AGENTS.md v4.3 для life-planning-coach v1.2.0+*
+*AGENTS.md v4.3 для life-planning-coach v1.3.0+*
