@@ -485,8 +485,12 @@ class TestSchemaAARField:
         return path.read_text(encoding="utf-8")
 
     def test_schema_version_bumped_to_2_2_4(self, content):
-        assert "2.2.4" in content
-        assert '"schema_version": "2.2.4"' in content
+        # v1.3.0 (PR-A): schema bumped 2.2.4 → 2.2.5. This v1.2 test now checks
+        # that 2.2.4 entry persists в §12 Changelog (history preservation guard),
+        # не текущая JSON literal version. Pattern matches v1.2 PR3 refactor.
+        assert "**2.2.4**" in content, "v2.2.4 changelog entry must persist (history)"
+        # Field availability matrix должна reference 2.2.4 для AAR row
+        assert "schema 2.2.4" in content, "Schema 2.2.4 reference must remain (e.g. matrix row)"
 
     def test_gap_analysis_field_documented(self, content):
         assert "gap_analysis" in content
