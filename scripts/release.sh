@@ -133,9 +133,14 @@ echo "[5/7] Проверка на GitHub..."
 # Ждём 3 секунды для репликации GitHub
 sleep 3
 
-# Проверяем версию в README на GitHub
+# Проверяем версию в README на GitHub.
+# BUG-008 fix (v1.3.0): использовали `sys.stdout.buffer.write(bytes)` вместо
+# `print(content.decode('utf-8'))`. Старый print() крашился на Windows cp1251
+# default encoding при попытке записать UTF-8 README (с emoji 🧭, кириллицей)
+# в stdout — UnicodeEncodeError + pipe error. Binary write bypass'ит encoding
+# entirely: pipe несёт raw UTF-8 bytes, grep их обрабатывает без проблем.
 PYTHON_BIN="$(command -v python3 || command -v python || echo python3)"
-GITHUB_README=$(gh api "repos/$REPO/contents/README.md" --jq '.content' | "$PYTHON_BIN" -c "import sys, base64; print(base64.b64decode(sys.stdin.read()).decode('utf-8'))" | grep -oP '\*\*Версия:\*\*\s*\K[0-9.]+' || true)
+GITHUB_README=$(gh api "repos/$REPO/contents/README.md" --jq '.content' | "$PYTHON_BIN" -c "import sys, base64; sys.stdout.buffer.write(base64.b64decode(sys.stdin.read()))" | grep -oP '\*\*Версия:\*\*\s*\K[0-9.]+' || true)
 
 if [ "$GITHUB_README" != "$VERSION" ]; then
     echo "❌ Версия на GitHub ($GITHUB_README) ≠ ожидаемой ($VERSION)"

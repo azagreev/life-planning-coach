@@ -41,44 +41,54 @@
 
 ## Открытые баги
 
-### BUG-008: `scripts/release.sh` падает на step 5 (verification) на Windows
-- **Приоритет:** P2
-- **Статус:** open
-- **Найден:** 2026-05-27
-- **Версия:** v1.2.0 (release flow)
-- **Owner:** @azagreev
-- **Файлы:** `scripts/release.sh` (step 5), вероятно `scripts/build-skill.py` или sync-version subprocess
-
-**Описание:**
-`release.sh` шаг 5 «Проверка на GitHub» падает с ошибкой `Python write /dev/stdout: The pipe is being closed.`. Steps 1-4 (preconditions / version sync / commit / push) проходят успешно — commit и push на GitHub выполняются. Падение на verification = step 5+ (создание тега + GitHub Release) **не выполняются автоматически**.
-
-**Expected:**
-Полный flow: build → version sync → commit → push → **verify on GitHub** → tag → GitHub Release без ошибок.
-
-**Actual:**
-Steps 1-4 ok, step 5 крашится с pipe error, далее release.sh exits. Tag + GitHub Release нужно делать вручную:
-```
-git -c tag.gpgSign=false tag -a v1.2.0 <commit> -m "..."
-git push origin v1.2.0
-gh release create v1.2.0 ...
-```
-
-**Steps to reproduce:**
-1. На Windows (PowerShell или Git Bash через MSYS)
-2. `PYTHONIOENCODING=utf-8 bash scripts/release.sh 1.2.0`
-3. Дождаться step 5 «Проверка на GitHub» → pipe error
-
-**Root cause (предполагаемый):**
-Step 5 видимо использует Python subprocess (через bash → python pipe) с PIPE stdout/stderr. Windows MSYS bash + Python 3.12 + cp1251 default encoding + subprocess pipe — где-то комбинация ломает stdout flush. Возможно проблема в `scripts/sync-version.sh` или другом subprocess который step 5 запускает.
-
-**Workaround (текущий):**
-Выполнить tag + GitHub release вручную после release.sh падения. См. сессию v1.2.0 release log как пример.
-
----
+_(no open bugs currently)_
 
 ---
 
 ## Закрытые баги
+
+### BUG-008: `scripts/release.sh` падает на step 5 (verification) на Windows
+- **Приоритет:** P2
+- **Статус:** resolved
+- **Исправлено:** 2026-05-27
+- **Найден:** 2026-05-27
+- **Версия:** v1.2.0 (release flow) → исправлено в v1.3.0
+- **Owner:** @azagreev
+- **Файлы:** `scripts/release.sh` (line 138)
+
+**Описание:**
+`release.sh` шаг 5 «Проверка на GitHub» падал с ошибкой `Python write /dev/stdout: The pipe is being closed.`. Steps 1-4 (preconditions / version sync / commit / push) проходили успешно. Step 5+ (tag + GitHub Release) **не выполнялись автоматически** — приходилось делать вручную.
+
+**Root cause:**
+Step 5 line 138 содержал inline pipe: `gh api ... | python -c "print(base64.b64decode(...).decode('utf-8'))" | grep -oP "..."`. Python decode'ил README в UTF-8 + print() → stdout, но Windows cp1251 default encoding не может encode emoji (`🧭` на первой строке README) и кириллицу. UnicodeEncodeError на Python side → pipe close → MSYS bash repackag'ил error как «The pipe is being closed.»
+
+Та же root cause что BUG-009 (cp1251 vs UTF-8 на Windows), но в другом scope (inline `-c` script внутри release.sh, не отдельный .py файл).
+
+**Resolution:**
+Заменили `print(content.decode('utf-8'))` на `sys.stdout.buffer.write(bytes)`:
+```bash
+# Было (BROKEN):
+... | "$PYTHON_BIN" -c "import sys, base64; print(base64.b64decode(sys.stdin.read()).decode('utf-8'))" | grep ...
+# Стало (FIXED):
+... | "$PYTHON_BIN" -c "import sys, base64; sys.stdout.buffer.write(base64.b64decode(sys.stdin.read()))" | grep ...
+```
+
+`sys.stdout.buffer.write(bytes)` bypass'ит text encoding entirely — pipe несёт raw UTF-8 bytes, grep их обрабатывает без проблем. Работает на любом OS / encoding. Более robust чем PYTHONIOENCODING=utf-8 (не зависит от env var).
+
+**Regression test:** `tests/unit/test_release_sh_step5.py::test_step5_uses_binary_stdout_write` — проверяет что `release.sh` содержит `sys.stdout.buffer.write` (не `print(...decode...)`).
+
+**Verification:**
+```
+$ gh api repos/azagreev/life-planning-coach/contents/README.md --jq .content \
+    | python -c "import sys, base64; sys.stdout.buffer.write(base64.b64decode(sys.stdin.read()))" \
+    | grep -oP '\*\*Версия:\*\*\s*\K[0-9.]+'
+1.2.0
+$ echo $?
+0
+```
+(На Windows MSYS без PYTHONIOENCODING=utf-8 prefix.)
+
+---
 
 ### BUG-009: `scripts/extract-release-notes.py` крашится на финальном print под Windows cp1251
 - **Приоритет:** P2
@@ -245,9 +255,9 @@ HTML Dashboard содержит старую реализацию Wheel of Life 
 
 | Метрика | Значение |
 |---------|----------|
-| Открыто | 1 |
+| Открыто | 0 |
 | In Progress | 0 |
 | P0 | 0 |
 | P1 | 0 |
-| P2 | 1 |
-| Закрыто | 8 |
+| P2 | 0 |
+| Закрыто | 9 |
