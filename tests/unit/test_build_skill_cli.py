@@ -166,3 +166,53 @@ def test_argparse_invalid_subcommand_fails():
     with pytest.raises(SystemExit) as exc:
         mod.main(["nonexistent"])
     assert exc.value.code != 0
+
+
+def test_clean_prev_artifacts_keeps_current_removes_previous(tmp_path):
+    """--clean-prev must delete prior-version artifacts but keep the current build."""
+    mod = _load_module()
+    dist = tmp_path / "dist"
+    dist.mkdir()
+
+    # Current version (must be kept)
+    (dist / "life-planning-coach-v1.4.0.zip").write_text("cur", encoding="utf-8")
+    (dist / "life-planning-coach-v1.4.0.skill").write_text("cur", encoding="utf-8")
+    (dist / "life-planning-coach-v1.4.0-grok.md").write_text("cur", encoding="utf-8")
+    cur_dir = dist / "life-planning-coach-v1.4.0"
+    cur_dir.mkdir()
+    (cur_dir / "SKILL.md").write_text("cur", encoding="utf-8")
+
+    # Previous version (must be removed)
+    (dist / "life-planning-coach-v1.3.1.zip").write_text("old", encoding="utf-8")
+    (dist / "life-planning-coach-v1.3.1-kimi.md").write_text("old", encoding="utf-8")
+    prev_dir = dist / "life-planning-coach-v1.3.1"
+    prev_dir.mkdir()
+    (prev_dir / "SKILL.md").write_text("old", encoding="utf-8")
+
+    # Unrelated file (does not match glob — must be untouched)
+    (dist / "README.txt").write_text("keep", encoding="utf-8")
+
+    removed = mod._clean_prev_artifacts(dist, "1.4.0")
+
+    assert {p.name for p in removed} == {
+        "life-planning-coach-v1.3.1",
+        "life-planning-coach-v1.3.1-kimi.md",
+        "life-planning-coach-v1.3.1.zip",
+    }
+    # Current build kept
+    assert (dist / "life-planning-coach-v1.4.0.zip").exists()
+    assert (dist / "life-planning-coach-v1.4.0.skill").exists()
+    assert (dist / "life-planning-coach-v1.4.0-grok.md").exists()
+    assert cur_dir.exists()
+    # Previous build removed (this is the bug the no-op silently skipped)
+    assert not (dist / "life-planning-coach-v1.3.1.zip").exists()
+    assert not (dist / "life-planning-coach-v1.3.1-kimi.md").exists()
+    assert not prev_dir.exists()
+    # Unrelated file untouched
+    assert (dist / "README.txt").exists()
+
+
+def test_clean_prev_artifacts_missing_dir_returns_empty(tmp_path):
+    """No dist dir → no-op, returns empty list (not a crash)."""
+    mod = _load_module()
+    assert mod._clean_prev_artifacts(tmp_path / "nonexistent", "1.4.0") == []

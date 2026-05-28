@@ -163,6 +163,30 @@ def _sync_root_skill_md() -> None:
     shutil.copy2(src, dst)
 
 
+def _clean_prev_artifacts(dist_dir: Path, version: str) -> list[Path]:
+    """Remove dist artifacts for PREVIOUS versions, keeping the one being built.
+
+    Historical releases live on GitHub, so dist/ only needs the current build.
+    Matches `life-planning-coach-v*` zip/skill/md files and version dirs; keeps
+    anything whose name starts with `life-planning-coach-v{version}`. Returns the
+    list of removed paths (for logging / tests).
+    """
+    if not dist_dir.exists():
+        return []
+    keep_prefix = f"life-planning-coach-v{version}"
+    removed: list[Path] = []
+    for f in sorted(dist_dir.glob("life-planning-coach-v*")):
+        is_artifact = f.name.endswith((".zip", ".skill", ".md")) or f.is_dir()
+        if not is_artifact or f.name.startswith(keep_prefix):
+            continue
+        if f.is_dir():
+            shutil.rmtree(f)
+        else:
+            f.unlink()
+        removed.append(f)
+    return removed
+
+
 def cmd_build(args: argparse.Namespace) -> int:
     """Build all platforms + dist artifacts."""
     _rebuild_platforms()
@@ -179,11 +203,8 @@ def cmd_build(args: argparse.Namespace) -> int:
 
     # Remove previous version artifacts (keep historical releases на GitHub)
     if args.clean_prev:
-        for f in DIST_DIR.glob(f"life-planning-coach-v*"):
-            if f.name.endswith((".zip", ".skill", ".md")) or f.is_dir():
-                # Only clean prev versions, not the one we're building
-                if version not in f.name:
-                    continue
+        for removed in _clean_prev_artifacts(DIST_DIR, version):
+            print(f"Cleaned previous artifact: {removed.name}")
 
     # Stage SKILL folder for ZIP
     shutil.copy2(PROJECT_ROOT / "SKILL.md", SKILL_FOLDER / "SKILL.md")
@@ -637,7 +658,7 @@ def main(argv: list[str] | None = None) -> int:
     p_build.add_argument(
         "--clean-prev",
         action="store_true",
-        help="Remove dist artifacts for the current version before rebuilding",
+        help="Remove dist artifacts for PREVIOUS versions (keeps the version being built)",
     )
     p_build.set_defaults(func=cmd_build)
 
