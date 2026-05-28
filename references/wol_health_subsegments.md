@@ -52,7 +52,7 @@ Health Index = avg(filled sub-segments)
 | 8.0 – 10.0 | Отличный | Поддержка текущих привычек; surface наиболее сильный sub-segment |
 | 6.5 – 7.9 | Хороший | Фокус на 1–2 слабых sub-segments; light habit tweak |
 | 5.0 – 6.4 | Средний | Предложить Health Snapshot (`health_snapshot.md`) — 4-вопросная light interview |
-| ≤ 5.0 | Низкий | Strongly recommend Health Snapshot; затем decision про Health Track (`track_health_metabolism.md`) |
+| 1.0 – 4.9 | Низкий | Strongly recommend Health Snapshot; затем decision про Health Track (`track_health_metabolism.md`) |
 
 ### Weakest sub-segment
 
@@ -135,7 +135,7 @@ Health Index = avg(filled sub-segments)
 | Отличный (≥ 8) | Surface strongest; continue WoL остальные сферы |
 | Хороший (6.5–7.9) | Surface weakest как habit tweak candidate; continue |
 | Средний (5.0–6.4) | Offer Light Health Snapshot (`health_snapshot.md` — Sub-feature B, v1.4.x); если decline → continue WoL |
-| Низкий (≤ 5.0) | Strongly recommend Health Snapshot ИЛИ Health Track (`track_health_metabolism.md`) — ask user |
+| Низкий (< 5.0) | Strongly recommend Health Snapshot ИЛИ Health Track (`track_health_metabolism.md`) — ask user |
 
 ---
 
