@@ -588,3 +588,62 @@ class TestSubfeatureAToBRouting:
             "health_snapshot.md must reference wol_health_subsegments.md as the "
             "primary entry-point (low-score auto-offer trigger)."
         )
+
+
+# ---------------------------------------------------------------------------
+# Sub-feature C — Phase 3 Weekly Review opt-in для Health Snapshot
+# ---------------------------------------------------------------------------
+
+
+PHASE3 = REFERENCES / "module_phase3_weekly_review.md"
+
+
+@pytest.fixture(scope="module")
+def phase3_text() -> str:
+    return PHASE3.read_text(encoding="utf-8")
+
+
+class TestSubfeatureCPhase3OptIn:
+    """Sub-feature C: Phase 3 §6.5 must offer Snapshot when Health Track NOT active."""
+
+    def test_phase3_references_health_snapshot(self, phase3_text: str) -> None:
+        """Phase 3 §6.5 Health Track Review должно reference health_snapshot.md."""
+        assert "health_snapshot.md" in phase3_text, (
+            "module_phase3_weekly_review.md §6.5 must reference `health_snapshot.md` "
+            "as opt-in path for users WITHOUT active Health Track (Sub-feature C, "
+            "PRD §8 «опционально — в еженедельном обзоре»)."
+        )
+
+    def test_phase3_distinguishes_active_branches(self, phase3_text: str) -> None:
+        """§6.5 must have both `active == true` AND `active == false` branches."""
+        section_match = re.search(
+            r"### 6\.5\.\s*Health Track Review.*?(?=^###?\s|\Z)",
+            phase3_text,
+            re.DOTALL | re.MULTILINE,
+        )
+        assert section_match, "§6.5 Health Track Review section missing"
+        section = section_match.group(0)
+        assert "active == true" in section, (
+            "§6.5 must keep existing `active == true` branch (v0.19.0 Health Track "
+            "review protocol — sleep/stress/nutrition check-in)."
+        )
+        assert "active == false" in section, (
+            "§6.5 must add `active == false` branch (Sub-feature C) — opt-in "
+            "Snapshot для users без active Health Track."
+        )
+
+    def test_phase3_mentions_schema_v2_2_7(self, phase3_text: str) -> None:
+        """Schema version (2.2.7+) must be visible near Snapshot reference."""
+        assert "v2.2.7" in phase3_text, (
+            "Phase 3 §6.5 must mention `v2.2.7+` near snapshot reference so "
+            "the minimum schema is visible at the loading point."
+        )
+
+    def test_phase3_within_budget(self, phase3_text: str) -> None:
+        """Sub-feature C must not blow Phase 3 budget (existing 19-token headroom)."""
+        tokens = len(phase3_text) // 3
+        assert tokens <= 2500, (
+            f"Phase 3 module = {tokens} tokens (budget 2500). Sub-feature C blew "
+            "the budget. Tighten existing §6.5 wording (the snapshot reference "
+            "itself is minimal; the headroom was already tight from v1.2/v1.3)."
+        )

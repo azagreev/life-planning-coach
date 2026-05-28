@@ -8,6 +8,32 @@
 
 ## [Unreleased]
 
+### Added (Methodology — PRD Health Assessment v1.0)
+
+- **WoL Health Sub-segments + Health Index** (v1.4.0 Sub-feature A, BACKLOG RICE 24.4). Новый Tier 3 ref `references/wol_health_subsegments.md` — opt-in detailed assessment сферы `health` через 6 канонических sub-segments (energy / recovery / physical_wellbeing / stress_resilience / nutrition / reserve), 1-10 каждый. `current.health` = Health Index = avg(filled subsegments) если ≥ 4 заполнены; иначе legacy single-score. 4 категории (≥8 / 6.5-7.9 / 5.0-6.4 / ≤5) + weakest sub-segment surface. 4 persona adaptations. Schema additive bump 2.2.5 → 2.2.6 (`diagnosis.wheel_of_life.current.health_subsegments` object | null). Phase 1 module loads ref при opt-in. Не дублирует `track_health_metabolism.md` (v0.19.0).
+- **Light Health Snapshot** (v1.4.0 Sub-feature B, BACKLOG RICE 15.0). Новый Tier 3 ref `references/health_snapshot.md` — 4-question light tool. Triggers: Health Index ≤ 5.5 (от Sub-feature A) ИЛИ explicit request ИЛИ Phase 3 opt-in (Sub-feature C). 2-decline cutoff per session. Schema additive bump 2.2.6 → 2.2.7 (`diagnosis.health_snapshot.last` object | null с полями date / average_score / weakest_question / answered_count / declined_count). 4 категории routing с safety escalation (все 4 ≤ 3 → SKILL.master Safety section). Routing к `track_health_metabolism.md` при agreement. Source: PRD §4 + PHQ-2/GAD-2 short-screening patterns.
+- **Phase 3 Weekly Review opt-in для Health Snapshot** (v1.4.0 Sub-feature C, BACKLOG RICE 15.0). `module_phase3_weekly_review.md §6.5` — при `health_metabolism.active == false` предложить 4-Q Snapshot. Existing branch (`active == true` Health Track review sleep/stress/nutrition) сохранён. Источник: PRD §8 «опционально — в еженедельном обзоре».
+
+### Changed (Schema)
+
+- **`state_v2_schema.md` bumped 2.2.5 → 2.2.7** (two additive bumps в одном release window). New §3.4.5 (health_subsegments) + §3.4.6 (health_snapshot.last). §9 write-rules matrix +2 rows. §12 changelog entries для 2.2.6 и 2.2.7.
+
+### Changed (Phase modules — token-tight)
+
+- **`module_phase1_diagnostic.md`** → 2 tight inline mentions (sub-segments + Snapshot routing). Final 2498/2500 tokens (2 headroom — будущие Phase 1 additions требуют offload в Tier 3 refs).
+- **`module_phase3_weekly_review.md`** → §6.5 расширен `active == false` branch + tightened wording в section. Final 2474/2500 (26 headroom).
+
+### Added (Tooling & Tests)
+
+- **`tests/system/test_methodology_v1_4.py`** (NEW, 80 tests): schema bump guards; health_subsegments + health_snapshot field specs + Tier 3 ref content (parametric over 6 subsegments / 4 questions / 4 personas / 4 categories); Phase 1 + Phase 3 integration; budget guards; A↔B routing consistency.
+- **`tests/system/test_methodology_v1_3.py`**: 3 schema-version tests refactored к history-preservation pattern; evidence-map slice now bounded by next H3.
+- **`scripts/build-platform-skill.py P0_REFS`** +2: `wol_health_subsegments.md`, `health_snapshot.md` — inlined для grok/kimi single-file builds.
+- **`references/evidence_map.md`** +2 entries (Schultchen 2019 + PHQ-2/GAD-2 pattern); WoL existing entry got Source line.
+
+### Planning
+
+- **ROADMAP swap 2026-05-28:** v1.4.0 (planned Health Assessment Methodology) ↔ v1.5.0 (TBD, signal-gated review pushed back). Sub-feature C ships как polish; PRD epic closed.
+
 ## [1.3.1] — 2026-05-28
 
 **Тема:** Patch release. Drive Wiki Path A formal skill-protocol abstraction (`save_state` / `read_state`) + 68 новых regression-guard tests across 4 suites + 2 P0 tech debt items closed (SKILL.master integrity extended, Calendar functional coverage). No new methodology, no schema bump, no SKILL.master changes — pure refactor + test infrastructure. Затем PRD intake для следующего minor (Health Assessment WoL sub-segments PRD v1.0 → BACKLOG + ROADMAP v1.5.0 Candidate).

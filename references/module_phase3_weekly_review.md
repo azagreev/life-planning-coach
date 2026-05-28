@@ -62,16 +62,18 @@
 
 Загрузи `references/habit_loop.md` если нужно ремонтировать привычку.
 
-### 6.5. Health Track Review (опционально, если активен)
+### 6.5. Health Track Review (опционально)
 
-Если `diagnosis.health_metabolism.active == true` — 1-2 минуты:
+При `active == true` — 1-2 мин:
 - «Как был сон на этой неделе? (час/качество)»
 - «Уровень стресса 1-10?»
 - «Что было самым тяжёлым в питании?»
 
-Обнови `diagnosis.health_metabolism.{sleep_quality, sleep_hours, stress_level, last_assessed}`. Если был активный micro_experiment — оцени outcome, добавь в `micro_experiments_log[]`.
+Обнови `diagnosis.health_metabolism.{sleep_quality, sleep_hours, stress_level, last_assessed}`. Если micro_experiment активен — оцени outcome → `micro_experiments_log[]`.
 
-**Не дави.** Если пользователь устал — пропустите этот шаг, вернитесь через неделю. См. `references/track_health_metabolism.md`.
+При `active == false` — opt-in `health_snapshot.md` (4-Q, v2.2.7+).
+
+**Не дави.** Устал — пропусти, вернись через неделю. См. `references/track_health_metabolism.md`.
 
 ---
 

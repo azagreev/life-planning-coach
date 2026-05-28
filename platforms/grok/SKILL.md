@@ -1681,12 +1681,13 @@ WOOP — единственный научно валидированный фо
 - Какие привычки работают? (✅ зелёный)
 - Какие требуют корректировки cue/reward? (⚠ жёлтый)
 - Какие сломались и нужно вернуть на старт «≤ 2 мин»? (🔁)
-##### 6.5. Health Track Review (опционально, если активен)
-Если `diagnosis.health_metabolism.active == true` — 1-2 минуты:
+##### 6.5. Health Track Review (опционально)
+При `active == true` — 1-2 мин:
 - «Как был сон на этой неделе? (час/качество)»
 - «Уровень стресса 1-10?»
 - «Что было самым тяжёлым в питании?»
-Обнови `diagnosis.health_metabolism.{sleep_quality, sleep_hours, stress_level, last_assessed}`. Если был активный micro_experiment — оцени outcome, добавь в `micro_experiments_log[]`.
+Обнови `diagnosis.health_metabolism.{sleep_quality, sleep_hours, stress_level, last_assessed}`. Если micro_experiment активен — оцени outcome → `micro_experiments_log[]`.
+При `active == false` — opt-in `health_snapshot.md` (4-Q, v2.2.7+).
 ---
 ##### 7. Reward Audit (опционально, при прокрастинации)
 ##### 8. Gap Analysis (AAR «Why?», опц.)
