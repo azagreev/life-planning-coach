@@ -127,7 +127,7 @@
 
 > **Evidence:** 🟠 Средний (practical). Short questionnaires (4-question) reduce friction without losing signal — same paradigm как PHQ-2 / GAD-2 в behavioral health screening (validated as effective gating tools перед full assessments).
 > **Source:** Kroenke et al. (2003) — PHQ-2 как 2-item ultra-brief depression screen; Skapinakis (2007) GAD-2 — anxiety equivalent. Same Short-screen principle: коротко → routing к full assessment если signal.
-> **Used in:** Phase 1 после Health Index ≤ 5.5 (`wol_health_subsegments.md` routing) ИЛИ explicit request ИЛИ Phase 3 opt-in (Sub-feature C). State: `diagnosis.health_snapshot.last` (schema 2.2.7+, v1.4.0). 2-decline cutoff per session. Routing: ≤ 5.0 → strongly offer `track_health_metabolism.md`; 5.0-6.4 → soft offer; ≥ 6.5 → light habit tweak. **Safety:** все 4 ≤ 3 → escalate per SKILL.master Safety section.
+> **Used in:** Phase 1 после Health Index ≤ 5.5 (`wol_health_subsegments.md` routing) ИЛИ explicit request ИЛИ Phase 3 opt-in (Sub-feature C). State: `diagnosis.health_snapshot.last` (schema 2.2.7+, v1.4.0). 2-decline cutoff per session. Routing: < 5.0 → strongly offer `track_health_metabolism.md`; 5.0-6.4 → soft offer; ≥ 6.5 → light habit tweak. **Safety:** все 4 ≤ 3 → escalate per SKILL.master Safety section.
 
 ### Schwartz Values Theory
 

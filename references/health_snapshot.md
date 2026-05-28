@@ -55,7 +55,7 @@ Snapshot Index = avg(filled answers)   // round to one decimal
 | 8.0 – 10.0 | Отличный | Acknowledge; continue без offer Health Track |
 | 6.5 – 7.9 | Хороший | Surface weakest как habit tweak candidate |
 | 5.0 – 6.4 | Средний | Strongly offer Health Track (`track_health_metabolism.md`) |
-| ≤ 5.0 | Низкий | Strongly offer Health Track; **safety**: если ВСЕ ответы ≤ 3 → SKILL.master Safety section (depression screen pattern + рекомендация специалиста) |
+| 1.0 – 4.9 | Низкий | Strongly offer Health Track; **safety**: если ВСЕ ответы ≤ 3 → SKILL.master Safety section (depression screen pattern + рекомендация специалиста) |
 
 ### Universal формулировка после Snapshot
 
@@ -124,7 +124,7 @@ Snapshot Index = avg(filled answers)   // round to one decimal
 
 | Snapshot Index | Если пользователь хочет deep dive | Если отказался |
 |----------------|----------------------------------|-----------------|
-| ≤ 5.0 | Load `track_health_metabolism.md` → activate Health Track. **Safety:** проверь ВСЕ ≤ 3 → escalate. | Acknowledge; soft note про availability later. Increment `declined_count`. |
+| < 5.0 | Load `track_health_metabolism.md` → activate Health Track. **Safety:** проверь ВСЕ ≤ 3 → escalate. | Acknowledge; soft note про availability later. Increment `declined_count`. |
 | 5.0–6.4 | Same as above если соглашается | Continue WoL / Phase 1 без friction. Increment `declined_count`. |
 | 6.5–7.9 | Habit tweak suggestion (light, weakest-targeted) | Continue. No decline tracking (offer is soft). |
 | ≥ 8.0 | No offer — acknowledge strength | Continue. |

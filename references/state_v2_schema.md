@@ -595,12 +595,12 @@ Additive, без миграции — старые v2.2.x клиенты игн�
 | `health_subsegments.nutrition` | 1-10 \| null | Питание и самочувствие от еды |
 | `health_subsegments.reserve` | 1-10 \| null | Общий резерв (скорость восстановления после нагрузок) |
 
-**Health Index:** `current.health` становится `avg(filled sub-segments)` (округление до десятых) если ≥ 4 заполнены. Иначе остаётся single-score (legacy). **4 категории:** ≥8 Отличный / 6.5-7.9 Хороший / 5.0-6.4 Средний / ≤5 Низкий. **Weakest sub-segment** определяется `min(filled)` с persona tie-break (ADHD → energy/recovery; Elder → recovery/physical_wellbeing).
+**Health Index:** `current.health` становится `avg(filled sub-segments)` (округление до десятых) если ≥ 4 заполнены. Иначе остаётся single-score (legacy). **4 категории:** ≥8 Отличный / 6.5-7.9 Хороший / 5.0-6.4 Средний / < 5.0 Низкий. **Weakest sub-segment** определяется `min(filled)` с persona tie-break (ADHD → energy/recovery; Elder → recovery/physical_wellbeing).
 
 **Write trigger:** после completed detailed-mode WoL health assessment. Same `last_assessed_at` reset (один WoL = один frequency gate trigger).
 
 **Routing logic в `wol_health_subsegments.md` §«Routing после Health Index»:**
-- Низкий (≤5) → strongly recommend Health Snapshot (Sub-feature B, v1.4.x) или Health Track (v0.19.0)
+- Низкий (< 5.0) → strongly recommend Health Snapshot (Sub-feature B, v1.4.x) или Health Track (v0.19.0)
 - Средний (5.0-6.4) → offer Health Snapshot
 - Хороший/Отличный → surface weakest или strongest; продолжай WoL
 
@@ -621,14 +621,14 @@ Additive, без миграции — старые v2.2.x клиенты игн�
 | `health_snapshot.last.answered_count` | 0-4 | Сколько вопросов получили ответ (skip allowed) |
 | `health_snapshot.last.declined_count` | int ≥ 0 | Session-level counter: incremented при отказе от offer (2-decline cutoff per session) |
 
-**Snapshot Index categories:** ≥8 Отличный / 6.5-7.9 Хороший / 5.0-6.4 Средний / ≤5 Низкий. **Safety:** все 4 ≤ 3 → escalate per SKILL.master Safety section (не оффер Health Track автоматически).
+**Snapshot Index categories:** ≥8 Отличный / 6.5-7.9 Хороший / 5.0-6.4 Средний / < 5.0 Низкий. **Safety:** все 4 ≤ 3 → escalate per SKILL.master Safety section (не оффер Health Track автоматически).
 
 **Routing logic в `health_snapshot.md` §«Routing after Snapshot»:**
-- ≤ 5.0 → strongly offer `track_health_metabolism.md` (если accept → activate `health_metabolism.active = true`)
+- < 5.0 → strongly offer `track_health_metabolism.md` (если accept → activate `health_metabolism.active = true`)
 - 5.0-6.4 → offer same; soft tone
 - ≥ 6.5 → habit tweak suggestion (light); no Health Track offer
 
-**Write trigger:** после completed Snapshot (≥ 1 ответ); декремент `declined_count` только session-level (resets per session).
+**Write trigger:** после completed Snapshot (≥ 1 ответ; `average_score` = null при < 3 заполненных). `declined_count` инкрементируется при отказе от offer, сбрасывается в начале сессии (session-level).
 
 **Frequency note:** Snapshot НЕ связан с WoL Frequency Gate (`last_assessed_at`). Можно запускать чаще — это lighter touch.
 
@@ -948,7 +948,7 @@ Behavior per mode:
 
 ## 12. Changelog схемы
 
-- **2.2.7** (2026-05-28) — Add `diagnosis.health_snapshot.last` optional object (PRD Health Assessment v1.0 §4). Lightweight 4-question Snapshot tool: average score, weakest question ID, answered/declined counts. Запускается при WoL Health Index ≤ 5.5 ИЛИ explicit user request ИЛИ Phase 3 opt-in (Sub-feature C). 2-decline cutoff per session. Routing: ≤ 5.0 → strongly offer `track_health_metabolism.md`; 5.0-6.4 → soft offer; ≥ 6.5 → light habit tweak. **Safety:** все 4 ≤ 3 → escalate per SKILL.master Safety. Tier 3 ref: `references/health_snapshot.md`. Phase 1 module routes к нему опционально. Additive, без миграции — `null` = Snapshot не запускался. Source: PRD §4 + PHQ-2/GAD-2 short-screening patterns. Реализовано в **v1.4.0** Sub-feature B.
+- **2.2.7** (2026-05-28) — Add `diagnosis.health_snapshot.last` optional object (PRD Health Assessment v1.0 §4). Lightweight 4-question Snapshot tool: average score, weakest question ID, answered/declined counts. Запускается при WoL Health Index ≤ 5.5 ИЛИ explicit user request ИЛИ Phase 3 opt-in (Sub-feature C). 2-decline cutoff per session. Routing: < 5.0 → strongly offer `track_health_metabolism.md`; 5.0-6.4 → soft offer; ≥ 6.5 → light habit tweak. **Safety:** все 4 ≤ 3 → escalate per SKILL.master Safety. Tier 3 ref: `references/health_snapshot.md`. Phase 1 module routes к нему опционально. Additive, без миграции — `null` = Snapshot не запускался. Source: PRD §4 + PHQ-2/GAD-2 short-screening patterns. Реализовано в **v1.4.0** Sub-feature B.
 - **2.2.6** (2026-05-28) — Add `diagnosis.wheel_of_life.current.health_subsegments` optional object (PRD Health Assessment v1.0 §7). 6 sub-segments (energy / recovery / physical_wellbeing / stress_resilience / nutrition / reserve), 1-10 каждый, для opt-in detailed health assessment. `current.health` становится Health Index (avg) если ≥ 4 sub-segments заполнены; иначе single-score (legacy). 4 категории + weakest sub-segment surface. Source: PRD Health Assessment v1.0 (2026-05-27) + Schultchen et al. (2019) bidirectional stress-activity. Tier 3 ref: `references/wol_health_subsegments.md`. Phase 1 module loads ref при opt-in. Additive, без миграции — `null` = single-score path. Реализовано в **v1.4.0** Sub-feature A.
 - **2.2.5** (2026-05-27) — Add `diagnosis.wheel_of_life.last_assessed_at` optional ISO 8601 timestamp поле (PRD v0.15 §5 frequency gate). Phase 1 module gates WoL auto-offer: skip < 30 days; offer re-assess ≥ 30 days; null = never assessed → standard flow. Source: PRD v0.15 §5 «WoL не чаще 1 раза в 30 дней». Additive, без миграции — поле остаётся null для existing users. Реализовано в **v1.3.0** (PR-A).
 - **2.2.4** (2026-05-27) — Add `weekly_reviews[].gap_analysis[]` + `weekly_reviews[].lessons_learned[]` optional полей (AAR Gap Analysis + pattern capture, PRD v0.15 §After Action Review). Источник: After Action Review (US Army TC 25-20, 1993) + Garvin (2000) *Learning in Action*. Lean integration — 7-step → 9-step Weekly Review с Step 8 Gap Analysis (Three Whys + COM-B escalation) и Step 9 Lessons Learned (`sighted_count ≥ 3` → quarterly adjustment). Skip при `execution_score ≥ 70%`. ADHD persona opt-out. Additive. Реализовано в **v1.2.0** (PR3/3).

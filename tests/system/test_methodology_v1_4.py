@@ -235,7 +235,7 @@ class TestWolHealthRefContent:
             (8.0, "Отличный"),
             (6.5, "Хороший"),
             (5.0, "Средний"),
-            (5.0, "Низкий"),  # appears in "≤ 5.0" condition
+            (4.9, "Низкий"),  # «Низкий» < 5.0 (1.0–4.9); 5.0 maps to «Средний» (no overlap)
         ],
     )
     def test_ref_has_four_categories(
@@ -647,3 +647,48 @@ class TestSubfeatureCPhase3OptIn:
             "the budget. Tighten existing §6.5 wording (the snapshot reference "
             "itself is minimal; the headroom was already tight from v1.2/v1.3)."
         )
+
+
+# ---------------------------------------------------------------------------
+# Regression — Health/Snapshot Index categories must not overlap at 5.0
+# ---------------------------------------------------------------------------
+
+
+class TestHealthIndexBoundaryNoOverlap:
+    """Regression guard for the 5.0 category overlap (audit finding, v1.4.x).
+
+    Bug: «Средний» was defined as 5.0–6.4 while «Низкий» was «≤ 5.0» / «≤5»,
+    so a score rounded to exactly 5.0 matched BOTH categories → ambiguous
+    routing (strongly-offer vs soft-offer Health Track). Fix: «Низкий» is
+    strictly < 5.0 (1.0–4.9); 5.0 maps to «Средний» only.
+
+    The forms below re-introduce the overlap. The `≤ 5.5` launch trigger and
+    the `≤ 3` safety threshold are unrelated and intentionally NOT matched.
+    """
+
+    OVERLAP_FORMS = (
+        "≤ 5.0 | Низкий",
+        "≤ 5 | Низкий",
+        "≤5 Низкий",
+        "≤ 5 Низкий",
+        "Низкий (≤ 5.0)",
+        "Низкий (≤5)",
+        "Низкий (≤ 5)",
+        "≤ 5.0 → strongly",
+        "≤5 → strongly",
+    )
+
+    @pytest.mark.parametrize(
+        "ref_doc",
+        sorted(REFERENCES.glob("*.md")),
+        ids=lambda p: p.name,
+    )
+    def test_no_low_category_overlap_at_5_0(self, ref_doc: Path) -> None:
+        text = ref_doc.read_text(encoding="utf-8")
+        for form in self.OVERLAP_FORMS:
+            assert form not in text, (
+                f"{ref_doc.name}: found «{form}» — «Низкий» must be strictly "
+                "< 5.0 (1.0–4.9) so a score rounded to 5.0 maps to «Средний» "
+                "only. Re-introducing «≤ 5» for «Низкий» recreates the "
+                "audit-flagged category overlap at 5.0."
+            )
