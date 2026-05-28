@@ -52,6 +52,70 @@ _select_python() {
 PYTHON_BIN="$(_select_python)" || exit 1
 echo "🐍 Python: $PYTHON_BIN"
 
+# ── Helper: make `git tag -a` succeed in THIS environment ──
+# BUG-016 (v1.4.1 release): release.sh aborted at step 6 (tag) AFTER the
+# irreversible step 4 (push) → half-shipped release requiring manual recovery.
+# Cause: the repo's tag.gpgSign=true + user.signingkey pointed at a WSL path
+# (/mnt/c/Users/.../id_ed25519_github.pub) that does NOT resolve under MSYS/
+# Git-Bash (MINGW64), where the key lives at /c/Users/.../id_ed25519_github.pub.
+# `git tag -a` then failed: "Couldn't load public key … unable to sign the tag".
+# Prior release tags (v1.3.1, v1.4.0) are UNSIGNED, so signing is not required.
+#
+# Fix: resolve the signing key per-environment (WSL /mnt/c → MSYS /c); if signing
+# still can't work, fall back to an UNSIGNED annotated tag instead of hard-failing.
+# The decision is validated by a throwaway-tag dry-run during preconditions
+# (BEFORE the push), so a signing/config mismatch can never strand a release.
+TAG_SIGN_ARGS=()
+
+# Create+delete a throwaway annotated tag with the given `git -c` override args.
+# Hang-guarded: SSH_ASKPASS_REQUIRE=force + </dev/null make a passphrase-protected
+# SSH key fail fast rather than block on a prompt. Returns 0 if tagging worked.
+_tag_dry_run() {
+    local tmp="_release_signtest_$$"
+    git tag -d "$tmp" >/dev/null 2>&1 || true
+    local rc=0
+    SSH_ASKPASS=/bin/false SSH_ASKPASS_REQUIRE=force DISPLAY="" GIT_TERMINAL_PROMPT=0 \
+        git "$@" tag -a "$tmp" -m "release.sh signing dry-run" </dev/null >/dev/null 2>&1 || rc=1
+    git tag -d "$tmp" >/dev/null 2>&1 || true
+    return $rc
+}
+
+# Populate TAG_SIGN_ARGS so step 6 tagging is guaranteed to work. Returns 1 only
+# if even an unsigned annotated tag cannot be created (git fundamentally broken).
+_resolve_tag_sign_args() {
+    TAG_SIGN_ARGS=()
+    local sign fmt key
+    sign="$(git config --type=bool --get tag.gpgSign 2>/dev/null || true)"
+
+    if [ "$sign" = "true" ]; then
+        fmt="$(git config --get gpg.format 2>/dev/null || true)"
+        key="$(git config --get user.signingkey 2>/dev/null || true)"
+        # Brittle case: SSH key given as a FILE PATH. A literal key (ssh-… / sk-…)
+        # needs no file, so config is left untouched there.
+        if [ "$fmt" = "ssh" ] && [ -n "$key" ] && [[ "$key" != ssh-* ]] && [[ "$key" != sk-* ]]; then
+            if [ ! -f "$key" ] && [[ "$key" == /mnt/?/* ]]; then
+                local alt="/${key#/mnt/}"   # WSL /mnt/c/… → MSYS /c/…
+                if [ -f "$alt" ]; then
+                    echo "ℹ️  signing key не найден по '$key' — использую MSYS-путь '$alt'"
+                    TAG_SIGN_ARGS=(-c "user.signingkey=$alt")
+                fi
+            fi
+        fi
+    fi
+
+    # Validate; on failure fall back to an unsigned annotated tag.
+    if _tag_dry_run ${TAG_SIGN_ARGS[@]+"${TAG_SIGN_ARGS[@]}"}; then
+        return 0
+    fi
+    if [ "$sign" = "true" ]; then
+        echo "⚠️  Подписанный тег невозможен в этом окружении — fallback на UNSIGNED annotated tag"
+        TAG_SIGN_ARGS=(-c tag.gpgSign=false)
+        _tag_dry_run ${TAG_SIGN_ARGS[@]+"${TAG_SIGN_ARGS[@]}"} && return 0
+    fi
+    echo "❌ git tag dry-run упал даже для unsigned тега — прерываю ДО push (release atomic)." >&2
+    return 1
+}
+
 echo "=== Release $TAG ==="
 
 # ── 0. HOOK INSTALLATION ──
@@ -126,6 +190,20 @@ if [ "$CURRENT_BRANCH" != "main" ]; then
     exit 1
 fi
 echo "✅ На ветке main"
+
+# Проверка: создание тега возможно в этом окружении (BUG-016).
+# Делаем ДО шага 4 (push) — необратимого — чтобы signing/config mismatch не
+# оставил half-shipped релиз. _resolve_tag_sign_args резолвит signing key
+# (WSL→MSYS) или fallback'ит на unsigned, и валидирует throwaway-tag dry-run'ом.
+echo "→ Проверка возможности создания тега (signing)..."
+if ! _resolve_tag_sign_args; then
+    exit 1
+fi
+if [ "${#TAG_SIGN_ARGS[@]}" -gt 0 ]; then
+    echo "✅ Тег создаваем (override: ${TAG_SIGN_ARGS[*]})"
+else
+    echo "✅ Тег создаваем (signing по умолчанию из git config)"
+fi
 
 # ── 2. VERSION SYNC ──
 echo ""
@@ -226,7 +304,7 @@ if git rev-parse "$TAG" >/dev/null 2>&1; then
     git push origin "$TAG"
     echo "✅ Тег $TAG запушен"
 else
-    git tag -a "$TAG" -m "$TAG"
+    git ${TAG_SIGN_ARGS[@]+"${TAG_SIGN_ARGS[@]}"} tag -a "$TAG" -m "$TAG"
     git push origin "$TAG"
     echo "✅ Тег $TAG создан и запушен"
 fi

@@ -47,6 +47,40 @@ _Открытых багов нет._
 
 ## Закрытые баги
 
+### BUG-016: `scripts/release.sh` tag step (signing) env-brittle + validated too late → half-shipped release
+- **Приоритет:** P1
+- **Статус:** resolved
+- **Исправлено:** 2026-05-29 (release.sh `_resolve_tag_sign_args` + `_tag_dry_run` precondition)
+- **Найден:** 2026-05-28 (v1.4.1 release flow)
+- **Версия:** v1.4.1 (наблюдаемо во время ship) → исправлено в v1.4.2+
+- **Owner:** @azagreev
+- **Файлы:** `scripts/release.sh` (helpers ~56-117, precondition ~194-206, step 6 create ~307), `tests/release/test_release_sh_signing.py`
+
+**Описание:**
+Во время релиза v1.4.1 release.sh упал на шаге 6 (`git tag -a "$TAG"`) ПОСЛЕ необратимого шага 4 (`git push origin main`). Получился half-shipped релиз: main уже запушен, но тега и GitHub Release нет → потребовалось ручное восстановление (ручной signed tag + создание Release через REST API, т.к. `gh release` subcommand отдавал 401).
+
+**Expected:**
+Релиз атомарен: если создание тега в этом окружении невозможно — скрипт прерывается ДО push, а не оставляет main запушенным без тега.
+
+**Actual:**
+`git tag -a` падал с `Couldn't load public key … unable to sign the tag` (exit 128) уже ПОСЛЕ push.
+
+**Root cause:**
+Два независимых дефекта:
+1. **Signing env-brittle.** Репо имеет `tag.gpgSign=true` + `gpg.format=ssh` + `user.signingkey=/mnt/c/Users/.../id_ed25519_github.pub` (WSL-путь, выставлен под WSL). Под MSYS/Git-Bash (MINGW64, где репо реально собирается) ключ лежит по `/c/Users/.../id_ed25519_github.pub`, а `/mnt/c/...` не резолвится → подпись падает. Прошлые теги (v1.3.1, v1.4.0) UNSIGNED — подпись исторически не требуется.
+2. **Validated too late.** Создание тега не входило в preconditions (шаг 1); фактическая попытка была только на шаге 6, ПОСЛЕ push. Любой signing/config mismatch делал релиз неатомарным.
+
+**Resolution:**
+Добавлены helper'ы `_tag_dry_run()` и `_resolve_tag_sign_args()` (по аналогии с `_select_python()` из BUG-013):
+- `_resolve_tag_sign_args` при `tag.gpgSign=true` + ssh + ключ-как-путь: если файл не найден и путь вида `/mnt/?/*`, ремапит WSL→MSYS (`local alt="/${key#/mnt/}"`) и пробрасывает `-c user.signingkey=<alt>`. Если подпись всё равно невозможна → fallback на UNSIGNED annotated tag (`-c tag.gpgSign=false`) вместо hard-fail.
+- Решение валидируется `_tag_dry_run` (throwaway annotated tag, hang-guarded: `SSH_ASKPASS_REQUIRE=force` + `</dev/null` + `GIT_TERMINAL_PROMPT=0` — passphrase-ключ падает быстро, а не виснет на prompt) среди preconditions ДО push. Если даже unsigned tag создать нельзя → релиз прерывается ДО необратимого шага.
+- Результат (`TAG_SIGN_ARGS`) пробрасывается в команду шага 6: `git ${TAG_SIGN_ARGS[@]+"${TAG_SIGN_ARGS[@]}"} tag -a "$TAG" -m "$TAG"`.
+Подход не обходит политику подписи (root-cause fix — резолв ключа per-environment); unsigned — только если подпись объективно невозможна, что согласуется с unsigned-историей тегов.
+
+**Test coverage:** `tests/release/test_release_sh_signing.py` — presence/ordering guards (helpers есть; override проброшен в строку `tag -a "$TAG"`; precondition-вызов идёт ДО `git push origin main`) + поведенческие тесты на Git-Bash (WSL→MSYS ремап `/${key#/mnt/}`; end-to-end: при битом ssh-signing config `_resolve_tag_sign_args` создаёт UNSIGNED tag, не падая). Тесты гоняют bash на script-FILE (не `bash -c`), т.к. под MSYS аргументы после `-c` теряются, а POSIX-литералы в `-c`-строке path-mangle'ятся.
+
+---
+
 ### BUG-015: `scripts/release.sh` step 2.5 does NOT remove released-version scope section from ROADMAP
 - **Приоритет:** P2
 - **Статус:** resolved
@@ -471,4 +505,4 @@ HTML Dashboard содержит старую реализацию Wheel of Life 
 | P0 | 0 |
 | P1 | 0 |
 | P2 | 0 |
-| Закрыто | 15 |
+| Закрыто | 16 |
