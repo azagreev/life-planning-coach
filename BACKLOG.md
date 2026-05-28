@@ -47,6 +47,30 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Статус:** 📋 Roadmap committed (v1.1 + v1.2 + v1.3). См. ROADMAP.md.
 - **RICE (epic):** Reach 80 × Impact 2.0 × Confidence 75% / Effort L=4 EAS (across 3 minor releases), Context Pressure Medium = **30.0** (Quick Win epic). Subtasks с individual RICE в ROADMAP.
 - **Артефакты:** PRD в `docs/research/`; новые refs (implementation_intentions, com_b_diagnostic, premortem); reframed habit_loop, weekly_review; state v2 schema bump для WoL.last_assessed_at.
+
+### WoL Health Sub-segments + Light Health Snapshot (PRD v1.0)
+
+- **Описание:** Усилить оценку сферы `health` в Колесе через 6 суб-сегментов (энергия, восстановление, физ. самочувствие, стрессоустойчивость, питание, общий резерв) → Health Index = avg → routing к лёгкому 4-вопросному Health Snapshot при Low/Middle. Snapshot = «middle ground» между one-shot WoL score и тяжёлым `track_health_metabolism.md` (7-рычаговая система, v0.19.0). См. полный PRD: [`docs/research/prd_health_assessment_wol_subsegments.md`](docs/research/prd_health_assessment_wol_subsegments.md).
+- **Триггер:** PRD получен 2026-05-27 (v1.0); intake 2026-05-28. Соответствует PRD v0.15 §5 (WoL опциональный, frequency-gated — landed v1.3.0) — не конфликтует, расширяет.
+- **Статус:** 📋 Intake done; ready for RICE-prioritized commit к v1.4.x или v1.5.0 scope. Awaiting decision на основе сигнала по v1.3.0 (30-дневное окно).
+- **RICE (epic):** Reach 50 × Impact 1.7 × Confidence 62% / Effort L=4.25 EAS, Context Pressure Medium = **12.4** (High Priority epic). Sub-features ниже.
+- **Sub-feature A — WoL Health Sub-segments + Health Index calculation:**
+  - 6 sub-segments scoring × WoL health sphere; avg → Health Index; identify weakest sub-segment; 4 категории (≥8 / 6.5-7.9 / 5-6.4 / ≤5).
+  - State (additive): `diagnosis.wheel_of_life.current.health_subsegments` (object с 6 fields).
+  - Phase 1 module update: per-persona-adapted scoring flow. Token risk: module at 2420/2500 (80 headroom); offload в new Tier 3 ref `references/wol_health_subsegments.md` если inline не помещается.
+  - **RICE:** Reach 50 × Impact 1.5 × Confidence 65% / Effort M=2 EAS, CP Medium = **24.4** (High Priority).
+- **Sub-feature B — Light Health Snapshot (4-question tool):**
+  - New Tier 3 ref `references/health_snapshot.md` (~150 строк) — 4 вопроса + 4 persona adaptations + trigger logic.
+  - State (additive): `diagnosis.health_snapshot.last = {date, average_score, weakest_subsegment}`.
+  - Triggers: Health Index ≤ 5.5 OR explicit user request OR Phase 3 opt-in (см. Sub-feature C).
+  - Routing: Phase 1 после WoL → если Low/Middle → Snapshot; результат → решение про deep-dive в `track_health_metabolism.md` (existing).
+  - **RICE:** Reach 25 × Impact 2.0 × Confidence 60% / Effort M=2 EAS, CP Medium = **15.0** (High Priority). **Depends on Sub-feature A** (нужен health_subsegments в state).
+- **Sub-feature C — Weekly Review opt-in для Health Snapshot:**
+  - Phase 3 (Weekly Review) — optional Snapshot triggered (например, после Step 4 Reflect или как Tiny Habit check-in).
+  - **RICE:** Reach 15 × Impact 0.5 × Confidence 50% / Effort XS=0.25 EAS, CP Low = **15.0** (High Priority). **Depends on Sub-feature B**. Bundle с B или ship отдельно как polish.
+- **Артефакты:** PRD в `docs/research/`; sub-features A+B = schema bump 2.2.5 → 2.2.6 (additive, two new optional fields); new Tier 3 ref `wol_health_subsegments.md` (если offload нужен) + `health_snapshot.md`; tests в `tests/system/test_methodology_v1_*.py` под соответствующий release.
+- **Не делаем (per PRD §9):** дублировать `track_health_metabolism.md`; создавать тяжёлый опросник здоровья; ломать WoL Frequency Gate (`last_assessed_at` из v1.3.0).
+- **Риск:** Phase 1 token budget tight (80 headroom). Если sub-segments inline не помещаются — offload в new Tier 3 ref (Sub-feature A) обязателен. Альтернатива — trim других inline-секций Phase 1.
 - **Риск:** Parts Work deferred (RICE 5, низкая evidence); "simplification" deferred (no specific pain identified).
 
 ### v1.2 follow-ups (epic) — ✅ Shipped в v1.3.0
