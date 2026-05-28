@@ -109,9 +109,9 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 
 - **Описание:** Filing evidence про Drive MCP write-tools gap (`update_file`/`delete_file` missing) с reference на наш `mcp_poc_log.md` §Drive PoC. Aim: усилить signal к Anthropic team на приоритизацию.
 - **Триггер:** PoC 2026-05-26 unique quantified evidence; existing [anthropics/claude-code#51040](https://github.com/anthropics/claude-code/issues/51040) labeled `invalid` (wrong repo — claude.ai connector issues belong в [anthropics/claude-ai-mcp](https://github.com/anthropics/claude-ai-mcp)).
-- **Статус:** 📋 Ready to file. Draft text готов (см. session 2026-05-28); requires user action — нельзя комментить external repo от имени проекта без user OAuth context.
+- **Статус:** 📋 Ready to file. Draft + one-click prefill URL в [docs/drafts/anthropic_mcp_drive_issue.md](docs/drafts/anthropic_mcp_drive_issue.md); requires user action — нельзя комментить external repo от имени проекта без user OAuth context.
 - **RICE:** Reach 100 [GUESS] × Impact 0.5 × Confidence 30% / Effort XS=0.25 EAS, Context Pressure Low = **60.0** (Quick Win).
-- **Артефакты:** New issue в `anthropics/claude-ai-mcp` (preferred) ИЛИ comment на #51040 redirecting к right repo. Self-contained body с PoC findings highlights; link к public mcp_poc_log.md.
+- **Артефакты:** [docs/drafts/anthropic_mcp_drive_issue.md](docs/drafts/anthropic_mcp_drive_issue.md) — self-contained issue body (title + summary + PoC evidence + workaround + ask) + prefill URL для one-click filing в `anthropics/claude-ai-mcp` + post-filing close-out checklist.
 - **Риск:** No guarantee on Anthropic response; low cost regardless.
 
 ### Интеграция с Google Tasks MCP
