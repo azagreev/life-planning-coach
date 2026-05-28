@@ -28,7 +28,7 @@
 ```bash
 # 1. Состояние репозитория
 git status --short          # Должно быть пусто или объяснено
-python3 -m pytest tests/ -q  # Должно быть 190+ passed
+python3 -m pytest tests/ -q  # Должно быть 900+ passed
 # 2. Версия
 git describe --tags --abbrev=0
 ```
@@ -76,7 +76,7 @@ P0 (11): Stage 1.5, Authentic Goal Filter, Communication Style, YAML frontmatter
 P1 (4): Deep Why, TTM, MI, Triggering Precision.  
 P2 (4): Energy Check, Wheel of Life 11 доменов, Progressive Disclosure, ZIP структура.
 
-**Проверка:** `python3 -m pytest tests/ -q` → **190+ passed**.
+**Проверка:** `python3 -m pytest tests/ -q` → **900+ passed**.
 
 ### 3.3 SKILL.md Structure (Anthropic Compliance)
 
@@ -156,7 +156,7 @@ python scripts/build-skill.py release X.Y.Z   # v1.0+ unified CLI
 **Примечание:** `docs/archive/RELEASE_NOTES_*.md` — generated artifacts, создаются автоматически из CHANGELOG.md. Не редактировать вручную.
 
 ### 4.3 System tests
-`python -m pytest tests/ -q` → **740+ passed**.
+`python -m pytest tests/ -q` → **900+ passed**.
 
 ### 4.4 Prioritization (RICE)
 

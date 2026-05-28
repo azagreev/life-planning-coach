@@ -122,7 +122,7 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 
 ### Drive Wiki Path A — full skill protocol refactor ✅ Shipped 2026-05-28
 
-- **Статус:** ✅ Closed via `feat/path-a-skill-protocol` branch. Phase modules не редактировались (cross-ref chain через state_v2_schema.md §5 → drive_integration.md §save_state работает без token-budget давления). См. CHANGELOG `[Unreleased]` для shipped items.
+- **Статус:** ✅ Closed via `feat/path-a-skill-protocol` branch. Phase modules не редактировались (cross-ref chain через state_v2_schema.md §5 → drive_integration.md §save_state работает без token-budget давления). См. CHANGELOG `[1.3.1]` для shipped items.
 - **Shipped artefacts:**
   - `drive_integration.md` — formal `save_state(template, content)` / `read_state(template)` definitions с filename pattern `{template}_{ISO}.md` + Path B/F swap note
   - `templates/AI_Instructions.md` — Протокол записи rewritten в терминах save_state; «Когда какой template писать» таблица с concrete call sites
