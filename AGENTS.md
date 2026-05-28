@@ -156,7 +156,7 @@ python scripts/build-skill.py release X.Y.Z   # v1.0+ unified CLI
 **Примечание:** `docs/archive/RELEASE_NOTES_*.md` — generated artifacts, создаются автоматически из CHANGELOG.md. Не редактировать вручную.
 
 ### 4.3 System tests
-`python -m pytest tests/ -q` → **540+ passed**.
+`python -m pytest tests/ -q` → **740+ passed**.
 
 ### 4.4 Prioritization (RICE)
 

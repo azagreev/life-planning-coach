@@ -49,29 +49,26 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Артефакты:** PRD в `docs/research/`; новые refs (implementation_intentions, com_b_diagnostic, premortem); reframed habit_loop, weekly_review; state v2 schema bump для WoL.last_assessed_at.
 - **Риск:** Parts Work deferred (RICE 5, низкая evidence); "simplification" deferred (no specific pain identified).
 
-### v1.2 follow-ups (epic) — code review observations
+### v1.2 follow-ups (epic) — ✅ Shipped в v1.3.0
 
-- **Описание:** 6 items из code review PRs #2/#3/#5 (v1.2 series). Включены в **ROADMAP v1.3.0** (см. секцию «v1.2 follow-ups»). Здесь — детализация с RICE.
-- **Триггер:** Code review 2026-05-27 после открытия PR #2/#3/#5. См. session transcript для full discussion.
-- **Статус:** 📋 Committed в v1.3.0 roadmap; 3 risks deferred до user feedback.
+- **Описание:** 6 items из code review PRs #2/#3/#5 (v1.2 series). 3 shipped в **v1.3.0**, 3 deferred to v1.4 candidates.
+- **Статус:** ✅ Closed. См. CHANGELOG `## [1.3.0]` для shipped items, ROADMAP «v1.4.0 (TBD)» для deferred risks.
 
-**Items в v1.3.0:**
+**Shipped в v1.3.0:**
 
-1. **AAR sighted_count runtime** — Reach 80 × Impact 2.5 × Confidence 60% / Effort 1 EAS, Medium = **120** (Quick Win). Skill-instruction-based natural-language match (no code). Без него Step 9 = journal, теряется core AAR value (pattern recognition для quarterly adjustments).
-2. **COM-B Phase 0 soft upsell** — Reach 70 × Impact 1.5 × Confidence 60% / Effort 0.5 EAS, Low = **126** (Quick Win). Cross-ref в `emotion_regulation.md` для lean conversation users.
-3. **Trivial cleanup bundle** (3-в-1 PR) — Avg RICE **180** (Quick Win, trivial). State writes policy в AGENTS.md + quoted speech whitelist в `test_no_forbidden_words` + explicit error в release-checks.yml.
+1. ✅ **AAR sighted_count runtime** (RICE 120) — PR #17. Skill-instruction в Phase 3 Step 9: load last 4 weekly_reviews → semantic similarity → increment OR append. Surface при ≥ 3 → routing к Phase 2 / Phase 1.5.
+2. ✅ **COM-B Phase 0 soft upsell** (RICE 126) — PR #13. `references/emotion_regulation.md` §5: opt-in upsell после ER protocol, 2-decline cutoff. Closes lean_conversation discovery gap.
+3. ✅ **Trivial cleanup bundle** (RICE 180 avg) — PR #12. AGENTS §3.6/3.7 + forbidden-words helper + release-checks.yml explicit error.
 
-**Items deferred до user feedback (revisit ~30 дней после v1.2 release):**
+**Deferred to v1.4 candidates (revisit ~30 дней пост-v1.3):**
 
-4. **Premortem triggers rank-order** — RICE 84. 5 OR conditions noise risk. Defer.
-5. **lessons_learned category drift** — RICE 56. Free-text validation. Defer.
-6. **`find dist` fragile pattern** — RICE 70. Future-proofing CI. Defer.
+4. ⏳ **Premortem triggers rank-order** — RICE 84. Awaiting signal: 2+ reports «Premortem fires слишком часто».
+5. ⏳ **lessons_learned category drift** — RICE 56. Awaiting signal: sighted_count produces irrelevant matches.
+6. ⏳ **`find dist` fragile pattern** — RICE 70. Awaiting first CI break на новом archive variant.
 
-**Item НЕ committed (offered, declined):**
+**Item NOT committed (offered, declined):**
 
-- **ADR-001 budget bumps policy** — RICE 160 (recommended в review, отклонён в planning). Erosion risk остаётся; revisit если в v1.3 потребуется ещё bump.
-
-**Артефакты:** Detailed discussion в session transcript; review notes в PR #2/#3/#5 comments (если posted inline). Future implementation PRs на ветках `fix/v1.3-aar-sighted-count`, `feat/v1.3-com-b-upsell`, `chore/v1.3-trivial-cleanup`.
+- **ADR-001 budget bumps policy** — RICE 160. Erosion risk остаётся managed через AGENTS §3.6 State Writes Policy (added в v1.3.0); если в v1.4+ потребуется новый budget bump — explicit ADR.
 
 ### QA Hardening — надёжность, edge cases, безопасность
 
@@ -124,8 +121,6 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **RICE:** Reach 100 [GUESS] × Impact 0.5 × Confidence 30% / Effort XS=0.25 EAS, Context Pressure Low = **60.0** (Quick Win).
 - **Артефакты:** Self-contained GitHub comment с PoC findings highlights; link к public mcp_poc_log.md в нашем repo.
 - **Риск:** No guarantee on Anthropic response; low cost regardless.
-
-### Интеграция с Google Tasks MCP
 
 ### Интеграция с Google Tasks MCP
 
