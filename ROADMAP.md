@@ -35,6 +35,32 @@
 
 ---
 
+## v1.5.0 Candidate — WoL Health Assessment Methodology
+
+**Тема:** PRD v1.0 (получен 2026-05-27, intake 2026-05-28) — структурированная оценка `health` сферы через 6 суб-сегментов + лёгкий 4-вопросный Health Snapshot как «middle ground» между one-shot WoL score и тяжёлым `track_health_metabolism.md` (v0.19.0 deep track). Не дублирует existing health track, расширяет PRD v0.15 §5 WoL refactor (frequency gate landed в v1.3.0).
+
+### Scope (3 sub-features, RICE-prioritized)
+
+- [ ] **A. WoL Health Sub-segments + Health Index** (RICE **24.4**, ~M=2 EAS) — 6 sub-segments scoring (энергия / восстановление / физ. самочувствие / стрессоустойчивость / питание / общий резерв) × avg → Health Index → 4 категории (≥8 / 6.5-7.9 / 5-6.4 / ≤5) + weakest sub-segment identification. State additive: `diagnosis.wheel_of_life.current.health_subsegments`. Phase 1 module update per persona; offload в new Tier 3 ref `wol_health_subsegments.md` если 80 token headroom не хватает.
+- [ ] **B. Light Health Snapshot** (RICE **15.0**, ~M=2 EAS) — new Tier 3 ref `references/health_snapshot.md` с 4 вопросами + persona adaptations (СДВГ / Переход / Пожилые / Planning Friction). Trigger: Health Index ≤ 5.5 OR explicit request. State: `diagnosis.health_snapshot.last = {date, average, weakest_subsegment}`. **Depends on A.**
+- [ ] **C. Weekly Review opt-in для Health Snapshot** (RICE **15.0**, ~XS=0.25 EAS) — Phase 3 optional check-in после Step 4 Reflect. **Depends on B.** Bundle с B или ship as polish.
+
+### Артефакты
+
+- **PRD:** [`docs/research/prd_health_assessment_wol_subsegments.md`](docs/research/prd_health_assessment_wol_subsegments.md)
+- **BACKLOG entry:** «WoL Health Sub-segments + Light Health Snapshot (PRD v1.0)» с full RICE breakdown
+- **Schema bump:** 2.2.5 → 2.2.6 (additive, два новых optional поля)
+- **Не нарушаем:** WoL Frequency Gate (v1.3.0 `last_assessed_at`); не дублируем `track_health_metabolism.md` (v0.19.0 deep track)
+
+### Gate перед commit к v1.5.0 scope
+
+- v1.3.0 30-дневное signal window прошло (≥ 2026-06-27) без блокирующих feedback reports?
+- Подтвердить через usage что текущий one-shot WoL `health` score действительно teряет precision (или пропустить если evidence сильное и без signal)?
+
+**Estimated effort:** ~4.25 EAS total (A + B + C). Можно split: A+B как v1.5.0, C как v1.5.x polish.
+
+---
+
 ## v0.17.x Candidate — Data & Health Integrations
 
 **Статус:** Candidate, требует отдельного research decision перед фиксацией версии.
