@@ -3,7 +3,7 @@
 ![tests](https://img.shields.io/badge/tests-740%2B%20passed-brightgreen)
 ![coverage](https://img.shields.io/badge/coverage-80%25-brightgreen)
 ![schema](https://img.shields.io/badge/state%20schema-v2.2-blue)
-![version](https://img.shields.io/badge/version-1.3.0-blue)
+![version](https://img.shields.io/badge/version-1.3.1-blue)
 
 > **Превращает диалог с AI в evidence-based личный план:** цели, привычки, ретроспективный ритм. Без приложений, подписок, лишних аккаунтов.
 > **Версия:** 1.3.1 | [Релизы](https://github.com/azagreev/life-planning-coach/releases) | [CHANGELOG](CHANGELOG.md)
@@ -60,7 +60,7 @@
 
 ### Claude.ai (ZIP-скилл)
 
-1. Скачайте `life-planning-coach-v1.3.0.zip` из раздела [Релизы](https://github.com/azagreev/life-planning-coach/releases)
+1. Скачайте `life-planning-coach-v1.3.1.zip` из раздела [Релизы](https://github.com/azagreev/life-planning-coach/releases)
 2. Claude → Настройки → Возможности → включите «Code execution and file creation»
 3. Настроить → Скиллы → + → загрузите ZIP
 4. В любом чате наберите `/life-planning-coach`
@@ -69,7 +69,7 @@
 
 ### Grok (xAI) — один файл
 
-1. Скачайте `life-planning-coach-v1.3.0-grok.md`
+1. Скачайте `life-planning-coach-v1.3.1-grok.md`
 2. Скопируйте всё содержимое, вставьте на [grok.com](https://grok.com)
 3. Добавьте сообщение: `Ты — Life Planning Coach. Начни сессию.`
 
@@ -78,7 +78,7 @@
 ### Kimi OK Computer (веб-агент)
 
 1. Зайдите на [kimi.com/agent](https://kimi.com/agent)
-2. Создайте агента → вставьте содержимое `life-planning-coach-v1.3.0-kimi.md` в системный промпт
+2. Создайте агента → вставьте содержимое `life-planning-coach-v1.3.1-kimi.md` в системный промпт
 3. Сохраните и начните диалог
 
 **→ [Полное руководство для Kimi Web](references/platforms/USER_GUIDE_KIMI_OKCOMPUTER.md)**

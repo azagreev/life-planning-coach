@@ -42,9 +42,17 @@ sed -i "s/^version: .*/version: $NEW_VERSION/" SKILL.md
 echo "→ SKILL.master.md"
 sed -i "s/^version: .*/version: $NEW_VERSION/" SKILL.master.md
 
-# 3. README.md
+# 3. README.md (version label + badge + install refs)
 echo "→ README.md"
 sed -i "s/\*\*Версия:\*\* [0-9.]*/**Версия:** $NEW_VERSION/" README.md
+# Badge: `![version](.../badge/version-X.Y.Z-blue)`
+sed -i "s/version-[0-9.]*-blue/version-$NEW_VERSION-blue/" README.md
+# Install refs: `life-planning-coach-vX.Y.Z.zip|-grok.md|-kimi.md|-kimi-cli.zip|-kimi-cli/`
+# Previously left stale — caused test_no_stale_versions_in_source_files failures
+# on v1.2.0 → v1.3.0 (fixed manually in PR #11) AND v1.3.0 → v1.3.1 (PR #27).
+# Match `life-planning-coach-v<X.Y.Z>` followed by any of the suffixes above so
+# we don't accidentally hit unrelated occurrences.
+sed -i -E "s|life-planning-coach-v[0-9.]+(\.zip|-grok\.md|-kimi\.md|-kimi-cli\.zip|-kimi-cli/)|life-planning-coach-v${NEW_VERSION}\1|g" README.md
 
 # 4. AGENTS.md
 echo "→ AGENTS.md"
