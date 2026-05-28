@@ -51,8 +51,8 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 ### WoL Health Sub-segments + Light Health Snapshot (PRD v1.0)
 
 - **Описание:** Усилить оценку сферы `health` в Колесе через 6 суб-сегментов (энергия, восстановление, физ. самочувствие, стрессоустойчивость, питание, общий резерв) → Health Index = avg → routing к лёгкому 4-вопросному Health Snapshot при Low/Middle. Snapshot = «middle ground» между one-shot WoL score и тяжёлым `track_health_metabolism.md` (7-рычаговая система, v0.19.0). См. полный PRD: [`docs/research/prd_health_assessment_wol_subsegments.md`](docs/research/prd_health_assessment_wol_subsegments.md).
-- **Триггер:** PRD получен 2026-05-27 (v1.0); intake 2026-05-28. Соответствует PRD v0.15 §5 (WoL опциональный, frequency-gated — landed v1.3.0) — не конфликтует, расширяет.
-- **Статус:** 📋 Intake done; ready for RICE-prioritized commit к v1.4.x или v1.5.0 scope. Awaiting decision на основе сигнала по v1.3.0 (30-дневное окно).
+- **Триггер:** PRD получен 2026-05-27 (v1.0); intake 2026-05-28; **scope committed к v1.4.0 — 2026-05-28** (swap с pre-existing v1.4 signal-gated review, которая теперь v1.5.0 TBD).
+- **Статус:** 🚧 **Committed → v1.4.0 (planned)** в ROADMAP. Implementation в активной разработке. Sub-feature A первой.
 - **RICE (epic):** Reach 50 × Impact 1.7 × Confidence 62% / Effort L=4.25 EAS, Context Pressure Medium = **12.4** (High Priority epic). Sub-features ниже.
 - **Sub-feature A — WoL Health Sub-segments + Health Index calculation:**
   - 6 sub-segments scoring × WoL health sphere; avg → Health Index; identify weakest sub-segment; 4 категории (≥8 / 6.5-7.9 / 5-6.4 / ≤5).

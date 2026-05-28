@@ -15,29 +15,11 @@
 
 ---
 
-## v1.4.0 (TBD) — Awaiting v1.2/v1.3 Usage Feedback
+## v1.4.0 (planned) — WoL Health Assessment Methodology
 
-**Тема:** Revisit deferred items от v1.2/v1.3 code reviews после ~30 дней production usage. Decide scope based на user signal — currently no committed scope.
+**Тема:** PRD v1.0 (получен 2026-05-27, intake 2026-05-28, scope committed 2026-05-28) — структурированная оценка `health` сферы через 6 суб-сегментов + лёгкий 4-вопросный Health Snapshot как «middle ground» между one-shot WoL score и тяжёлым `track_health_metabolism.md` (v0.19.0 deep track). Не дублирует existing health track, расширяет PRD v0.15 §5 WoL refactor (frequency gate landed в v1.3.0).
 
-### Candidates (revisit after 30d usage signal)
-
-- [ ] **Premortem trigger rank-order / AND logic** (RICE 84, defer'd от v1.3) — 5 OR conditions могут trigger слишком часто для junior users. Revisit если получим 2+ feedback reports что «Premortem fires слишком часто».
-- [ ] **lessons_learned category drift** (RICE 56, defer'd от v1.3) — free-text без validation. Будет surface через AAR sighted_count runtime (v1.3.0+) если drift станет проблемой. Revisit если sighted_count produces irrelevant matches.
-- [ ] **`find dist -name -not` fragile pattern** (RICE 70, defer'd от v1.3) — explicit regex `dist/life-planning-coach-v[0-9.]+\.zip`. Revisit при first CI break добавлением нового archive variant.
-
-### Gate перед commit к v1.4 scope
-
-- Есть concrete signal что Premortem fires «слишком часто» для junior users (хотя бы 2 user reports)?
-- Есть signal что `lessons_learned.sighted_count` matching produces irrelevant matches (semantic drift)?
-- Какой-то новый item из user feedback заслуживает committed slot?
-
-**Estimated effort:** TBD после signal review (~30 дней пост-release).
-
----
-
-## v1.5.0 Candidate — WoL Health Assessment Methodology
-
-**Тема:** PRD v1.0 (получен 2026-05-27, intake 2026-05-28) — структурированная оценка `health` сферы через 6 суб-сегментов + лёгкий 4-вопросный Health Snapshot как «middle ground» между one-shot WoL score и тяжёлым `track_health_metabolism.md` (v0.19.0 deep track). Не дублирует existing health track, расширяет PRD v0.15 §5 WoL refactor (frequency gate landed в v1.3.0).
+Swap rationale (2026-05-28): PRD v1.0 имеет concrete RICE breakdown и ready-to-ship scope. Pre-v1.3.0 signal-gated review (Premortem rank-order / lessons_learned drift / find dist pattern) сохраняется но отодвигается на v1.5.0 (TBD) — ждёт того же usage signal, просто в другом slot'е.
 
 ### Scope (3 sub-features, RICE-prioritized)
 
@@ -52,12 +34,27 @@
 - **Schema bump:** 2.2.5 → 2.2.6 (additive, два новых optional поля)
 - **Не нарушаем:** WoL Frequency Gate (v1.3.0 `last_assessed_at`); не дублируем `track_health_metabolism.md` (v0.19.0 deep track)
 
+**Estimated effort:** ~4.25 EAS total (A + B + C). Natural staging: A+B как v1.4.0 ship, C как v1.4.x polish.
+
+---
+
+## v1.5.0 (TBD) — Awaiting v1.2/v1.3 Usage Feedback
+
+**Тема:** Revisit deferred items от v1.2/v1.3 code reviews после ~30 дней production usage. Decide scope based на user signal — currently no committed scope. Pushed back from v1.4 в swap 2026-05-28 (v1.4 теперь занят Health Assessment Methodology — concrete PRD ready).
+
+### Candidates (revisit after 30d usage signal, ≥ 2026-06-27)
+
+- [ ] **Premortem trigger rank-order / AND logic** (RICE 84, defer'd от v1.3) — 5 OR conditions могут trigger слишком часто для junior users. Revisit если получим 2+ feedback reports что «Premortem fires слишком часто».
+- [ ] **lessons_learned category drift** (RICE 56, defer'd от v1.3) — free-text без validation. Будет surface через AAR sighted_count runtime (v1.3.0+) если drift станет проблемой. Revisit если sighted_count produces irrelevant matches.
+- [ ] **`find dist -name -not` fragile pattern** (RICE 70, defer'd от v1.3) — explicit regex `dist/life-planning-coach-v[0-9.]+\.zip`. Revisit при first CI break добавлением нового archive variant.
+
 ### Gate перед commit к v1.5.0 scope
 
-- v1.3.0 30-дневное signal window прошло (≥ 2026-06-27) без блокирующих feedback reports?
-- Подтвердить через usage что текущий one-shot WoL `health` score действительно teряет precision (или пропустить если evidence сильное и без signal)?
+- Есть concrete signal что Premortem fires «слишком часто» для junior users (хотя бы 2 user reports)?
+- Есть signal что `lessons_learned.sighted_count` matching produces irrelevant matches (semantic drift)?
+- Какой-то новый item из user feedback заслуживает committed slot?
 
-**Estimated effort:** ~4.25 EAS total (A + B + C). Можно split: A+B как v1.5.0, C как v1.5.x polish.
+**Estimated effort:** TBD после signal review.
 
 ---
 
