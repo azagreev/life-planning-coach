@@ -28,6 +28,30 @@ fi
 VERSION="${VERSION#v}"
 TAG="v$VERSION"
 
+# ── Helper: resolve a working Python 3 interpreter ──
+# BUG-013 (v1.4.0 release): plain `command -v python3` on Windows MSYS bash returns
+# `/c/Users/.../Microsoft/WindowsApps/python3` — a Microsoft Store install-prompt
+# stub, NOT a Python interpreter. Invoking it fails / opens Store UI. Probe each
+# candidate с `--version` чтобы убедиться что это working Python 3.
+_select_python() {
+    for candidate in python3 python; do
+        if command -v "$candidate" >/dev/null 2>&1; then
+            local out
+            out="$("$candidate" --version 2>&1 || true)"
+            if [[ "$out" == "Python 3."* ]]; then
+                command -v "$candidate"
+                return 0
+            fi
+        fi
+    done
+    echo "❌ Не найден working Python 3 интерпретатор (проверены python3, python)" >&2
+    echo "   На Windows: установить python.org Python и добавить в PATH ДО Microsoft Store stub" >&2
+    return 1
+}
+
+PYTHON_BIN="$(_select_python)" || exit 1
+echo "🐍 Python: $PYTHON_BIN"
+
 echo "=== Release $TAG ==="
 
 # ── 0. HOOK INSTALLATION ──
@@ -54,6 +78,21 @@ if [ -f "$HOOK_SRC" ]; then
 else
     echo "⚠️  Шаблон hook'а не найден: $HOOK_SRC"
 fi
+
+# ── 0.5. PRE-TEST ARTIFACT REBUILD ──
+# BUG-014 (v1.4.0 release): `test_zip_is_fresh` (tests/release/test_skill_package.py)
+# fails if ZIP older than SKILL.md. Between releases прошлые v1.X.Y artifacts в dist/
+# become stale relative к main's SKILL.md (которая накопила PR'ы). Rebuild с CURRENT
+# version СНАЧАЛА чтобы tests видели fresh ZIP. Step 2.6 (post-sync) rebuild later
+# regenerates с NEW version — both rebuilds legitimate, each для своей цели.
+echo ""
+echo "[0.5/7] Pre-test artifact rebuild (current version, для test_zip_is_fresh)..."
+if ! "$PYTHON_BIN" scripts/build-skill.py build >/dev/null; then
+    echo "❌ Pre-test build упал. Запустите вручную для diagnostics:"
+    echo "   python scripts/build-skill.py build"
+    exit 1
+fi
+echo "✅ Артефакты пересобраны (current version)"
 
 # ── 1. PRECONDITION CHECKS ──
 echo ""
@@ -114,7 +153,7 @@ fi
 # code propagate so failure halts the release atomically.
 echo ""
 echo "[2.6/7] Пересборка артефактов (build-skill.py, после version sync)..."
-PYTHON_BIN="$(command -v python3 || command -v python || echo python3)"
+# PYTHON_BIN уже resolved в top-of-script header (BUG-013 fix).
 if ! "$PYTHON_BIN" scripts/build-skill.py build >/dev/null; then
     echo "❌ Сборка артефактов упала. Запустите вручную для diagnostics:"
     echo "   python scripts/build-skill.py build"
@@ -158,7 +197,7 @@ sleep 3
 # даже когда GitHub README correct. Replay v1.3.1 release: «Python write
 # /dev/stdout: The pipe is being closed». Fix: decode в temp-file, потом grep
 # на файл — никакого pipe, никакого early-exit issue.
-PYTHON_BIN="$(command -v python3 || command -v python || echo python3)"
+# PYTHON_BIN уже resolved в top-of-script header (BUG-013 fix).
 TMP_README=$(mktemp)
 trap 'rm -f "$TMP_README"' EXIT
 gh api "repos/$REPO/contents/README.md" --jq '.content' \

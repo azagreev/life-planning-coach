@@ -41,11 +41,153 @@
 
 ## Открытые баги
 
-_(no open bugs currently)_
+### BUG-015: `scripts/release.sh` step 2.5 does NOT remove released-version scope section from ROADMAP
+- **Приоритет:** P2
+- **Статус:** open
+- **Найден:** 2026-05-28 (v1.4.0 release flow)
+- **Версия:** v1.4.0 (наблюдаемо post-ship)
+- **Owner:** @azagreev
+- **Файлы:** `scripts/release.sh` (step 2.5)
+
+**Описание:**
+После v1.4.0 ship CI failed на `test_roadmap_integrity.py` because ROADMAP всё ещё содержал `## v1.4.0 (planned) — WoL Health Assessment Methodology` section с full sub-feature scope. Released-version detail belongs в CHANGELOG.md, не ROADMAP.md (per planning guardrails).
+
+release.sh step 2.5 ТОЛЬКО removes a status-table row (`| v${VERSION} | ... |`) — это legacy pattern от earlier release format. Современный ROADMAP convention использует `## v${VERSION} (planned)` headings instead of table rows. release.sh не обновился под этот convention.
+
+**Workaround:** manual ROADMAP cleanup PR after release (как PR #19 для v1.3.0, и this PR для v1.4.0).
+
+**Expected fix (deferred):**
+Extend release.sh step 2.5 чтобы remove `## v${VERSION} (planned) ...` section. Pattern: match from heading line до next `## v` heading (or `---` separator + next `##`). Use sed multi-line OR awk OR Python. Bash sed multi-line хрупкий — Python via build-skill.py более robust.
+
+**Test coverage:** `tests/system/test_roadmap_integrity.py` уже catches the regression post-release; just inconvenient because it requires a separate cleanup PR after each release.
 
 ---
 
 ## Закрытые баги
+
+### BUG-014: `scripts/release.sh` step 1 tests падает на `test_zip_is_fresh` если dist/ZIP stale
+- **Приоритет:** P2
+- **Статус:** resolved
+- **Исправлено:** 2026-05-28 (тот же PR что BUG-013)
+- **Найден:** 2026-05-28 (v1.4.0 release attempt)
+- **Версия:** v1.4.0 release flow → исправлено в v1.4.1+
+- **Owner:** @azagreev
+- **Файлы:** `scripts/release.sh` (новый step 0.5)
+
+**Описание:**
+v1.4.0 release attempt halted at step 1 «Запуск тестов» с `AssertionError: ZIP is older than SKILL.md. Run scripts/build-skill.sh to rebuild.` Между релизами `dist/life-planning-coach-v${PREVIOUS_VERSION}.zip` хранит timestamp от предыдущего release; main's SKILL.md накапливает изменения от promotion PRs (regenerated platforms/* в methodology PRs). В момент следующего release ZIP становится stale relative к SKILL.md.
+
+**Root cause:**
+- `tests/release/test_skill_package.py::TestBuildScriptIntegrity::test_zip_is_fresh` enforces `ZIP.mtime >= SKILL.md.mtime`
+- Step 1 release.sh runs tests BEFORE any rebuild → ZIP not refreshed since last release
+- Step 2.6 (BUG-011 fix) rebuilds AFTER sync, but it's POST-tests — uselessly for step 1's freshness check
+- В v1.3.0/v1.3.1 the issue был masked by silent BUG-011 (build attempted в old step 1.5 but failed) → test_zip_is_fresh was using stale data, but other failures stopped flow before this surfaced
+
+**Resolution:**
+Added step 0.5 BEFORE step 1: `python scripts/build-skill.py build` rebuilds artifacts с CURRENT version. Now tests see fresh ZIP. Step 2.6 (post-sync) STILL exists — produces NEW-version artifacts after sync. Two builds в одном release flow, each для своей цели:
+
+- Step 0.5 (NEW): pre-test, CURRENT version, satisfies `test_zip_is_fresh`
+- Step 2.6 (PR #28): post-sync, NEW version, produces `dist/life-planning-coach-v${NEW_VERSION}.{zip,skill,...}` для step 7 (gh release create)
+
+См. также BUG-013 (тот же session — оба fixes в одном PR).
+
+---
+
+### BUG-013: `scripts/release.sh` `$PYTHON_BIN` resolves к Microsoft Store stub на Windows
+- **Приоритет:** P2
+- **Статус:** resolved
+- **Исправлено:** 2026-05-28
+- **Найден:** 2026-05-28 (v1.4.0 release attempt, step 2.6 silent failure)
+- **Версия:** v1.4.0 release flow → исправлено в v1.4.1+
+- **Owner:** @azagreev
+- **Файлы:** `scripts/release.sh` (top-of-script `_select_python` helper + sites где PYTHON_BIN использовался)
+
+**Описание:**
+v1.4.0 release attempt step 2.6 «Пересборка артефактов (build-skill.py)» упал silently с непонятным error message:
+```
+[2.6/7] Пересборка артефактов (build-skill.py, после version sync)...
+Python ❌ Сборка артефактов упала.
+```
+
+«Python» в выводе — отрывок Microsoft Store error message «Python was not found; install via Microsoft Store».
+
+**Root cause:**
+release.sh использовал:
+```bash
+PYTHON_BIN="$(command -v python3 || command -v python || echo python3)"
+```
+
+На Windows MSYS bash `command -v python3` resolves к `/c/Users/<name>/AppData/Local/Microsoft/WindowsApps/python3` — это **symlink к `AppInstallerPythonRedirector.exe`** (Microsoft Store install-prompt stub). НЕ Python interpreter. Invoking его с args → exits non-zero с install prompt text в stderr.
+
+Тот же fallback на `python` (без `3`) resolved к real Python at `/c/Users/<name>/AppData/Local/Programs/Python/Python312/python`, но `command -v python3` уже succeeded → real Python никогда не probed.
+
+**Resolution:**
+Helper function `_select_python()` at top of release.sh probes each candidate с `--version` чтобы убедиться что это working Python 3:
+
+```bash
+_select_python() {
+    for candidate in python3 python; do
+        if command -v "$candidate" >/dev/null 2>&1; then
+            local out
+            out="$("$candidate" --version 2>&1 || true)"
+            if [[ "$out" == "Python 3."* ]]; then
+                command -v "$candidate"
+                return 0
+            fi
+        fi
+    done
+    return 1
+}
+PYTHON_BIN="$(_select_python)" || exit 1
+```
+
+Resolved once at top, used throughout (step 0.5, 2.6, 5). Eliminates stub-trap on Windows. Linux/macOS поведение не меняется (working python3 returns matching `--version`, picked first).
+
+См. также BUG-014 (тот же session — оба fixes в одном PR).
+
+---
+
+### BUG-012: `scripts/sync-version.sh` install-refs sed падает с «unknown option to s'»
+- **Приоритет:** P2
+- **Статус:** resolved
+- **Исправлено:** 2026-05-28 (PR #34)
+- **Найден:** 2026-05-28 (v1.4.0 release attempt, step 2)
+- **Версия:** v1.4.0 release flow → исправлено перед re-attempt
+- **Owner:** @azagreev
+- **Файлы:** `scripts/sync-version.sh` (install-refs sed line)
+
+**Описание:**
+v1.4.0 release attempt step 2 «Синхронизация версии» upal с:
+```
+=== Синхронизация версии 1.4.0 ===
+→ setup.py
+→ SKILL.md
+→ SKILL.master.md
+→ README.md
+sed: -e expression #1, char 48: unknown option to `s'
+```
+
+Pre-PR-#27 sync-version.sh не trogal install refs. PR #27 (v1.3.1 leftovers) added a sed для install refs (`life-planning-coach-v${V}.zip|-grok.md|-kimi.md|-kimi-cli.zip|-kimi-cli/`).
+
+**Root cause:**
+Added sed использовал `|` как BOTH delimiter AND regex alternation operator:
+```bash
+sed -i -E "s|life-planning-coach-v[0-9.]+(\.zip|-grok\.md|-kimi\.md|-kimi-cli\.zip|-kimi-cli/)|life-planning-coach-v${NEW_VERSION}\1|g"
+        ^                            ^                  ^                  ^
+        open                    first alternation   sed sees как close
+```
+
+sed parser reads first inner `|` as delimiter close → tries to parse rest of pattern as flags → unknown «s'» option.
+
+**Resolution:**
+Switched delimiter к `#` (absent from pattern AND version strings):
+```bash
+sed -i -E "s#life-planning-coach-v[0-9.]+(\.zip|-grok\.md|-kimi\.md|-kimi-cli\.zip|-kimi-cli/)#life-planning-coach-v${NEW_VERSION}\1#g"
+```
+
+Regression tests: `tests/unit/test_sync_version_sh.py` (5 tests). Verified manually на live README content. Также regression guard `test_install_refs_sed_uses_hash_delimiter` ensures the fix не regress.
+
+---
 
 ### BUG-011: `scripts/release.sh` step 1.5 «Пересборка артефактов» молча падает на Windows (rsync missing)
 - **Приоритет:** P2
