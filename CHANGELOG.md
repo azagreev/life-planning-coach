@@ -8,6 +8,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **`scripts/release.sh` tag-шаг (signing) был env-brittle и валидировался слишком поздно** (BUG-016). Во время релиза v1.4.1 скрипт упал на шаге 6 (`git tag -a`) ПОСЛЕ необратимого шага 4 (`git push origin main`): `tag.gpgSign=true` + WSL-путь signing-ключа (`/mnt/c/.../id_ed25519_github.pub`), который не резолвится под MSYS/Git-Bash (`/c/.../id_ed25519_github.pub`), дал «unable to sign the tag» → half-shipped релиз, потребовавший ручного восстановления (ручной тег + Release через REST). Добавлены `_resolve_tag_sign_args()` + `_tag_dry_run()` (по аналогии с `_select_python()`, BUG-013): ремап WSL→MSYS пути ключа, fallback на UNSIGNED annotated tag если подпись объективно невозможна (прошлые теги тоже unsigned), и валидация создания тега среди preconditions через throwaway-tag dry-run ДО push — релиз больше не может застрять на полпути из-за signing/config mismatch. Regression-тесты: `tests/release/test_release_sh_signing.py`.
+
 ## [1.4.1] — 2026-05-28
 
 **Тема:** Patch release. Post-v1.4.0 project-wide audit fixes — корректность данных в docs, устранение overlap категорий Health Index на границе 5.0, и hardening release-тулинга (BUG-015, `--clean-prev`, release.sh pytest). Без новых features; поведение методологии не меняется, кроме disambiguation границы 5.0.
