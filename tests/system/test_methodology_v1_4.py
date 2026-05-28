@@ -64,34 +64,59 @@ def phase1_text() -> str:
 
 
 class TestSchemaBump:
-    def test_schema_frontmatter_version_2_2_6(self, schema_text: str) -> None:
+    """Schema bump tests for v1.4.0 ship state.
+
+    Note: v1.4.0 ships with schema 2.2.7 (Sub-feature A bumped 2.2.5 → 2.2.6;
+    Sub-feature B bumped 2.2.6 → 2.2.7). Both sub-features ship together as
+    v1.4.0; the intermediate 2.2.6 state is internal implementation detail.
+    Tests use history-preservation pattern для 2.2.6 entry.
+    """
+
+    def test_schema_frontmatter_version_2_2_7(self, schema_text: str) -> None:
         assert re.search(
-            r"\*\*Версия схемы:\*\*\s*`2\.2\.6`",
+            r"\*\*Версия схемы:\*\*\s*`2\.2\.7`",
             schema_text,
         ), (
-            "state_v2_schema.md frontmatter must declare `2.2.6` — Sub-feature A "
-            "adds optional `health_subsegments` block (additive)."
+            "state_v2_schema.md frontmatter must declare `2.2.7` — v1.4.0 ships "
+            "with schema 2.2.7 (Sub-feature A added 2.2.6 health_subsegments; "
+            "Sub-feature B bumped to 2.2.7 для health_snapshot.last)."
         )
 
-    def test_schema_json_example_version_2_2_6(self, schema_text: str) -> None:
-        assert '"schema_version": "2.2.6"' in schema_text, (
-            "JSON example must show `schema_version: 2.2.6` so consumer code "
+    def test_schema_json_example_version_2_2_7(self, schema_text: str) -> None:
+        assert '"schema_version": "2.2.7"' in schema_text, (
+            "JSON example must show `schema_version: 2.2.7` so consumer code "
             "produces matching state docs."
         )
 
-    def test_changelog_2_2_6_entry_present(self, schema_text: str) -> None:
+    def test_changelog_2_2_7_entry_present(self, schema_text: str) -> None:
+        assert "**2.2.7**" in schema_text, (
+            "§12 Changelog must have a `**2.2.7**` entry explaining the additive "
+            "bump (health_snapshot.last object, Sub-feature B)."
+        )
+
+    def test_changelog_2_2_6_entry_persists(self, schema_text: str) -> None:
+        """Sub-feature A's bump 2.2.6 (health_subsegments) must remain в §12 — history preservation."""
         assert "**2.2.6**" in schema_text, (
-            "§12 Changelog must have a `**2.2.6**` entry explaining the additive "
-            "bump (health_subsegments object)."
+            "§12 Changelog must keep `**2.2.6**` entry (Sub-feature A's "
+            "health_subsegments bump) — history preservation pattern."
         )
 
     def test_schema_history_preserves_prior_versions(self, schema_text: str) -> None:
         """Prior schema entries must remain visible — no rewriting history."""
-        for prior in ("**2.2.5**", "**2.2.4**", "**2.2.3**", "**2.2.2**", "**2.2**", "**2.1**", "**2.0.1**", "**2.0**"):
+        for prior in ("**2.2.6**", "**2.2.5**", "**2.2.4**", "**2.2.3**", "**2.2.2**", "**2.2**", "**2.1**", "**2.0.1**", "**2.0**"):
             assert prior in schema_text, (
                 f"Prior schema entry {prior} missing from §12. Bumping a version "
                 "doesn't erase history — append, don't overwrite."
             )
+
+    def test_changelog_ordering_newest_first(self, schema_text: str) -> None:
+        """§12 ordering: 2.2.7 must precede 2.2.6 (newest first)."""
+        idx_2_7 = schema_text.find("**2.2.7**")
+        idx_2_6 = schema_text.find("**2.2.6**")
+        assert idx_2_7 != -1 and idx_2_6 != -1
+        assert idx_2_7 < idx_2_6, (
+            "§12 must show 2.2.7 entry FIRST (before 2.2.6) — newest-first ordering."
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -300,16 +325,266 @@ class TestPhase1Integration:
 
 
 class TestPhase1BudgetUnchanged:
-    """Sub-feature A must not blow per-module budget. Existing
+    """Sub-features A + B must not blow per-module budget. Existing
     `test_tier_token_budgets.test_each_module_under_budget` covers this
-    generically; this dedicated test gives a Sub-feature-A-specific error
-    message so a regression points to the right cause."""
+    generically; this dedicated test gives a v1.4-specific error message
+    so a regression points to the right cause."""
 
     def test_phase1_within_budget(self, phase1_text: str) -> None:
         tokens = len(phase1_text) // 3
         assert tokens <= 2500, (
-            f"Phase 1 module = {tokens} tokens (budget 2500). Sub-feature A's "
-            "additions blew the budget. Tighten the inline notes — full detail "
-            "lives in `wol_health_subsegments.md`, the module only needs to "
-            "name the loading trigger."
+            f"Phase 1 module = {tokens} tokens (budget 2500). Sub-features A + "
+            "B additions blew the budget. Tighten the inline notes — full detail "
+            "lives in `wol_health_subsegments.md` + `health_snapshot.md`; the "
+            "module only needs to name the loading triggers."
+        )
+
+
+# ---------------------------------------------------------------------------
+# Sub-feature B — Light Health Snapshot (4-question tool)
+# ---------------------------------------------------------------------------
+
+
+HEALTH_SNAPSHOT = REFERENCES / "health_snapshot.md"
+
+CANONICAL_SNAPSHOT_QUESTIONS = [
+    "energy_stability",
+    "recovery",
+    "stress_management",
+    "resilience",
+]
+
+
+@pytest.fixture(scope="module")
+def health_snapshot_text() -> str:
+    assert HEALTH_SNAPSHOT.exists(), (
+        f"Missing {HEALTH_SNAPSHOT} — v1.4.0 Sub-feature B introduces this Tier 3 ref."
+    )
+    return HEALTH_SNAPSHOT.read_text(encoding="utf-8")
+
+
+class TestHealthSnapshotFieldSpec:
+    """`diagnosis.health_snapshot.last` field shape in state schema."""
+
+    def test_section_3_4_6_exists(self, schema_text: str) -> None:
+        assert "### 3.4.6 diagnosis.health_snapshot.last" in schema_text, (
+            "state_v2_schema.md must have §3.4.6 для health_snapshot.last spec."
+        )
+
+    def test_health_snapshot_block_in_diagnosis(self, schema_text: str) -> None:
+        """JSON example must include `health_snapshot` block."""
+        assert '"health_snapshot"' in schema_text, (
+            "JSON example must include `health_snapshot` block inside `diagnosis`."
+        )
+
+    @pytest.mark.parametrize(
+        "field",
+        ["date", "average_score", "weakest_question", "answered_count", "declined_count"],
+    )
+    def test_schema_documents_each_snapshot_field(
+        self, schema_text: str, field: str
+    ) -> None:
+        match = re.search(
+            r"### 3\.4\.6 diagnosis\.health_snapshot\.last(.*?)(?=^###?\s|\Z)",
+            schema_text,
+            re.DOTALL | re.MULTILINE,
+        )
+        assert match, "§3.4.6 body not found"
+        body = match.group(1)
+        assert f"`health_snapshot.last.{field}`" in body, (
+            f"§3.4.6 must document `health_snapshot.last.{field}` field."
+        )
+
+    def test_write_rule_table_includes_snapshot(self, schema_text: str) -> None:
+        assert "diagnosis.health_snapshot.last" in schema_text, (
+            "§9 write-rules table must include `diagnosis.health_snapshot.last` "
+            "row (Phase 1 trigger at Health Index ≤ 5.5 OR explicit request)."
+        )
+
+
+class TestHealthSnapshotRefContent:
+    """References/health_snapshot.md Tier 3 ref content guards."""
+
+    def test_ref_declares_tier_3(self, health_snapshot_text: str) -> None:
+        assert "**Tier:** 3" in health_snapshot_text, (
+            "health_snapshot.md must declare Tier 3 (lazy-load)."
+        )
+
+    def test_ref_declares_schema_version(self, health_snapshot_text: str) -> None:
+        assert "v2.2.7" in health_snapshot_text, (
+            "Header must reference schema v2.2.7+ so consumers know the minimum "
+            "supporting state schema."
+        )
+
+    def test_ref_cites_prd(self, health_snapshot_text: str) -> None:
+        assert "prd_health_assessment_wol_subsegments.md" in health_snapshot_text, (
+            "Ref must cross-link to source PRD §4."
+        )
+
+    def test_ref_explicitly_avoids_track_metabolism_duplication(
+        self, health_snapshot_text: str
+    ) -> None:
+        assert "track_health_metabolism.md" in health_snapshot_text, (
+            "Ref must reference `track_health_metabolism.md` so positioning as "
+            "decision-gate (vs duplicate) is clear."
+        )
+        assert re.search(
+            r"(не\s+дубл|NOT\s+duplicat)",
+            health_snapshot_text,
+            re.IGNORECASE,
+        ), "Ref must explicitly say it does NOT duplicate the deep health track."
+
+    def test_ref_has_four_questions(self, health_snapshot_text: str) -> None:
+        """All 4 PRD §4 questions must be enumerated."""
+        # Each question is a numbered item; the table shows them
+        # We expect at least the 4 question topics present
+        assert re.search(r"уровень\s+энерги", health_snapshot_text, re.IGNORECASE), (
+            "Q1 (energy stability) missing"
+        )
+        assert re.search(r"восстанавлива", health_snapshot_text, re.IGNORECASE), (
+            "Q2 (recovery) missing"
+        )
+        assert re.search(r"стресс", health_snapshot_text, re.IGNORECASE), (
+            "Q3 (stress management) missing"
+        )
+        assert re.search(r"быстро\s+ты\s+приходишь", health_snapshot_text, re.IGNORECASE), (
+            "Q4 (resilience / bounce-back) missing"
+        )
+
+    @pytest.mark.parametrize("qid", CANONICAL_SNAPSHOT_QUESTIONS)
+    def test_ref_has_canonical_question_ids(
+        self, health_snapshot_text: str, qid: str
+    ) -> None:
+        assert f"`{qid}`" in health_snapshot_text, (
+            f"Ref must list canonical question ID `{qid}` — alignment с state "
+            "schema §3.4.6 weakest_question enum."
+        )
+
+    @pytest.mark.parametrize(
+        "persona_module",
+        ["mode_adhd.md", "mode_unemployed.md", "mode_elder.md", "mode_planning_friction.md"],
+    )
+    def test_ref_covers_all_four_personas(
+        self, health_snapshot_text: str, persona_module: str
+    ) -> None:
+        assert persona_module in health_snapshot_text, (
+            f"Ref must reference `{persona_module}` — PRD §5 defines persona "
+            "adaptations for all 4 modes."
+        )
+
+    def test_ref_has_snapshot_index_formula(
+        self, health_snapshot_text: str
+    ) -> None:
+        assert re.search(
+            r"Snapshot Index\s*=\s*avg",
+            health_snapshot_text,
+            re.IGNORECASE,
+        ), (
+            "Ref must show explicit `Snapshot Index = avg(...)` formula. PRD §4 "
+            "implies avg over 4 answers."
+        )
+
+    @pytest.mark.parametrize(
+        "category",
+        ["Отличный", "Хороший", "Средний", "Низкий"],
+    )
+    def test_ref_has_four_categories(
+        self, health_snapshot_text: str, category: str
+    ) -> None:
+        assert category in health_snapshot_text, (
+            f"Category «{category}» missing from ref — 4 categories required "
+            "for routing decisions."
+        )
+
+    def test_ref_documents_2_decline_cutoff(self, health_snapshot_text: str) -> None:
+        """2-decline cutoff per session must be documented."""
+        assert re.search(
+            r"(2-decline|2\s+(раза|times)\s+decline|declined_count)",
+            health_snapshot_text,
+            re.IGNORECASE,
+        ), (
+            "Ref must document 2-decline cutoff per session — respects user "
+            "autonomy after 2 offers declined."
+        )
+
+    def test_ref_has_safety_escalation(self, health_snapshot_text: str) -> None:
+        """If all 4 ≤ 3 — escalate per SKILL.master Safety section."""
+        assert "Safety" in health_snapshot_text, (
+            "Ref must reference Safety section for low-score escalation pattern."
+        )
+        assert re.search(r"<=\s*3|≤\s*3", health_snapshot_text), (
+            "Safety threshold (`≤ 3`) must be explicit in escalation logic."
+        )
+
+    def test_ref_documents_routing_to_health_track(
+        self, health_snapshot_text: str
+    ) -> None:
+        """Routing after Snapshot must mention Health Track activation."""
+        assert "health_metabolism.active" in health_snapshot_text or "Health Track" in health_snapshot_text, (
+            "Ref must document that user-agreed offer activates Health Track "
+            "(`track_health_metabolism.md` + `health_metabolism.active = true`)."
+        )
+
+    def test_ref_documents_triggers(self, health_snapshot_text: str) -> None:
+        """All 3 trigger conditions from PRD §8 must be documented."""
+        assert "5.5" in health_snapshot_text, "Trigger «Health Index ≤ 5.5» missing"
+        assert re.search(
+            r"explicit|по\s+запросу|user\s+request",
+            health_snapshot_text,
+            re.IGNORECASE,
+        ), "Trigger «explicit user request» missing"
+        assert re.search(
+            r"Phase\s*3|еженедельн|Weekly",
+            health_snapshot_text,
+            re.IGNORECASE,
+        ), "Trigger «Phase 3 opt-in» missing (forward-reference Sub-feature C)"
+
+
+class TestPhase1IntegrationSnapshot:
+    """Phase 1 module must mention health_snapshot loading point."""
+
+    def test_phase1_references_snapshot_ref(self, phase1_text: str) -> None:
+        assert "health_snapshot.md" in phase1_text, (
+            "module_phase1_diagnostic.md must reference `health_snapshot.md` "
+            "so loading point is discoverable from Phase 1."
+        )
+
+    def test_phase1_mentions_schema_2_2_7(self, phase1_text: str) -> None:
+        assert "v2.2.7" in phase1_text, (
+            "Phase 1 module must mention v2.2.7 near snapshot reference."
+        )
+
+    def test_phase1_state_write_includes_snapshot_last(
+        self, phase1_text: str
+    ) -> None:
+        assert "health_snapshot.last" in phase1_text, (
+            "Phase 1 State writes block must include `health_snapshot.last`."
+        )
+
+
+# ---------------------------------------------------------------------------
+# Cross-PR consistency — A and B must coherently route to each other
+# ---------------------------------------------------------------------------
+
+
+class TestSubfeatureAToBRouting:
+    """Sub-feature A (wol_health_subsegments.md) must route low-score → Snapshot."""
+
+    @pytest.fixture(scope="class")
+    def wol_health_text(self) -> str:
+        return (REFERENCES / "wol_health_subsegments.md").read_text(encoding="utf-8")
+
+    def test_subseg_routes_to_health_snapshot(self, wol_health_text: str) -> None:
+        """Sub-feature A must explicitly reference Sub-feature B."""
+        assert "health_snapshot.md" in wol_health_text, (
+            "wol_health_subsegments.md must route Low/Middle categories к "
+            "health_snapshot.md (Sub-feature B). Previously B был forward-reference; "
+            "now both shipped together, должен быть hard link, не «when shipped»."
+        )
+
+    def test_snapshot_back_links_to_subseg(self, health_snapshot_text: str) -> None:
+        """Sub-feature B's «Когда запускать» must reference subsegments routing."""
+        assert "wol_health_subsegments.md" in health_snapshot_text, (
+            "health_snapshot.md must reference wol_health_subsegments.md as the "
+            "primary entry-point (low-score auto-offer trigger)."
         )

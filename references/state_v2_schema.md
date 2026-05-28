@@ -1,6 +1,6 @@
 # State v2 Schema — Single Source of Truth
 
-> **Версия схемы:** `2.2.6`
+> **Версия схемы:** `2.2.7`
 > **Дата:** 2026-05-28
 > **Заменяет:** `references/conversation_state_schema.md` (v1 — удалён в v1.1.0; migration таблица в §8 ниже)
 > **Используется:** HTML dashboard, 8 wiki templates, dashboard_guide.md, SKILL.master.md gating logic
@@ -35,7 +35,7 @@ State v2 — единый источник правды о пользовате�
 
 ```jsonc
 {
-  "schema_version": "2.2.6",
+  "schema_version": "2.2.7",
   "user_id": "uuid-v4",
   "created_at": "2026-05-26T10:00:00Z",
   "updated_at": "2026-05-27T10:00:00Z",
@@ -175,6 +175,13 @@ State v2 — единый источник правды о пользовате�
       "caffeine_cutoff_hour": null,    // 0-23 (час после которого не пьёт кофеин)
       "last_assessed": null,           // ISO timestamp
       "micro_experiments_log": []      // [{date, lever, hypothesis, outcome, duration_days}]
+    },
+
+    // ====================================
+    // HEALTH_SNAPSHOT — v2.2.7+ (light 4-question opt-in tool)
+    // ====================================
+    "health_snapshot": {
+      "last": null                     // {date, average_score, weakest_question, answered_count, declined_count} — см. §3.4.6
     }
   },
 
@@ -601,6 +608,34 @@ Additive, без миграции — старые v2.2.x клиенты игн�
 
 Источник методологии: `docs/research/prd_health_assessment_wol_subsegments.md` v1.0.
 
+### 3.4.6 diagnosis.health_snapshot.last (v2.2.7+, optional)
+
+Лёгкий 4-вопросный Health Snapshot — opt-in tool, запускается при Health Index ≤ 5.5 (WoL detailed mode) ИЛИ explicit user request ИЛИ Phase 3 opt-in. Sub-feature B из PRD Health Assessment v1.0 §4.
+
+| Поле | Тип | Описание |
+|---|---|---|
+| `health_snapshot.last` | object \| null | `null` = Snapshot не запускался; object = last completed Snapshot record |
+| `health_snapshot.last.date` | ISO 8601 date | Дата completed Snapshot |
+| `health_snapshot.last.average_score` | 1-10 \| null | `avg(filled answers)`; `null` если < 3 из 4 заполнены |
+| `health_snapshot.last.weakest_question` | `"energy_stability"` \| `"recovery"` \| `"stress_management"` \| `"resilience"` \| null | Canonical ID самого слабого вопроса; `null` если 0 заполнено |
+| `health_snapshot.last.answered_count` | 0-4 | Сколько вопросов получили ответ (skip allowed) |
+| `health_snapshot.last.declined_count` | int ≥ 0 | Session-level counter: incremented при отказе от offer (2-decline cutoff per session) |
+
+**Snapshot Index categories:** ≥8 Отличный / 6.5-7.9 Хороший / 5.0-6.4 Средний / ≤5 Низкий. **Safety:** все 4 ≤ 3 → escalate per SKILL.master Safety section (не оффер Health Track автоматически).
+
+**Routing logic в `health_snapshot.md` §«Routing after Snapshot»:**
+- ≤ 5.0 → strongly offer `track_health_metabolism.md` (если accept → activate `health_metabolism.active = true`)
+- 5.0-6.4 → offer same; soft tone
+- ≥ 6.5 → habit tweak suggestion (light); no Health Track offer
+
+**Write trigger:** после completed Snapshot (≥ 1 ответ); декремент `declined_count` только session-level (resets per session).
+
+**Frequency note:** Snapshot НЕ связан с WoL Frequency Gate (`last_assessed_at`). Можно запускать чаще — это lighter touch.
+
+Additive, без миграции — `null` = Snapshot никогда не запускался. Существующие пользователи получают `null` → стандартный flow.
+
+Источник методологии: `docs/research/prd_health_assessment_wol_subsegments.md` §4 + PHQ-2/GAD-2 short-screening patterns.
+
 ### 3.4.2 goal_filter.active_goals[].partner_coordination (v2.2+, optional)
 
 Заполняется ТОЛЬКО для целей, затрагивающих партнёра/семью (триггеры в формулировке: «партнёр», «жена/муж», «семья», «we», «наш»). Если цель индивидуальная — поле остаётся `null` и не валидируется.
@@ -877,6 +912,7 @@ Behavior per mode:
 | `weekly_reviews[].gap_analysis[]` + `lessons_learned[]` | Phase 3 AAR steps 8–9 (Lean Gap Analysis + pattern capture) | ✅ **(v1.2.0, schema 2.2.4)** `module_phase3_weekly_review.md` шаги 8–9 |
 | `diagnosis.wheel_of_life.last_assessed_at` | Phase 1 Wheel of Life completion (любой Track A/B) | ✅ **(v1.3.0, schema 2.2.5)** `module_phase1_diagnostic.md` §WoL Frequency Gate |
 | `diagnosis.wheel_of_life.current.health_subsegments` | Phase 1 WoL `health` detailed mode (opt-in, single-score ≤ 6 ИЛИ explicit interest) | ✅ **(v1.4.0, schema 2.2.6)** `module_phase1_diagnostic.md` + `wol_health_subsegments.md` |
+| `diagnosis.health_snapshot.last` | Phase 1 после Health Index ≤ 5.5 ИЛИ explicit request ИЛИ Phase 3 opt-in (Sub-feature C) | ✅ **(v1.4.0, schema 2.2.7)** `module_phase1_diagnostic.md` + `health_snapshot.md` |
 
 **Все write-rules** теперь явно прописаны в соответствующих модулях. Tests (`tests/unit/test_v018_gating_state_writes.py`, `tests/unit/test_v019_health_concordance.py`) гарантируют, что каждое поле имеет write-trigger.
 
@@ -912,6 +948,7 @@ Behavior per mode:
 
 ## 12. Changelog схемы
 
+- **2.2.7** (2026-05-28) — Add `diagnosis.health_snapshot.last` optional object (PRD Health Assessment v1.0 §4). Lightweight 4-question Snapshot tool: average score, weakest question ID, answered/declined counts. Запускается при WoL Health Index ≤ 5.5 ИЛИ explicit user request ИЛИ Phase 3 opt-in (Sub-feature C). 2-decline cutoff per session. Routing: ≤ 5.0 → strongly offer `track_health_metabolism.md`; 5.0-6.4 → soft offer; ≥ 6.5 → light habit tweak. **Safety:** все 4 ≤ 3 → escalate per SKILL.master Safety. Tier 3 ref: `references/health_snapshot.md`. Phase 1 module routes к нему опционально. Additive, без миграции — `null` = Snapshot не запускался. Source: PRD §4 + PHQ-2/GAD-2 short-screening patterns. Реализовано в **v1.4.0** Sub-feature B.
 - **2.2.6** (2026-05-28) — Add `diagnosis.wheel_of_life.current.health_subsegments` optional object (PRD Health Assessment v1.0 §7). 6 sub-segments (energy / recovery / physical_wellbeing / stress_resilience / nutrition / reserve), 1-10 каждый, для opt-in detailed health assessment. `current.health` становится Health Index (avg) если ≥ 4 sub-segments заполнены; иначе single-score (legacy). 4 категории + weakest sub-segment surface. Source: PRD Health Assessment v1.0 (2026-05-27) + Schultchen et al. (2019) bidirectional stress-activity. Tier 3 ref: `references/wol_health_subsegments.md`. Phase 1 module loads ref при opt-in. Additive, без миграции — `null` = single-score path. Реализовано в **v1.4.0** Sub-feature A.
 - **2.2.5** (2026-05-27) — Add `diagnosis.wheel_of_life.last_assessed_at` optional ISO 8601 timestamp поле (PRD v0.15 §5 frequency gate). Phase 1 module gates WoL auto-offer: skip < 30 days; offer re-assess ≥ 30 days; null = never assessed → standard flow. Source: PRD v0.15 §5 «WoL не чаще 1 раза в 30 дней». Additive, без миграции — поле остаётся null для existing users. Реализовано в **v1.3.0** (PR-A).
 - **2.2.4** (2026-05-27) — Add `weekly_reviews[].gap_analysis[]` + `weekly_reviews[].lessons_learned[]` optional полей (AAR Gap Analysis + pattern capture, PRD v0.15 §After Action Review). Источник: After Action Review (US Army TC 25-20, 1993) + Garvin (2000) *Learning in Action*. Lean integration — 7-step → 9-step Weekly Review с Step 8 Gap Analysis (Three Whys + COM-B escalation) и Step 9 Lessons Learned (`sighted_count ≥ 3` → quarterly adjustment). Skip при `execution_score ≥ 70%`. ADHD persona opt-out. Additive. Реализовано в **v1.2.0** (PR3/3).

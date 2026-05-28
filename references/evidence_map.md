@@ -123,6 +123,12 @@
 > **Source:** Schultchen et al. (2019) — bidirectional relationship of stress and physical activity (subjective stress/energy/recovery scores correlate с adherence behavior).
 > **Used in:** Phase 1 diagnostic при `health` ≤ 6 ИЛИ explicit interest (`module_phase1_diagnostic.md` + `wol_health_subsegments.md`). State: `diagnosis.wheel_of_life.current.health_subsegments` (6-segment object, schema 2.2.6+, v1.4.0 Sub-feature A). Не дублирует `track_health_metabolism.md` (v0.19.0 deep 7-рычаговый трек) — это light pre-screening (≤ 6 вопросов).
 
+### Light Health Snapshot (4-question short-screening, v1.4.0 Sub-feature B)
+
+> **Evidence:** 🟠 Средний (practical). Short questionnaires (4-question) reduce friction without losing signal — same paradigm как PHQ-2 / GAD-2 в behavioral health screening (validated as effective gating tools перед full assessments).
+> **Source:** Kroenke et al. (2003) — PHQ-2 как 2-item ultra-brief depression screen; Skapinakis (2007) GAD-2 — anxiety equivalent. Same Short-screen principle: коротко → routing к full assessment если signal.
+> **Used in:** Phase 1 после Health Index ≤ 5.5 (`wol_health_subsegments.md` routing) ИЛИ explicit request ИЛИ Phase 3 opt-in (Sub-feature C). State: `diagnosis.health_snapshot.last` (schema 2.2.7+, v1.4.0). 2-decline cutoff per session. Routing: ≤ 5.0 → strongly offer `track_health_metabolism.md`; 5.0-6.4 → soft offer; ≥ 6.5 → light habit tweak. **Safety:** все 4 ≤ 3 → escalate per SKILL.master Safety section.
+
 ### Schwartz Values Theory
 
 > **Evidence:** 🟢 Очень высокий. Cross-cultural validation.
