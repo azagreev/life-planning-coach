@@ -41,29 +41,32 @@
 
 ## Открытые баги
 
+_Открытых багов нет._
+
+---
+
+## Закрытые баги
+
 ### BUG-015: `scripts/release.sh` step 2.5 does NOT remove released-version scope section from ROADMAP
 - **Приоритет:** P2
-- **Статус:** open
+- **Статус:** resolved
+- **Исправлено:** 2026-05-28 (build-skill.py `roadmap-cleanup` + release.sh step 2.5)
 - **Найден:** 2026-05-28 (v1.4.0 release flow)
-- **Версия:** v1.4.0 (наблюдаемо post-ship)
+- **Версия:** v1.4.0 (наблюдаемо post-ship) → исправлено в v1.4.1+
 - **Owner:** @azagreev
-- **Файлы:** `scripts/release.sh` (step 2.5)
+- **Файлы:** `scripts/build-skill.py` (`_strip_roadmap_version` + `roadmap-cleanup` subcommand + `cmd_release` parity), `scripts/release.sh` (step 2.5), `tests/unit/test_build_skill_cli.py`
 
 **Описание:**
 После v1.4.0 ship CI failed на `test_roadmap_integrity.py` because ROADMAP всё ещё содержал `## v1.4.0 (planned) — WoL Health Assessment Methodology` section с full sub-feature scope. Released-version detail belongs в CHANGELOG.md, не ROADMAP.md (per planning guardrails).
 
 release.sh step 2.5 ТОЛЬКО removes a status-table row (`| v${VERSION} | ... |`) — это legacy pattern от earlier release format. Современный ROADMAP convention использует `## v${VERSION} (planned)` headings instead of table rows. release.sh не обновился под этот convention.
 
-**Workaround:** manual ROADMAP cleanup PR after release (как PR #19 для v1.3.0, и this PR для v1.4.0).
+**Resolution:**
+Step 2.5 теперь delegates в `python scripts/build-skill.py roadmap-cleanup "$VERSION"`. Pure-Python helper `_strip_roadmap_version()` удаляет `## v${VERSION} …` detail section (от heading до следующего `## ` heading / EOF) + legacy `| v${VERSION} |` status row, с cleanup orphaned `---` separator если section была последней. Version-boundary lookahead (`(?![\w.])`) не даёт v1.4.1 матчить v1.4.10. Хрупкий bash sed multi-line (см. оригинальный note) заменён robust Python. `cmd_release` (Python release path) получил тот же шаг для parity. Exit code propagates → failure halt'ит release атомарно.
 
-**Expected fix (deferred):**
-Extend release.sh step 2.5 чтобы remove `## v${VERSION} (planned) ...` section. Pattern: match from heading line до next `## v` heading (or `---` separator + next `##`). Use sed multi-line OR awk OR Python. Bash sed multi-line хрупкий — Python via build-skill.py более robust.
-
-**Test coverage:** `tests/system/test_roadmap_integrity.py` уже catches the regression post-release; just inconvenient because it requires a separate cleanup PR after each release.
+**Test coverage:** `tests/system/test_roadmap_integrity.py` ловит regression post-release; `tests/unit/test_build_skill_cli.py::test_strip_roadmap_version_*` (6 тестов: middle/last section, status-row, no-op, idempotent, longer-version preservation) проверяют removal logic напрямую.
 
 ---
-
-## Закрытые баги
 
 ### BUG-014: `scripts/release.sh` step 1 tests падает на `test_zip_is_fresh` если dist/ZIP stale
 - **Приоритет:** P2
@@ -463,9 +466,9 @@ HTML Dashboard содержит старую реализацию Wheel of Life 
 
 | Метрика | Значение |
 |---------|----------|
-| Открыто | 1 |
+| Открыто | 0 |
 | In Progress | 0 |
 | P0 | 0 |
 | P1 | 0 |
-| P2 | 1 |
-| Закрыто | 14 |
+| P2 | 0 |
+| Закрыто | 15 |

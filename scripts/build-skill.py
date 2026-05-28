@@ -187,6 +187,78 @@ def _clean_prev_artifacts(dist_dir: Path, version: str) -> list[Path]:
     return removed
 
 
+def _strip_roadmap_version(content: str, version: str) -> tuple[str, list[str]]:
+    """Remove a released version's traces from ROADMAP.md text.
+
+    ROADMAP holds ONLY future scope (Option B). After releasing v{version} the
+    file must not keep (a) a `## v{version} …` detail section nor (b) a
+    `| v{version} |` status-table row — otherwise
+    tests/system/test_roadmap_integrity.py fails post-tag (BUG-015).
+
+    The detail section is removed from its `## v{version}` heading through the
+    line before the next `## ` heading (or EOF). If the removed section was last
+    in the file, an orphaned trailing `---` separator (plus surrounding blanks)
+    is trimmed so no dangling rule is left. A version-boundary lookahead keeps
+    v1.4.1 from matching v1.4.10. Returns (new_content, removed) where `removed`
+    describes what was deleted. Idempotent — clean input yields no changes.
+    """
+    removed: list[str] = []
+    lines = content.splitlines(keepends=True)
+
+    # (a) Drop status-table row(s) `| v{version} | … |` (legacy ROADMAP format).
+    row_marker = f"| v{version} |"
+    kept = [ln for ln in lines if not ln.lstrip().startswith(row_marker)]
+    if len(kept) != len(lines):
+        removed.append(f"status-table row '{row_marker}'")
+        lines = kept
+
+    # (b) Drop detail section `## v{version} …` (heading → next `## ` / EOF).
+    heading_re = re.compile(rf"^##\s+v{re.escape(version)}(?![\w.])")
+    start = next((i for i, ln in enumerate(lines) if heading_re.match(ln)), None)
+    if start is not None:
+        end = next(
+            (j for j in range(start + 1, len(lines)) if lines[j].startswith("## ")),
+            len(lines),
+        )
+        was_last = end == len(lines)
+        del lines[start:end]
+        if was_last:
+            # Trim trailing blanks + one orphaned `---` separator left dangling.
+            while lines and lines[-1].strip() == "":
+                lines.pop()
+            if lines and lines[-1].strip() == "---":
+                lines.pop()
+                while lines and lines[-1].strip() == "":
+                    lines.pop()
+            if lines and not lines[-1].endswith("\n"):
+                lines[-1] += "\n"
+        removed.append(f"detail section '## v{version} …'")
+
+    return "".join(lines), removed
+
+
+def cmd_roadmap_cleanup(args: argparse.Namespace) -> int:
+    """Strip a released version's planned section/row from ROADMAP.md.
+
+    Release step 2.5: ROADMAP keeps only future scope, so once v{version} is
+    tagged its `## v{version}` section + any status row must go (BUG-015). Pure
+    Python — replaces the fragile multi-line `sed` previously in release.sh.
+    """
+    version = args.version.lstrip("v")
+    roadmap = PROJECT_ROOT / "ROADMAP.md"
+    if not roadmap.exists():
+        print(f"⚠ ROADMAP.md not found at {roadmap}")
+        return 0
+    after, removed = _strip_roadmap_version(roadmap.read_text(encoding="utf-8"), version)
+    if removed:
+        roadmap.write_text(after, encoding="utf-8")
+        for item in removed:
+            print(f"ROADMAP: removed {item}")
+    else:
+        print(f"ROADMAP: no v{version} planned section/row to remove")
+    return 0
+
+
 def cmd_build(args: argparse.Namespace) -> int:
     """Build all platforms + dist artifacts."""
     _rebuild_platforms()
@@ -527,6 +599,17 @@ def cmd_release(args: argparse.Namespace) -> int:
     if cmd_version(args) != 0:
         return 1
 
+    # Step 1b: strip released-version section/row from ROADMAP (BUG-015).
+    # Keeps this Python release path in parity with release.sh step 2.5.
+    roadmap = PROJECT_ROOT / "ROADMAP.md"
+    if roadmap.exists():
+        after, removed = _strip_roadmap_version(
+            roadmap.read_text(encoding="utf-8"), version
+        )
+        if removed:
+            roadmap.write_text(after, encoding="utf-8")
+            print(f"  ROADMAP: removed {', '.join(removed)}")
+
     # Step 2: rebuild platforms + artifacts
     print("\n[2/6] Building artifacts...")
     args.clean_prev = False
@@ -668,6 +751,13 @@ def main(argv: list[str] | None = None) -> int:
 
     p_verify = sub.add_parser("verify", help="Pre-release checks")
     p_verify.set_defaults(func=cmd_verify)
+
+    p_roadmap = sub.add_parser(
+        "roadmap-cleanup",
+        help="Remove a released version's planned section/row from ROADMAP.md",
+    )
+    p_roadmap.add_argument("version", help="Released version (X.Y.Z)")
+    p_roadmap.set_defaults(func=cmd_roadmap_cleanup)
 
     p_release = sub.add_parser("release", help="Full release flow")
     p_release.add_argument("version", help="Release version (X.Y.Z)")
