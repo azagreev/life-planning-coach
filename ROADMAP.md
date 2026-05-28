@@ -81,4 +81,4 @@
 - [BACKLOG.md](BACKLOG.md) — идеи, research debt и техдолг без committed версии.
 - [BUGS.md](BUGS.md) — активные баги и известные проблемы.
 - [CHANGELOG.md](CHANGELOG.md) — факты о выпущенных версиях.
-- [references/plan_roadmap_backlog_cleanup.md](references/plan_roadmap_backlog_cleanup.md) — план нормализации roadmap/backlog.
+- [docs/planning/plan_roadmap_backlog_cleanup.md](docs/planning/plan_roadmap_backlog_cleanup.md) — план нормализации roadmap/backlog.

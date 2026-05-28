@@ -1,6 +1,6 @@
 # 🧭 Life Planning Coach
 
-![tests](https://img.shields.io/badge/tests-740%2B%20passed-brightgreen)
+![tests](https://img.shields.io/badge/tests-900%2B%20passed-brightgreen)
 ![coverage](https://img.shields.io/badge/coverage-80%25-brightgreen)
 ![schema](https://img.shields.io/badge/state%20schema-v2.2-blue)
 ![version](https://img.shields.io/badge/version-1.4.0-blue)
@@ -121,7 +121,7 @@ life-planning-coach/
 │       ├── USER_GUIDE_KIMI_OKCOMPUTER.md
 │       ├── USER_GUIDE_KIMI_CLI.md
 │       └── CROSS_PLATFORM_COMPARISON.md
-├── tests/                  # 740+ тестов (unit + system + e2e)
+├── tests/                  # 900+ тестов (unit + system + e2e)
 ├── scripts/
 │   ├── build-skill.sh      # Сборка всех артефактов
 │   └── build-platform-skill.py  # Генерация файлов под платформы
@@ -151,7 +151,7 @@ python3 -m pytest tests/ -q
 
 ## Тестирование
 
-- **740+ тестов** — покрытие структуры, контента и совместимости с платформами
+- **900+ тестов** — покрытие структуры, контента и совместимости с платформами
 - **Эталонный набор** (`tests/e2e/`) — 20 поведенческих сценариев
 - **Шкала оценки** — LLM в роли судьи для проверки качества коучинга
 - **Протокол ручного тестирования** — `tests/e2e/MANUAL_TEST_RUN.md`
