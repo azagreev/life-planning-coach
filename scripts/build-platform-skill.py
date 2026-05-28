@@ -67,6 +67,11 @@ P0_REFS = [
     # lazy-load. Phase 1 module references это при single-score ≤ 6 ИЛИ
     # explicit interest — без inline grok/kimi не смогут load.
     "wol_health_subsegments.md",
+    # v1.4.0 Sub-feature B — Light Health Snapshot (PRD §4). Inlined для
+    # grok/kimi: 4 questions + persona adaptations + Snapshot Index routing
+    # + safety escalation должны быть доступны без lazy-load. Phase 1 routes
+    # к нему при Health Index ≤ 5.5 ИЛИ explicit request.
+    "health_snapshot.md",
 ]
 
 

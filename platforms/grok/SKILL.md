@@ -85,7 +85,7 @@ Check `diagnosis.wheel_of_life.last_assessed_at` перед предложени
 #### 11 канонических сфер Wheel of Life
 `health`, `finances`, `career`, `family`, `romance`, `social`, `personal_growth`, `meaning`, `fun_recreation`, `contribution`, `physical_environment`.
 Используй именно эти 11 — это контракт со схемой v2 и HTML-дашбордом. Не подменяй на «работа/деньги/духовность» — именования фиксированы.
-`health` deeper: `wol_health_subsegments.md` (v2.2.6+, opt-in, score ≤ 6).
+`health` deeper: `wol_health_subsegments.md` (v2.2.6+, ≤ 6); Index ≤ 5.5 → `health_snapshot.md` (v2.2.7+, 4-Q).
 ---
 #### Readiness Gate Protocol
 После КАЖДОЙ фазы (Wheel, Values, Reflection, Goal Filter) спроси: «На шкале 1–10, насколько комфортно продолжать?»
@@ -122,7 +122,7 @@ Check `diagnosis.wheel_of_life.last_assessed_at` перед предложени
 - `emotion_regulation_log[]`: append `{event_id, date, protocol: "reappraisal"|"grounding"|"self_compassion", trigger, outcome_readiness (1–10), duration_minutes}` за каждый запуск
 **Phase 1 Diagnostic core:**
 - `diagnosis.wheel_of_life.last_assessed_at`: ISO 8601 timestamp — **обязательно** после completed WoL assessment (любой Track, frequency gate, schema v2.2.5+)
-- `diagnosis.wheel_of_life.current`: { sphere_id: score (1–10) } × 11 (canonical); `current.health_subsegments` — 6-segment object если detailed mode (v2.2.6+, см. `wol_health_subsegments.md`)
+- `diagnosis.wheel_of_life.current`: { sphere_id: score (1–10) } × 11; `current.health_subsegments` (v2.2.6+) + `diagnosis.health_snapshot.last` (v2.2.7+) — opt-in detailed health (см. respective refs)
 - `diagnosis.values_schwartz`: { value: 0.0–1.0 } (если PVQ выполнен)
 - `diagnosis.ikigai_pillars`: { love, good_at, world_needs, paid_for } (если Track B)
 - `session.completed_phases`: append `"1"` (или `"0.5"` для ER)
@@ -1312,6 +1312,91 @@ Environment design — primary intervention для Opportunity gap (COM-B). Ме
 
 </details>
 <!-- END INLINED REF: habit_loop.md -->
+
+<!-- INLINED REF: health_snapshot.md -->
+<details>
+<summary>📄 health_snapshot (полный протокол)</summary>
+
+### Health Snapshot — лёгкий 4-вопросный инструмент
+> **Tier:** 3 (lazy-load ref)
+> **Загружается:** Phase 1 после WoL Health Index ≤ 5.5 (см. `wol_health_subsegments.md` routing) ИЛИ explicit user request ИЛИ Phase 3 opt-in (Sub-feature C v1.4.x).
+> **Schema:** v2.2.7+ `diagnosis.health_snapshot.last`
+> **PRD:** `docs/research/prd_health_assessment_wol_subsegments.md` §4 (v1.0)
+> **Не дублирует:** `track_health_metabolism.md` (v0.19.0, deep track) — Snapshot тоньше: 4 вопроса вместо 7-рычаговой системы. Snapshot decides **whether** to enter Health Track.
+---
+#### Когда запускать
+**2-decline cutoff per session:** если пользователь отказался 2 раза в одной сессии → не предлагай больше. Increment `health_snapshot.last.declined_count` при каждом отказе.
+---
+#### 4 вопроса
+Каждый — балл **1-10**. Allow skip (null).
+---
+#### Snapshot Index
+Минимум **3 из 4** вопросов заполнены, иначе skip Index (записывай `average_score: null`, но `weakest_question` всё равно можно identify).
+##### Weakest question
+`weakest_question = min(filled answers).id`. Surface в conversation:
+> «По твоим оценкам проседает [weakest_display] ([score]/10). Есть смысл посмотреть более targeted трек по метаболизму. Хочешь?»
+---
+#### 4 категории + routing
+##### Universal формулировка после Snapshot
+> «По твоим оценкам проседает [weakest_display] ([score]/10). Есть смысл посмотреть более targeted трек по метаболизму. Хочешь?»
+Если пользователь соглашается → load `track_health_metabolism.md` + set `health_metabolism.active = true`. Если отказался → respect, continue WoL/Phase 1 без friction.
+---
+#### Persona adaptations (per PRD §5)
+##### ADHD (`mode_adhd.md`)
+- **Стиль:** Минимум текста. 4 вопроса одним блоком, allow skip любого.
+- **Подача:** «Быстрый health snapshot — 4 вопроса, 1-10 каждый. Skip любой если не знаешь. Поехали?»
+- **Routing:** ≤ 6 → быстрый переход в Health Track без длинного объяснения.
+##### Transitional / Unemployed (`mode_unemployed.md`)
+- **Стиль:** Эмпатичный, с учётом изменений (декрет, переход карьеры, безработица).
+- **Подача:** Свяжи с привычками и рутиной — «Иногда переход выматывает body, давай посмотрим конкретно. 4 вопроса».
+- **Reword Q3** (stress): «Сейчас особый период — насколько стресс пробивает структуру дня?»
+- **Routing:** Soft offer Health Track, не давить.
+##### Elder homebound (`mode_elder.md`)
+- **Стиль:** Простой язык, акцент на восстановление и якори дня.
+- **Подача 4 вопросов:** медленнее, по одному за раз; allow recall help («подумай о вчера и позавчера»).
+- **Reword Q3** (stress): «Что больше всего истощает на этой неделе?»
+- **Routing:** Фокус на energy + recovery как entry для conversation про сон / гидратацию / mobility.
+##### Planning Friction (`mode_planning_friction.md`)
+- **Стиль:** Чёткий, структурированный, с примерами (a/b/c для каждого вопроса).
+- **Подача Q1 example:**
+  - «Энергия за 7-10 дней: (a) стабильная и хватает, (b) есть провалы днём, (c) почти всегда мало?»
+- **Routing:** Связь sub-segments с привычками — «Sleep affects recovery; protein affects energy. Хочешь посмотреть конкретный рычаг?»
+---
+#### State writes
+После completed Snapshot (даже частичного — ≥ 1 ответ):
+См. `state_v2_schema.md §3.4.6` для полной спецификации.
+**Frequency note:** Snapshot **не** связан с WoL Frequency Gate (`last_assessed_at`). Snapshot можно запускать чаще (например, monthly check-in через Phase 3 opt-in) — это lighter touch, отдельный кадет от полного WoL.
+---
+#### Routing after Snapshot
+---
+#### Научная база
+- См. `wol_health_subsegments.md §«Научная база»` — same evidence base (Wheel of Life 2022 + Schultchen 2019).
+- **Short questionnaires reduce friction without losing signal:** PHQ-2 / GAD-2 patterns в behavioral health screening валидированы как effective gating tools перед full assessments. 4-вопросный Snapshot — same paradigm для wellness self-assessment.
+---
+#### Не делаем (per PRD §9)
+- **Не дублируем `track_health_metabolism.md`** — Snapshot decides whether to enter that track, не competes с ним
+- **Не создаём тяжёлый опросник** — strict 4 questions, allow skip любого
+- **Не запускаем automatically** без trigger (≤ 5.5 OR explicit request OR Phase 3 opt-in)
+- **Не surfaceim Snapshot Index как «балл / оценку личности»** — это observability tool, не judgment
+- **Не нарушаем 2-decline cutoff** — respects user autonomy; second decline → no more offers в этой session
+- **Не запускаем без WoL Frequency Gate respect** для full WoL — Snapshot separate, но это не excuse для частого full re-assessment
+---
+#### Safety escalation
+Если **ВСЕ 4 ответа ≤ 3** ИЛИ Q3 (stress) ≤ 2 + Q4 (resilience) ≤ 2:
+- **НЕ оффер** Health Track автоматически
+- Surface concern softly: «Звучит как тяжёлый период. Это коучинг, не терапия — если устойчиво тяжело, есть смысл поговорить со специалистом.»
+- См. `SKILL.master.md` § Safety & Ethics → low-score escalation pattern.
+---
+#### Связанные
+- `wol_health_subsegments.md` (Sub-feature A v1.4.0) — entry point for low-score routing → Snapshot
+- `track_health_metabolism.md` (v0.19.0) — deep 7-рычаговый трек, activated post-Snapshot если user agrees
+- `state_v2_schema.md §3.4.6 health_snapshot.last` — schema spec
+- `mode_*.md` — persona adaptations
+- `evidence_map.md` § «WoL Health Sub-segments» — shared evidence
+- PRD: `docs/research/prd_health_assessment_wol_subsegments.md` §4
+
+</details>
+<!-- END INLINED REF: health_snapshot.md -->
 
 <!-- INLINED REF: module_phase1_5_goal_filter.md -->
 <details>
