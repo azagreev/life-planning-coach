@@ -216,3 +216,109 @@ def test_clean_prev_artifacts_missing_dir_returns_empty(tmp_path):
     """No dist dir → no-op, returns empty list (not a crash)."""
     mod = _load_module()
     assert mod._clean_prev_artifacts(tmp_path / "nonexistent", "1.4.0") == []
+
+
+# ---------------------------------------------------------------------------
+# BUG-015: _strip_roadmap_version — remove released-version traces from ROADMAP
+# ASCII-only synthetic ROADMAP samples (helper keys off `## `, `---`, `| v.. |`,
+# never on the Cyrillic prose) so assertion output is cp1251-console safe.
+# ---------------------------------------------------------------------------
+
+_ROADMAP_3_SECTIONS = """\
+# Roadmap
+
+> Only future scope lives here.
+
+---
+
+## Current Status
+
+- **Version:** `v1.4.1`
+
+---
+
+## v1.4.1 (planned) — Patch fixes
+
+Scope for the patch release.
+
+- [ ] item one
+- [ ] item two
+
+---
+
+## v1.5.0 (TBD) — Future
+
+Future scope.
+"""
+
+
+def test_strip_roadmap_version_removes_middle_section():
+    """A `## v{version}` section between others is removed; neighbours intact."""
+    mod = _load_module()
+    new, removed = mod._strip_roadmap_version(_ROADMAP_3_SECTIONS, "1.4.1")
+    assert "## v1.4.1 (planned)" not in new
+    assert "## v1.5.0 (TBD)" in new          # later section preserved
+    assert "## Current Status" in new        # earlier section preserved
+    assert "---\n\n---" not in new           # no doubled/orphaned separators
+    assert any("detail section" in r for r in removed)
+
+
+def test_strip_roadmap_version_removes_last_section():
+    """A trailing `## v{version}` section leaves no dangling `---` at EOF."""
+    mod = _load_module()
+    new, removed = mod._strip_roadmap_version(_ROADMAP_3_SECTIONS, "1.5.0")
+    assert "## v1.5.0" not in new
+    assert "## v1.4.1 (planned)" in new      # earlier section preserved
+    assert not new.rstrip().endswith("---"), "Orphaned separator left at EOF"
+    assert "---\n\n---" not in new
+    assert any("detail section" in r for r in removed)
+
+
+def test_strip_roadmap_version_removes_status_row():
+    """Legacy `| v{version} |` status-table row is dropped; siblings kept."""
+    mod = _load_module()
+    roadmap = (
+        "# Roadmap\n\n## Current Status\n\n"
+        "| Version | Status | ETA  |\n"
+        "|---------|--------|------|\n"
+        "| v1.4.1 | planned | soon |\n"
+        "| v1.5.0 | TBD     | late |\n"
+    )
+    new, removed = mod._strip_roadmap_version(roadmap, "1.4.1")
+    assert "| v1.4.1 |" not in new
+    assert "| v1.5.0 |" in new
+    assert any("status-table row" in r for r in removed)
+
+
+def test_strip_roadmap_version_absent_is_noop():
+    """A version with no section/row leaves content byte-identical."""
+    mod = _load_module()
+    new, removed = mod._strip_roadmap_version(_ROADMAP_3_SECTIONS, "9.9.9")
+    assert new == _ROADMAP_3_SECTIONS
+    assert removed == []
+
+
+def test_strip_roadmap_version_idempotent():
+    """Re-running on already-cleaned content is a no-op."""
+    mod = _load_module()
+    once, removed1 = mod._strip_roadmap_version(_ROADMAP_3_SECTIONS, "1.4.1")
+    twice, removed2 = mod._strip_roadmap_version(once, "1.4.1")
+    assert removed1, "first pass should have removed something"
+    assert removed2 == []
+    assert twice == once
+
+
+def test_strip_roadmap_version_preserves_longer_version():
+    """v1.4.1 must not match v1.4.10 (version-boundary lookahead)."""
+    mod = _load_module()
+    roadmap = (
+        "# Roadmap\n\n"
+        "## v1.4.1 (planned) — Patch\n\nbody one\n\n---\n\n"
+        "## v1.4.10 (planned) — Later patch\n\nbody two\n\n---\n\n"
+        "## v1.5.0 (TBD) — Future\n\nbody three\n"
+    )
+    new, removed = mod._strip_roadmap_version(roadmap, "1.4.1")
+    assert "## v1.4.1 (planned)" not in new
+    assert "## v1.4.10 (planned)" in new     # longer version untouched
+    assert "## v1.5.0 (TBD)" in new
+    assert any("detail section" in r for r in removed)

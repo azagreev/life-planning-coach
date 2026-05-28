@@ -132,16 +132,20 @@ echo ""
 echo "[2/7] Синхронизация версии..."
 bash scripts/sync-version.sh "$VERSION"
 
-# ── 2.5. UPDATE ROADMAP STATUS TABLE ──
+# ── 2.5. ROADMAP CLEANUP (released-version section + status row) ──
+# BUG-015 (v1.4.0 release): step 2.5 ранее удаляла ТОЛЬКО legacy status-table
+# row через `sed -i "/| v${VERSION} |/d"`, оставляя `## v${VERSION} (planned) …`
+# detail section в ROADMAP → post-release CI падал на test_roadmap_integrity
+# (ROADMAP должен содержать только future scope). Bash sed multi-line хрупкий
+# (BUG-015 note), поэтому delegate в build-skill.py (pure-Python, robust
+# heading→next-`## ` section removal + orphan `---` cleanup). Exit code
+# propagates чтобы failure halt'ил release атомарно.
 echo ""
-echo "[2.5/7] Обновление ROADMAP..."
-ROADMAP_FILE="ROADMAP.md"
-# Remove released version from status table (Option B: no Released rows in ROADMAP)
-if grep -q "| v${VERSION} |" "$ROADMAP_FILE"; then
-    sed -i "/| v${VERSION} |/d" "$ROADMAP_FILE"
-    echo "✅ Удалена строка v${VERSION} из 'Текущий статус'"
-else
-    echo "ℹ️  Версия v${VERSION} не найдена в таблице статуса"
+echo "[2.5/7] Очистка ROADMAP (released-version section/row)..."
+if ! "$PYTHON_BIN" scripts/build-skill.py roadmap-cleanup "$VERSION"; then
+    echo "❌ ROADMAP cleanup упал. Запустите вручную для diagnostics:"
+    echo "   python scripts/build-skill.py roadmap-cleanup $VERSION"
+    exit 1
 fi
 
 # ── 2.6. REBUILD ARTIFACTS WITH NEW VERSION ──
