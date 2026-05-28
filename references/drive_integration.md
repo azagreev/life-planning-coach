@@ -175,7 +175,7 @@ Manual cleanup в любой момент через Drive UI (search + multi-se
 | **B: Tiered Desktop community MCP** | [piotr-agier/google-drive-mcp](https://github.com/piotr-agier/google-drive-mcp) full CRUD на Desktop | Power-user only; ~30 min OAuth+GCloud setup. **§Advanced below.** |
 | **C: State в conversation memory only** | Drive read-only; state в memory + JSON on demand | Loses cross-session persistence |
 | **D: Migrate в Obsidian+Git** | Per Karpathy LLM Wiki pattern | Requires Desktop + local file MCP; defeats portable cloud Wiki |
-| **F: Zapier MCP hybrid** | Native Drive reads + Zapier MCP для writes | Не verified Zapier MCP available на web; **BACKLOG investigation** |
+| **F: Zapier MCP hybrid** | Native Drive reads + Zapier MCP для writes (update/delete) | ✅ **Verified 2026-05-28**: Zapier connector в Anthropic directory ([claude.com/connectors/zapier](https://claude.com/connectors/zapier)), paid plans only. **§Advanced below.** Viable для power users c Zapier subscription. |
 
 ---
 
@@ -204,6 +204,56 @@ Manual cleanup в любой момент через Drive UI (search + multi-se
 ### Future: when Anthropic ships `update_file` natively
 
 Skill abstraction (`save_state(template, content)` wrapper) позволяет swap Path A → direct overwrite в одном месте. No protocol re-write needed.
+
+---
+
+## Advanced: Path F (Zapier MCP hybrid — claude.ai web с update/delete)
+
+Для users на **claude.ai web** (paid plan) кто хочет update/delete семантику без Desktop / community MCP setup. **Verified available 2026-05-28** через Anthropic Connectors directory.
+
+### Setup outline (~10-15 min, requires active Zapier account)
+
+1. Zapier account на платном плане (Starter+ для MCP feature)
+2. Connect Zapier к Google Drive (one-time OAuth внутри Zapier UI)
+3. Создать 2 Zaps с MCP triggers:
+   - **Update file content** (Zapier action: Google Drive → Replace File)
+   - **Move file to trash** (Zapier action: Google Drive → Delete File)
+4. claude.ai → Settings → Connectors → Zapier → Connect (OAuth к Zapier)
+5. Опционально: `add_to_calendar`, `send_email`, и любые из ~8 000 Zapier-supported apps
+
+### Skill behaviour когда Zapier connector detected
+
+```
+if zapier_available and user.prefers_path_f:
+    save_state(template, content) → Zapier "Replace File" с known file_id
+    delete_state(file_id)         → Zapier "Move to Trash"
+else:
+    fall back на Path A (append-only + Apps Script cleanup)
+```
+
+Skill abstraction (`save_state(template, content)`) уже спроектирован для swap; Path F = third backend (после Path A native MCP + Path B community Desktop MCP).
+
+### Trade-offs vs Path A
+
+| Concern | Path A (default) | Path F (Zapier hybrid) |
+|---------|------------------|------------------------|
+| Setup time | 0–3 min (Apps Script optional) | ~15 min (Zapier account + 2 Zaps) |
+| Recurring cost | Free | Zapier Starter+ subscription ($20/mo+) |
+| Update semantics | Append-only (timestamp-suffix) | Native overwrite via Zap |
+| Delete semantics | Apps Script (user-side) или manual UI | Native trash via Zap |
+| Latency | Sub-second MCP + LLM (5–15s end-to-end) | +1 Zapier round-trip (~10–30s additional) |
+| Audit trail | Built-in (5+ snapshots per category) | Lost (overwrite = single current state) |
+| Cross-platform | Works на всех MCP-supporting platforms | claude.ai web only (Zapier connector scope) |
+| Quota | Drive 15 GB (rarely hit) | Zapier task quota (~750/mo Starter) |
+
+### When to choose Path F over Path A
+
+- Уже есть Zapier subscription и Zaps для других целей
+- Critical concern about Drive file accumulation (visual noise в UI)
+- Need overwrite-not-append semantics для downstream tooling (e.g. Notion sync)
+- Comfortable с дополнительным dependency surface (Zapier как middleman)
+
+Otherwise — **Path A остаётся default**. Cost (free, fewer dependencies) + audit trail обычно outweigh setup convenience.
 
 ---
 
