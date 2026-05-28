@@ -7,7 +7,7 @@ purpose: "Compact session-start cache, читается первым. < 1000 т�
 # Hot Cache
 
 > **Для Claude:** Читай ПЕРВЫМ при старте сессии с Drive. Цель ~500 слов / < 1000 токенов.
-> Обновляется в конце каждой сессии (overwrite полностью).
+> Записывается в конце каждой сессии через `save_state("Hot_Cache", <full snapshot>)` — new file `Hot_Cache_{ISO}.md`, "current" = latest by `modifiedTime`. См. [`AI_Instructions.md` §Протокол записи](AI_Instructions.md).
 
 ## 👤 Контекст пользователя
 

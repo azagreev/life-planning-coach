@@ -8,6 +8,15 @@
 
 ## [Unreleased]
 
+### Changed (Methodology)
+
+- **Drive Wiki Path A — full skill protocol refactor** (BACKLOG RICE 56). `references/drive_integration.md` теперь formally defines `save_state(template, content)` / `read_state(template)` skill-instruction abstractions с canonical filename pattern `{template}_{ISO}.md` (ISO = `YYYY-MM-DDTHH-MM`). Path B/F backends swap behaviour at single call site без переписывания phase modules. `templates/AI_Instructions.md` Протокол записи rewritten в терминах save_state; «Когда какой template писать» таблица показывает concrete call sites (`save_state("Hot_Cache", ...)` etc.). `state_v2_schema.md §5` cross-references abstraction.
+- **Legacy «overwrite»/«section update» wording cleaned** в templates: `Hot_Cache.md` («Обновляется ... overwrite полностью» → save_state framing), `Progress_Dashboard.md` («Автообновляется» → new-file-per-save), `Wheel_of_Life_History.md` («КАК ОБНОВИТЬ» → «КАК СОСТАВИТЬ НОВЫЙ SNAPSHOT» с explicit read_state + composition step). Path A architecture (committed 2026-05-26) теперь явно проявлена в write-side artefacts, не только в research docs.
+
+### Added (Tooling & Tests)
+
+- **`tests/system/test_path_a_skill_protocol.py`** (NEW, 14 tests) — read-latest semantics guards + anti-legacy-wording checks: save_state/read_state definitions present с правильным pattern; AI_Instructions.md uses concrete call sites; state_v2_schema §5 cross-refs; Hot_Cache / Progress_Dashboard / Wheel_of_Life_History не содержат legacy «overwrite» / «Автообновляется» / «КАК ОБНОВИТЬ» wording; ISO format `YYYY-MM-DDTHH-MM` consistent across docs; `disableConversionToGoogleType` flag documented.
+
 ## [1.3.0] — 2026-05-27
 
 **Тема:** WoL Refactor (PRD v0.15 §5 frequency gate) + v1.2 code review follow-ups + Windows release script bugs closed. Closes 3 follow-up items из v1.2 + addresses PRD's last remaining WoL concern + makes release.sh work end-to-end on Windows. Schema bump 2.2.5 (additive). No new evidence-based methods — focus на operational polish, discovery gaps, и tooling reliability.

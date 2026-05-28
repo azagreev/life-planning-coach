@@ -50,31 +50,45 @@ PoC 2026-05-26 discovered:
 
 After research synthesis (PoC findings + community precedents — Karpathy LLM Wiki, Justin Norris Apps Script mirroring, Zapier hybrid pattern), the skill commits to **Path A: append-only with timestamp suffix + Apps Script auto-cleanup**.
 
-### Write protocol (skill side)
+### `save_state(template, content)` — write abstraction
+
+This is the canonical write call site. All skill-instructions in `module_phase*.md` and `templates/AI_Instructions.md` describe persistence в терминах `save_state(...)` — concrete behaviour swaps по факту detected backend (Path A by default; Path B/F when available) без переписывания call sites.
+
+**Path A implementation (default, claude.ai web + native MCP):**
 
 ```
-create_file(
-  parentId=<wiki_subfolder_id>,
-  title="<Category>_<ISO8601_compact>.md",   // e.g. "Hot_Cache_2026-05-26T18-45.md"
-  textContent=<rendered_snapshot>,
-  contentMimeType="text/markdown",
-  disableConversionToGoogleType=true
-)
+save_state(template, content):
+  iso = now_utc.strftime("YYYY-MM-DDTHH-MM")     // colons → "-" для filename safety
+  subfolder_id = wiki_subfolder_for_template(template)   // см. Write rules table в AI_Instructions.md
+  create_file(
+    parentId=subfolder_id,
+    title=f"{template}_{iso}.md",                // e.g. "Hot_Cache_2026-05-26T18-45.md"
+    textContent=content,
+    contentMimeType="text/markdown",
+    disableConversionToGoogleType=true
+  )
 ```
 
-ISO format: `YYYY-MM-DDTHH-MM` (colons replaced with `-` для совместимости с filename conventions).
+ISO format: `YYYY-MM-DDTHH-MM` (colons replaced with `-`).
 
-### Read protocol (skill side)
+**Path B / Path F variants** (detected backend): `save_state` swaps к `updateTextFile(...)` (Path B community MCP) или Zapier "Replace File" action (Path F). Skill-instruction call site остаётся `save_state(template, content)` — single swap point.
+
+### `read_state(template)` — read abstraction
 
 ```
-search_files(
-  query="title contains '<Category>_' and parentId = '<wiki_subfolder_id>'",
-  orderBy="modifiedTime desc",
-  pageSize=1
-)
-→ first result = "current" state
-→ download_file_content(fileId) → base64-decode → parse markdown
+read_state(template):
+  subfolder_id = wiki_subfolder_for_template(template)
+  results = search_files(
+    query=f"title contains '{template}_' and parentId = '{subfolder_id}'",
+    orderBy="modifiedTime desc",
+    pageSize=1
+  )
+  if not results:
+    return None
+  return download_file_content(results[0].id) → base64-decode → parse markdown
 ```
+
+«Current» state = latest by `modifiedTime`. Older snapshots остаются как audit trail (см. Cleanup §below).
 
 ⚠️ **NEVER use `read_file_content` для `.md`** — returns `{}` silently. ALWAYS `download_file_content`.
 

@@ -81,18 +81,40 @@ if no:
 
 ## Протокол записи
 
+Все записи в Wiki проходят через единую skill-instruction abstraction **`save_state(template, content)`** — полное определение в [`drive_integration.md` §save_state](../drive_integration.md#save_statetemplate-content--write-abstraction). Path A behaviour (default):
+
+```
+save_state(template, content):
+  iso = now_utc → "YYYY-MM-DDTHH-MM"   // colons replaced с "-"
+  create_file(
+    parentId=<subfolder per Write rules table below>,
+    title=f"{template}_{iso}.md",       // e.g. Hot_Cache_2026-05-26T18-45.md
+    textContent=content,
+    contentMimeType="text/markdown",
+    disableConversionToGoogleType=true
+  )
+```
+
+«Current» state = latest by `modifiedTime` через `read_state(template)`. Старые snapshots — audit trail (Apps Script cleanup управляет retention).
+
+**Forward-compat:** call sites в phase modules используют термин `save_state(...)`; concrete backend swaps по detected MCP surface (Path A → Path B Desktop community MCP с native update_file → Path F Zapier replace), без переписывания module instructions.
+
+### Когда какой template писать
+
 | Файл | Режим | Когда |
 |---|---|---|
-| `00_Raw/{session_date}.md` | new file | Конец каждой сессии |
-| `01_Wiki/Hot_Cache_{TS}.md` | new file (latest by `modifiedTime`) | Конец сессии, < 1000 токенов |
-| `01_Wiki/User_Progress/{Goals,Wheel}_{TS}.md` | new file | После релевантной фазы |
-| `03_Dashboard/dashboard_data_{TS}.json` | new file | После значимого изменения state |
-| `03_Dashboard/Progress_Dashboard_{TS}.md` | new file | Конец сессии |
-| `CHANGELOG_{YYYY-MM}.md` | new file/мес | Каждое значимое изменение |
+| `00_Raw/{session_date}_{TS}.md` | `save_state("Raw", ...)` | Конец каждой сессии |
+| `01_Wiki/Hot_Cache_{TS}.md` | `save_state("Hot_Cache", ...)` | Конец сессии, < 1000 токенов |
+| `01_Wiki/User_Progress/Goals_{TS}.md` | `save_state("Goals", ...)` | После Phase 2 / Phase 3 (изменение целей или wins) |
+| `01_Wiki/User_Progress/Wheel_of_Life_History_{TS}.md` | `save_state("Wheel_of_Life_History", ...)` | После Phase 1 (новая WoL оценка) |
+| `01_Wiki/User_Progress/USER_PROGRESS_JOURNAL_{TS}.md` | `save_state("USER_PROGRESS_JOURNAL", ...)` | После значимых событий (persona switch, ER breakthrough, weekly review) |
+| `01_Wiki/User_Progress/Core_Values_Compass_{TS}.md` | `save_state("Core_Values_Compass", ...)` | После Phase 1.5 (core values + compass questions) |
+| `03_Dashboard/dashboard_data_{TS}.json` | `save_state("dashboard_data", ...)` | После значимого изменения state |
+| `03_Dashboard/Progress_Dashboard_{TS}.md` | `save_state("Progress_Dashboard", ...)` | Конец сессии |
 
 ## Write rules per state v2 field
 
-Source-of-write — соответствующий `module_phase*.md` (см. State Writes секции там).
+Source-of-write — соответствующий `module_phase*.md` (см. State Writes секции там). Каждая запись = один вызов `save_state(template, content)` с подходящим template из таблицы выше.
 
 | State поле | Куда писать |
 |---|---|

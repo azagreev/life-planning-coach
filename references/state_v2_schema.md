@@ -671,6 +671,8 @@ on session_start:
     (false, false) → "lean_conversation"
 ```
 
+**Write abstraction.** Все Wiki-записи в `full_persistence` / `wiki_no_execution` modes проходят через `save_state(template, content)` — single skill-instruction call site, definition в [`drive_integration.md` §save_state](drive_integration.md#save_statetemplate-content--write-abstraction). Path A backend (default): new file `{template}_{ISO}.md`; "current" = latest by `modifiedTime` через `read_state(template)`. Path B/F variants swap backend без переписывания call sites в phase modules.
+
 ### 5.1 full_persistence mode
 
 - Все поля state v2 пишутся в Drive Wiki
