@@ -16,6 +16,7 @@
 ### Added (Tooling & Tests)
 
 - **`tests/system/test_path_a_skill_protocol.py`** (NEW, 14 tests) — read-latest semantics guards + anti-legacy-wording checks: save_state/read_state definitions present с правильным pattern; AI_Instructions.md uses concrete call sites; state_v2_schema §5 cross-refs; Hot_Cache / Progress_Dashboard / Wheel_of_Life_History не содержат legacy «overwrite» / «Автообновляется» / «КАК ОБНОВИТЬ» wording; ISO format `YYYY-MM-DDTHH-MM` consistent across docs; `disableConversionToGoogleType` flag documented.
+- **`tests/system/test_planning_docs_guardrails.py`** (NEW, 11 tests, BACKLOG RICE 64) — закрывает «roadmap не превращается в changelog» tech debt из v0.15.0+. Guards: ROADMAP «Текущая версия» = latest git tag + present в CHANGELOG; scope sections (planned/TBD/Candidate) без `✅ Shipped`/changelog `## [X.Y.Z]` headings/«released»-«shipped»-«выпущено» dates; ROADMAP/BACKLOG без consecutive `---` separators; ROADMAP/BACKLOG без duplicate H3 в одной H2-секции. Покрывает regressions, которые руками чинили в PR #19.
 
 ## [1.3.0] — 2026-05-27
 

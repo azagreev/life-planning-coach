@@ -198,7 +198,7 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 | Coverage report + badge | P1 | v0.15.0 | 80 × 1.0 × 75% / S=1, CP Low = **60.0** | `pytest-cov`, минимум 85%, badge в README |
 | Pre-commit hooks | P1 | v0.15.0 | 80 × 1.0 × 70% / S=1, CP Med = **56.0** | `ruff`, `mypy`, whitespace |
 | Универсальный скрипт сборки | P2 | v0.15.0+ | 60 × 1.0 × 70% / M=2, CP Med = **21.0** | Единый `build-skill.py` |
-| Planning docs guardrails | P2 | v0.15.0+ | 80 × 0.5 × 80% / XS=0.5, CP Low = **64.0** | Проверка, что roadmap не превращается в changelog |
+| ~~Planning docs guardrails~~ | P2 | ✅ 2026-05-28 | 80 × 0.5 × 80% / XS=0.5, CP Low = **64.0** | Shipped: `tests/system/test_planning_docs_guardrails.py` (11 tests). Guards: ROADMAP «Текущая версия» = latest git tag + present в CHANGELOG; scope sections (planned/TBD/Candidate) без ✅ Shipped / changelog headings / released dates; no consecutive `---`; no duplicate H3 в одной H2-секции. |
 | Timezone edge-case hardening | P2 | v0.16 candidate | 60 × 1.0 × 60% / M=2, CP Med = **18.0** | Travel, DST, смена рабочей зоны |
 
 ---
