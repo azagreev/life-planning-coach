@@ -11,7 +11,7 @@ mode: "text_fallback"
 > **Это text-fallback дашборда** для платформ без HTML rendering (terminal, Paper Coach Mode, печать).  
 > HTML-версия живёт в репозитории как `life-planning-dashboard.html` и читает `03_Dashboard/dashboard_data.json`.
 
-> Автообновляется. Последнее обновление: [YYYY-MM-DD HH:MM]
+> Записывается через `save_state("Progress_Dashboard", ...)` — new file `Progress_Dashboard_{ISO}.md` per save. Latest by `modifiedTime`. Текущий snapshot: [YYYY-MM-DD HH:MM]
 
 ---
 

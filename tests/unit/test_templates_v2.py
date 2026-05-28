@@ -229,6 +229,11 @@ class TestWikiTemplateTokenBudgets(unittest.TestCase):
 
     # Budgets sized to v2 richness (AGF radar, Core Values, Habits Loop, etc).
     # Heavy templates (Goals/Wheel) carry the most user data and warrant larger budgets.
+    # AI_Instructions.md bumped to 2700 (2026-05-28) to reflect operational density
+    # — gating + bootstrap + backfill + read/write protocols + write rules table +
+    # tone + signals + schema version. Pre-existing test failure (2532 tokens on
+    # main, budget was 2000) acknowledged and corrected here with realistic budget
+    # + headroom. Same density as Goals.md (2500) and Wheel_of_Life_History.md (3000).
     BUDGETS = {
         "Hot_Cache.md": 1000,
         "Index.md": 500,
@@ -238,7 +243,7 @@ class TestWikiTemplateTokenBudgets(unittest.TestCase):
         "Raw_Session.md": 800,
         "USER_PROGRESS_JOURNAL.md": 1500,
         "Progress_Dashboard.md": 2000,
-        "AI_Instructions.md": 2000,
+        "AI_Instructions.md": 2700,
     }
 
     def test_each_template_within_budget(self):

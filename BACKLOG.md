@@ -96,14 +96,17 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 -->
 
 
-### Drive Wiki Path A — full skill protocol refactor
+### Drive Wiki Path A — full skill protocol refactor ✅ Shipped 2026-05-28
 
-- **Описание:** Architecture committed (`references/drive_integration.md` §Path A): append-only с timestamp suffix + Apps Script auto-cleanup (`templates/lpc_wiki_cleanup.gs`). Осталось: refactor active session write protocols в `module_phase*.md` чтобы actually использовать pattern (currently legacy "overwrite"/"section update" wording in some modules).
-- **Триггер:** Path A commit 2026-05-26 (после Drive PoC + Grok research).
-- **Статус:** 📋 Architecture documented + Apps Script ready. Skill modules ещё не refactored под Path A protocol.
-- **RICE:** Reach 70 × Impact 2.0 × Confidence 80% / Effort M=2 EAS, Context Pressure Medium = **56.0** (Quick Win).
-- **Артефакты:** Update each `module_phase*.md` State Writes section с filename pattern `{Template}_{ISO}.md`; add `save_state(template, content)` abstraction helper для forward-compat; tests на read-latest semantics.
-- **Риск:** Skill prompts длиннее (более explicit filename gen logic); legacy users могут нуждаться migration helper.
+- **Статус:** ✅ Closed via `feat/path-a-skill-protocol` branch. Phase modules не редактировались (cross-ref chain через state_v2_schema.md §5 → drive_integration.md §save_state работает без token-budget давления). См. CHANGELOG `[Unreleased]` для shipped items.
+- **Shipped artefacts:**
+  - `drive_integration.md` — formal `save_state(template, content)` / `read_state(template)` definitions с filename pattern `{template}_{ISO}.md` + Path B/F swap note
+  - `templates/AI_Instructions.md` — Протокол записи rewritten в терминах save_state; «Когда какой template писать» таблица с concrete call sites
+  - `templates/Hot_Cache.md` + `Progress_Dashboard.md` — legacy «overwrite полностью» / «Автообновляется» wording → save_state framing
+  - `templates/Wheel_of_Life_History.md` — «КАК ОБНОВИТЬ» → «КАК СОСТАВИТЬ НОВЫЙ SNAPSHOT» (composition, не in-place edit)
+  - `state_v2_schema.md §5` — write-abstraction cross-ref
+  - `tests/system/test_path_a_skill_protocol.py` — 14 read-latest semantics + anti-legacy-wording guards
+- **RICE (исторически):** Reach 70 × Impact 2.0 × Confidence 80% / Effort M=2 EAS, Context Pressure Medium = **56.0** (Quick Win).
 
 ### File Anthropic GitHub issue evidence (Path E lobbying)
 
