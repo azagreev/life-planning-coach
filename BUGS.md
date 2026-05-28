@@ -47,6 +47,72 @@ _(no open bugs currently)_
 
 ## Закрытые баги
 
+### BUG-011: `scripts/release.sh` step 1.5 «Пересборка артефактов» молча падает на Windows (rsync missing)
+- **Приоритет:** P2
+- **Статус:** resolved
+- **Исправлено:** 2026-05-28 (тот же commit что BUG-010)
+- **Найден:** 2026-05-28 (v1.3.1 release)
+- **Версия:** v1.3.1 release flow → исправлено в v1.3.2+ (через release.sh обновление)
+- **Owner:** @azagreev
+- **Файлы:** `scripts/release.sh` (бывшая строка 86; перемещён на step 2.6)
+
+**Описание:**
+release.sh шаг 1.5 пересобирал артефакты через `bash scripts/build-skill.sh >/dev/null 2>&1 || true`. build-skill.sh использует `rsync` для копирования references/templates — на Windows MSYS bash rsync отсутствует. Команда падала с `rsync: command not found`, но stderr был перенаправлен в /dev/null + `|| true` глотал exit code → молчаливый провал. Результат: артефакты в dist/ оставались со старой версией ПЛЮС платформы (platforms/{claude,grok,kimi,kimi-cli}/SKILL.md) не регенерировались после version sync, что требовало retroactive cleanup PR после каждого release (v1.2 → v1.3, v1.3.0 → v1.3.1).
+
+**Root cause:**
+1. `bash scripts/build-skill.sh` depends on rsync → не работает на Windows MSYS bash (rsync не входит в Git for Windows by default).
+2. Step 1.5 (rebuild) выполнялся ДО step 2 (version sync) — даже если build успешно проходил, артефакты получали СТАРУЮ версию, а step 7 (gh release create) ожидал `dist/life-planning-coach-v${VERSION}.{zip,skill,...}` с НОВОЙ версией.
+3. Suppressed output + `|| true` маскировали failure: release.sh продолжался как если всё было ОК.
+
+**Resolution:**
+- Step 1.5 удалён.
+- Новый step 2.6 после version sync, вызывает `python scripts/build-skill.py build` (pure-Python, без rsync) — работает кросс-платформенно. Exit code пропагируется (без `|| true`), failure halts release.
+- Step 3 commit теперь включает регенерированные platforms/* SKILL.md вместе с source-file sync.
+
+См. также BUG-010 (тот же session, обе fixes в одном PR).
+
+---
+
+### BUG-010: `scripts/release.sh` step 5 (verification) — BrokenPipeError при grep early-exit
+- **Приоритет:** P2
+- **Статус:** resolved
+- **Исправлено:** 2026-05-28
+- **Найден:** 2026-05-28 (v1.3.1 release flow — рецидив после BUG-008 fix)
+- **Версия:** v1.3.1 release flow → исправлено в v1.3.2+
+- **Owner:** @azagreev
+- **Файлы:** `scripts/release.sh` (бывшая строка 143; рефакторено на temp-file approach)
+
+**Описание:**
+Step 5 «Проверка на GitHub» снова упал с `Python write /dev/stdout: The pipe is being closed.` — несмотря на BUG-008 fix (v1.3.0 PR #14) который заменил `print(content.decode('utf-8'))` на `sys.stdout.buffer.write(bytes)`. Версия на GitHub была correct (1.3.1), но release.sh не смог её захватить → exit 1 → tag + GH release не сделаны автоматически (пришлось руками).
+
+**Root cause:**
+BUG-008 fix решил **encoding** issue (UTF-8 vs cp1251), но не **pipe-lifecycle** issue:
+
+```bash
+gh api ... | python -c "...sys.stdout.buffer.write(base64.b64decode(...))" | grep -oP '...\K[0-9.]+'
+```
+
+`grep -oP` находит match в первой строке (или там где `**Версия:**` встречается), выводит result и **завершается**. Python всё ещё writing bytes (decoded README ~3-5 KB) в свой stdout, который теперь закрыт → BrokenPipeError → Python exits non-zero → bash subshell capture видит pipefail (если включён) ИЛИ empty result → variable GITHUB_README пустая → `[ "$GITHUB_README" != "$VERSION" ]` true → exit 1.
+
+Не воспроизводился стабильно: depending on timing/OS pipe buffer size, иногда Python успевал отписать всё ДО grep'а early-exit, иногда нет. На Linux/CI с большим pipe buffer чаще проходит; на Windows MSYS bash с меньшим — чаще падает.
+
+**Resolution:**
+Заменили pipe-to-grep на temp-file approach:
+
+```bash
+TMP_README=$(mktemp)
+trap 'rm -f "$TMP_README"' EXIT
+gh api ... | python -c "...write bytes..." > "$TMP_README"
+GITHUB_README=$(grep -oP '...' "$TMP_README" | head -n 1 || true)
+rm -f "$TMP_README"; trap - EXIT
+```
+
+Python пишет полный output в файл (нет downstream pipe → нет early-exit issue → нет BrokenPipeError). Grep читает с диска — операции последовательные, не concurrent. `head -n 1` ограничивает output одной строкой. `trap EXIT` cleanup гарантирует удаление temp-file даже при failure mid-step.
+
+**Regression test:** `tests/unit/test_release_sh_step5.py` (расширен — было 3 теста для BUG-008, теперь +N для BUG-010 pattern).
+
+---
+
 ### BUG-008: `scripts/release.sh` падает на step 5 (verification) на Windows
 - **Приоритет:** P2
 - **Статус:** resolved

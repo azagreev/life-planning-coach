@@ -80,11 +80,6 @@ if ! git diff --quiet HEAD; then
 fi
 echo "✅ Рабочая директория чиста"
 
-# Пересобираем артефакты после тестов, чтобы ZIP был свежим
-# (pytest TestBuildScript может перезаписать platforms/*/SKILL.md, делая ZIP "устаревшим")
-echo "→ Пересборка артефактов..."
-bash scripts/build-skill.sh >/dev/null 2>&1 || true
-
 # Проверка: мы на main
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 if [ "$CURRENT_BRANCH" != "main" ]; then
@@ -109,6 +104,23 @@ if grep -q "| v${VERSION} |" "$ROADMAP_FILE"; then
 else
     echo "ℹ️  Версия v${VERSION} не найдена в таблице статуса"
 fi
+
+# ── 2.6. REBUILD ARTIFACTS WITH NEW VERSION ──
+# Previously step 1.5: `bash scripts/build-skill.sh` BEFORE version sync — but
+# (a) build-skill.sh uses rsync which is absent on Windows MSYS bash → silent
+# failure under `>/dev/null 2>&1 || true`, and (b) running BEFORE sync produces
+# artifacts with the OLD version (step 7 then can't find v${VERSION} files).
+# Fix: rebuild AFTER sync via build-skill.py (pure-Python, no rsync), let exit
+# code propagate so failure halts the release atomically.
+echo ""
+echo "[2.6/7] Пересборка артефактов (build-skill.py, после version sync)..."
+PYTHON_BIN="$(command -v python3 || command -v python || echo python3)"
+if ! "$PYTHON_BIN" scripts/build-skill.py build >/dev/null; then
+    echo "❌ Сборка артефактов упала. Запустите вручную для diagnostics:"
+    echo "   python scripts/build-skill.py build"
+    exit 1
+fi
+echo "✅ Артефакты пересобраны c версией $VERSION"
 
 # ── 3. COMMIT ──
 echo ""
@@ -138,9 +150,23 @@ sleep 3
 # `print(content.decode('utf-8'))`. Старый print() крашился на Windows cp1251
 # default encoding при попытке записать UTF-8 README (с emoji 🧭, кириллицей)
 # в stdout — UnicodeEncodeError + pipe error. Binary write bypass'ит encoding
-# entirely: pipe несёт raw UTF-8 bytes, grep их обрабатывает без проблем.
+# entirely.
+#
+# BUG-010 fix (v1.3.2+): после BUG-008 fix остаётся вторая pipe-related issue —
+# `grep -oP '...'` находит match рано и закрывает upstream pipe, пока Python
+# ещё не закончил writing → BrokenPipeError → empty result → проверка падает
+# даже когда GitHub README correct. Replay v1.3.1 release: «Python write
+# /dev/stdout: The pipe is being closed». Fix: decode в temp-file, потом grep
+# на файл — никакого pipe, никакого early-exit issue.
 PYTHON_BIN="$(command -v python3 || command -v python || echo python3)"
-GITHUB_README=$(gh api "repos/$REPO/contents/README.md" --jq '.content' | "$PYTHON_BIN" -c "import sys, base64; sys.stdout.buffer.write(base64.b64decode(sys.stdin.read()))" | grep -oP '\*\*Версия:\*\*\s*\K[0-9.]+' || true)
+TMP_README=$(mktemp)
+trap 'rm -f "$TMP_README"' EXIT
+gh api "repos/$REPO/contents/README.md" --jq '.content' \
+    | "$PYTHON_BIN" -c "import sys, base64; sys.stdout.buffer.write(base64.b64decode(sys.stdin.read()))" \
+    > "$TMP_README"
+GITHUB_README=$(grep -oP '\*\*Версия:\*\*\s*\K[0-9.]+' "$TMP_README" | head -n 1 || true)
+rm -f "$TMP_README"
+trap - EXIT
 
 if [ "$GITHUB_README" != "$VERSION" ]; then
     echo "❌ Версия на GitHub ($GITHUB_README) ≠ ожидаемой ($VERSION)"
@@ -185,7 +211,7 @@ else
         KIMI_FILE="dist/life-planning-coach-v${VERSION}-kimi.md"
         KIMI_CLI_FILE="dist/life-planning-coach-v${VERSION}-kimi-cli.zip"
         if [ ! -f "$ZIP_FILE" ] || [ ! -f "$SKILL_FILE" ]; then
-            echo "❌ Build artifacts not found. Run: bash scripts/build-skill.sh"
+            echo "❌ Build artifacts not found. Run: python scripts/build-skill.py build"
             exit 1
         fi
         UPLOAD_ARGS=("$ZIP_FILE" "$SKILL_FILE")
