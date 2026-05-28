@@ -296,6 +296,16 @@ def cmd_version(args: argparse.Namespace) -> int:
     )
     changes.append(("README.md (badge)", count))
 
+    # README.md install refs: `life-planning-coach-vX.Y.Z.zip|-grok.md|-kimi.md|-kimi-cli.zip|-kimi-cli/`
+    # Previously left stale — caused test_no_stale_versions_in_source_files failures
+    # in v1.2.0 → v1.3.0 (manually fixed в PR #11) AND v1.3.0 → v1.3.1 (PR #27).
+    count = _replace_in_file(
+        PROJECT_ROOT / "README.md",
+        r"life-planning-coach-v[\d.]+(\.zip|-grok\.md|-kimi\.md|-kimi-cli\.zip|-kimi-cli/)",
+        rf"life-planning-coach-v{new_version}\1",
+    )
+    changes.append(("README.md (install refs)", count))
+
     # AGENTS.md: life-planning-coach v0.X.Y
     count = _replace_in_file(
         PROJECT_ROOT / "AGENTS.md",
