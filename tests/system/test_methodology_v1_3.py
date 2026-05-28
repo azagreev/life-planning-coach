@@ -130,13 +130,17 @@ class TestCOMBUpsell:
         # Phase 0 section не должна содержать direct COM-B trigger.
         # OK если упоминается в Routing Map для direct user request («как себя заставить»).
         phase0_idx = head.find("phase 0")
-        if phase0_idx != -1:
-            # Check 500 chars после Phase 0 mention — не должно быть com_b trigger
-            phase0_block = head[phase0_idx:phase0_idx + 500]
-            assert "com_b" not in phase0_block, (
-                "Regression: SKILL.master.md Phase 0 section имеет COM-B trigger. "
-                "Это нарушает v1.2.0 architecture decision (см. CHANGELOG ## [1.2.0])."
-            )
+        assert phase0_idx != -1, (
+            "Test premise broken: «Phase 0» not found in first 3000 chars of "
+            "SKILL.master.md — without it the regression guard below would pass "
+            "vacuously. Update the anchor if the Routing Map layout changed."
+        )
+        # Check 500 chars после Phase 0 mention — не должно быть com_b trigger
+        phase0_block = head[phase0_idx:phase0_idx + 500]
+        assert "com_b" not in phase0_block, (
+            "Regression: SKILL.master.md Phase 0 section имеет COM-B trigger. "
+            "Это нарушает v1.2.0 architecture decision (см. CHANGELOG ## [1.2.0])."
+        )
 
     def test_com_b_upsell_section_no_forbidden_words(self, er_content):
         """Forbidden directive words check (с whitelist Russian quoted speech)
@@ -288,21 +292,25 @@ class TestSchemaWoLField:
         return path.read_text(encoding="utf-8")
 
     def test_schema_version_bumped_to_2_2_5(self, content):
-        # v1.4.0 (Sub-feature A): schema bumped 2.2.5 → 2.2.6. This v1.3 test now
-        # checks that 2.2.5 entry persists в §12 Changelog (history preservation
-        # guard), не текущая JSON literal version. Pattern matches v1.2 PR3
-        # refactor + v1.3 → v1.4 pattern.
-        assert "**2.2.5**" in content, "v2.2.5 changelog entry must persist (history)"
-        # Field availability matrix должна reference 2.2.5 для last_assessed_at row
+        # v1.4.0: schema bumped 2.2.5 → 2.2.6 (Sub-feature A) → 2.2.7 (Sub-feature
+        # B). This v1.3 test now checks that the 2.2.5 entry persists в §12
+        # Changelog (history preservation guard), not the current header version.
+        cl_idx = content.find("## 12. Changelog схемы")
+        assert cl_idx != -1, "§12 Changelog section missing"
+        assert "**2.2.5**" in content[cl_idx:], (
+            "v2.2.5 changelog entry must persist в §12 (history)"
+        )
+        # Field availability matrix (§9) должна reference 2.2.5 для last_assessed_at row
         assert "schema 2.2.5" in content, (
             "Schema 2.2.5 reference must remain (e.g. matrix row для last_assessed_at)"
         )
 
     def test_header_version_2_2_5(self, content):
-        # v1.4.0 (Sub-feature A): schema bumped 2.2.5 → 2.2.6. Header теперь
-        # `2.2.6` (newest), но 2.2.5 entry persists в §12 Changelog — это
-        # history preservation guard.
-        assert "**2.2.5**" in content, "Schema 2.2.5 changelog entry must persist"
+        # v1.4.0: schema bumped to 2.2.7 (newest); the 2.2.5 entry persists в §12
+        # Changelog — history preservation guard.
+        cl_idx = content.find("## 12. Changelog схемы")
+        assert cl_idx != -1, "§12 Changelog section missing"
+        assert "**2.2.5**" in content[cl_idx:], "Schema 2.2.5 changelog entry must persist"
 
     def test_last_assessed_at_field_in_json_schema(self, content):
         """JSON schema должна include last_assessed_at field в wheel_of_life block."""

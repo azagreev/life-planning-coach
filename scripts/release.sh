@@ -100,7 +100,7 @@ echo "[1/7] Проверка preconditions..."
 
 # Проверка: все тесты проходят
 echo "→ Запуск тестов..."
-if ! pytest tests/release/ tests/system/ -q --tb=short; then
+if ! "$PYTHON_BIN" -m pytest tests/release/ tests/system/ -q --tb=short; then
     echo "❌ Тесты не проходят. Исправьте перед релизом."
     exit 1
 fi
