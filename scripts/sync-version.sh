@@ -52,7 +52,16 @@ sed -i "s/life-planning-coach v[0-9.]*/life-planning-coach v$NEW_VERSION/" AGENT
 sed -i "s/Title = только тег (\`v[0-9.]*\`)/Title = только тег (\`v$NEW_VERSION\`)/" AGENTS.md
 sed -i "s/\*\*Версия:\*\* v[0-9.]*/**Версия:** v$NEW_VERSION/" AGENTS.md
 
-# 4. Проверка: нет stale версий в других файлах
+# 5. ROADMAP.md «Текущая версия» line.
+# Without this, tests/system/test_planning_docs_guardrails.py
+# `test_roadmap_version_matches_latest_git_tag` fails right after release.sh
+# creates the new tag (ROADMAP would still point to the previous version).
+TODAY=$(date +%Y-%m-%d)
+echo "→ ROADMAP.md (Текущая версия → v$NEW_VERSION, released $TODAY)"
+sed -i "s/\*\*Текущая версия:\*\* \`v[0-9.]*\`/**Текущая версия:** \`v$NEW_VERSION\`/" ROADMAP.md
+sed -i "s/(released [0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\})/(released $TODAY)/" ROADMAP.md
+
+# 6. Проверка: нет stale версий в других файлах
 echo "→ Проверка на stale версии..."
 STALE=$(grep -rn "version.*0\.[0-9]\+\.\?[0-9]*" --include="*.py" --include="*.md" --include="*.toml" . \
     | grep -v "node_modules" \

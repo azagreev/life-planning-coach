@@ -30,6 +30,7 @@ Exit codes:
 from __future__ import annotations
 
 import argparse
+import datetime
 import os
 import re
 import shutil
@@ -318,6 +319,23 @@ def cmd_version(args: argparse.Namespace) -> int:
         f"**Версия:** v{new_version}",
     )
     changes.append(("AGENTS.md (version label)", count))
+
+    # ROADMAP.md «Текущая версия» — без этого
+    # tests/system/test_planning_docs_guardrails.py::test_roadmap_version_matches_latest_git_tag
+    # упадёт сразу после release.sh tag-bump (ROADMAP остаётся на предыдущей версии).
+    today = datetime.date.today().isoformat()
+    count = _replace_in_file(
+        PROJECT_ROOT / "ROADMAP.md",
+        r"\*\*Текущая версия:\*\*\s*`v[\d.]+`",
+        f"**Текущая версия:** `v{new_version}`",
+    )
+    changes.append(("ROADMAP.md (Текущая версия)", count))
+    count = _replace_in_file(
+        PROJECT_ROOT / "ROADMAP.md",
+        r"\(released \d{4}-\d{2}-\d{2}\)",
+        f"(released {today})",
+    )
+    changes.append(("ROADMAP.md (release date)", count))
 
     for path, count in changes:
         marker = "✓" if count > 0 else "·"
