@@ -47,6 +47,36 @@ _Открытых багов нет._
 
 ## Закрытые баги
 
+### BUG-017: full test suite мутирует tracked `ROADMAP.md` (test isolation)
+- **Приоритет:** P2
+- **Статус:** resolved
+- **Исправлено:** 2026-05-29 (`test_cmd_version_accepts_semver` → tmp_path + monkeypatch `PROJECT_ROOT`)
+- **Найден:** 2026-05-29 (во время работы над BUG-016)
+- **Версия:** v1.4.1 → исправлено в v1.4.2+
+- **Owner:** @azagreev
+- **Файлы:** `tests/unit/test_build_skill_cli.py::test_cmd_version_accepts_semver`
+
+**Описание:**
+Полный прогон `python -m pytest` на чистом дереве оставлял `git status` грязным: `modified: ROADMAP.md`. Изолированный прогон `tests/release/` это НЕ триггерил — нужен был именно весь suite (тест живёт в `tests/unit/`).
+
+**Expected:**
+Тесты гермитичны: `python -m pytest` на чистом дереве оставляет `git status` чистым — ни один tracked-файл не мутируется как side effect.
+
+**Actual:**
+`git diff -- ROADMAP.md` показывал единственное изменение — строку `**Текущая версия:**`:
+`- **Текущая версия:** `v1.4.1` 🎉 (released 2026-05-28)`
+`+ **Текущая версия:** `v1.4.1` 🎉 (released <сегодняшняя дата>)`
+
+**Root cause:**
+`test_cmd_version_accepts_semver` вызывал `cmd_version(version=current)` напрямую, без изоляции. `cmd_version` (`scripts/build-skill.py` ~429-440) пишет в файлы по hardcoded `PROJECT_ROOT` и штампует ROADMAP-строку `(released <today>)` через `today = datetime.date.today().isoformat()`. Даже «no-op» sync на текущую версию переписывает release-дату на сегодняшнюю, когда она отличается от сохранённой → мутация tracked working-copy `ROADMAP.md`. Остальные synced-файлы diff не показывали (версия не менялась → `_replace_in_file` писал идентичный контент).
+
+**Resolution:**
+Тест теперь гермитичен: копирует все 6 файлов, которые трогает `cmd_version` (`setup.py`, `SKILL.md`, `SKILL.master.md`, `README.md`, `AGENTS.md`, `ROADMAP.md`), в `tmp_path` и делает `monkeypatch.setattr(mod, "PROJECT_ROOT", tmp_path)` — sync (+ `_scan_stale_versions`, который тоже читает `PROJECT_ROOT.rglob`) гоняется только против tmp-копии. Добавлен regression-guard: snapshot реального `ROADMAP.md` до вызова + assert байт-идентичности после (падает, если monkeypatch когда-нибудь уберут). Production-код `cmd_version` не менялся — это чисто test-isolation fix; стэмп `(released <build-date>)` в реальном релизе корректен, т.к. sync и tag создаются в один день.
+
+**Test coverage:** сам `test_cmd_version_accepts_semver` теперь содержит guard (реальный `ROADMAP.md` не мутируется); `tests/system/test_github_sync.py::test_working_tree_is_clean` ловит любую будущую suite-wide regression.
+
+---
+
 ### BUG-016: `scripts/release.sh` tag step (signing) env-brittle + validated too late → half-shipped release
 - **Приоритет:** P1
 - **Статус:** resolved
@@ -505,4 +535,4 @@ HTML Dashboard содержит старую реализацию Wheel of Life 
 | P0 | 0 |
 | P1 | 0 |
 | P2 | 0 |
-| Закрыто | 16 |
+| Закрыто | 17 |

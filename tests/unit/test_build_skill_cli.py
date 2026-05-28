@@ -13,6 +13,7 @@ exit codes (out of scope for unit tests — they require git/gh).
 from __future__ import annotations
 
 import io
+import shutil
 import sys
 from pathlib import Path
 from unittest.mock import patch
@@ -85,14 +86,50 @@ def test_cmd_version_rejects_bad_format(capsys):
     assert "bad version format" in err.lower()
 
 
-def test_cmd_version_accepts_semver():
+def test_cmd_version_accepts_semver(tmp_path, monkeypatch):
+    """cmd_version returns 0 for a valid semver and runs the full sync flow.
+
+    BUG-017 (test isolation): cmd_version() writes to hardcoded PROJECT_ROOT files
+    and stamps ROADMAP.md's `(released <today>)` line with the *current* date — so
+    even a "no-op" sync to the current version rewrites that line whenever today
+    differs from the stored release date. Running it against the real working copy
+    therefore dirtied the tracked ROADMAP.md as a side effect (a clean `git status`
+    showed `modified: ROADMAP.md` after the full suite). Redirect PROJECT_ROOT to a
+    tmp copy of every file the sync touches so the test is hermetic.
+    """
     mod = _load_module()
     import argparse
-    # Run version sync to current version (no-op) to validate flow
+
+    # Read the real current version BEFORE redirecting PROJECT_ROOT.
     current = mod._read_skill_version()
+
+    # cmd_version() (+ _scan_stale_versions) reads/writes these via PROJECT_ROOT;
+    # _replace_in_file reads unconditionally, so every one must exist in the copy.
+    synced_files = (
+        "setup.py",
+        "SKILL.md",
+        "SKILL.master.md",
+        "README.md",
+        "AGENTS.md",
+        "ROADMAP.md",
+    )
+    for name in synced_files:
+        shutil.copy2(PROJECT_ROOT / name, tmp_path / name)
+
+    # Snapshot the tracked ROADMAP.md: a regression guard that fails if the
+    # monkeypatch is ever dropped and the sync hits the real working copy.
+    real_roadmap = PROJECT_ROOT / "ROADMAP.md"
+    before = real_roadmap.read_text(encoding="utf-8")
+
+    monkeypatch.setattr(mod, "PROJECT_ROOT", tmp_path)
+
     args = argparse.Namespace(version=current)
     rc = mod.cmd_version(args)
     assert rc == 0
+
+    assert real_roadmap.read_text(encoding="utf-8") == before, (
+        "cmd_version mutated the tracked ROADMAP.md — test isolation broke (BUG-017)"
+    )
 
 
 def test_copy_references_excludes_dev_only(tmp_path):
