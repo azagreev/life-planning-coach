@@ -1,6 +1,6 @@
 # 🧭 Life Planning Coach
 
-![tests](https://img.shields.io/badge/tests-510%2B%20passed-brightgreen)
+![tests](https://img.shields.io/badge/tests-740%2B%20passed-brightgreen)
 ![coverage](https://img.shields.io/badge/coverage-80%25-brightgreen)
 ![schema](https://img.shields.io/badge/state%20schema-v2.2-blue)
 ![version](https://img.shields.io/badge/version-1.3.0-blue)
@@ -60,7 +60,7 @@
 
 ### Claude.ai (ZIP-скилл)
 
-1. Скачайте `life-planning-coach-v1.2.0.zip` из раздела [Релизы](https://github.com/azagreev/life-planning-coach/releases)
+1. Скачайте `life-planning-coach-v1.3.0.zip` из раздела [Релизы](https://github.com/azagreev/life-planning-coach/releases)
 2. Claude → Настройки → Возможности → включите «Code execution and file creation»
 3. Настроить → Скиллы → + → загрузите ZIP
 4. В любом чате наберите `/life-planning-coach`
@@ -69,7 +69,7 @@
 
 ### Grok (xAI) — один файл
 
-1. Скачайте `life-planning-coach-v1.2.0-grok.md`
+1. Скачайте `life-planning-coach-v1.3.0-grok.md`
 2. Скопируйте всё содержимое, вставьте на [grok.com](https://grok.com)
 3. Добавьте сообщение: `Ты — Life Planning Coach. Начни сессию.`
 
@@ -78,7 +78,7 @@
 ### Kimi OK Computer (веб-агент)
 
 1. Зайдите на [kimi.com/agent](https://kimi.com/agent)
-2. Создайте агента → вставьте содержимое `life-planning-coach-v1.2.0-kimi.md` в системный промпт
+2. Создайте агента → вставьте содержимое `life-planning-coach-v1.3.0-kimi.md` в системный промпт
 3. Сохраните и начните диалог
 
 **→ [Полное руководство для Kimi Web](references/platforms/USER_GUIDE_KIMI_OKCOMPUTER.md)**
@@ -121,7 +121,7 @@ life-planning-coach/
 │       ├── USER_GUIDE_KIMI_OKCOMPUTER.md
 │       ├── USER_GUIDE_KIMI_CLI.md
 │       └── CROSS_PLATFORM_COMPARISON.md
-├── tests/                  # 510+ тестов (unit + system + e2e)
+├── tests/                  # 740+ тестов (unit + system + e2e)
 ├── scripts/
 │   ├── build-skill.sh      # Сборка всех артефактов
 │   └── build-platform-skill.py  # Генерация файлов под платформы
@@ -151,7 +151,7 @@ python3 -m pytest tests/ -q
 
 ## Тестирование
 
-- **510+ тестов** — покрытие структуры, контента и совместимости с платформами
+- **740+ тестов** — покрытие структуры, контента и совместимости с платформами
 - **Эталонный набор** (`tests/e2e/`) — 20 поведенческих сценариев
 - **Шкала оценки** — LLM в роли судьи для проверки качества коучинга
 - **Протокол ручного тестирования** — `tests/e2e/MANUAL_TEST_RUN.md`
