@@ -242,10 +242,13 @@ class TestWoLFrequencyGate:
 
     def test_evidence_map_wol_entry_updated(self, evidence_map_content):
         """evidence_map.md WoL entry должен mention frequency gate implementation, не v1.3 plan."""
-        # Find WoL entry
+        # Find WoL entry — scoped до следующего `### ` heading (next subsection).
+        # v1.4.0 (Sub-feature A) добавил `### WoL Health Sub-segments` сразу после
+        # WoL entry; fixed 500-char window больше не достаёт до `last_assessed_at`.
         idx = evidence_map_content.find("### Wheel of Life")
         assert idx != -1, "Wheel of Life entry missing в evidence_map.md"
-        entry = evidence_map_content[idx:idx + 500]
+        next_h3 = evidence_map_content.find("### ", idx + 1)
+        entry = evidence_map_content[idx:next_h3] if next_h3 != -1 else evidence_map_content[idx:]
 
         assert "v1.3 plan" not in entry, (
             "WoL entry все еще говорит 'v1.3 plan' — после ship должен говорить о реализации"
@@ -285,16 +288,21 @@ class TestSchemaWoLField:
         return path.read_text(encoding="utf-8")
 
     def test_schema_version_bumped_to_2_2_5(self, content):
-        """`schema_version` в JSON literal должен быть 2.2.5."""
-        assert '"schema_version": "2.2.5"' in content, (
-            "JSON schema literal must say schema_version: 2.2.5"
+        # v1.4.0 (Sub-feature A): schema bumped 2.2.5 → 2.2.6. This v1.3 test now
+        # checks that 2.2.5 entry persists в §12 Changelog (history preservation
+        # guard), не текущая JSON literal version. Pattern matches v1.2 PR3
+        # refactor + v1.3 → v1.4 pattern.
+        assert "**2.2.5**" in content, "v2.2.5 changelog entry must persist (history)"
+        # Field availability matrix должна reference 2.2.5 для last_assessed_at row
+        assert "schema 2.2.5" in content, (
+            "Schema 2.2.5 reference must remain (e.g. matrix row для last_assessed_at)"
         )
 
     def test_header_version_2_2_5(self, content):
-        """Header `Версия схемы` должна показывать 2.2.5."""
-        assert "**Версия схемы:** `2.2.5`" in content, (
-            "Header line должна show Версия схемы: 2.2.5"
-        )
+        # v1.4.0 (Sub-feature A): schema bumped 2.2.5 → 2.2.6. Header теперь
+        # `2.2.6` (newest), но 2.2.5 entry persists в §12 Changelog — это
+        # history preservation guard.
+        assert "**2.2.5**" in content, "Schema 2.2.5 changelog entry must persist"
 
     def test_last_assessed_at_field_in_json_schema(self, content):
         """JSON schema должна include last_assessed_at field в wheel_of_life block."""
@@ -332,17 +340,20 @@ class TestSchemaWoLField:
         assert "2.2.5" in matrix_section, "Matrix row должен mention schema 2.2.5"
 
     def test_changelog_2_2_5_entry_exists(self, content):
-        """§12 Changelog должна have 2.2.5 entry с PRD reference."""
+        # v1.4.0 (Sub-feature A): 2.2.5 уже не FIRST — теперь 2.2.6 first. Этот
+        # test продолжает гарантировать что 2.2.5 entry persists в §12 (history
+        # preservation), но «FIRST» check снимается (now 2.2.6 occupies that slot).
         idx = content.find("## 12. Changelog схемы")
         assert idx != -1
         cl_section = content[idx:]
         assert "**2.2.5**" in cl_section, "Missing 2.2.5 changelog entry"
-        # Section должна быть FIRST (newest first ordering)
-        first_entry_pos = cl_section.find("**2.")
-        first_2_5 = cl_section.find("**2.2.5**")
-        assert first_2_5 == first_entry_pos, (
-            "2.2.5 entry must be FIRST (newest first ordering)"
-        )
+        # 2.2.5 entry должна остаться в порядке: idx 2.2.6 < idx 2.2.5
+        idx_2_5 = cl_section.find("**2.2.5**")
+        idx_2_6 = cl_section.find("**2.2.6**")
+        if idx_2_6 != -1:
+            assert idx_2_6 < idx_2_5, (
+                "Changelog ordering newest-first: 2.2.6 entry must precede 2.2.5"
+            )
 
     def test_changelog_2_2_4_entry_still_present(self, content):
         """Regression guard: history-preserving bumps."""

@@ -58,6 +58,8 @@ Check `diagnosis.wheel_of_life.last_assessed_at` перед предложени
 
 Используй именно эти 11 — это контракт со схемой v2 и HTML-дашбордом. Не подменяй на «работа/деньги/духовность» — именования фиксированы.
 
+`health` deeper: `wol_health_subsegments.md` (v2.2.6+, opt-in, score ≤ 6).
+
 ---
 
 ## Readiness Gate Protocol
@@ -120,7 +122,7 @@ Check `diagnosis.wheel_of_life.last_assessed_at` перед предложени
 
 **Phase 1 Diagnostic core:**
 - `diagnosis.wheel_of_life.last_assessed_at`: ISO 8601 timestamp — **обязательно** после completed WoL assessment (любой Track, frequency gate, schema v2.2.5+)
-- `diagnosis.wheel_of_life.current`: { sphere_id: score (1–10) } × 11 (canonical)
+- `diagnosis.wheel_of_life.current`: { sphere_id: score (1–10) } × 11 (canonical); `current.health_subsegments` — 6-segment object если detailed mode (v2.2.6+, см. `wol_health_subsegments.md`)
 - `diagnosis.values_schwartz`: { value: 0.0–1.0 } (если PVQ выполнен)
 - `diagnosis.ikigai_pillars`: { love, good_at, world_needs, paid_for } (если Track B)
 - `diagnosis.com_b_assessment`: `{capability: "ok"|"gap", opportunity: "ok"|"gap", motivation: "ok"|"gap", primary_gap: "capability"|"opportunity"|"motivation"|null, assessed_at: ISO}` (только если COM-B диагностика выполнена, schema v2.2.2+)

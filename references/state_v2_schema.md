@@ -1,7 +1,7 @@
 # State v2 Schema — Single Source of Truth
 
-> **Версия схемы:** `2.2.5`
-> **Дата:** 2026-05-27
+> **Версия схемы:** `2.2.6`
+> **Дата:** 2026-05-28
 > **Заменяет:** `references/conversation_state_schema.md` (v1 — удалён в v1.1.0; migration таблица в §8 ниже)
 > **Используется:** HTML dashboard, 8 wiki templates, dashboard_guide.md, SKILL.master.md gating logic
 
@@ -35,7 +35,7 @@ State v2 — единый источник правды о пользовате�
 
 ```jsonc
 {
-  "schema_version": "2.2.5",
+  "schema_version": "2.2.6",
   "user_id": "uuid-v4",
   "created_at": "2026-05-26T10:00:00Z",
   "updated_at": "2026-05-27T10:00:00Z",
@@ -89,7 +89,8 @@ State v2 — единый источник правды о пользовате�
     "wheel_of_life": {
       "last_assessed_at": null,        // ISO 8601 / null (NEW v2.2.5) — frequency gate для re-assessment (PRD v0.15 §5: skip < 30d, offer re-assess ≥ 30d)
       "current": {
-        "health": null,                // 1-10 или null если не оценено
+        "health": null,                // 1-10 или null если не оценено (Health Index если sub-segments заполнены, иначе single-score)
+        "health_subsegments": null,    // NEW v2.2.6 — opt-in detailed health assessment, см. §3.4.5 + `wol_health_subsegments.md`
         "finances": null,
         "career": null,
         "family": null,
@@ -573,6 +574,33 @@ Additive, без миграции — старые v2.2.x клиенты игн�
 
 Источник методологии: PRD v0.15 §5 Wheel of Life refactor.
 
+### 3.4.5 diagnosis.wheel_of_life.current.health_subsegments (v2.2.6+, optional)
+
+Детальная оценка сферы `health` через 6 sub-segments. PRD Health Assessment v1.0: разделение здоровья на multiple dimensions повышает точность самооценки и эффективность targeted изменений (modeled wellness). Phase 1 module loads `wol_health_subsegments.md` при opt-in сценариях (user shows interest ИЛИ single-score ≤ 6).
+
+| Поле | Тип | Описание |
+|---|---|---|
+| `health_subsegments` | object \| null | `null` = single-score mode (default); object = detailed mode |
+| `health_subsegments.energy` | 1-10 \| null | Энергия и бодрость днём (стабильность уровня) |
+| `health_subsegments.recovery` | 1-10 \| null | Качество восстановления (сон + общее самочувствие) |
+| `health_subsegments.physical_wellbeing` | 1-10 \| null | Физическое самочувствие (боли, подвижность) |
+| `health_subsegments.stress_resilience` | 1-10 \| null | Стрессоустойчивость (управление стрессом) |
+| `health_subsegments.nutrition` | 1-10 \| null | Питание и самочувствие от еды |
+| `health_subsegments.reserve` | 1-10 \| null | Общий резерв (скорость восстановления после нагрузок) |
+
+**Health Index:** `current.health` становится `avg(filled sub-segments)` (округление до десятых) если ≥ 4 заполнены. Иначе остаётся single-score (legacy). **4 категории:** ≥8 Отличный / 6.5-7.9 Хороший / 5.0-6.4 Средний / ≤5 Низкий. **Weakest sub-segment** определяется `min(filled)` с persona tie-break (ADHD → energy/recovery; Elder → recovery/physical_wellbeing).
+
+**Write trigger:** после completed detailed-mode WoL health assessment. Same `last_assessed_at` reset (один WoL = один frequency gate trigger).
+
+**Routing logic в `wol_health_subsegments.md` §«Routing после Health Index»:**
+- Низкий (≤5) → strongly recommend Health Snapshot (Sub-feature B, v1.4.x) или Health Track (v0.19.0)
+- Средний (5.0-6.4) → offer Health Snapshot
+- Хороший/Отличный → surface weakest или strongest; продолжай WoL
+
+Additive, без миграции — старые v2.2.x клиенты игнорируют unknown field. Существующие пользователи получают `health_subsegments: null` → single-score path.
+
+Источник методологии: `docs/research/prd_health_assessment_wol_subsegments.md` v1.0.
+
 ### 3.4.2 goal_filter.active_goals[].partner_coordination (v2.2+, optional)
 
 Заполняется ТОЛЬКО для целей, затрагивающих партнёра/семью (триггеры в формулировке: «партнёр», «жена/муж», «семья», «we», «наш»). Если цель индивидуальная — поле остаётся `null` и не валидируется.
@@ -848,6 +876,7 @@ Behavior per mode:
 | `goals.premortem_assessments[]` | Phase 2 Premortem trigger (confidence ≤ 6 / horizon ≥ 1y / partner_coord) | ✅ **(v1.2.0, schema 2.2.3)** `module_phase2_goal_architecture.md` + `premortem.md` |
 | `weekly_reviews[].gap_analysis[]` + `lessons_learned[]` | Phase 3 AAR steps 8–9 (Lean Gap Analysis + pattern capture) | ✅ **(v1.2.0, schema 2.2.4)** `module_phase3_weekly_review.md` шаги 8–9 |
 | `diagnosis.wheel_of_life.last_assessed_at` | Phase 1 Wheel of Life completion (любой Track A/B) | ✅ **(v1.3.0, schema 2.2.5)** `module_phase1_diagnostic.md` §WoL Frequency Gate |
+| `diagnosis.wheel_of_life.current.health_subsegments` | Phase 1 WoL `health` detailed mode (opt-in, single-score ≤ 6 ИЛИ explicit interest) | ✅ **(v1.4.0, schema 2.2.6)** `module_phase1_diagnostic.md` + `wol_health_subsegments.md` |
 
 **Все write-rules** теперь явно прописаны в соответствующих модулях. Tests (`tests/unit/test_v018_gating_state_writes.py`, `tests/unit/test_v019_health_concordance.py`) гарантируют, что каждое поле имеет write-trigger.
 
@@ -883,6 +912,7 @@ Behavior per mode:
 
 ## 12. Changelog схемы
 
+- **2.2.6** (2026-05-28) — Add `diagnosis.wheel_of_life.current.health_subsegments` optional object (PRD Health Assessment v1.0 §7). 6 sub-segments (energy / recovery / physical_wellbeing / stress_resilience / nutrition / reserve), 1-10 каждый, для opt-in detailed health assessment. `current.health` становится Health Index (avg) если ≥ 4 sub-segments заполнены; иначе single-score (legacy). 4 категории + weakest sub-segment surface. Source: PRD Health Assessment v1.0 (2026-05-27) + Schultchen et al. (2019) bidirectional stress-activity. Tier 3 ref: `references/wol_health_subsegments.md`. Phase 1 module loads ref при opt-in. Additive, без миграции — `null` = single-score path. Реализовано в **v1.4.0** Sub-feature A.
 - **2.2.5** (2026-05-27) — Add `diagnosis.wheel_of_life.last_assessed_at` optional ISO 8601 timestamp поле (PRD v0.15 §5 frequency gate). Phase 1 module gates WoL auto-offer: skip < 30 days; offer re-assess ≥ 30 days; null = never assessed → standard flow. Source: PRD v0.15 §5 «WoL не чаще 1 раза в 30 дней». Additive, без миграции — поле остаётся null для existing users. Реализовано в **v1.3.0** (PR-A).
 - **2.2.4** (2026-05-27) — Add `weekly_reviews[].gap_analysis[]` + `weekly_reviews[].lessons_learned[]` optional полей (AAR Gap Analysis + pattern capture, PRD v0.15 §After Action Review). Источник: After Action Review (US Army TC 25-20, 1993) + Garvin (2000) *Learning in Action*. Lean integration — 7-step → 9-step Weekly Review с Step 8 Gap Analysis (Three Whys + COM-B escalation) и Step 9 Lessons Learned (`sighted_count ≥ 3` → quarterly adjustment). Skip при `execution_score ≥ 70%`. ADHD persona opt-out. Additive. Реализовано в **v1.2.0** (PR3/3).
 - **2.2.3** (2026-05-27) — Add `goals.premortem_assessments[]` optional массив (Premortem упражнение для важных OKR, PRD v0.15 §Premortem). Источник: Klein, G. (2007). *Performing a Project Premortem*. HBR. Активируется через Phase 2 trigger (confidence ≤ 6 / horizon ≥ 1y / partner_coord / explicit_request / mid_quarter_stagnation). Mitigation через if-then coping plans (Implementation Intentions). Additive, без миграции — массив пуст если упражнение не запускалось. Реализовано в **v1.2.0**.

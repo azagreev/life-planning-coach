@@ -114,7 +114,14 @@
 ### Wheel of Life (life balance assessment)
 
 > **Evidence:** 🟠 Средний (practical). Coaching tool с decades of use. No strong academic RCTs.
+> **Source:** [The Wheel of Life as a Coaching Tool to Audit Life Priorities (2022)](https://www.researchgate.net/publication/365375169_The_Wheel_of_Life_as_a_Coaching_Tool_to_Audit_Life_Priorities) — улучшение self-insight, motivation, habit-change support.
 > **Used in:** Phase 1 diagnostic (`module_phase1_diagnostic.md` § WoL Frequency Gate), frequency-gated к 1×/30 days (PRD v0.15 §5). State: `diagnosis.wheel_of_life.last_assessed_at` (schema 2.2.5+, v1.3.0).
+
+### WoL Health Sub-segments (multidimensional wellness, v1.4.0)
+
+> **Evidence:** 🟠 Средний (practical). Multi-dimensional wellness self-assessment повышает targeted change effectiveness vs single-score.
+> **Source:** Schultchen et al. (2019) — bidirectional relationship of stress and physical activity (subjective stress/energy/recovery scores correlate с adherence behavior).
+> **Used in:** Phase 1 diagnostic при `health` ≤ 6 ИЛИ explicit interest (`module_phase1_diagnostic.md` + `wol_health_subsegments.md`). State: `diagnosis.wheel_of_life.current.health_subsegments` (6-segment object, schema 2.2.6+, v1.4.0 Sub-feature A). Не дублирует `track_health_metabolism.md` (v0.19.0 deep 7-рычаговый трек) — это light pre-screening (≤ 6 вопросов).
 
 ### Schwartz Values Theory
 
