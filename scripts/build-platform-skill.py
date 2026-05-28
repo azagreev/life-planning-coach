@@ -61,6 +61,12 @@ P0_REFS = [
     "com_b_diagnostic.md",
     "environment_design.md",
     "premortem.md",
+    # v1.4.0 Sub-feature A — WoL Health Sub-segments (PRD Health Assessment
+    # v1.0). Inlined для grok/kimi потому что 6-segment scoring protocol +
+    # 4-category routing + 4 persona adaptations должны быть доступны без
+    # lazy-load. Phase 1 module references это при single-score ≤ 6 ИЛИ
+    # explicit interest — без inline grok/kimi не смогут load.
+    "wol_health_subsegments.md",
 ]
 
 

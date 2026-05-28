@@ -85,6 +85,7 @@ Check `diagnosis.wheel_of_life.last_assessed_at` перед предложени
 #### 11 канонических сфер Wheel of Life
 `health`, `finances`, `career`, `family`, `romance`, `social`, `personal_growth`, `meaning`, `fun_recreation`, `contribution`, `physical_environment`.
 Используй именно эти 11 — это контракт со схемой v2 и HTML-дашбордом. Не подменяй на «работа/деньги/духовность» — именования фиксированы.
+`health` deeper: `wol_health_subsegments.md` (v2.2.6+, opt-in, score ≤ 6).
 ---
 #### Readiness Gate Protocol
 После КАЖДОЙ фазы (Wheel, Values, Reflection, Goal Filter) спроси: «На шкале 1–10, насколько комфортно продолжать?»
@@ -121,7 +122,7 @@ Check `diagnosis.wheel_of_life.last_assessed_at` перед предложени
 - `emotion_regulation_log[]`: append `{event_id, date, protocol: "reappraisal"|"grounding"|"self_compassion", trigger, outcome_readiness (1–10), duration_minutes}` за каждый запуск
 **Phase 1 Diagnostic core:**
 - `diagnosis.wheel_of_life.last_assessed_at`: ISO 8601 timestamp — **обязательно** после completed WoL assessment (любой Track, frequency gate, schema v2.2.5+)
-- `diagnosis.wheel_of_life.current`: { sphere_id: score (1–10) } × 11 (canonical)
+- `diagnosis.wheel_of_life.current`: { sphere_id: score (1–10) } × 11 (canonical); `current.health_subsegments` — 6-segment object если detailed mode (v2.2.6+, см. `wol_health_subsegments.md`)
 - `diagnosis.values_schwartz`: { value: 0.0–1.0 } (если PVQ выполнен)
 - `diagnosis.ikigai_pillars`: { love, good_at, world_needs, paid_for } (если Track B)
 - `session.completed_phases`: append `"1"` (или `"0.5"` для ER)
@@ -1955,3 +1956,85 @@ Premortem (Klein 2007) — 5-step упражнение через future-perfect
 
 </details>
 <!-- END INLINED REF: weekly_review.md -->
+
+<!-- INLINED REF: wol_health_subsegments.md -->
+<details>
+<summary>📄 wol_health_subsegments (полный протокол)</summary>
+
+### WoL Health Sub-segments — детальная оценка сферы Здоровье
+> **Tier:** 3 (lazy-load ref)
+> **Загружается:** Phase 1 Diagnostic — при оценке сферы `health` ≤ 6 ИЛИ explicit user interest в детальном анализе здоровья. NOT loaded for single-score WoL flow (default).
+> **Schema:** v2.2.6+ `diagnosis.wheel_of_life.current.health_subsegments`
+> **PRD:** `docs/research/prd_health_assessment_wol_subsegments.md` (v1.0, 2026-05-27)
+> **Не дублирует:** `track_health_metabolism.md` (v0.19.0) — это deep 7-рычаговый трек; sub-segments здесь — light pre-screening (4-6 вопросов).
+---
+#### Когда использовать
+При WoL оценке сферы `health` есть 3 пути:
+**Default — single-score.** Sub-segments — opt-in path для users которые хотят precision. Не навязывай.
+---
+#### 6 суб-сегментов
+Каждый sub-segment — балл **1-10**. Allow `null` если пользователь не хочет/не может оценить.
+---
+#### Health Index
+Округлять до одной десятой. Если все 6 заполнены — divide by 6. Если часть `null` (skipped) — divide by N filled. **Минимум 4 sub-segments** заполнены, иначе skip Health Index (использовать single-score path).
+##### 4 категории
+##### Weakest sub-segment
+Найди min(filled sub-segments). Surface в conversation:
+> «По твоим оценкам проседает [weakest_display] ([score]/10). Есть смысл посмотреть глубже?»
+Если несколько sub-segments с одинаковым минимумом — выбери по persona priority:
+- **ADHD** → `energy` или `recovery`
+- **Elder** → `recovery` или `physical_wellbeing`
+- **Default** → first match по порядку из таблицы выше
+---
+#### Persona adaptations
+Стиль вопросов и подачи зависит от detected persona (см. `mode_*.md`).
+##### ADHD (`mode_adhd.md`)
+- **Стиль:** Короткий, конкретный, минимум текста.
+- **Подача 6 sub-segments:** 3 за раз с визуальным таймером.
+- **Примеры формулировок:**
+  - «Энергия днём — стабильная или скачет? 1-10.»
+  - «Восстанавливаешься нормально после стресса? 1-10.»
+- **Routing:** Health Index ≤ 5.5 → быстрый переход к Health Track decision (без длинного объяснения).
+##### Transitional / Unemployed (`mode_unemployed.md`)
+- **Стиль:** Эмпатичный, с учётом изменений (декрет, переход карьеры, безработица).
+- **Подача:** Свяжи с привычками и рутиной — «Когда меньше структуры, что с энергией днём?»
+- **Routing:** ≤ 5.5 → soft offer Health Snapshot («Иногда переход выматывает body — посмотрим конкретно?»).
+##### Elder homebound (`mode_elder.md`)
+- **Стиль:** Простой язык, акцент на восстановление и якори дня.
+- **Подача 6 sub-segments:** избирательно (4 ключевых: `energy`, `recovery`, `physical_wellbeing`, `reserve`). Skip `stress_resilience` и `nutrition` если irrelevant.
+- **Routing:** Focus на `recovery` и `physical_wellbeing` как entry для conversation про сон / mobility / hydration.
+##### Planning Friction (`mode_planning_friction.md`)
+- **Стиль:** Чёткий, структурированный, с примерами.
+- **Подача:** Готовые формулировки на выбор (a/b/c) вместо open-ended.
+  - «Энергия днём: (a) стабильная и хватает, (b) есть провалы днём, (c) почти всегда мало?»
+- **Routing:** Связь sub-segments с привычками — «Sleep affects recovery and reserve; protein affects energy. Хочешь посмотреть конкретный рычаг?»
+---
+#### State writes
+После completed sub-segments scoring запиши в state v2:
+Полная спецификация — `state_v2_schema.md §3.4.5`.
+---
+#### Routing после Health Index
+---
+#### Научная база
+- **Многомерный wellness:** разделение здоровья на несколько измерений (энергия, восстановление, стресс, физическое состояние) повышает точность самооценки и эффективность targeted изменений.
+- **Wheel of Life эффективность:** [The Wheel of Life as a Coaching Tool to Audit Life Priorities (2022)](https://www.researchgate.net/publication/365375169_The_Wheel_of_Life_as_a_Coaching_Tool_to_Audit_Life_Priorities) — улучшение self-insight и motivation для habit change.
+- **Subjective measures валидны:** Schultchen et al. (2019) — bidirectional relationship of stress and physical activity. Субъективные оценки энергии / восстановления / стресса коррелируют с реальным поведением и adherence к привычкам.
+---
+#### Не делаем (per PRD §9)
+- **Не дублируем `track_health_metabolism.md`** (deep 7-рычаговый трек для users с low score + agreed deep dive).
+- **Не создаём тяжёлый опросник** — этот ref максимум 6 вопросов в одной сессии.
+- **Не нарушаем WoL Frequency Gate** — sub-segments tied к same `last_assessed_at` timestamp (один WoL = один frequency reset).
+- **Не surfaceim Health Index как «балл» / «оценку личности»** — это observability tool, не judgment. Формулировки: «по твоим оценкам проседает X» вместо «у тебя плохое здоровье».
+- **Не запускаем automatically** — opt-in path. Default остаётся single-score.
+---
+#### Связанные
+- `state_v2_schema.md §3.4.5 health_subsegments` — schema spec
+- `module_phase1_diagnostic.md` — loading point (Phase 1 WoL flow)
+- `track_health_metabolism.md` — deep 7-рычаговый трек (v0.19.0)
+- `health_snapshot.md` — light 4-вопросный tool (Sub-feature B, v1.4.x)
+- `mode_*.md` — persona adaptations
+- `evidence_map.md` § «WoL Health Sub-segments»
+- PRD: `docs/research/prd_health_assessment_wol_subsegments.md`
+
+</details>
+<!-- END INLINED REF: wol_health_subsegments.md -->
