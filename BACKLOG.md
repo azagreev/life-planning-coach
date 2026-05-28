@@ -105,21 +105,13 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Артефакты:** Update each `module_phase*.md` State Writes section с filename pattern `{Template}_{ISO}.md`; add `save_state(template, content)` abstraction helper для forward-compat; tests на read-latest semantics.
 - **Риск:** Skill prompts длиннее (более explicit filename gen logic); legacy users могут нуждаться migration helper.
 
-### Verify Zapier MCP availability на claude.ai web (Path F investigation)
-
-- **Описание:** Grok research упомянул aimaker.substack and Reddit precedents где люди использовали Zapier MCP для writes на claude.ai web (Path F hybrid: native Drive reads + Zapier для updates). Не verified что Zapier MCP available в Anthropic Directory как connector. Если ДА — power users получают full CRUD на web без Desktop switch.
-- **Триггер:** Path A architecture committed 2026-05-26; Path F deferred до verification.
-- **Статус:** ⏳ Research task.
-- **RICE:** Reach 30 × Impact 1.5 × Confidence 50% / Effort XS=0.5 EAS, Context Pressure Low = **45.0** (Quick Win).
-- **Артефакты:** Verify Zapier connector в Anthropic Directory; если есть — добавить Path F section в `drive_integration.md`; иначе close as "not viable for web".
-
 ### File Anthropic GitHub issue evidence (Path E lobbying)
 
-- **Описание:** Add detailed comment на [#51040](https://github.com/anthropics/claude-code/issues/51040) с ссылкой на наш `mcp_poc_log.md` §Drive PoC как concrete evidence pro приоритизации `update_file`/`delete_file` в Drive connector. Aim: усилить signal к Anthropic team.
-- **Триггер:** Issue open с 0 ответов; наш PoC = unique quantified evidence.
-- **Статус:** 📋 Ready to file.
+- **Описание:** Filing evidence про Drive MCP write-tools gap (`update_file`/`delete_file` missing) с reference на наш `mcp_poc_log.md` §Drive PoC. Aim: усилить signal к Anthropic team на приоритизацию.
+- **Триггер:** PoC 2026-05-26 unique quantified evidence; existing [anthropics/claude-code#51040](https://github.com/anthropics/claude-code/issues/51040) labeled `invalid` (wrong repo — claude.ai connector issues belong в [anthropics/claude-ai-mcp](https://github.com/anthropics/claude-ai-mcp)).
+- **Статус:** 📋 Ready to file. Draft + one-click prefill URL в [docs/drafts/anthropic_mcp_drive_issue.md](docs/drafts/anthropic_mcp_drive_issue.md); requires user action — нельзя комментить external repo от имени проекта без user OAuth context.
 - **RICE:** Reach 100 [GUESS] × Impact 0.5 × Confidence 30% / Effort XS=0.25 EAS, Context Pressure Low = **60.0** (Quick Win).
-- **Артефакты:** Self-contained GitHub comment с PoC findings highlights; link к public mcp_poc_log.md в нашем repo.
+- **Артефакты:** [docs/drafts/anthropic_mcp_drive_issue.md](docs/drafts/anthropic_mcp_drive_issue.md) — self-contained issue body (title + summary + PoC evidence + workaround + ask) + prefill URL для one-click filing в `anthropics/claude-ai-mcp` + post-filing close-out checklist.
 - **Риск:** No guarantee on Anthropic response; low cost regardless.
 
 ### Интеграция с Google Tasks MCP
@@ -232,6 +224,7 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 | Goal Concordance | v0.19.0 | Transactive Goal Dynamics |
 | README rewrite (positioning) | v0.19.0 | Promise + comparison + quickstart |
 | PoC MCP (Calendar + Drive) | 2026-05-26 | MCP-first decision; см. `docs/research/mcp_poc_log.md` |
+| Verify Zapier MCP availability (Path F) | 2026-05-28 | ✅ Verified available на paid plans ([claude.com/connectors/zapier](https://claude.com/connectors/zapier)). Path F section added в `references/drive_integration.md` §Advanced. |
 
 ---
 
