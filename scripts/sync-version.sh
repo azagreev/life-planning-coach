@@ -52,7 +52,11 @@ sed -i "s/version-[0-9.]*-blue/version-$NEW_VERSION-blue/" README.md
 # on v1.2.0 → v1.3.0 (fixed manually in PR #11) AND v1.3.0 → v1.3.1 (PR #27).
 # Match `life-planning-coach-v<X.Y.Z>` followed by any of the suffixes above so
 # we don't accidentally hit unrelated occurrences.
-sed -i -E "s|life-planning-coach-v[0-9.]+(\.zip|-grok\.md|-kimi\.md|-kimi-cli\.zip|-kimi-cli/)|life-planning-coach-v${NEW_VERSION}\1|g" README.md
+# Use `#` as sed delimiter because the pattern needs `|` for regex alternation
+# (between suffixes) AND has `/` for the kimi-cli folder suffix.
+# Previously used `|` which clashed with the alternation; failed v1.4.0 release
+# step 2 «sed: -e expression #1, char 48: unknown option to s'».
+sed -i -E "s#life-planning-coach-v[0-9.]+(\.zip|-grok\.md|-kimi\.md|-kimi-cli\.zip|-kimi-cli/)#life-planning-coach-v${NEW_VERSION}\1#g" README.md
 
 # 4. AGENTS.md
 echo "→ AGENTS.md"
