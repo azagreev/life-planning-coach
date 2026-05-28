@@ -194,7 +194,7 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 | Задача | Приоритет | Триггер | RICE | Примечание |
 |--------|-----------|---------|------|------------|
 | Функциональные тесты календаря | P0 | v0.15.0 | 100 × 2.0 × 80% / M=2, CP Med = **80.0** | Free Slot Algorithm, event patterns, conflict detection, JSON validation |
-| Тесты целостности `SKILL.master.md` | P0 | v0.15.0 | 100 × 2.0 × 80% / M=2, CP Med = **80.0** | Structure, cross-reference validation, platform sync |
+| ~~Тесты целостности `SKILL.master.md`~~ | P0 | ✅ 2026-05-28 | 100 × 2.0 × 80% / M=2, CP Med = **80.0** | Shipped: `tests/system/test_master_skill_integrity.py` (20 tests, +12 extended). Базовое covered ранее: frontmatter, version=tag, ≥10 trigger phrases, required H2 sections, generic Assistant examples, reference link existence, platform-agnostic body, Claude SKILL = root SKILL. Extended (this session): all 4 platforms built; Routing Map references every `module_phase*.md` + ER + recovery; all 4 persona modules referenced; Persistence Mode table lists 4 modes; Safety section has warning signs (< 3/10 + самоповреждение); Examples/Troubleshooting не содержат `надо`/`должен`/`провал` outside `«...»` quotes; frontmatter.runtime = `multi-platform`. |
 | Coverage report + badge | P1 | v0.15.0 | 80 × 1.0 × 75% / S=1, CP Low = **60.0** | `pytest-cov`, минимум 85%, badge в README |
 | Pre-commit hooks | P1 | v0.15.0 | 80 × 1.0 × 70% / S=1, CP Med = **56.0** | `ruff`, `mypy`, whitespace |
 | Универсальный скрипт сборки | P2 | v0.15.0+ | 60 × 1.0 × 70% / M=2, CP Med = **21.0** | Единый `build-skill.py` |
