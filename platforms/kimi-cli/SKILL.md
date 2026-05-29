@@ -119,7 +119,7 @@ on session_start:
 
 ### Example 3: Weekly Review entry
 
-**User**: «Обзор недели.» → **Kimi** говорит...«Чек-ин: какая неделя — лёгкая, тяжёлая, ровная?» *(Pre-flight)* → `references/module_phase3_weekly_review.md` (7-step).
+**User**: «Обзор недели.» → **Kimi** говорит...«Чек-ин: какая неделя — лёгкая, тяжёлая, ровная?» *(Pre-flight)* → `references/module_phase3_weekly_review.md` (9-step).
 
 ## Gotchas
 
@@ -195,7 +195,7 @@ on session_start:
 ## Kimi CLI-Specific Notes
 
 - **Filesystem access**: полный доступ к `read_file`, `write_file`, `edit_file`. `references/` грузятся через `read_file`.
-- **MCP support**: Google Calendar и Google Drive через MCP (ручная настройка, см. `USER_GUIDE_MCP_KIMI_CLI.md`).
+- **MCP support**: Google Calendar и Google Drive через MCP (ручная настройка, см. `USER_GUIDE_KIMI_CLI.md`).
 - **No step limit**: в отличие от OK Computer (10 steps), CLI без ограничений — phase modules грузятся lazy.
 - **No KIMI_REF**: не используй `KIMI_REF` tags — это фича OK Computer web UI.
 - **No memory_space**: для persistence используй файловую систему (`write_file`) или Google Drive MCP.

@@ -68,7 +68,7 @@ git describe --tags --abbrev=0
 
 Версия совпадает в: `SKILL.md`, `setup.py`, `README.md`, `AGENTS.md §1`.
 
-Обновление: `bash scripts/sync-version.sh X.Y.Z`.
+Обновление: `python scripts/build-skill.py version X.Y.Z` (`sync-version.sh` deprecated, см. §4.2).
 
 ### 3.2 Acceptance Criteria
 
@@ -138,18 +138,18 @@ Helper автоматически whitelists Russian quoted speech `«...»` —
 
 ### 4.2 Release process
 ```bash
-python scripts/build-skill.py release X.Y.Z   # v1.0+ unified CLI
-# OR (deprecated, will be removed in v1.1):
-# bash scripts/release.sh X.Y.Z
+bash scripts/release.sh X.Y.Z   # канонический orchestrator (§0.2: release.sh ONLY)
 ```
+`release.sh` гоняет атомарный flow (preconditions + tag dry-run, BUG-016) и внутри вызывает `build-skill.py` subcommands ниже. Прямой запуск `build-skill.py release` обходит эти guard'ы → **не** entrypoint.
 
 **ЗАПРЕЩЕНО создавать релизы вручную.** Title = только тег (`v1.4.1`). Описание генерируется автоматически из CHANGELOG.md.
 
-**Sub-commands `build-skill.py`** (v1.0+):
+**Sub-commands `build-skill.py`** (v1.0+, building blocks для `release.sh`; можно гонять по отдельности):
 - `build` — все 4 платформы + ZIP/skill/grok-md/kimi-md/kimi-cli-zip
 - `version X.Y.Z` — sync version во все source files (replaces sync-version.sh)
 - `verify` — pre-release checks (tests, working tree, version, ZIP freshness)
-- `release X.Y.Z` — full flow (verify + version + build + commit + tag + push + gh release)
+- `roadmap-cleanup X.Y.Z` — удаляет released-version section/row из ROADMAP (BUG-015)
+- `release X.Y.Z` — full flow; internal building block, entrypoint остаётся `release.sh`
 
 **Защита:** Git hook + GitHub Actions (`release-guard.yml`) + этот документ.
 
