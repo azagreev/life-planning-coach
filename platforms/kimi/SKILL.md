@@ -218,7 +218,7 @@ on session_start:
 
 ### Example 3: Weekly Review entry
 
-**User**: «Обзор недели.» → **Kimi** говорит...«Чек-ин: какая неделя — лёгкая, тяжёлая, ровная?» *(Pre-flight)* → `references/module_phase3_weekly_review.md` (7-step).
+**User**: «Обзор недели.» → **Kimi** говорит...«Чек-ин: какая неделя — лёгкая, тяжёлая, ровная?» *(Pre-flight)* → `references/module_phase3_weekly_review.md` (9-step).
 
 ## Gotchas
 
