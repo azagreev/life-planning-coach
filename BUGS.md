@@ -47,6 +47,36 @@ _Открытых багов нет._
 
 ## Закрытые баги
 
+### BUG-018: backfill-accept ставит `full_persistence` без подключённого календаря
+- **Приоритет:** P1
+- **Статус:** resolved
+- **Исправлено:** 2026-05-29 (`accept_backfill` выводит mode из pre-prompt `gating_mode`; схема §6 + AI_Instructions §Backfill сделаны calendar-aware)
+- **Найден:** 2026-05-29 (полный код-ревью проекта)
+- **Версия:** v1.4.1 → исправлено в v1.4.2+
+- **Owner:** @azagreev
+- **Файлы:** `scripts/gating_logic.py::accept_backfill`, `references/state_v2_schema.md` §6, `references/templates/AI_Instructions.md` §Backfill, `tests/system/test_gating_modes_e2e.py`
+
+**Описание:**
+При mid-session подключении Drive из режима `lean_conversation` (календарь НЕ подключён) и принятии backfill-предложения скилл переключался в `full_persistence` — режим, который по матрице §5 требует drive ✅ + calendar ✅.
+
+**Expected:**
+Backfill подключает только Drive, не календарь. Из `lean_conversation` (нет календаря) корректный итоговый режим — `wiki_no_execution`; из `execution_no_wiki` (календарь уже подключён) — `full_persistence`.
+
+**Actual:**
+`accept_backfill()` безусловно ставил `FULL_PERSISTENCE`. То же противоречие было запечатано в источнике-схеме (`state_v2_schema.md` §6 → `switch_to_mode("full_persistence")`), в операционном промпте (`AI_Instructions.md` §Backfill) и в e2e-тесте (`test_backfill_accepted_runs_bootstrap_and_switches_mode` ассертил `== FULL_PERSISTENCE`, т.е. зелёный тест охранял баг).
+
+**Root cause:**
+Дефект originated в схеме §6: ветка `if previous_mode in ["lean_conversation","execution_no_wiki"]` на accept делала `switch_to_mode("full_persistence")` безусловно, игнорируя календарь; `gating_logic.py` и `AI_Instructions.md` верно зеркалили (ошибочную) схему. При этом рядом, в `on_drive_connected_mid_session()` (no-prompt fallback), уже была корректная логика `FULL_PERSISTENCE if previous_mode == EXECUTION_NO_WIKI else WIKI_NO_EXECUTION` — эталон просто не применили в accept-ветке. Влияние: `gating_mode` (персистентное поле) пишется неверно → downstream feature-availability/recovery/dashboard считает календарь доступным, хотя его нет (в проде смягчено graceful-fallback'ом «Calendar не работает → Paper Coach»).
+
+**Resolution:**
+- `accept_backfill()` читает `previous_mode = state.gating_mode` (он не меняется до accept/decline — инвариант уже задокументирован и протестирован для `on_drive_connected_mid_session`) и ставит `FULL_PERSISTENCE if previous_mode == EXECUTION_NO_WIKI else WIKI_NO_EXECUTION` — идентично эталонному sibling'у. Сигнатура не менялась (production-вызовов вне тестов нет).
+- Схема §6: `switch_to_mode("full_persistence" if previous_mode == "execution_no_wiki" else "wiki_no_execution")`.
+- `AI_Instructions.md` §Backfill: `switch_to_mode("full_persistence" if calendar else "wiki_no_execution")` (в этом блоке `previous_mode` не в scope, но `calendar` — естественная переменная; идиома `if drive && calendar` уже используется в §session_start).
+
+**Test coverage:** `test_backfill_accepted_runs_bootstrap_and_switches_mode` теперь ассертит `WIKI_NO_EXECUTION` (из lean); добавлен `test_backfill_accepted_from_execution_no_wiki_switches_to_full` (из execution_no_wiki → full_persistence) — обе accept-ветки покрыты.
+
+---
+
 ### BUG-017: full test suite мутирует tracked `ROADMAP.md` (test isolation)
 - **Приоритет:** P2
 - **Статус:** resolved
@@ -535,4 +565,4 @@ HTML Dashboard содержит старую реализацию Wheel of Life 
 | P0 | 0 |
 | P1 | 0 |
 | P2 | 0 |
-| Закрыто | 17 |
+| Закрыто | 18 |

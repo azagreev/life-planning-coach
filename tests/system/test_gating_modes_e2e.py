@@ -152,9 +152,22 @@ def test_backfill_offered_only_once_per_session():
 
 
 def test_backfill_accepted_runs_bootstrap_and_switches_mode():
+    # BUG-018: backfill connects only Drive. From lean_conversation (no calendar)
+    # the correct post-accept mode is wiki_no_execution, NOT full_persistence
+    # (the §5 matrix reserves full_persistence for drive + calendar).
     state = GatingState(gating_mode=LEAN_CONVERSATION)
     state = accept_backfill(state)
     assert state.backfill_offered is True
+    assert state.backfill_accepted is True
+    assert state.drive.wiki_bootstrapped is True
+    assert state.gating_mode == WIKI_NO_EXECUTION
+
+
+def test_backfill_accepted_from_execution_no_wiki_switches_to_full():
+    # execution_no_wiki = calendar already connected; adding Drive via backfill
+    # completes the pair → full_persistence.
+    state = GatingState(gating_mode=EXECUTION_NO_WIKI)
+    state = accept_backfill(state)
     assert state.backfill_accepted is True
     assert state.drive.wiki_bootstrapped is True
     assert state.gating_mode == FULL_PERSISTENCE

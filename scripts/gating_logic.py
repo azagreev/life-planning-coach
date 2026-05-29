@@ -127,11 +127,25 @@ def should_offer_backfill(
 
 
 def accept_backfill(state: GatingState) -> GatingState:
-    """User accepted backfill prompt → mark accepted, run bootstrap, switch mode."""
+    """User accepted backfill prompt → mark accepted, run bootstrap, switch mode.
+
+    Backfill connects only Drive — it never connects the calendar. So the
+    post-accept mode depends on whether the calendar was already connected,
+    which is encoded by the pre-prompt gating_mode (left unchanged until
+    accept/decline, see on_drive_connected_mid_session):
+    - from execution_no_wiki (calendar on)  → full_persistence
+    - from lean_conversation  (calendar off) → wiki_no_execution
+
+    Returning full_persistence without a calendar would violate the §5 mode
+    matrix (full_persistence == drive + calendar). See BUG-018.
+    """
+    previous_mode = state.gating_mode
     state.backfill_offered = True
     state.backfill_accepted = True
     state = run_bootstrap(state)
-    state.gating_mode = FULL_PERSISTENCE
+    state.gating_mode = (
+        FULL_PERSISTENCE if previous_mode == EXECUTION_NO_WIKI else WIKI_NO_EXECUTION
+    )
     return state
 
 
