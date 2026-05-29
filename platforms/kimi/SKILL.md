@@ -287,7 +287,7 @@ on session_start:
 - Quick ≤ 30 мин / Deep 2–4 сессии
 - Goal layers: BHAG + 1 OKR + Weekly + Daily (только 🟢 Active)
 - Weekly review: 10–14 дней нормально
-- Dashboard: 3 таба, schema v2.0.1, `window.lpData`
+- Dashboard: 3 таба, schema v2.0, `window.lpData`
 - Calendar: connector + 4 presets + Paper Coach fallback
 - Persistence: zero-setup default; 4 gating modes; Hot_Cache < 1000 tokens; batch ≤ 5
 
@@ -1200,7 +1200,7 @@ on session_start:
 - **Эмоциональный block / depressive state** — упражнение представления провала может ухудшить состояние. Сначала ER protocol (`emotion_regulation.md`). После — закрывай Premortem **Self-Compassion Break** ритуалом.
 - **Нет конкретной цели** — Premortem требует measurable target. Если цель в формате «хочу больше энергии» — сначала Phase 2 → SMART-ish formulation.
 - **Перфекционист с высокой тревожностью** — для них Premortem может стать новым источником ruminating. Используй upfront opt-in и short version (3 risks вместо 5).
-- **Цель уже завершена** — это postmortem, не premortem. Используй AAR (Phase 3 Weekly Review, шаги 8–11).
+- **Цель уже завершена** — это postmortem, не premortem. Используй AAR (Phase 3 Weekly Review, шаги 8–9).
 #### State writes
 #### Cross-references
 - **`implementation_intentions.md`** §Coping plans — critical mitigation pattern (Step 4)
