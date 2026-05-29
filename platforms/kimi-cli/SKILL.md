@@ -188,7 +188,7 @@ on session_start:
 - Quick ≤ 30 мин / Deep 2–4 сессии
 - Goal layers: BHAG + 1 OKR + Weekly + Daily (только 🟢 Active)
 - Weekly review: 10–14 дней нормально
-- Dashboard: 3 таба, schema v2.0.1, `window.lpData`
+- Dashboard: 3 таба, schema v2.0, `window.lpData`
 - Calendar: connector + 4 presets + Paper Coach fallback
 - Persistence: zero-setup default; 4 gating modes; Hot_Cache < 1000 tokens; batch ≤ 5
 

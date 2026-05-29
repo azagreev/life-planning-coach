@@ -44,10 +44,12 @@
   "user_id": "anonymous",
   "generated_at": "2026-05-26T14:30:00Z",
   "wheel_of_life": {
-    "health": 6, "finances": 4, "career": 7, "family": 8,
-    "romance": 5, "social": 6, "personal_growth": 7,
-    "meaning": 5, "fun_recreation": 3, "contribution": 6,
-    "physical_environment": 7
+    "current": {
+      "health": 6, "finances": 4, "career": 7, "family": 8,
+      "romance": 5, "social": 6, "personal_growth": 7,
+      "meaning": 5, "fun_recreation": 3, "contribution": 6,
+      "physical_environment": 7
+    }
   },
   "core_values": ["autonomy", "contribution", "family"],
   "goals": [
