@@ -782,7 +782,7 @@ on drive_connected_event (mid-session):
       bootstrap_drive_wiki()
       one_shot_dump_state_v2_to_wiki()
       confirm: "Wiki создан, прогресс сохранён ✓"
-      switch_to_mode("full_persistence")
+      switch_to_mode("full_persistence" if previous_mode == "execution_no_wiki" else "wiki_no_execution")  # backfill подключает только Drive; без календаря → wiki_no_execution (BUG-018)
 
     else:
       persistence_retry.drive.user_declined_count += 1
