@@ -29,6 +29,18 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 
 ## Active Candidates
 
+### Atomic Habits — trimmed extension (1 модуль + reframing)
+
+- **Описание:** Точечное усиление работы с привычками на базе Atomic Habits — БЕЗ пивота в «коучинг идентичности» (identity уже покрыт `habit_loop §3.2` голосованием-за-идентичность + Self-Concordance в `authentic_goal_filter.md`). Scope: 1 новый Tier-3 модуль **Bad Habit Inversion** (`references/bad_habit_inversion.md`, заземлён на Wood/Duhigg, не только инверсия Клира) + **reframing-prompts** нелинейности прогресса поверх кривой Lally (`habit_loop §5` + Weekly Review). Усечён из исходного v1.0 PRD (8 фич → 1 модуль + prompts). См. полный PRD: `docs/research/prd_atomic_habits_trimmed.md`.
+- **Триггер:** PRD v1.0 (8 фич) получен 2026-06-03; independent review → ~⅔ уже в продукте на primary-источниках (Fogg/Wood/Lally/SDT), поп-метафоры Клира («1.01³⁶⁵=37.8×», «кубик льда») снижают evidence-планку → усечён до реального пробела (структурированный flow для вредных привычек).
+- **Статус:** 📋 Candidate — gated к v1.5.0 (revisit ≥ 2026-06-27; gate-вопросы в PRD §5). НЕ committed; не блокирует релизы.
+- **RICE (две части):**
+  - RP — Reframing-prompts: Reach 50 × Impact 0.75 × Confidence 60% / Effort 1 EAS, Context Pressure Low = **22.5** (High Priority).
+  - M1 — Bad Habit Inversion module: Reach 45 × Impact 1.0 × Confidence 65% / Effort 2 EAS, Context Pressure Medium = **14.6** (High Priority).
+  - Порядок по RICE: RP → M1. Совокупно ≈ 3 EAS.
+- **Артефакты:** `docs/research/prd_atomic_habits_trimmed.md` (trimmed PRD). При commit scope: new `references/bad_habit_inversion.md`; правки `habit_loop.md §2/§5`, `recovery_protocol.md`; routing в SKILL.master + `module_phase5_execution.md`; rebuild платформ. Без schema bump.
+- **Риск:** исходный v1.0 (пивот идентичности) нёс therapy-boundary риск — снят усечением. Следить, чтобы inversion не дублировал `habit_loop §2` Golden Rule, а расширял его; поп-метафоры Клира исключены ради evidence-планки.
+
 ### Track 0 Micro-Goal + Tiny Habits unified framework
 
 - **Описание:** Быстрый путь от первого сообщения до одного маленького поведения сегодня. Объединяет Track 0 onboarding (Best Hopes → Scaling → One Small Step → If-Then) с Tiny Habits (BJ Fogg B=MAP). Implementation Intentions как primary "Plan" tool.
