@@ -41,6 +41,15 @@ Effort: Estimated AI Sessions (EAS) + Context Pressure
 - **Артефакты:** `docs/research/prd_atomic_habits_trimmed.md` (trimmed PRD). При commit scope: new `references/bad_habit_inversion.md`; правки `habit_loop.md §2/§5`, `recovery_protocol.md`; routing в SKILL.master + `module_phase5_execution.md`; rebuild платформ. Без schema bump.
 - **Риск:** исходный v1.0 (пивот идентичности) нёс therapy-boundary риск — снят усечением. Следить, чтобы inversion не дублировал `habit_loop §2` Golden Rule, а расширял его; поп-метафоры Клира исключены ради evidence-планки.
 
+### Wearable readiness — manual import (Variant C)
+
+- **Описание:** Дешёвый zero-eng слой: если у пользователя есть носимый трекер (Whoop / Oura / Garmin / Apple Watch), он сам делится сегодняшним recovery% / сном / HRV в чат или Drive-wiki, и эти значения питают **objective-компонент (40%)** Composite Readiness Index (`docs/research/composite_readiness_model.md` §5). Без MCP, OAuth, инфраструктуры и reverse-engineering. Маленький reference-сниппет в `energy_scheduling.md` (+ опц. Phase 5 routing). Source-agnostic (любой трекер). Оценка Whoop/`my-whoop` → `docs/research/google_health_mcp_integration_research.md` §Addendum (2026-06-04).
+- **Триггер:** Запрос «применить Whoop / `my-whoop`» (2026-06-04). Independent review: reverse-eng BLE-ридер (`my-whoop`) отклонён (неверная архитектура, ToS/fragility, не валидировано, скилл его не запускает); официальный Whoop API через MCP-агрегатор — это уже items `Google Health MCP integration research` + `Wearable Energy Integration` (v0.17.x). Manual import — самый дешёвый способ дать ценность и **провалидировать спрос** до постройки любого MCP.
+- **Статус:** 📋 Candidate — gated к v0.17.x «Data & Health Integrations» (требует research decision + usage-сигнал, см. ROADMAP). НЕ committed; релизы не блокирует.
+- **RICE:** Reach 25 [GUESS] × Impact 0.75 × Confidence 70% / Effort XS=0.5 EAS, Context Pressure Low = **26.3** (High Priority). *Только пользователи с трекером; ценность — заземление CRI OR-компонента без инфраструктуры; effort крошечный.*
+- **Артефакты:** при commit — reference-сниппет в `references/energy_scheduling.md`; потребитель — `composite_readiness_model.md` OR-компонент. Без новых модулей, без schema bump.
+- **Риск:** держать advisory (не диагностика; и `my-whoop`, и сам Whoop — «не валидировано / не мед.совет»). Не дублировать subjective self-report (60% CRI и так работает без трекера). Автоматизация (aggregator-MCP) — в research-debt items, не здесь.
+
 ### Track 0 Micro-Goal + Tiny Habits unified framework
 
 - **Описание:** Быстрый путь от первого сообщения до одного маленького поведения сегодня. Объединяет Track 0 onboarding (Best Hopes → Scaling → One Small Step → If-Then) с Tiny Habits (BJ Fogg B=MAP). Implementation Intentions как primary "Plan" tool.
