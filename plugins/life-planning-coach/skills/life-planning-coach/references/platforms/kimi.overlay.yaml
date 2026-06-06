@@ -1,0 +1,31 @@
+# Kimi K2.6 Platform Overlay for life-planning-coach
+# Merged with SKILL.master.md by build-platform-skill.py
+#
+# After v0.17.0 the master is platform-neutral. This overlay translates
+# neutral terms into Kimi-specific tools and adds Kimi-only notes.
+
+frontmatter_remove:
+  - requires_connector
+  - runtime
+  - author
+  - last_updated
+
+replacements:
+  - old: "**Assistant**: "
+    new: "**Kimi** говорит..."
+
+  - old: "AI Memory"
+    new: "memory_space"
+
+  - old: "Cloud Storage"
+    new: "файловая система (write_file)"
+
+append_after_privacy: |
+
+  ## Kimi-Specific Notes
+
+  - **Mode guidance**: для Track B (65–105 мин) рекомендуй OK Computer (kimi.com/agent). Base Chat ограничен 10 шагами.
+  - **memory_space**: CRITICAL — обязан вызывать `memory_space_edits` (command="add") для любого сохранения. Никогда не говори "запомню" без tool call.
+  - **KIMI_REF**: сгенерированные файлы должны заканчиваться тегом `<KIMI_REF type="file" path="/mnt/okcomputer/output/dashboard.html" />`.
+  - **Step budget**: Base Chat = max 10 steps per turn. Используй микро-сессии для сложных задач.
+  - **Language**: `memory_space` content должен начинаться с "User" / "用户" и совпадать с языком диалога.

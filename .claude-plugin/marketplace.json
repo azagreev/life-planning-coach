@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "life-planning-coach",
+  "description": "Life Planning Coach — evidence-based лайф-коучинг как Claude Code плагин: диагностика жизни, система целей и еженедельная ретроспектива.",
+  "owner": {
+    "name": "Andrey Zagreev",
+    "url": "https://github.com/azagreev"
+  },
+  "plugins": [
+    {
+      "name": "life-planning-coach",
+      "source": "./plugins/life-planning-coach",
+      "description": "Evidence-based лайф-коуч: Wheel of Life, ценности, Ikigai, BHAG/OKR/WOOP, GTD Weekly Review. Активируется по запросам про планирование жизни, цели и ретроспективу. Язык: русский.",
+      "category": "personal-productivity"
+    }
+  ]
+}

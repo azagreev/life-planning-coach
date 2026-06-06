@@ -44,6 +44,7 @@
 
 | Платформа | Для кого | Установка | Google Calendar | Google Drive | Файл |
 |-----------|----------|-----------|-----------|------|------|
+| **Claude Code / Cowork** | 🌟 Рекомендуется — 1 клик, без файлов | Plugin marketplace (GitHub) | ✅ MCP¹ | ✅ MCP¹ | плагин |
 | **Claude.ai** | Опытные пользователи, нужны MCP-коннекторы | Загрузка ZIP | ✅ MCP¹ | ✅ MCP¹ | `.zip` / `.skill` |
 | **Grok** (xAI) | Пользователи xAI, большой контекст | Скопировать-вставить | ✅ встроенный OAuth | ✅ встроенный OAuth | `-grok.md` |
 | **Kimi OK Computer** | Простая настройка через сайт | Веб-агент | ❌ только текст | ❌ нет | `-kimi.md` |
@@ -57,6 +58,23 @@
 ---
 
 ## Быстрый старт
+
+### Claude Code / Cowork — плагин-маркетплейс 🌟 (рекомендуется, без файлов)
+
+**Cowork (для не-разработчиков):**
+1. Открой **Customize** (слева внизу)
+2. **Browse plugins → Personal → +**
+3. **Add marketplace from GitHub**
+4. Введи: `azagreev/life-planning-coach`
+5. Плагин **life-planning-coach** установится сам — получишь скилл (и команды) в один клик.
+
+**Claude Code (CLI):**
+```bash
+/plugin marketplace add azagreev/life-planning-coach
+/plugin install life-planning-coach@life-planning-coach
+```
+
+Обновление: `/plugin marketplace update life-planning-coach`. Репозиторий публичный — авторизация не нужна.
 
 ### Claude.ai (ZIP-скилл)
 

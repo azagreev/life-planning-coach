@@ -1,0 +1,31 @@
+# Claude Platform Overlay for life-planning-coach
+# Merged with SKILL.master.md by build-platform-skill.py
+#
+# After the v0.17.0 Tier 1 decomposition the master is platform-neutral.
+# This overlay only translates the neutral terminology into Claude-specific
+# names (Memory, Drive, MCP) and adds Claude-only frontmatter fields.
+
+frontmatter_remove:
+  - requires_connector
+  - runtime
+
+frontmatter_add:
+  min_claude_version: "4.6"
+  runtime: "claude.ai"
+  requires_mcp: "google-calendar (optional), google-drive (optional for wiki persistence)"
+
+replacements:
+  # NOTE: replacements act on master body BEFORE references are inlined,
+  # so they can only retag terms present in SKILL.master.md itself.
+  # Master is platform-neutral by contract.
+  - old: "AI Memory"
+    new: "Claude Memory"
+
+  - old: "Cloud Storage"
+    new: "Google Drive"
+
+  - old: "Drive"
+    new: "Google Drive"
+
+  - old: "calendar (optional), cloud-storage (optional for wiki persistence)"
+    new: "google-calendar (optional), google-drive (optional for wiki persistence)"
