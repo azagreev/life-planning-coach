@@ -76,6 +76,8 @@
 
 Обновление: `/plugin marketplace update life-planning-coach`. Репозиторий публичный — авторизация не нужна.
 
+**Команды плагина:** `/life-plan` (полная сессия), `/resume` (продолжить), `/daily` (план на день), `/weekly-review` (ретроспектива), `/wheel-of-life` (диагностика), `/goals` (цели), `/dashboard` (дашборд), `/check-in` (быстрый чек-ин).
+
 ### Claude.ai (ZIP-скилл)
 
 1. Скачайте `life-planning-coach-v1.4.2.zip` из раздела [Релизы](https://github.com/azagreev/life-planning-coach/releases)

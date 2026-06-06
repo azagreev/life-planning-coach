@@ -128,3 +128,30 @@ def test_plugin_excludes_dev_only_references():
         elif any(f.name.startswith(p) for p in REFERENCES_EXCLUDE_PREFIXES):
             offenders.append(str(f.relative_to(plugin_refs)))
     assert not offenders, f"dev-only references leaked into plugin: {offenders[:5]}"
+
+
+# ----- slash commands ----------------------------------------------------
+
+EXPECTED_COMMANDS = {
+    "life-plan", "resume", "daily", "weekly-review",
+    "wheel-of-life", "goals", "dashboard", "check-in",
+}
+
+
+def test_plugin_commands_present():
+    cmd_dir = PLUGIN_DIR / "commands"
+    assert cmd_dir.is_dir(), "plugin commands/ dir missing"
+    found = {p.stem for p in cmd_dir.glob("*.md")}
+    missing = EXPECTED_COMMANDS - found
+    assert not missing, f"missing command files: {sorted(missing)}"
+
+
+def test_plugin_commands_have_description_frontmatter():
+    """Each command .md needs YAML frontmatter with a description (shown in /help)."""
+    cmd_dir = PLUGIN_DIR / "commands"
+    bad = []
+    for p in cmd_dir.glob("*.md"):
+        text = p.read_text(encoding="utf-8")
+        if not (text.startswith("---") and re.search(r"^description:\s*\S", text, re.MULTILINE)):
+            bad.append(p.name)
+    assert not bad, f"commands missing description frontmatter: {bad}"
