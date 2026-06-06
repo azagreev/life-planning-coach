@@ -8,6 +8,10 @@
 
 ## [Unreleased]
 
+## [1.4.3] — 2026-06-04
+
+**Тема:** Distribution release. Репозиторий теперь устанавливается как **Claude Code плагин-маркетплейс** (Cowork / CLI) — скилл + 8 slash-команд в один клик. Методология не меняется (команды — тонкие роутеры в существующие фазы, маркетплейс — чистая дистрибуция), поэтому patch.
+
 ### Added
 
 - **Claude Code plugin marketplace** — репозиторий теперь устанавливается в один клик через Cowork (Customize → Browse plugins → Personal → + → Add marketplace from GitHub → `azagreev/life-planning-coach`) или CLI (`/plugin marketplace add azagreev/life-planning-coach` → `/plugin install life-planning-coach@life-planning-coach`). Добавлен hand-authored `.claude-plugin/marketplace.json` (source → `./plugins/life-planning-coach`); `build-skill.py build` генерит committed-каталог `plugins/life-planning-coach/` (skills/<name>/SKILL.md + references с теми же dev-only-исключениями, что и ZIP + сгенерированный `plugin.json` с текущей версией) — тот же паттерн, что и `platforms/`. Генерация воспроизводима (byte-identical на rebuild); 8 guard-тестов `tests/release/test_plugin_marketplace.py` (валидность манифестов, version-sync, plugin↔source в синхроне, dev-cruft не утекает). README: способ установки помечен 🌟 рекомендуемым.
