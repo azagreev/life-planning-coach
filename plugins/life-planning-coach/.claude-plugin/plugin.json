@@ -1,0 +1,23 @@
+{
+  "name": "life-planning-coach",
+  "version": "1.4.2",
+  "description": "Evidence-based лайф-коуч: Wheel of Life, ценности, Ikigai, BHAG/OKR/WOOP, GTD Weekly Review. Диагностика жизни, система целей и еженедельная ретроспектива.",
+  "author": {
+    "name": "Andrey Zagreev",
+    "url": "https://github.com/azagreev"
+  },
+  "keywords": [
+    "life-planning",
+    "coaching",
+    "goals",
+    "okr",
+    "woop",
+    "wheel-of-life",
+    "ikigai",
+    "retrospective",
+    "self-development"
+  ],
+  "homepage": "https://github.com/azagreev/life-planning-coach",
+  "repository": "https://github.com/azagreev/life-planning-coach",
+  "license": "MIT"
+}

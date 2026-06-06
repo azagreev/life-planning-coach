@@ -1,0 +1,39 @@
+# Kimi Code CLI Platform Overlay for life-planning-coach
+# Merged with SKILL.master.md by build-platform-skill.py
+#
+# Kimi Code CLI = terminal coding agent: full filesystem, references/ via
+# read_file, MCP (Google Calendar, Google Drive), no 10-step limit, no
+# KIMI_REF tags, no memory_space tool.
+#
+# After v0.17.0 the master is platform-neutral. This overlay only translates
+# neutral terms into Kimi CLI specifics and adds CLI-only notes.
+
+frontmatter_remove:
+  - requires_connector
+  - runtime
+  - author
+  - last_updated
+
+frontmatter_add:
+  runtime: "kimi-cli"
+  requires_mcp: "google-calendar (optional), google-drive (optional for wiki persistence)"
+
+replacements:
+  - old: "**Assistant**: "
+    new: "**Kimi** говорит..."
+
+  - old: "AI Memory"
+    new: "Контекстный memory + write_file"
+
+  - old: "Cloud Storage"
+    new: "Google Drive MCP / локальные файлы"
+
+append_after_privacy: |
+
+  ## Kimi CLI-Specific Notes
+
+  - **Filesystem access**: полный доступ к `read_file`, `write_file`, `edit_file`. `references/` грузятся через `read_file`.
+  - **MCP support**: Google Calendar и Google Drive через MCP (ручная настройка, см. `USER_GUIDE_KIMI_CLI.md`).
+  - **No step limit**: в отличие от OK Computer (10 steps), CLI без ограничений — phase modules грузятся lazy.
+  - **No KIMI_REF**: не используй `KIMI_REF` tags — это фича OK Computer web UI.
+  - **No memory_space**: для persistence используй файловую систему (`write_file`) или Google Drive MCP.

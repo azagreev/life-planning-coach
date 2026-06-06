@@ -1,0 +1,363 @@
+# Google Drive Integration Reference (MCP)
+
+> **Runtime**: Claude.ai web/desktop + Kimi Code CLI (requires Google Drive MCP server)
+> **Not supported**: Grok (uses native connectors), Kimi OK Computer (web, no MCP)
+> **Setup**: Claude — Settings → Customize → Connectors → Google Drive → Connect (Max plan); Kimi CLI — manual JSON config
+> **Version**: 0.1.0
+> **PoC verified**: 2026-05-26 on Claude Max — see [docs/research/mcp_poc_log.md §Drive PoC](../docs/research/mcp_poc_log.md). Direct MCP execution via current session. 13 ops, 10 schema quirks. **Critical gap: no update/delete tools.**
+
+---
+
+## MCP Tools (8 confirmed)
+
+| Tool | Group | Description |
+|------|-------|-------------|
+| `get_file_metadata` | Read | Metadata only (name, MIME, parent, dates, size, owner). Optional `excludeContentSnippets`. |
+| `read_file_content` | Read | "Natural language representation" — **strips markdown markup**. Supported MIME: Google native, Office, PDF, images. **NOT text/markdown → silent `{}`**. |
+| `download_file_content` | Read | **Faithful round-trip** as base64-encoded raw bytes. Use for text/markdown. |
+| `search_files` | Read | Structured query (`title`, `fullText`, `mimeType`, `parentId`, `owner`, dates). |
+| `list_recent_files` | Read | Sort by `recency` / `lastModified` / `lastModifiedByMe`. |
+| `get_file_permissions` | Read | List sharing/ACL. No `set_file_permissions` (aligned with safety rules). |
+| `create_file` | Write | Files AND folders (mimeType `application/vnd.google-apps.folder`). |
+| `copy_file` | Write | Duplicate. **Defaults to ROOT, not source folder** — always pass explicit `parentId`. |
+
+### ❌ NOT available (critical gaps)
+
+- `update_file` / `append_to_file` / `create_revision` — **NO content modification**
+- `delete_file` / `move_to_trash` — **NO file removal**
+- Explicit folder tools (`create_folder`, `list_folder_contents`, `move_to_folder`)
+
+---
+
+## Schema Quirks (must follow exactly)
+
+PoC 2026-05-26 discovered:
+
+1. **`text/markdown` NOT in `read_file_content` supported list** → silent `{}` empty response. **For .md files ALWAYS use `download_file_content`** and decode base64.
+2. **`download_file_content` returns base64** even for plain text — decode required.
+3. **`text/plain` and `text/csv` auto-convert to Google formats** by default — set `disableConversionToGoogleType: true` to keep raw MIME.
+4. **Files identified by ID, NOT title** — same title can have many duplicate files. Title is just metadata.
+5. **`canAddChildren: false` in folder metadata is MISLEADING** — child creation may still succeed.
+6. **`copy_file` ignores "same folder" promise** — defaults to root. ALWAYS pass `parentId`.
+7. **`fullText contains` searches entire Drive** — no auto-scope; combine with `parentId =` for folder-scope.
+8. **`nextPageToken` appears even when results < pageSize** — phantom pagination.
+9. **`fileSize` returned as string** — parse to int if needed.
+10. **`search_files` returns `contentSnippet`** with truncated body — use `excludeContentSnippets: true` for speed/privacy.
+
+---
+
+## Wiki Persistence Architecture — Path A (committed 2026-05-26)
+
+After research synthesis (PoC findings + community precedents — Karpathy LLM Wiki, Justin Norris Apps Script mirroring, Zapier hybrid pattern), the skill commits to **Path A: append-only with timestamp suffix + Apps Script auto-cleanup**.
+
+### `save_state(template, content)` — write abstraction
+
+This is the canonical write call site. All skill-instructions in `module_phase*.md` and `templates/AI_Instructions.md` describe persistence в терминах `save_state(...)` — concrete behaviour swaps по факту detected backend (Path A by default; Path B/F when available) без переписывания call sites.
+
+**Path A implementation (default, claude.ai web + native MCP):**
+
+```
+save_state(template, content):
+  iso = now_utc.strftime("YYYY-MM-DDTHH-MM")     // colons → "-" для filename safety
+  subfolder_id = wiki_subfolder_for_template(template)   // см. Write rules table в AI_Instructions.md
+  create_file(
+    parentId=subfolder_id,
+    title=f"{template}_{iso}.md",                // e.g. "Hot_Cache_2026-05-26T18-45.md"
+    textContent=content,
+    contentMimeType="text/markdown",
+    disableConversionToGoogleType=true
+  )
+```
+
+ISO format: `YYYY-MM-DDTHH-MM` (colons replaced with `-`).
+
+**Path B / Path F variants** (detected backend): `save_state` swaps к `updateTextFile(...)` (Path B community MCP) или Zapier "Replace File" action (Path F). Skill-instruction call site остаётся `save_state(template, content)` — single swap point.
+
+### `read_state(template)` — read abstraction
+
+```
+read_state(template):
+  subfolder_id = wiki_subfolder_for_template(template)
+  results = search_files(
+    query=f"title contains '{template}_' and parentId = '{subfolder_id}'",
+    orderBy="modifiedTime desc",
+    pageSize=1
+  )
+  if not results:
+    return None
+  return download_file_content(results[0].id) → base64-decode → parse markdown
+```
+
+«Current» state = latest by `modifiedTime`. Older snapshots остаются как audit trail (см. Cleanup §below).
+
+⚠️ **NEVER use `read_file_content` для `.md`** — returns `{}` silently. ALWAYS `download_file_content`.
+
+### Cleanup — Layered defaults (4 modes)
+
+User picks один из 4 при first Drive connect; choice persists в `persistence_retry.drive.wiki_cleanup_mode`.
+
+| Mode | Write cadence | Skill notifications | User setup |
+|------|---------------|--------------------|-----------|
+| `apps_script` | per-session | One-time link к script setup | ~3 min one-time |
+| `batch_weekly` | end-of-week только | "сохраню в воскресенье" mention | none |
+| `reminder` (default) | per-session | Quarterly: "N файлов, вот query для cleanup" | none |
+| `ignore` | per-session | none | none |
+
+#### Mode 1 — `apps_script` (recommended для tech-savvy users)
+
+Pre-built Apps Script: [`references/templates/lpc_wiki_cleanup.gs`](templates/lpc_wiki_cleanup.gs).
+
+User setup (~3 min, paste-once):
+1. <https://script.google.com> → New project
+2. Paste contents of `lpc_wiki_cleanup.gs` в Code.gs
+3. `dryRun()` once для preview
+4. `installTrigger()` once → daily 03:00 trigger
+5. Forget about it
+
+Behaviour: keeps last 5 per category + всё < 30 дней. Surplus → Drive trash (recoverable 30 days). Configurable via script constants.
+
+#### Mode 2 — `batch_weekly`
+
+Skill пишет snapshots ТОЛЬКО end-of-week (e.g. Sunday session OR explicit "save weekly progress" command). Intermediate state lives в conversation memory только.
+
+```
+~50 weeks × 8 categories = ~400 files/year (vs ~2400 в per-session mode)
+
+8x reduction в file count. Trade-off: если mid-week conversation lost,
+теряются intermediate changes (state.session restart from last weekly snapshot).
+```
+
+Naming convention остаётся `{Category}_{ISO}.md` для consistency с другими modes.
+
+#### Mode 3 — `reminder` (default, no setup)
+
+Skill пишет per-session как обычно. Quarterly (или каждые 30 sessions — whichever first) skill включает в conversation:
+
+```
+📂 Wiki status: {count} файлов в LPC_Wiki/, последний cleanup {days_ago} дней назад.
+
+Хочешь почистить? В Drive UI search bar:
+  modifiedDate before:{cutoff_date} ({prefix1} OR {prefix2} OR ...)
+→ select all → Move to trash. Восстановимо 30 дней.
+
+Можешь игнорировать — skill работает дальше.
+```
+
+Skill records timestamp в `wiki_cleanup_last_reminder_at` after showing notice. Default cleanup cutoff = 90 days ago.
+
+#### Mode 4 — `ignore`
+
+Skill пишет per-session, никаких notifications. Файлы накапливаются органически.
+
+```
+Реалистичные numbers:
+  1 год: ~400 файлов, ~2 MB
+  3 года: ~1200 файлов, ~6 MB
+  5 лет: ~2000 файлов, ~10 MB
+
+Drive free quota = 15 GB. Storage не проблема никогда.
+Single pain point: визуальный шум в Drive UI.
+```
+
+Manual cleanup в любой момент через Drive UI (search + multi-select + trash).
+
+### Why this architecture
+
+| Concern | Path A address |
+|---------|----------------|
+| MCP no `update_file` | Each write = new file with timestamp; "current" = latest by modifiedTime |
+| MCP no `delete_file` | User-side Apps Script (independent of MCP) автоматически handles cleanup |
+| File accumulation | Apps Script keeps 5+recent + 30-day window; bounded growth |
+| Cross-session persistence | Drive holds state server-side; survives device/context loss |
+| Audit trail | 5+ snapshots per category = built-in undo / inspection |
+| Works on all platforms | Pure MCP read/create only; no Desktop dependency |
+| Forward compat | When Anthropic ships `update_file`, swap `create_file` call site — no architecture change |
+
+### Trade-offs accepted
+
+- Storage: ~365×N×size/year если user never cleanups; bounded если daily trigger running
+- 3-min one-time Apps Script setup (skippable → degrades к manual cleanup)
+- Reads have extra `search_files` call vs known-ID direct read (sub-second через direct MCP)
+- 5-snapshot retention may not be enough для users wanting full history — increase `MIN_RETAIN_PER_PREFIX` в script
+
+---
+
+## Alternative architectures (НЕ chosen — documented для context)
+
+| Path | Brief | Why not |
+|------|-------|---------|
+| **B: Tiered Desktop community MCP** | [piotr-agier/google-drive-mcp](https://github.com/piotr-agier/google-drive-mcp) full CRUD на Desktop | Power-user only; ~30 min OAuth+GCloud setup. **§Advanced below.** |
+| **C: State в conversation memory only** | Drive read-only; state в memory + JSON on demand | Loses cross-session persistence |
+| **D: Migrate в Obsidian+Git** | Per Karpathy LLM Wiki pattern | Requires Desktop + local file MCP; defeats portable cloud Wiki |
+| **F: Zapier MCP hybrid** | Native Drive reads + Zapier MCP для writes (update/delete) | ✅ **Verified 2026-05-28**: Zapier connector в Anthropic directory ([claude.com/connectors/zapier](https://claude.com/connectors/zapier)), paid plans only. **§Advanced below.** Viable для power users c Zapier subscription. |
+
+---
+
+## Advanced: Path B (Desktop power-user setup с full CRUD)
+
+Для users на **Claude Desktop** / **Claude Code CLI** (NOT claude.ai web) кто хочет native `update_file`/`delete_file`:
+
+### Community MCP servers с full CRUD
+
+- **[piotr-agier/google-drive-mcp](https://github.com/piotr-agier/google-drive-mcp)** — Drive/Docs/Sheets/Slides/Calendar в одном. Tools: `updateTextFile`, `deleteItem`, `renameItem`, `moveItem`.
+- **[a-bonus/google-docs-mcp](https://github.com/a-bonus/google-docs-mcp)** — "Ultimate" Google Suite MCP.
+- **[StackOne](https://www.stackone.com/connectors/googledrive/mcp/)** — Managed, 53 actions, commercial.
+
+### Setup outline (piotr-agier example, ~30 min)
+
+1. Google Cloud Project, enable Drive/Docs/Sheets/Slides/Calendar APIs
+2. OAuth credentials — Desktop app type (NOT Web)
+3. Place в `~/.config/google-drive-mcp/gcp-oauth.keys.json`
+4. Install MCP server (npm/clone)
+5. Add to `claude_desktop_config.json` или Claude Code config
+6. First run triggers browser OAuth
+7. Skill detects `update_file` tool availability → switches от Path A appended к direct overwrite
+
+⚠️ **Не для claude.ai web** — custom MCP servers not supported (только Anthropic-curated). Web users stay на Path A.
+
+### Future: when Anthropic ships `update_file` natively
+
+Skill abstraction (`save_state(template, content)` wrapper) позволяет swap Path A → direct overwrite в одном месте. No protocol re-write needed.
+
+---
+
+## Advanced: Path F (Zapier MCP hybrid — claude.ai web с update/delete)
+
+Для users на **claude.ai web** (paid plan) кто хочет update/delete семантику без Desktop / community MCP setup. **Verified available 2026-05-28** через Anthropic Connectors directory.
+
+### Setup outline (~10-15 min, requires active Zapier account)
+
+1. Zapier account на платном плане (Starter+ для MCP feature)
+2. Connect Zapier к Google Drive (one-time OAuth внутри Zapier UI)
+3. Создать 2 Zaps с MCP triggers:
+   - **Update file content** (Zapier action: Google Drive → Replace File)
+   - **Move file to trash** (Zapier action: Google Drive → Delete File)
+4. claude.ai → Settings → Connectors → Zapier → Connect (OAuth к Zapier)
+5. Опционально: `add_to_calendar`, `send_email`, и любые из ~8 000 Zapier-supported apps
+
+### Skill behaviour когда Zapier connector detected
+
+```
+if zapier_available and user.prefers_path_f:
+    save_state(template, content) → Zapier "Replace File" с known file_id
+    delete_state(file_id)         → Zapier "Move to Trash"
+else:
+    fall back на Path A (append-only + Apps Script cleanup)
+```
+
+Skill abstraction (`save_state(template, content)`) уже спроектирован для swap; Path F = third backend (после Path A native MCP + Path B community Desktop MCP).
+
+### Trade-offs vs Path A
+
+| Concern | Path A (default) | Path F (Zapier hybrid) |
+|---------|------------------|------------------------|
+| Setup time | 0–3 min (Apps Script optional) | ~15 min (Zapier account + 2 Zaps) |
+| Recurring cost | Free | Zapier Starter+ subscription ($20/mo+) |
+| Update semantics | Append-only (timestamp-suffix) | Native overwrite via Zap |
+| Delete semantics | Apps Script (user-side) или manual UI | Native trash via Zap |
+| Latency | Sub-second MCP + LLM (5–15s end-to-end) | +1 Zapier round-trip (~10–30s additional) |
+| Audit trail | Built-in (5+ snapshots per category) | Lost (overwrite = single current state) |
+| Cross-platform | Works на всех MCP-supporting platforms | claude.ai web only (Zapier connector scope) |
+| Quota | Drive 15 GB (rarely hit) | Zapier task quota (~750/mo Starter) |
+
+### When to choose Path F over Path A
+
+- Уже есть Zapier subscription и Zaps для других целей
+- Critical concern about Drive file accumulation (visual noise в UI)
+- Need overwrite-not-append semantics для downstream tooling (e.g. Notion sync)
+- Comfortable с дополнительным dependency surface (Zapier как middleman)
+
+Otherwise — **Path A остаётся default**. Cost (free, fewer dependencies) + audit trail обычно outweigh setup convenience.
+
+---
+
+## Prompt Patterns
+
+### Bootstrap LPC_Wiki (first-time, on first Drive connect)
+
+```
+1. create_file(parentId=root, title="Life Planning Coach Wiki",
+               contentMimeType="application/vnd.google-apps.folder")
+   → save wiki_root_id
+
+2. For each subfolder in ["00_Raw", "01_Wiki", "02_Instructions", "03_Dashboard", "05_Archive"]:
+   create_file(parentId=wiki_root_id, title=subfolder,
+               contentMimeType="application/vnd.google-apps.folder")
+   → save subfolder_ids
+
+3. For each template in 8 templates:
+   create_file(parentId=target_subfolder_id, title="{template}_{date}.md",
+               textContent=rendered_template_content,
+               contentMimeType="text/markdown",
+               disableConversionToGoogleType=true)
+   → record IDs in conversation_state.persistence_retry.drive.template_ids
+```
+
+### Append-only save (Hot_Cache pattern)
+
+```
+create_file(
+  parentId=wiki_01_id,
+  title="Hot_Cache_2026-05-26T19:15.md",
+  textContent={rendered_hot_cache},
+  contentMimeType="text/markdown",
+  disableConversionToGoogleType=true
+)
+```
+
+### Read current state (latest by modifiedTime)
+
+```
+search_files(
+  query="title contains 'Hot_Cache_' and parentId = '{wiki_01_id}'",
+  orderBy="modifiedTime desc",
+  pageSize=1
+)
+→ first result.id → download_file_content(fileId) → base64-decode
+```
+
+### Read existing user document (Google Doc)
+
+```
+search_files(query="title contains '{name}' and mimeType = 'application/vnd.google-apps.document'")
+→ get id → read_file_content(fileId)  // OK for Google Docs, strips markup acceptable
+```
+
+---
+
+## Latency Expectations (from PoC 2026-05-26)
+
+Direct MCP execution (this session): **all ops sub-second** wall-clock.
+
+User-experience latency (via claude.ai chat with LLM round-trip): expect 5-15s per op (analog to Calendar's 20-35s but Drive ops are simpler/faster).
+
+---
+
+## Troubleshooting
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| `read_file_content` returns `{}` | MIME not in supported list (e.g. text/markdown) | Use `download_file_content` + decode base64 |
+| Markdown markup stripped (`#` → `\#`) | `read_file_content` is natural-lang repr | Use `download_file_content` for faithful round-trip |
+| Created file but appears as Google Doc | Auto-conversion for text/plain | Set `disableConversionToGoogleType: true` |
+| Same-title file created instead of updated | No `update_file` tool exists | Use append-only with timestamp suffix |
+| Cannot delete test file | No `delete_file` tool | Manual via Drive UI (right-click → trash) |
+| `copy_file` landed in root, not source folder | "Same folder" default doesn't work | ALWAYS pass explicit `parentId` |
+| `fullText` search returned files from other folders | No auto-scope to parent | Add `parentId = 'X'` to query |
+| `nextPageToken` present despite no more results | Phantom pagination | Following may return empty; don't auto-recurse |
+| `fileSize` is string, not number | API quirk | Parse to int: `parseInt(file.fileSize, 10)` |
+| Search returned my private files | Connector has full Drive scope | Skill should scope queries to `parentId = wiki_root_id` |
+
+---
+
+## Daily Top-3 / Tasks (NOT in Drive scope)
+
+Google Tasks is in separate Google product, **NOT covered by Drive connector**. Per Calendar PoC: Tasks MCP also absent from Anthropic directory. Conversational tasks (Claude as proxy) remain the path.
+
+---
+
+## See also
+
+- [`calendar_integration.md`](calendar_integration.md) — sibling reference for Google Calendar MCP
+- [`docs/research/mcp_poc_log.md` §Drive PoC](../docs/research/mcp_poc_log.md) — full PoC log with ops + responses
+- [`templates/AI_Instructions.md`](templates/AI_Instructions.md) — Bootstrap + Backfill protocols (updated 2026-05-26 with PoC findings)

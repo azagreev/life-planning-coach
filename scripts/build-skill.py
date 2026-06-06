@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import datetime
+import json
 import os
 import re
 import shutil
@@ -50,6 +51,11 @@ DIST_DIR = PROJECT_ROOT / "dist"
 SKILL_FOLDER = BUILD_DIR / "life-planning-coach"
 
 PLATFORMS = ["claude", "grok", "kimi", "kimi-cli"]
+
+# Claude Code plugin marketplace: .claude-plugin/marketplace.json (repo root)
+# points at plugins/<PLUGIN_NAME>/ (source: ./plugins/life-planning-coach).
+PLUGINS_DIR = PROJECT_ROOT / "plugins"
+PLUGIN_NAME = "life-planning-coach"
 
 # Directories excluded from references/ when building skill folder
 REFERENCES_EXCLUDE_DIRS = {"research", "tasks", "archive"}
@@ -109,6 +115,58 @@ def _copy_references(src: Path, dst: Path) -> None:
             if any(f.startswith(p) for p in REFERENCES_EXCLUDE_PREFIXES):
                 continue
             shutil.copy2(Path(root) / f, target / f)
+
+
+def _write_json(path: Path, data: dict) -> None:
+    """Write JSON deterministically (UTF-8, LF, trailing newline) for reproducible builds."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+def _generate_plugin(version: str) -> None:
+    """Generate the committed Claude Code plugin tree at plugins/<name>/.
+
+    The repo's .claude-plugin/marketplace.json points here (source:
+    ./plugins/life-planning-coach), so users install via
+    `/plugin marketplace add azagreev/life-planning-coach`. Regenerated on every
+    build and committed — same pattern as platforms/. The skill is the Claude
+    variant (root SKILL.md); references use the same dev-only excludes as the ZIP,
+    so the plugin ships no test/script/research cruft. plugin.json is generated
+    (version always current); marketplace.json is hand-authored (static).
+    """
+    plugin_root = PLUGINS_DIR / PLUGIN_NAME
+    skill_dir = plugin_root / "skills" / PLUGIN_NAME
+    # Clean the skill dir so deleted references don't linger (reproducible output).
+    if skill_dir.exists():
+        shutil.rmtree(skill_dir)
+    skill_dir.mkdir(parents=True)
+    shutil.copy2(PROJECT_ROOT / "SKILL.md", skill_dir / "SKILL.md")
+    _copy_references(PROJECT_ROOT / "references", skill_dir / "references")
+    dashboard = PROJECT_ROOT / "life-planning-dashboard.html"
+    if dashboard.exists():
+        shutil.copy2(dashboard, skill_dir / "life-planning-dashboard.html")
+    _write_json(
+        plugin_root / ".claude-plugin" / "plugin.json",
+        {
+            "name": PLUGIN_NAME,
+            "version": version,
+            "description": (
+                "Evidence-based лайф-коуч: Wheel of Life, ценности, Ikigai, "
+                "BHAG/OKR/WOOP, GTD Weekly Review. Диагностика жизни, система "
+                "целей и еженедельная ретроспектива."
+            ),
+            "author": {"name": "Andrey Zagreev", "url": "https://github.com/azagreev"},
+            "keywords": [
+                "life-planning", "coaching", "goals", "okr", "woop",
+                "wheel-of-life", "ikigai", "retrospective", "self-development",
+            ],
+            "homepage": "https://github.com/azagreev/life-planning-coach",
+            "repository": "https://github.com/azagreev/life-planning-coach",
+            "license": "MIT",
+        },
+    )
+    n_refs = sum(1 for p in (skill_dir / "references").rglob("*") if p.is_file())
+    print(f"Generated plugin: plugins/{PLUGIN_NAME}/ (skill + {n_refs} reference files)")
 
 
 def _make_zip(zip_path: Path, src_dir: Path, base_name: str) -> None:
@@ -266,6 +324,9 @@ def cmd_build(args: argparse.Namespace) -> int:
 
     version = _read_skill_version()
     print(f"Version detected from SKILL.master.md: {version}")
+
+    # Generate the committed Claude Code plugin tree (plugins/<name>/) for the marketplace.
+    _generate_plugin(version)
 
     # Clean build dir
     if BUILD_DIR.exists():

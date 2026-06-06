@@ -1,0 +1,35 @@
+# Grok 4.3 Platform Overlay for life-planning-coach
+# Merged with SKILL.master.md by build-platform-skill.py
+#
+# After the v0.17.0 Tier 1 decomposition the master is platform-neutral.
+# This overlay only translates neutral terms into Grok-specific names
+# (Native Memory, Projects, Drive connector) and adds Grok-only notes.
+
+frontmatter_remove:
+  - requires_connector
+  - runtime
+  - author
+  - last_updated
+
+replacements:
+  - old: "**Assistant**: "
+    new: "**Grok** говорит..."
+
+  - old: "AI Memory"
+    new: "Native Memory"
+
+  - old: "Cloud Storage"
+    new: "Google Drive connector"
+
+append_after_privacy: |
+
+  ## Grok-Specific Notes
+
+  - **Sandbox Tools**: `read_file`, `write_file`, `edit_file`, `bash`, `web_search`, `browse_page`, `generate_image`, `edit_image`, `search_images`
+  - **Render Components**: `render_file` (HTML dashboard в чат), `render_inline_citation`, `render_searched_image`, `render_generated_image`, `render_edited_image`
+  - **Native Memory**: Settings → Data Controls
+  - **Grok Projects**: workspace context с persistent файлами и заметками
+  - **Skills System** (forthcoming): reusable скиллы через slash commands, импорт .md/.zip/.skill
+  - **Connectors**: Google Drive (search/read/write/create/upload), Google Calendar (CRUD/search/RSVP), Outlook Calendar
+  - **Tool Limit**: Max 10 steps per turn. Batch file operations.
+  - **Sandbox Lifecycle**: Файлы в `/home/workdir/artifacts/` persist ВНУТРИ сессии, очищаются МЕЖДУ сессиями. Предложи скачать важные файлы до конца сессии.
