@@ -8,6 +8,10 @@
 
 ## [Unreleased]
 
+## [1.4.4] — 2026-06-07
+
+**Тема:** Integration patch. Плагин объявляет **Google Calendar + Google Drive** как bundled MCP-коннекторы — при установке через Cowork они видны во вкладке **Connectors** (один клик Connect). Коннекторы опциональны, методология и zero-setup default не меняются, поэтому patch. (Cowork ставит плагин с последнего release-тега, а не с `main` — поэтому коннекторы, замёрженные в `main` после тега v1.4.3, доезжают до пользователей именно этим релизом.)
+
 ### Added
 
 - **Google Calendar + Google Drive коннекторы в плагине** — `build-skill.py` теперь генерит `plugins/life-planning-coach/.mcp.json` с двумя remote-HTTP MCP-серверами (`https://calendarmcp.googleapis.com/mcp/v1`, `https://drivemcp.googleapis.com/mcp/v1`), которые скилл опционально использует (Phase 5 execution / календарь + cloud-storage wiki-персистентность, см. `requires_connector` во frontmatter). При установке плагина через Cowork они появляются во вкладке **Connectors** (один клик Connect). URL-only, **без OAuth-секретов** в манифесте — авторизацию делает Cowork/Claude; формат зеркалит публичный плагин Anthropic `knowledge-work-plugins/small-business/.mcp.json` (проверено 2026-06-07). Gmail исключён (скилл не использует). Коннекторы остаются optional — плагин ставится без них (zero-setup default + Paper-Coach fallback сохранены). Guard-тесты: `test_plugin_mcp_json_declares_expected_connectors` + `test_plugin_mcp_json_has_no_committed_secrets`. Отменяет раннее (ошибочное) решение «connectors account-level only» — см. `docs/research/scope_analysis.md` §Correction.
