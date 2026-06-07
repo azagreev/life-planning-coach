@@ -8,7 +8,7 @@
 
 ## Текущий статус
 
-- **Текущая версия:** `v1.4.2` 🎉 (released 2026-06-04)
+- **Текущая версия:** `v1.4.3` 🎉 (released 2026-06-07)
 - **Источник правды по версии:** `git describe --tags --abbrev=0`
 - **История релизов:** [CHANGELOG.md](CHANGELOG.md)
 - **Архив старого roadmap:** [docs/archive/ROADMAP_before_cleanup_2026-05-21.md](docs/archive/ROADMAP_before_cleanup_2026-05-21.md)
