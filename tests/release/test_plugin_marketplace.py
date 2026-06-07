@@ -21,6 +21,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 MARKETPLACE = PROJECT_ROOT / ".claude-plugin" / "marketplace.json"
 PLUGIN_DIR = PROJECT_ROOT / "plugins" / "life-planning-coach"
 PLUGIN_JSON = PLUGIN_DIR / ".claude-plugin" / "plugin.json"
+PLUGIN_MCP_JSON = PLUGIN_DIR / ".mcp.json"
 PLUGIN_SKILL_DIR = PLUGIN_DIR / "skills" / "life-planning-coach"
 
 # Dev-only references excluded from the shipped skill (mirror build-skill.py).
@@ -86,6 +87,37 @@ def test_plugin_version_matches_skill():
         "plugin.json version is stale — run `python scripts/build-skill.py build` "
         "so it matches SKILL.master.md"
     )
+
+
+# ----- bundled connectors (.mcp.json) -----------------------------------
+
+# Google Calendar (Phase 5 execution) + Google Drive (cloud-storage persistence).
+# URLs + URL-only pattern mirror Anthropic's anthropics/knowledge-work-plugins
+# small-business/.mcp.json. Gmail intentionally excluded (skill doesn't use it).
+EXPECTED_CONNECTORS = {
+    "google calendar": "https://calendarmcp.googleapis.com/mcp/v1",
+    "google drive": "https://drivemcp.googleapis.com/mcp/v1",
+}
+
+
+def test_plugin_mcp_json_declares_expected_connectors():
+    """Plugin bundles exactly Google Calendar + Drive as remote http MCP servers."""
+    assert PLUGIN_MCP_JSON.exists(), f"{PLUGIN_MCP_JSON} missing (run: python scripts/build-skill.py build)"
+    servers = json.loads(PLUGIN_MCP_JSON.read_text(encoding="utf-8")).get("mcpServers", {})
+    assert set(servers) == set(EXPECTED_CONNECTORS), (
+        f"connector set drift: {set(servers) ^ set(EXPECTED_CONNECTORS)}"
+    )
+    for name, url in EXPECTED_CONNECTORS.items():
+        assert servers[name].get("type") == "http", f"{name} must be a remote http MCP"
+        assert servers[name].get("url") == url, f"{name} url wrong: {servers[name].get('url')}"
+
+
+def test_plugin_mcp_json_has_no_committed_secrets():
+    """No OAuth secrets/tokens in the manifest — Cowork handles auth at Connect time
+    (Anthropic's Google entries are URL-only; secrets must never be committed)."""
+    raw = PLUGIN_MCP_JSON.read_text(encoding="utf-8").lower()
+    for forbidden in ("client_secret", "clientsecret", "secret", "token", "password", "api_key", "apikey"):
+        assert forbidden not in raw, f"possible secret committed in .mcp.json: '{forbidden}'"
 
 
 # ----- generated skill tree ---------------------------------------------

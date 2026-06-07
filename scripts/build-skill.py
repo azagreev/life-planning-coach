@@ -219,6 +219,29 @@ def _generate_plugin(version: str) -> None:
             "license": "MIT",
         },
     )
+    # Plugin-bundled connectors. The skill OPTIONALLY reads Google Calendar (Phase 5
+    # execution / Daily Top-3) and Google Drive (cloud-storage wiki persistence) — see
+    # SKILL frontmatter `requires_connector`. Declared by URL as remote HTTP MCP servers;
+    # NO OAuth secrets in the manifest — Cowork/Claude handles auth at Connect time.
+    # URLs + URL-only (no `oauth`) pattern mirror Anthropic's own public plugin
+    # anthropics/knowledge-work-plugins → small-business/.mcp.json (verified 2026-06-07).
+    # Gmail intentionally omitted (skill doesn't use it). Connectors stay optional:
+    # the plugin installs without them (zero-setup default, Paper-Coach fallback).
+    _write_json(
+        plugin_root / ".mcp.json",
+        {
+            "mcpServers": {
+                "google calendar": {
+                    "type": "http",
+                    "url": "https://calendarmcp.googleapis.com/mcp/v1",
+                },
+                "google drive": {
+                    "type": "http",
+                    "url": "https://drivemcp.googleapis.com/mcp/v1",
+                },
+            }
+        },
+    )
     n_refs = sum(1 for p in (skill_dir / "references").rglob("*") if p.is_file())
     print(f"Generated plugin: plugins/{PLUGIN_NAME}/ (skill + {n_refs} reference files)")
 

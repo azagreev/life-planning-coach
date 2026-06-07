@@ -8,6 +8,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- **Google Calendar + Google Drive коннекторы в плагине** — `build-skill.py` теперь генерит `plugins/life-planning-coach/.mcp.json` с двумя remote-HTTP MCP-серверами (`https://calendarmcp.googleapis.com/mcp/v1`, `https://drivemcp.googleapis.com/mcp/v1`), которые скилл опционально использует (Phase 5 execution / календарь + cloud-storage wiki-персистентность, см. `requires_connector` во frontmatter). При установке плагина через Cowork они появляются во вкладке **Connectors** (один клик Connect). URL-only, **без OAuth-секретов** в манифесте — авторизацию делает Cowork/Claude; формат зеркалит публичный плагин Anthropic `knowledge-work-plugins/small-business/.mcp.json` (проверено 2026-06-07). Gmail исключён (скилл не использует). Коннекторы остаются optional — плагин ставится без них (zero-setup default + Paper-Coach fallback сохранены). Guard-тесты: `test_plugin_mcp_json_declares_expected_connectors` + `test_plugin_mcp_json_has_no_committed_secrets`. Отменяет раннее (ошибочное) решение «connectors account-level only» — см. `docs/research/scope_analysis.md` §Correction.
+
 ## [1.4.3] — 2026-06-04
 
 **Тема:** Distribution release. Репозиторий теперь устанавливается как **Claude Code плагин-маркетплейс** (Cowork / CLI) — скилл + 8 slash-команд в один клик. Методология не меняется (команды — тонкие роутеры в существующие фазы, маркетплейс — чистая дистрибуция), поэтому patch.
