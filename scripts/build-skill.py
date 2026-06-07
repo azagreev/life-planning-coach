@@ -117,10 +117,65 @@ def _copy_references(src: Path, dst: Path) -> None:
             shutil.copy2(Path(root) / f, target / f)
 
 
-def _write_json(path: Path, data: dict) -> None:
-    """Write JSON deterministically (UTF-8, LF, trailing newline) for reproducible builds."""
+_LF_NORMALIZE_EXTS = TEXT_EXTENSIONS + (".gs",)
+
+
+def _normalized_bytes(path: Path) -> bytes:
+    """Read bytes, normalizing text files to LF so the generated plugin never carries
+    CRLF (stable under .gitattributes `plugins/** text eol=lf`, like the ZIP)."""
+    data = path.read_bytes()
+    if path.suffix in _LF_NORMALIZE_EXTS:
+        data = data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return data
+
+
+def _copy_if_changed(src: Path, dst: Path) -> None:
+    """Copy LF-normalized bytes only if content differs (no spurious git churn)."""
+    data = _normalized_bytes(src)
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    if dst.exists() and dst.read_bytes() == data:
+        return
+    dst.write_bytes(data)
+
+
+def _write_if_changed(path: Path, content: str) -> None:
+    """Write LF text only if content differs — preserves mtime, no spurious churn."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    encoded = content.encode("utf-8")
+    if path.exists() and path.read_bytes() == encoded:
+        return
+    path.write_bytes(encoded)
+
+
+def _sync_references(src: Path, dst: Path) -> None:
+    """Content-aware LF mirror of references/ -> dst (same dev-only excludes as the
+    ZIP). Only rewrites changed files and prunes plugin files whose source
+    disappeared, so an unchanged rebuild leaves the plugin tree git-clean."""
+    wanted: set[str] = set()
+    for root, dirs, files in os.walk(src):
+        dirs[:] = [d for d in dirs if d not in REFERENCES_EXCLUDE_DIRS]
+        rel_dir = Path(root).relative_to(src)
+        for f in files:
+            if any(f.startswith(p) for p in REFERENCES_EXCLUDE_PREFIXES):
+                continue
+            rel = rel_dir / f
+            wanted.add(rel.as_posix())
+            _copy_if_changed(Path(root) / f, dst / rel)
+    if dst.exists():
+        for p in list(dst.rglob("*")):
+            if p.is_file() and p.relative_to(dst).as_posix() not in wanted:
+                p.unlink()
+        for d in sorted((x for x in dst.rglob("*") if x.is_dir()),
+                        key=lambda x: len(x.parts), reverse=True):
+            try:
+                d.rmdir()
+            except OSError:
+                pass
+
+
+def _write_json(path: Path, data: dict) -> None:
+    """Write JSON deterministically (UTF-8, LF, trailing newline), only if changed."""
+    _write_if_changed(path, json.dumps(data, indent=2, ensure_ascii=False) + "\n")
 
 
 def _generate_plugin(version: str) -> None:
@@ -136,15 +191,14 @@ def _generate_plugin(version: str) -> None:
     """
     plugin_root = PLUGINS_DIR / PLUGIN_NAME
     skill_dir = plugin_root / "skills" / PLUGIN_NAME
-    # Clean the skill dir so deleted references don't linger (reproducible output).
-    if skill_dir.exists():
-        shutil.rmtree(skill_dir)
-    skill_dir.mkdir(parents=True)
-    shutil.copy2(PROJECT_ROOT / "SKILL.md", skill_dir / "SKILL.md")
-    _copy_references(PROJECT_ROOT / "references", skill_dir / "references")
+    skill_dir.mkdir(parents=True, exist_ok=True)
+    # Idempotent + LF-normalized: only changed files are rewritten, all text as LF,
+    # so an unchanged rebuild leaves git status clean (release precondition).
+    _copy_if_changed(PROJECT_ROOT / "SKILL.md", skill_dir / "SKILL.md")
+    _sync_references(PROJECT_ROOT / "references", skill_dir / "references")
     dashboard = PROJECT_ROOT / "life-planning-dashboard.html"
     if dashboard.exists():
-        shutil.copy2(dashboard, skill_dir / "life-planning-dashboard.html")
+        _copy_if_changed(dashboard, skill_dir / "life-planning-dashboard.html")
     _write_json(
         plugin_root / ".claude-plugin" / "plugin.json",
         {

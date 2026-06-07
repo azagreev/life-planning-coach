@@ -12,6 +12,7 @@ plugin tree stays in sync with the source skill + references (so a stale plugin
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import re
 from pathlib import Path
@@ -155,3 +156,31 @@ def test_plugin_commands_have_description_frontmatter():
         if not (text.startswith("---") and re.search(r"^description:\s*\S", text, re.MULTILINE)):
             bad.append(p.name)
     assert not bad, f"commands missing description frontmatter: {bad}"
+
+
+# ----- build hygiene (OS-agnostic: CI is Linux, so Windows-only churn must be
+#       caught here, not via test_working_tree_is_clean) -----------------------
+
+
+def _load_build_module():
+    spec = importlib.util.spec_from_file_location(
+        "build_skill", PROJECT_ROOT / "scripts" / "build-skill.py"
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_plugin_copy_normalizes_crlf_and_is_idempotent(tmp_path):
+    """Files copied into the plugin are LF-normalized and unchanged files are not
+    rewritten — otherwise the generated tree churns against `plugins/** text eol=lf`
+    on Windows and breaks the release precondition."""
+    mod = _load_build_module()
+    src = tmp_path / "x.md"
+    src.write_bytes(b"line1\r\nline2\r\n")
+    dst = tmp_path / "out" / "x.md"
+    mod._copy_if_changed(src, dst)
+    assert dst.read_bytes() == b"line1\nline2\n", "plugin copy must normalize CRLF -> LF"
+    mtime1 = dst.stat().st_mtime_ns
+    mod._copy_if_changed(src, dst)  # second call: content identical
+    assert dst.stat().st_mtime_ns == mtime1, "_copy_if_changed must skip unchanged files (idempotent)"
