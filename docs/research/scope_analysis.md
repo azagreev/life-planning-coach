@@ -218,6 +218,8 @@ The official Google Calendar MCP server exposes **8 tools** (confirmed in Google
 
 ## Addendum (2026-06-07): Decision — connectors stay account-level, NOT in the plugin manifest
 
+> ⚠️ **SUPERSEDED — see "Correction (2026-06-07)" below.** This decision (B) was based on an incomplete search (local CLI cache only) and was **wrong**: a third-party plugin CAN bundle Google Calendar/Drive as URL-based MCP connectors. Kept for audit trail.
+
 **Context.** После публикации life-planning-coach как Claude Code плагин-маркетплейса возник вопрос: добавить ли Google Calendar + Google Drive во вкладку **Connectors** плагина в Cowork (референс — first-party плагин **Small Business**, у которого эти два коннектора one-click).
 
 **Что выяснено (проверено по [plugins-reference](https://code.claude.com/docs/en/plugins-reference) + локальным манифестам):**
@@ -230,3 +232,25 @@ The official Google Calendar MCP server exposes **8 tools** (confirmed in Google
 **Решение (Вариант B):** коннекторы Google **НЕ объявляются в манифесте плагина**. Google Calendar + Google Drive остаются на **уровне аккаунта Claude** (Settings → Connectors), как скилл их и потребляет сегодня. Это сохраняет zero-setup/optional дизайн (graceful Paper-Coach fallback) и не вшивает нерабочих/неофициальных конфигов — та же дисциплина «только официальное», что и при отклонении reverse-eng Whoop-ридера.
 
 **Revisit-триггер:** Anthropic документирует ссылки на managed-коннекторы для сторонних плагинов, ИЛИ публикует Google Calendar/Drive как referenceable connectors в CLI-маркетплейсе. Тогда — declare в генерируемом `plugins/life-planning-coach/.mcp.json` (через `build-skill.py _generate_plugin`).
+
+---
+
+## Correction (2026-06-07): connectors ARE bundled in the plugin (decision B reversed)
+
+Deep-research pass + прямая проверка первоисточника **опровергли** addendum выше.
+
+**Проверенное first-source доказательство:** публичный плагин Anthropic `anthropics/knowledge-work-plugins` → `small-business/.mcp.json` объявляет Google-коннекторы как обычные **URL-based remote MCP серверы, БЕЗ `oauth`-блока**:
+
+```json
+"gmail":           { "type": "http", "url": "https://gmailmcp.googleapis.com/mcp/v1" },
+"google calendar": { "type": "http", "url": "https://calendarmcp.googleapis.com/mcp/v1" },
+"google drive":    { "type": "http", "url": "https://drivemcp.googleapis.com/mcp/v1" }
+```
+
+(Только `slack` несёт `oauth.clientId`; Google-записи — URL-only, авторизацию Cowork/Claude делает при Connect. Runtime-имена `plugin_<name>_<server>` — это namespacing, а не скрытый серверный registry.)
+
+**Почему прежний вывод был неверным:** поиск охватил только локальный CLI-кэш (`claude-plugins-official/external_plugins/`, где Google-коннектора нет) и пропустил публичный репозиторий `knowledge-work-plugins`. Cowork-плагины категорий (Small Business и т.п.) живут там, а не на диске.
+
+**Исправленное решение:** объявить **Google Calendar** + **Google Drive** в генерируемом `plugins/life-planning-coach/.mcp.json` (через `build-skill.py _generate_plugin`), URL-only, без секретов. **Gmail исключён** (скилл не использует). Коннекторы остаются optional (плагин ставится без них; zero-setup default + Paper-Coach fallback сохранены). Guard: `tests/release/test_plugin_marketplace.py` (`test_plugin_mcp_json_*`).
+
+**[uncertain]** Наследует ли сторонний плагин, ссылающийся на эти URL, Anthropic shared Google OAuth app (настоящий one-click) — или будет per-user auth — публично не задокументировано. Anthropic отгружает ровно эту URL-only форму в small-business, так что объявление корректно в любом случае; финальный Connect-UX пользователь проверяет в Cowork.
