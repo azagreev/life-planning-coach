@@ -1,2 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Generated Claude Code plugin tree (scripts/build-skill.py writes LF). Force LF in
+# the working tree too so it never churns against core.autocrlf=true on Windows —
+# the release precondition runs test_working_tree_is_clean right after a build.
+plugins/** text eol=lf
+

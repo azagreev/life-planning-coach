@@ -12,6 +12,7 @@ plugin tree stays in sync with the source skill + references (so a stale plugin
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import re
 from pathlib import Path
@@ -38,6 +39,12 @@ def _skill_master_version() -> str:
     m = re.search(r"^version:\s*(\S+)\s*$", master, re.MULTILINE)
     assert m, "version not found in SKILL.master.md frontmatter"
     return m.group(1).strip("\"'")
+
+
+def _lf(data: bytes) -> bytes:
+    """Normalize line endings: the generated plugin tree is LF, but sources may be
+    CRLF in a Windows working tree (core.autocrlf), so compare content, not bytes."""
+    return data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
 
 
 # ----- marketplace.json --------------------------------------------------
@@ -90,8 +97,8 @@ def test_plugin_skill_present():
 
 def test_plugin_skill_in_sync_with_root():
     """Plugin skill is a copy of the root (Claude) SKILL.md — must be byte-identical."""
-    plugin_skill = (PLUGIN_SKILL_DIR / "SKILL.md").read_bytes()
-    root_skill = (PROJECT_ROOT / "SKILL.md").read_bytes()
+    plugin_skill = _lf((PLUGIN_SKILL_DIR / "SKILL.md").read_bytes())
+    root_skill = _lf((PROJECT_ROOT / "SKILL.md").read_bytes())
     assert plugin_skill == root_skill, (
         "plugins/.../SKILL.md is out of sync with root SKILL.md — "
         "run `python scripts/build-skill.py build`"
@@ -108,7 +115,7 @@ def test_plugin_references_in_sync_with_source():
             continue
         rel = f.relative_to(plugin_refs)
         src = PROJECT_ROOT / "references" / rel
-        if not src.exists() or src.read_bytes() != f.read_bytes():
+        if not src.exists() or _lf(src.read_bytes()) != _lf(f.read_bytes()):
             stale.append(str(rel))
     assert not stale, (
         f"plugin references out of sync with references/ (run build): {stale[:5]}"
@@ -155,3 +162,31 @@ def test_plugin_commands_have_description_frontmatter():
         if not (text.startswith("---") and re.search(r"^description:\s*\S", text, re.MULTILINE)):
             bad.append(p.name)
     assert not bad, f"commands missing description frontmatter: {bad}"
+
+
+# ----- build hygiene (OS-agnostic: CI is Linux, so Windows-only churn must be
+#       caught here, not via test_working_tree_is_clean) -----------------------
+
+
+def _load_build_module():
+    spec = importlib.util.spec_from_file_location(
+        "build_skill", PROJECT_ROOT / "scripts" / "build-skill.py"
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_plugin_copy_normalizes_crlf_and_is_idempotent(tmp_path):
+    """Files copied into the plugin are LF-normalized and unchanged files are not
+    rewritten — otherwise the generated tree churns against `plugins/** text eol=lf`
+    on Windows and breaks the release precondition."""
+    mod = _load_build_module()
+    src = tmp_path / "x.md"
+    src.write_bytes(b"line1\r\nline2\r\n")
+    dst = tmp_path / "out" / "x.md"
+    mod._copy_if_changed(src, dst)
+    assert dst.read_bytes() == b"line1\nline2\n", "plugin copy must normalize CRLF -> LF"
+    mtime1 = dst.stat().st_mtime_ns
+    mod._copy_if_changed(src, dst)  # second call: content identical
+    assert dst.stat().st_mtime_ns == mtime1, "_copy_if_changed must skip unchanged files (idempotent)"
