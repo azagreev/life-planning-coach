@@ -41,6 +41,12 @@ def _skill_master_version() -> str:
     return m.group(1).strip("\"'")
 
 
+def _lf(data: bytes) -> bytes:
+    """Normalize line endings: the generated plugin tree is LF, but sources may be
+    CRLF in a Windows working tree (core.autocrlf), so compare content, not bytes."""
+    return data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+
+
 # ----- marketplace.json --------------------------------------------------
 
 
@@ -91,8 +97,8 @@ def test_plugin_skill_present():
 
 def test_plugin_skill_in_sync_with_root():
     """Plugin skill is a copy of the root (Claude) SKILL.md — must be byte-identical."""
-    plugin_skill = (PLUGIN_SKILL_DIR / "SKILL.md").read_bytes()
-    root_skill = (PROJECT_ROOT / "SKILL.md").read_bytes()
+    plugin_skill = _lf((PLUGIN_SKILL_DIR / "SKILL.md").read_bytes())
+    root_skill = _lf((PROJECT_ROOT / "SKILL.md").read_bytes())
     assert plugin_skill == root_skill, (
         "plugins/.../SKILL.md is out of sync with root SKILL.md — "
         "run `python scripts/build-skill.py build`"
@@ -109,7 +115,7 @@ def test_plugin_references_in_sync_with_source():
             continue
         rel = f.relative_to(plugin_refs)
         src = PROJECT_ROOT / "references" / rel
-        if not src.exists() or src.read_bytes() != f.read_bytes():
+        if not src.exists() or _lf(src.read_bytes()) != _lf(f.read_bytes()):
             stale.append(str(rel))
     assert not stale, (
         f"plugin references out of sync with references/ (run build): {stale[:5]}"
