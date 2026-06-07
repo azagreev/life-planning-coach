@@ -74,9 +74,20 @@
 /plugin install life-planning-coach@life-planning-coach
 ```
 
-Обновление: `/plugin marketplace update life-planning-coach`. Репозиторий публичный — авторизация не нужна.
-
 **Команды плагина:** `/life-plan` (полная сессия), `/resume` (продолжить), `/daily` (план на день), `/weekly-review` (ретроспектива), `/wheel-of-life` (диагностика), `/goals` (цели), `/dashboard` (дашборд), `/check-in` (быстрый чек-ин).
+
+#### 🔄 Обновление плагина
+
+При выходе новой версии плагин **не обновляется сам**: Claude Code/Cowork авто-обновляют только официальный маркетплейс Anthropic, а сторонние (как этот) — нет ([Claude Code #26744](https://github.com/anthropics/claude-code/issues/26744)). Версия в манифесте проставлена корректно — нужно просто подтянуть свежие данные маркетплейса:
+
+- **Cowork (GUI):** Customize → найди маркетплейс `life-planning-coach` → **удали и добавь заново** (`+` → Add marketplace from GitHub → `azagreev/life-planning-coach`).
+- **Claude Code (CLI):** `/plugin marketplace update life-planning-coach` → обнови плагин → `/reload-plugins` (или перезапусти сессию). Чтобы обновлялось само на старте сессии — включи auto-update: `/plugin` → Marketplaces → `life-planning-coach` → enable auto-update. Репозиторий публичный, авторизация не нужна.
+
+**Если не сработало** (поле Version не сменилось / кнопка Update неактивна):
+1. Проверь, что новая версия реально есть в [Releases](https://github.com/azagreev/life-planning-coach/releases).
+2. **Полностью закрой и снова открой** Cowork/Claude Code — маркетплейс перечитывается на старте.
+3. Версия всё ещё старая → **удали маркетплейс и добавь заново**: это форсит свежий git-клон (самый надёжный способ для сторонних маркетплейсов).
+4. Признак успеха — поле **Version** показывает новую версию (напр. `1.4.4`). Новые команды и коннекторы появляются только после этого.
 
 ### Claude.ai (ZIP-скилл)
 
