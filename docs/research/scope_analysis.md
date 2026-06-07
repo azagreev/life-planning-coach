@@ -213,3 +213,20 @@ The official Google Calendar MCP server exposes **8 tools** (confirmed in Google
 6. **Read-only enforcement:** If only read-only scopes are granted, do write tools fail gracefully with a clear error message?
 7. **Multi-calendar behavior:** Can `list_events` query shared calendars the user has access to but does not own?
 8. **Free plan directory vs custom:** Is Google's Calendar MCP available as a pre-built directory connector (no custom connector slot needed) or must it always be added as a custom connector?
+
+---
+
+## Addendum (2026-06-07): Decision — connectors stay account-level, NOT in the plugin manifest
+
+**Context.** После публикации life-planning-coach как Claude Code плагин-маркетплейса возник вопрос: добавить ли Google Calendar + Google Drive во вкладку **Connectors** плагина в Cowork (референс — first-party плагин **Small Business**, у которого эти два коннектора one-click).
+
+**Что выяснено (проверено по [plugins-reference](https://code.claude.com/docs/en/plugins-reference) + локальным манифестам):**
+- Плагин объявляет коннекторы как **стандартные MCP-серверы** — `.mcp.json` в корне плагина или `mcpServers`/`channels` в `plugin.json` (`command/args/env` для stdio, `type:http/sse + url + oauth` для remote). **Поля «сослаться на managed-коннектор по id» в схеме нет.**
+- Managed one-click коннекторы (Slack и т.п.) — это remote MCP с **Anthropic-зарегистрированным** `url` + `oauth.clientId` (напр. `claude-plugins-official/external_plugins/slack/.mcp.json` → `https://mcp.slack.com/mcp`). В CLI-маркетплейсе есть slack/linear/asana/github/gitlab/supabase/… — **но Google Calendar/Drive там НЕТ**.
+- Google Calendar/Drive из Small Business — **Cowork-серверные** (на диске отсутствуют; URL+clientId недоступны). Воспроизвести их сторонним GitHub-плагином документированного способа **нет**.
+- Официальный Google Calendar remote MCP `https://calendarmcp.googleapis.com/mcp/v1` существует, но требует **ручного GCP OAuth-клиента** (см. §Official Calendar MCP выше) — не one-click. **Google Drive** официального remote MCP **не имеет** (только commercial/community).
+- ⚠️ Guide-агент предлагал `https://mcp.google.com/calendar` — **галлюцинация**, такого эндпоинта нет; отклонено.
+
+**Решение (Вариант B):** коннекторы Google **НЕ объявляются в манифесте плагина**. Google Calendar + Google Drive остаются на **уровне аккаунта Claude** (Settings → Connectors), как скилл их и потребляет сегодня. Это сохраняет zero-setup/optional дизайн (graceful Paper-Coach fallback) и не вшивает нерабочих/неофициальных конфигов — та же дисциплина «только официальное», что и при отклонении reverse-eng Whoop-ридера.
+
+**Revisit-триггер:** Anthropic документирует ссылки на managed-коннекторы для сторонних плагинов, ИЛИ публикует Google Calendar/Drive как referenceable connectors в CLI-маркетплейсе. Тогда — declare в генерируемом `plugins/life-planning-coach/.mcp.json` (через `build-skill.py _generate_plugin`).
